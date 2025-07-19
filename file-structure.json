@@ -1,0 +1,276 @@
+{
+  "project_structure": {
+    "root": {
+      "existing_files": [
+        "package.json",
+        "tsconfig.json",
+        "vite.config.ts",
+        "README.md",
+        ".gitignore",
+        ".npmignore"
+      ],
+      "new_files": [
+        "LICENSE",
+        "ROADMAP.md",
+        "PROJECT_TASKS.md",
+        "CONTRIBUTING.md",
+        "CHANGELOG.md",
+        "vitest.config.ts"
+      ]
+    },
+    "src": {
+      "existing_files": [
+        "index.ts",
+        "viewer.ts",
+        "types.ts",
+        "loader.ts",
+        "factory.ts",
+        "themes.ts",
+        "navigation.ts",
+        "search.ts",
+        "router.ts",
+        "styles.ts"
+      ],
+      "new_files": [
+        "utils/index.ts",
+        "utils/dom.ts",
+        "utils/validation.ts",
+        "errors/index.ts",
+        "errors/viewer-error.ts"
+      ]
+    },
+    "tests": {
+      "structure": [
+        "setup.ts",
+        "viewer.test.ts",
+        "loader.test.ts",
+        "themes.test.ts",
+        "navigation.test.ts",
+        "search.test.ts",
+        "router.test.ts",
+        "factory.test.ts",
+        "integration/",
+        "integration/full-workflow.test.ts",
+        "fixtures/",
+        "fixtures/sample-documents.ts",
+        "fixtures/test-themes.ts"
+      ]
+    },
+    "demo": {
+      "structure": [
+        "index.html",
+        "demo.css",
+        "demo.js",
+        "package.json",
+        "content/",
+        "content/getting-started.md",
+        "content/api-reference.md",
+        "content/examples.md",
+        "content/advanced-usage.md",
+        "content/theming-guide.md",
+        "assets/",
+        "assets/logo.svg",
+        "assets/screenshot.png"
+      ]
+    },
+    "examples": {
+      "structure": [
+        "basic/",
+        "basic/index.html",
+        "basic/example.js",
+        "basic/README.md",
+        "advanced/",
+        "advanced/index.html",
+        "advanced/example.js",
+        "advanced/README.md",
+        "github-source/",
+        "github-source/index.html",
+        "github-source/example.js",
+        "react-integration/",
+        "react-integration/App.jsx",
+        "react-integration/package.json",
+        "vue-integration/",
+        "vue-integration/App.vue",
+        "vue-integration/package.json",
+        "content/",
+        "content/sample-docs/"
+      ]
+    },
+    "docs": {
+      "structure": [
+        "API.md",
+        "CONFIGURATION.md",
+        "THEMING.md",
+        "INTEGRATION.md",
+        "TROUBLESHOOTING.md",
+        "MIGRATION.md",
+        "images/",
+        "images/architecture-diagram.svg",
+        "images/theme-showcase.png"
+      ]
+    },
+    "github": {
+      "structure": [
+        ".github/",
+        ".github/workflows/",
+        ".github/workflows/ci.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/demo-deploy.yml",
+        ".github/ISSUE_TEMPLATE/",
+        ".github/ISSUE_TEMPLATE/bug_report.md",
+        ".github/ISSUE_TEMPLATE/feature_request.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        ".github/SECURITY.md",
+        ".github/FUNDING.yml"
+      ]
+    },
+    "dist": {
+      "generated_files": [
+        "index.js",
+        "index.es.js",
+        "index.umd.js",
+        "index.d.ts",
+        "types/",
+        "types/*.d.ts"
+      ]
+    }
+  },
+  "file_priorities": {
+    "critical": [
+      "demo/index.html",
+      "demo/demo.js",
+      "tests/viewer.test.ts",
+      "vitest.config.ts",
+      "LICENSE"
+    ],
+    "high": [
+      "tests/loader.test.ts",
+      "tests/themes.test.ts",
+      "examples/basic/index.html",
+      "demo/content/getting-started.md",
+      "CONTRIBUTING.md"
+    ],
+    "medium": [
+      "docs/API.md",
+      "docs/CONFIGURATION.md",
+      ".github/workflows/ci.yml",
+      "examples/advanced/index.html"
+    ],
+    "low": [
+      "examples/react-integration/",
+      "examples/vue-integration/",
+      ".github/workflows/release.yml"
+    ]
+  },
+  "file_templates": {
+    "test_file": {
+      "imports": [
+        "import { describe, it, expect, beforeEach, vi } from 'vitest';",
+        "import { [CLASS_NAME] } from '../src/[FILE_NAME]';"
+      ],
+      "structure": [
+        "describe('[CLASS_NAME]', () => {",
+        "  beforeEach(() => {",
+        "    // Setup",
+        "  });",
+        "",
+        "  it('should [test description]', () => {",
+        "    // Test implementation",
+        "  });",
+        "});"
+      ]
+    },
+    "demo_html": {
+      "doctype": "<!DOCTYPE html>",
+      "meta_tags": [
+        "<meta charset=\"UTF-8\">",
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
+        "<title>Markdown Docs Viewer - [DEMO_NAME]</title>"
+      ],
+      "structure": [
+        "<div class=\"demo-header\">",
+        "  <h1>[DEMO_TITLE]</h1>",
+        "  <div class=\"demo-controls\">",
+        "    <!-- Controls -->",
+        "  </div>",
+        "</div>",
+        "<div id=\"viewer-container\"></div>"
+      ]
+    },
+    "markdown_content": {
+      "frontmatter": [
+        "---",
+        "title: [TITLE]",
+        "description: [DESCRIPTION]",
+        "category: [CATEGORY]",
+        "order: [ORDER]",
+        "---",
+        ""
+      ],
+      "structure": [
+        "# [TITLE]",
+        "",
+        "[DESCRIPTION]",
+        "",
+        "## Section",
+        "",
+        "Content here...",
+        "",
+        "```javascript",
+        "// Code example",
+        "```"
+      ]
+    }
+  },
+  "validation_criteria": {
+    "phase_1": {
+      "demo": [
+        "Demo page loads without errors",
+        "All theme switches work",
+        "All example configurations load",
+        "Mobile responsive design works",
+        "No console errors"
+      ],
+      "tests": [
+        "All tests pass",
+        "Coverage > 80%",
+        "No failing builds",
+        "Test environment setup correct"
+      ],
+      "package": [
+        "All metadata fields populated",
+        "Scripts work correctly",
+        "Dependencies correct",
+        "Build succeeds"
+      ]
+    },
+    "phase_2": {
+      "documentation": [
+        "API fully documented",
+        "Examples comprehensive",
+        "Integration guides complete",
+        "Troubleshooting section useful"
+      ],
+      "performance": [
+        "Bundle size < 50KB gzipped",
+        "Initial load < 2 seconds",
+        "Navigation smooth with 1000+ items",
+        "Memory usage optimized"
+      ]
+    },
+    "phase_3": {
+      "cicd": [
+        "CI pipeline working",
+        "Automated tests passing",
+        "Release automation functional",
+        "Security scanning active"
+      ],
+      "production": [
+        "Error handling comprehensive",
+        "Accessibility compliant",
+        "Performance benchmarks met",
+        "Documentation complete"
+      ]
+    }
+  }
+}
