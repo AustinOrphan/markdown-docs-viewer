@@ -1,0 +1,15 @@
+{
+  "name": "markdown-docs-viewer-demo",
+  "version": "1.0.0",
+  "description": "Interactive demo for Markdown Documentation Viewer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx http-server -p 3000 -c-1 --cors",
+    "build": "npm run build --prefix ..",
+    "dev": "npm run start"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
