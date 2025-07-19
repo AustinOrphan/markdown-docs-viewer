@@ -1,5 +1,5 @@
 {
-  "name": "@yourusername/markdown-docs-viewer",
+  "name": "@austinorphan/markdown-docs-viewer",
   "version": "1.0.0",
   "description": "A generic, themeable markdown documentation viewer",
   "type": "module",
@@ -23,7 +23,7 @@
     "viewer",
     "docs"
   ],
-  "author": "",
+  "author": "Austin Orphan <austin@austinorphan.com>",
   "license": "MIT",
   "peerDependencies": {
     "marked": ">=12.0.0",
@@ -43,10 +43,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/markdown-docs-viewer.git"
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/markdown-docs-viewer/issues"
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer/issues"
   },
-  "homepage": "https://github.com/yourusername/markdown-docs-viewer#readme"
+  "homepage": "https://github.com/AustinOrphan/markdown-docs-viewer#readme"
 }
