@@ -107,7 +107,7 @@ jobs:
   demo:
     name: Demo Build
     runs-on: ubuntu-latest
-    needs: [lint]
+    needs: [build]
     
     steps:
       - name: Checkout code
@@ -121,6 +121,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
       - name: Build demo
         run: npm run demo:build
