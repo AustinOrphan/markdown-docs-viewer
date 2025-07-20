@@ -1,5 +1,5 @@
 import { I18nConfig, I18nMessages } from './types';
-import { ErrorFactory, ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
+import { ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
 
 /**
  * Internationalization manager for multi-language support

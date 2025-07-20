@@ -1,7 +1,7 @@
 import { Document, ExportOptions, ExportFormat } from './types';
 import { MarkdownDocsViewer } from './viewer';
 import { marked } from 'marked';
-import { ErrorFactory, ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
+import { ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
 
 /**
  * Escape HTML special characters to prevent XSS attacks
@@ -11,6 +11,49 @@ function escapeHtml(text: string): string {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+/**
+ * Basic HTML sanitizer for markdown-generated content
+ * Removes potentially dangerous tags while preserving safe formatting
+ * For production use with untrusted content, consider using DOMPurify
+ */
+function sanitizeHtml(html: string): string {
+  if (typeof html !== 'string') return '';
+  
+  // Allow safe HTML tags for markdown content
+  const allowedTags = [
+    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'code', 'pre', 
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'ul', 'ol', 'li', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'td', 'th',
+    'a', 'img', 'hr', 'div', 'span'
+  ];
+  
+  // Remove script tags and event handlers
+  let sanitized = html
+    .replace(/<script[^>]*>.*?<\/script>/gis, '')
+    .replace(/<style[^>]*>.*?<\/style>/gis, '')
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:/gi, '');
+  
+  // Basic tag filtering - remove tags not in allowedTags
+  sanitized = sanitized.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g, (match, tagName) => {
+    if (allowedTags.includes(tagName.toLowerCase())) {
+      // For links, ensure href is safe
+      if (tagName.toLowerCase() === 'a') {
+        return match.replace(/href\s*=\s*["']([^"']*)["']/gi, (hrefMatch, url) => {
+          if (url.startsWith('javascript:') || url.startsWith('data:') || url.startsWith('vbscript:')) {
+            return 'href="#"';
+          }
+          return hrefMatch;
+        });
+      }
+      return match;
+    }
+    return '';
+  });
+  
+  return sanitized;
 }
 
 /**
@@ -175,7 +218,7 @@ export class ExportManager {
     for (let i = 0; i < documents.length; i++) {
       const doc = documents[i];
       const content = await this.viewer.getDocumentContent(doc);
-      const processedContent = marked(content);
+      const processedContent = await marked(content);
       
       html += `
   <article class="exported-document ${i > 0 ? 'page-break' : ''}" id="doc-${escapeHtml(doc.id)}">
@@ -183,7 +226,7 @@ export class ExportManager {
     ${doc.description ? `<p class="doc-description">${escapeHtml(doc.description)}</p>` : ''}
     ${doc.tags?.length ? `<div class="doc-tags">${doc.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
     <div class="doc-content">
-      ${processedContent}
+      ${sanitizeHtml(processedContent)}
     </div>
   </article>`;
     }
