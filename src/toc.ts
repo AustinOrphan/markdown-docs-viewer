@@ -206,7 +206,6 @@ export class TableOfContents {
    * Update active heading based on scroll position
    */
   private updateActiveHeading(container: HTMLElement, headings: HTMLElement[]): void {
-    const scrollTop = container.scrollTop;
     let activeHeading: HTMLElement | null = null;
 
     for (const heading of headings) {
