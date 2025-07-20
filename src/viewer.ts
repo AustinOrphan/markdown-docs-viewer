@@ -5,8 +5,7 @@ import {
   DocumentationConfig, 
   Document, 
   ViewerState, 
-  Theme,
-  DocumentSource 
+  Theme
 } from './types';
 import { defaultTheme } from './themes';
 import { generateStyles } from './styles';

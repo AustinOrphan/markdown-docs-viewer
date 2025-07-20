@@ -37,7 +37,7 @@ export class TableOfContents {
     }
 
     this.headings = [];
-    const tokens = marked.lexer(content);
+    const tokens = marked.lexer ? marked.lexer(content) : [];
     
     this.extractHeadings(tokens);
     return this.buildTree();
@@ -91,7 +91,7 @@ export class TableOfContents {
    * Generate unique ID for heading
    */
   private generateId(text: string): string {
-    let id = text
+    const id = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '') // Remove special characters
       .replace(/\s+/g, '-') // Replace spaces with hyphens
@@ -384,7 +384,7 @@ export function addHeadingIds(html: string): string {
   
   headings.forEach((heading) => {
     if (!heading.id) {
-      let id = heading.textContent!
+      const id = heading.textContent!
         .toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')

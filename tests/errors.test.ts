@@ -11,12 +11,11 @@ import {
 } from '../src/errors'
 
 describe('Error Handling System', () => {
-  let consoleLogSpy: any
   let consoleWarnSpy: any
   let consoleErrorSpy: any
 
   beforeEach(() => {
-    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    vi.spyOn(console, 'log').mockImplementation(() => {})
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
   })

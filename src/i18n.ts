@@ -160,7 +160,7 @@ export class I18nManager {
     const output = { ...target };
     
     for (const key in source) {
-      if (source.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
         if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
           output[key] = this.deepMerge(target[key] || {}, source[key]);
         } else {
@@ -255,7 +255,7 @@ function mergeMessages(defaults: I18nMessages, custom: I18nMessages): I18nMessag
   const result: I18nMessages = { ...defaults };
   
   for (const key in custom) {
-    if (custom.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(custom, key)) {
       const defaultValue = defaults[key];
       const customValue = custom[key];
       

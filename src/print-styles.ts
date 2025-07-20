@@ -3,7 +3,7 @@ import { Theme } from './types';
 /**
  * Generate print-friendly CSS styles
  */
-export function generatePrintStyles(theme: Theme): string {
+export function generatePrintStyles(_theme: Theme): string {
   return `
     @media print {
       /* Reset page margins and setup */

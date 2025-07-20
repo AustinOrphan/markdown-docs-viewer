@@ -176,7 +176,7 @@ export class DocumentLoader {
       case 'github':
         // GitHub sources don't require additional validation
         break;
-      case 'content':
+      case 'content': {
         // Content sources should have content in documents
         const missingContent = this.source.documents.filter(doc => !doc.content);
         if (missingContent.length > 0) {
@@ -185,6 +185,7 @@ export class DocumentLoader {
           });
         }
         break;
+      }
       default:
         throw new MarkdownDocsError(
           ErrorCode.INVALID_SOURCE,

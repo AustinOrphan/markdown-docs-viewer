@@ -504,7 +504,7 @@ export function generateMobileLayout(): string {
 /**
  * Main function to generate complete mobile-responsive CSS
  */
-export function generateMobileCSS(config?: DocumentationConfig): string {
+export function generateMobileCSS(_config?: DocumentationConfig): string {
   const cssVariables = generateResponsiveCSSVariables();
   const mediaQueries = generateMediaQueries();
   const typography = generateResponsiveTypography();
