@@ -397,7 +397,6 @@ export class DocumentLoader {
         }
 
         if (response.status === 403) {
-          const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining');
           const rateLimitReset = response.headers.get('X-RateLimit-Reset');
           
           let message = 'GitHub API rate limit exceeded';

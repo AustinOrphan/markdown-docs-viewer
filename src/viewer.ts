@@ -20,7 +20,6 @@ import {
   ErrorBoundary,
   ErrorLogger,
   ConsoleErrorLogger,
-  withRetry,
   DEFAULT_RETRY_CONFIG
 } from './errors';
 import { 

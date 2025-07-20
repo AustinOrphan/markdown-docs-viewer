@@ -1,5 +1,5 @@
 import { I18nConfig, I18nMessages } from './types';
-import { ErrorFactory, ErrorCode } from './errors';
+import { ErrorFactory, ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
 
 /**
  * Internationalization manager for multi-language support
@@ -26,10 +26,13 @@ export class I18nManager {
     if (!this.messages[this.currentLocale]) {
       console.warn(`No messages found for locale "${this.currentLocale}", falling back to "${this.fallbackLocale}"`);
       if (!this.messages[this.fallbackLocale]) {
-        throw ErrorFactory.create(
+        throw new MarkdownDocsError(
           ErrorCode.INVALID_CONFIG,
           `No messages found for locale "${this.currentLocale}" or fallback locale "${this.fallbackLocale}"`,
-          'error'
+          'No translation messages found for the specified locale or fallback locale.',
+          ErrorSeverity.HIGH,
+          false,
+          { operation: 'validateI18nConfig', currentLocale: this.currentLocale, fallbackLocale: this.fallbackLocale }
         );
       }
     }
@@ -100,10 +103,13 @@ export class I18nManager {
    */
   setLocale(locale: string): void {
     if (!this.messages[locale]) {
-      throw ErrorFactory.create(
+      throw new MarkdownDocsError(
         ErrorCode.INVALID_CONFIG,
         `No messages found for locale "${locale}"`,
-        'error'
+        'The specified locale is not available.',
+        ErrorSeverity.HIGH,
+        false,
+        { operation: 'setLocale', locale }
       );
     }
     this.currentLocale = locale;

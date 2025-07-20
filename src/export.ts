@@ -1,7 +1,17 @@
 import { Document, ExportOptions, ExportFormat } from './types';
 import { MarkdownDocsViewer } from './viewer';
 import { marked } from 'marked';
-import { ErrorFactory, ErrorCode } from './errors';
+import { ErrorFactory, ErrorCode, MarkdownDocsError, ErrorSeverity } from './errors';
+
+/**
+ * Escape HTML special characters to prevent XSS attacks
+ */
+function escapeHtml(text: string): string {
+  if (typeof text !== 'string') return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
 /**
  * Export manager for generating PDF and HTML exports of documentation
@@ -35,10 +45,13 @@ export class ExportManager {
       case 'html':
         return this.exportHTML(options);
       default:
-        throw ErrorFactory.create(
+        throw new MarkdownDocsError(
           ErrorCode.INVALID_CONFIG,
           `Unsupported export format: ${options.format}`,
-          'error'
+          'The specified export format is not supported.',
+          ErrorSeverity.HIGH,
+          false,
+          { operation: 'export', format: options.format }
         );
     }
   }
@@ -48,10 +61,13 @@ export class ExportManager {
    */
   private async exportPDF(options: ExportOptions): Promise<Blob> {
     if (!this.html2pdfAvailable) {
-      throw ErrorFactory.create(
-        ErrorCode.DEPENDENCY_ERROR,
+      throw new MarkdownDocsError(
+        ErrorCode.INVALID_CONFIG, // A missing dependency can be considered an invalid configuration
         'html2pdf.js is required for PDF export. Please include it in your project.',
-        'error'
+        'PDF export requires the html2pdf.js library to be included in your project.',
+        ErrorSeverity.HIGH,
+        false,
+        { operation: 'exportPDF', dependency: 'html2pdf.js' }
       );
     }
 
@@ -114,11 +130,11 @@ export class ExportManager {
     const theme = this.viewer.getTheme();
     
     let html = `<!DOCTYPE html>
-<html lang="${options.locale || 'en'}">
+<html lang="${escapeHtml(options.locale || 'en')}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${options.title || 'Documentation Export'}</title>
+  <title>${escapeHtml(options.title || 'Documentation Export')}</title>
   <style>
     ${this.getExportStyles(theme)}
     ${options.includeTheme ? this.viewer.getThemeStyles() : ''}
@@ -162,10 +178,10 @@ export class ExportManager {
       const processedContent = marked(content);
       
       html += `
-  <article class="exported-document ${i > 0 ? 'page-break' : ''}" id="doc-${doc.id}">
-    <h1>${doc.title}</h1>
-    ${doc.description ? `<p class="doc-description">${doc.description}</p>` : ''}
-    ${doc.tags?.length ? `<div class="doc-tags">${doc.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
+  <article class="exported-document ${i > 0 ? 'page-break' : ''}" id="doc-${escapeHtml(doc.id)}">
+    <h1>${escapeHtml(doc.title)}</h1>
+    ${doc.description ? `<p class="doc-description">${escapeHtml(doc.description)}</p>` : ''}
+    ${doc.tags?.length ? `<div class="doc-tags">${doc.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
     <div class="doc-content">
       ${processedContent}
     </div>
@@ -203,7 +219,7 @@ export class ExportManager {
     
     for (const doc of documents) {
       toc += `
-      <li><a href="#doc-${doc.id}">${doc.title}</a></li>`;
+      <li><a href="#doc-${escapeHtml(doc.id)}">${escapeHtml(doc.title)}</a></li>`;
     }
     
     toc += `
