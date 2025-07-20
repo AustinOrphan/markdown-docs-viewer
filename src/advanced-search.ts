@@ -29,7 +29,7 @@ export class AdvancedSearchManager {
   private searchHistory: SearchHistory[] = [];
   private debouncedSearch: (query: string) => void;
 
-  constructor(documents: Document[], options: AdvancedSearchOptions = {}) {
+  constructor(documents: Document[], options: Partial<AdvancedSearchOptions> = {}) {
     this.documents = documents;
     this.options = {
       enabled: true,
@@ -59,17 +59,25 @@ export class AdvancedSearchManager {
    * Build search index from documents
    */
   private buildIndex(): void {
+    // Create content cache from document content
+    const contentCache = new Map<string, string>();
     this.documents.forEach(doc => {
-      const indexData = {
-        title: doc.title,
-        content: doc.content || '',
-        description: doc.description || '',
-        tags: doc.tags?.join(' ') || '',
-        category: doc.category || ''
-      };
-      
-      this.searchIndex.add(doc.id, indexData);
+      if (doc.content) {
+        contentCache.set(doc.id, doc.content);
+      }
     });
+    
+    // Update the search index with all documents
+    this.searchIndex.updateIndex(this.documents, contentCache);
+  }
+
+  /**
+   * Perform search and update history
+   */
+  private performSearch(query: string): SearchResult[] {
+    const results = this.search(query);
+    this.addToHistory(query, results.length);
+    return results;
   }
 
   /**
@@ -84,11 +92,10 @@ export class AdvancedSearchManager {
     const indexResults = this.searchIndex.search(query);
     
     // Convert to SearchResult format
-    let results: SearchResult[] = indexResults.map(result => {
-      const doc = this.documents.find(d => d.id === result.id)!;
+    let results: SearchResult[] = indexResults.map((doc, index) => {
       return {
         document: doc,
-        score: result.score,
+        score: 1.0 - (index * 0.1), // Simple scoring based on position
         highlights: this.options.highlighting ? this.generateHighlights(doc, query) : []
       };
     });

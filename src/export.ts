@@ -51,7 +51,7 @@ export class ExportManager {
           'The specified export format is not supported.',
           ErrorSeverity.HIGH,
           false,
-          { operation: 'export', format: options.format }
+          { operation: 'export', additionalData: { format: options.format } }
         );
     }
   }
@@ -67,7 +67,7 @@ export class ExportManager {
         'PDF export requires the html2pdf.js library to be included in your project.',
         ErrorSeverity.HIGH,
         false,
-        { operation: 'exportPDF', dependency: 'html2pdf.js' }
+        { operation: 'exportPDF', additionalData: { dependency: 'html2pdf.js' } }
       );
     }
 

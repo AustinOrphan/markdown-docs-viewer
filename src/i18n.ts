@@ -32,7 +32,7 @@ export class I18nManager {
           'No translation messages found for the specified locale or fallback locale.',
           ErrorSeverity.HIGH,
           false,
-          { operation: 'validateI18nConfig', currentLocale: this.currentLocale, fallbackLocale: this.fallbackLocale }
+          { operation: 'validateI18nConfig', additionalData: { locale: this.currentLocale, fallbackLocale: this.fallbackLocale } }
         );
       }
     }
@@ -109,7 +109,7 @@ export class I18nManager {
         'The specified locale is not available.',
         ErrorSeverity.HIGH,
         false,
-        { operation: 'setLocale', locale }
+        { operation: 'setLocale', additionalData: { locale } }
       );
     }
     this.currentLocale = locale;

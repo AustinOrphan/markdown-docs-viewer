@@ -1,5 +1,5 @@
 import { TableOfContentsOptions } from './types';
-import { marked } from 'marked';
+import { marked, Token } from 'marked';
 
 export interface TOCItem {
   id: string;
@@ -46,7 +46,7 @@ export class TableOfContents {
   /**
    * Extract headings from markdown tokens
    */
-  private extractHeadings(tokens: marked.Token[]): void {
+  private extractHeadings(tokens: Token[]): void {
     for (const token of tokens) {
       if (token.type === 'heading' && token.depth <= this.options.maxDepth!) {
         const id = this.generateId(token.text);

@@ -71,6 +71,10 @@ export class LRUCache<K, V> {
     return totalSize;
   }
 
+  entries(): IterableIterator<[K, V]> {
+    return this.cache.entries();
+  }
+
   private moveToFront(key: K): void {
     this.accessOrder = this.accessOrder.filter(k => k !== key);
     this.accessOrder.unshift(key);
@@ -160,7 +164,7 @@ export class PersistentCache extends LRUCache<string, string> {
   private saveToStorage(): void {
     try {
       const data = {
-        entries: Array.from(this.cache.entries()),
+        entries: Array.from(this.entries()),
         timestamp: Date.now()
       };
       localStorage.setItem(this.storageKey, JSON.stringify(data));
