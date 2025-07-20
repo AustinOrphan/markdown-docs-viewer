@@ -10,13 +10,7 @@ Object.defineProperty(global, 'ResizeObserver', {
   })),
 })
 
-Object.defineProperty(global, 'IntersectionObserver', {
-  value: vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  })),
-})
+// IntersectionObserver is mocked per-test where needed
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {

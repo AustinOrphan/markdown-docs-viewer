@@ -37,7 +37,24 @@ export class TableOfContents {
     }
 
     this.headings = [];
-    const tokens = marked.lexer ? marked.lexer(content) : [];
+    let tokens: Token[] = [];
+    try {
+      // Try the function approach first (newer marked versions)
+      tokens = marked.lexer(content);
+    } catch (e) {
+      // Fallback to parsing markdown manually for headings
+      const lines = content.split('\n');
+      for (const line of lines) {
+        const match = line.match(/^(#{1,6})\s+(.+)$/);
+        if (match) {
+          const level = match[1].length;
+          const text = match[2].trim();
+          const id = this.generateId(text);
+          this.headings.push({ level, text, id });
+        }
+      }
+      return this.buildTree();
+    }
     
     this.extractHeadings(tokens);
     return this.buildTree();

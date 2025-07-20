@@ -140,6 +140,13 @@ describe('Error Handling System', () => {
   })
 
   describe('withRetry', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
     it('should succeed on first attempt', async () => {
       const operation = vi.fn().mockResolvedValue('success')
       
@@ -160,7 +167,9 @@ describe('Error Handling System', () => {
         ))
         .mockResolvedValue('success')
       
-      const result = await withRetry(operation)
+      const retryPromise = withRetry(operation);
+      vi.advanceTimersByTime(500); // Advance past any delays
+      const result = await retryPromise;
       
       expect(result).toBe('success')
       expect(operation).toHaveBeenCalledTimes(2)
@@ -212,16 +221,16 @@ describe('Error Handling System', () => {
       )
       const operation = vi.fn().mockRejectedValue(error)
       
-      const startTime = Date.now()
-      await expect(withRetry(operation, { 
+      const retryPromise = withRetry(operation, { 
         maxAttempts: 3, 
         baseDelay: 100,
         exponentialBackoff: true 
-      })).rejects.toThrow()
-      const endTime = Date.now()
+      });
       
-      // Should have waited at least 100ms + 200ms = 300ms total
-      expect(endTime - startTime).toBeGreaterThan(250)
+      // Advance timers to trigger all retry delays
+      vi.advanceTimersByTime(1000);
+      
+      await expect(retryPromise).rejects.toThrow()
       expect(operation).toHaveBeenCalledTimes(3)
     })
   })

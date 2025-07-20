@@ -274,6 +274,16 @@ describe('Performance Optimizations', () => {
   });
 
   describe('Debounce', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+      vi.useRealTimers();
+    });
+
     it('should delay function execution', async () => {
       const mockFn = vi.fn();
       const debouncedFn = debounce(mockFn, 100);
@@ -281,7 +291,7 @@ describe('Performance Optimizations', () => {
       debouncedFn('test');
       expect(mockFn).not.toHaveBeenCalled();
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      vi.advanceTimersByTime(150);
       expect(mockFn).toHaveBeenCalledWith('test');
     });
 
@@ -293,7 +303,7 @@ describe('Performance Optimizations', () => {
       debouncedFn('second');
       debouncedFn('third');
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      vi.advanceTimersByTime(150);
       
       expect(mockFn).toHaveBeenCalledTimes(1);
       expect(mockFn).toHaveBeenCalledWith('third');
@@ -301,6 +311,16 @@ describe('Performance Optimizations', () => {
   });
 
   describe('Throttle', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+      vi.useRealTimers();
+    });
+
     it('should limit function calls', async () => {
       const mockFn = vi.fn();
       const throttledFn = throttle(mockFn, 100);
@@ -312,7 +332,7 @@ describe('Performance Optimizations', () => {
       expect(mockFn).toHaveBeenCalledTimes(1);
       expect(mockFn).toHaveBeenCalledWith('first');
       
-      await new Promise(resolve => setTimeout(resolve, 150));
+      vi.advanceTimersByTime(150);
       
       throttledFn('fourth');
       expect(mockFn).toHaveBeenCalledTimes(2);
