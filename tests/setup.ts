@@ -80,6 +80,18 @@ Object.defineProperty(global, 'fetch', {
   value: vi.fn(),
 })
 
+// Mock window.location
+Object.defineProperty(window, 'location', {
+  value: {
+    href: 'http://localhost:3000/',
+    origin: 'http://localhost:3000',
+    pathname: '/',
+    search: '',
+    hash: ''
+  },
+  writable: true
+})
+
 // Mock console methods to avoid noise in tests (optional)
 beforeEach(() => {
   // Reset all mocks before each test

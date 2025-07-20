@@ -91,7 +91,7 @@ export class MarkdownDocsError extends Error {
     this.context = {
       timestamp: new Date(),
       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-      url: typeof window !== 'undefined' ? window.location.href : undefined,
+      url: typeof window !== 'undefined' && window.location ? window.location.href : undefined,
       stackTrace: this.stack,
       ...context
     };

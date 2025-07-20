@@ -16,6 +16,8 @@ describe('Error Handling System', () => {
 
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {})
+    vi.spyOn(console, 'info').mockImplementation(() => {})
+    vi.spyOn(console, 'debug').mockImplementation(() => {})
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
   })
