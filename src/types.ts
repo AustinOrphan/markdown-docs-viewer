@@ -24,9 +24,12 @@ export interface Theme {
     secondary: string;
     background: string;
     surface: string;
+    text: string;
     textPrimary: string;
+    textLight: string;
     textSecondary: string;
     border: string;
+    code: string;
     codeBackground: string;
     link: string;
     linkHover: string;

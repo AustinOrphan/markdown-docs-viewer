@@ -45,12 +45,12 @@ export class TableOfContents {
       // Fallback to parsing markdown manually for headings
       const lines = content.split('\n');
       for (const line of lines) {
-        const match = line.match(/^(#{1,6})\s+(.+)$/);
+        const match = line.match(/^(#{1,6})\s+([^\r\n]+)$/);
         if (match) {
           const level = match[1].length;
           const text = match[2].trim();
           const id = this.generateId(text);
-          this.headings.push({ level, text, id });
+          this.headings.push({ level, text, id, children: [] });
         }
       }
       return this.buildTree();
