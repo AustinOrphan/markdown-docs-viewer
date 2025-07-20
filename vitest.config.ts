@@ -42,8 +42,8 @@ export default defineConfig({
     ],
     
     // Test timeout
-    testTimeout: 60000,
-    hookTimeout: 60000,
+    testTimeout: 10000,
+    hookTimeout: 10000,
     
     // Reporter configuration
     reporter: ['verbose', 'json'],
@@ -56,7 +56,7 @@ export default defineConfig({
     watch: false,
     
     // Retry failed tests
-    retry: 1
+    retry: 0
   },
   
   // Resolve configuration for imports

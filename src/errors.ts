@@ -285,11 +285,14 @@ export async function withRetry<T>(
         break;
       }
 
-      // Don't retry if the error is not retryable
+      // Only retry if the error is a MarkdownDocsError AND is retryable
       if (error instanceof MarkdownDocsError) {
         if (!error.isRetryable || !retryConfig.retryableErrorCodes.includes(error.code)) {
           break;
         }
+      } else {
+        // Don't retry non-MarkdownDocsError exceptions
+        break;
       }
 
       // Calculate delay for next attempt

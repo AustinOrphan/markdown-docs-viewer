@@ -90,18 +90,12 @@ Object.defineProperty(window, 'location', {
 beforeEach(() => {
   // Reset all mocks before each test
   vi.clearAllMocks()
-  
-  // Reset timers
-  vi.useFakeTimers()
 })
 
 afterEach(() => {
-  // Restore timers
-  vi.useRealTimers()
-  
   // Clean up DOM
-  document.body.innerHTML = ''
-  document.head.innerHTML = ''
+  if (document.body) document.body.innerHTML = ''
+  if (document.head) document.head.innerHTML = ''
 })
 
 // Global test utilities

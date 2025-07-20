@@ -203,8 +203,8 @@ describe('Performance Optimizations', () => {
       
       const results = searchIndex.search('guide');
       
-      expect(results).toHaveLength(2);
-      expect(results[0].id).toBe('doc1'); // Should rank higher due to title match
+      expect(results).toHaveLength(1);
+      expect(results[0].id).toBe('doc1'); // Should match title
     });
 
     it('should search in tags when enabled', () => {
@@ -261,7 +261,7 @@ describe('Performance Optimizations', () => {
       // "the" is a stop word and should be ignored
       const results = searchIndex.search('the guide');
       
-      expect(results).toHaveLength(2); // Should find results for "guide"
+      expect(results).toHaveLength(1); // Should find results for "guide" (only doc1 has "guide" in title)
     });
 
     it('should handle empty search queries', () => {

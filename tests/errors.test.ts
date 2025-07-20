@@ -168,7 +168,10 @@ describe('Error Handling System', () => {
         .mockResolvedValue('success')
       
       const retryPromise = withRetry(operation);
-      vi.advanceTimersByTime(500); // Advance past any delays
+      
+      // Need to use async timer advancement for async operations
+      await vi.advanceTimersByTimeAsync(1000);
+      
       const result = await retryPromise;
       
       expect(result).toBe('success')
@@ -199,7 +202,12 @@ describe('Error Handling System', () => {
       )
       const operation = vi.fn().mockRejectedValue(error)
       
-      await expect(withRetry(operation, { maxAttempts: 2 })).rejects.toThrow(error)
+      const retryPromise = withRetry(operation, { maxAttempts: 2 })
+      
+      // Advance timers for retries
+      await vi.advanceTimersByTimeAsync(2000)
+      
+      await expect(retryPromise).rejects.toThrow(error)
       expect(operation).toHaveBeenCalledTimes(2)
     })
 
@@ -207,7 +215,12 @@ describe('Error Handling System', () => {
       const error = new Error('Generic error')
       const operation = vi.fn().mockRejectedValue(error)
       
-      await expect(withRetry(operation)).rejects.toThrow(error)
+      const retryPromise = withRetry(operation)
+      
+      // Even though this won't retry, we need to advance timers for the initial attempt
+      await vi.runAllTimersAsync()
+      
+      await expect(retryPromise).rejects.toThrow(error)
       expect(operation).toHaveBeenCalledTimes(1) // Should not retry generic errors
     })
 
@@ -228,7 +241,7 @@ describe('Error Handling System', () => {
       });
       
       // Advance timers to trigger all retry delays
-      vi.advanceTimersByTime(1000);
+      await vi.advanceTimersByTimeAsync(1000);
       
       await expect(retryPromise).rejects.toThrow()
       expect(operation).toHaveBeenCalledTimes(3)
