@@ -62,7 +62,7 @@ export class ExportManager {
   private async exportPDF(options: ExportOptions): Promise<Blob> {
     if (!this.html2pdfAvailable) {
       throw new MarkdownDocsError(
-        ErrorCode.NETWORK_ERROR, // Using available error code since DEPENDENCY_ERROR doesn't exist
+        ErrorCode.INVALID_CONFIG, // A missing dependency can be considered an invalid configuration
         'html2pdf.js is required for PDF export. Please include it in your project.',
         'PDF export requires the html2pdf.js library to be included in your project.',
         ErrorSeverity.HIGH,
