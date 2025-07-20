@@ -1,0 +1,76 @@
+name: Mark Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Mark stale issues and PRs
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Issue configuration
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs within 14 days.
+            
+            If this issue is still relevant, please:
+            - Comment on this issue to keep it open
+            - Add any additional context that might help resolve it
+            - Consider submitting a PR if you have a solution
+            
+            Thank you for your contributions!
+          
+          close-issue-message: |
+            This issue has been automatically closed due to inactivity. 
+            
+            If you believe this issue is still relevant, please feel free to reopen it with additional context.
+          
+          stale-issue-label: 'stale'
+          exempt-issue-labels: 'pinned,security,bug,enhancement,help wanted,good first issue'
+          days-before-issue-stale: 60
+          days-before-issue-close: 14
+          
+          # PR configuration
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs within 30 days.
+            
+            If this PR is still relevant, please:
+            - Rebase it on the latest main branch
+            - Address any outstanding review comments
+            - Comment on this PR to keep it open
+            
+            Thank you for your contributions!
+          
+          close-pr-message: |
+            This pull request has been automatically closed due to inactivity.
+            
+            If you would like to continue working on this, please:
+            1. Create a new branch from the latest main
+            2. Cherry-pick your commits
+            3. Open a new pull request
+            
+            Thank you for your understanding!
+          
+          stale-pr-label: 'stale'
+          exempt-pr-labels: 'pinned,security,dependencies'
+          days-before-pr-stale: 30
+          days-before-pr-close: 30
+          
+          # Operation options
+          operations-per-run: 30
+          remove-stale-when-updated: true
+          delete-branch: false
+          
+          # Exempt items
+          exempt-all-milestones: true
+          exempt-draft-pr: true

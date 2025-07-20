@@ -15,7 +15,15 @@
     "build": "vite build && tsc",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "typecheck": "tsc --noEmit",
+    "demo:dev": "cd demo && vite",
+    "demo:build": "cd demo && vite build",
+    "demo:preview": "cd demo && vite preview"
   },
   "keywords": [
     "markdown",

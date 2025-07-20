@@ -1,0 +1,185 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0, 1.0.0-beta.1)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.create-pr.outputs.pull-request-number }}
+      version: ${{ steps.version.outputs.version }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Validate version
+        id: version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          
+          # Validate version format
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+          
+          # Check if version already exists
+          if git tag | grep -q "^v$VERSION$"; then
+            echo "Version v$VERSION already exists"
+            exit 1
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          BRANCH="release/${{ steps.version.outputs.version }}"
+          git checkout -b "$BRANCH"
+
+      - name: Update version
+        run: |
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          
+          # Update CHANGELOG
+          DATE=$(date +%Y-%m-%d)
+          sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [${{ steps.version.outputs.version }}] - $DATE/" CHANGELOG.md
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Commit changes
+        run: |
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore: release v${{ steps.version.outputs.version }}"
+          git push origin "release/${{ steps.version.outputs.version }}"
+
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/${{ steps.version.outputs.version }}
+          title: "Release v${{ steps.version.outputs.version }}"
+          body: |
+            ## Release v${{ steps.version.outputs.version }}
+
+            This PR prepares the release for version ${{ steps.version.outputs.version }}.
+
+            ### Checklist
+            - [ ] Version updated in package.json
+            - [ ] CHANGELOG.md updated
+            - [ ] All tests passing
+            - [ ] Build successful
+
+            ### Type of release
+            - Pre-release: ${{ github.event.inputs.prerelease }}
+
+            Once this PR is merged, the release will be automatically created and published to npm.
+          labels: |
+            release
+            automated
+          assignees: ${{ github.actor }}
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: prepare-release
+    if: needs.prepare-release.outputs.pr_number
+    
+    steps:
+      - name: Wait for PR to be merged
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = ${{ needs.prepare-release.outputs.pr_number }};
+            const maxAttempts = 60; // 30 minutes
+            let attempt = 0;
+            
+            while (attempt < maxAttempts) {
+              const pr = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber
+              });
+              
+              if (pr.data.merged) {
+                console.log(`PR #${prNumber} has been merged`);
+                return;
+              }
+              
+              if (pr.data.state === 'closed') {
+                throw new Error(`PR #${prNumber} was closed without merging`);
+              }
+              
+              console.log(`Waiting for PR #${prNumber} to be merged (attempt ${attempt + 1}/${maxAttempts})`);
+              await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
+              attempt++;
+            }
+            
+            throw new Error(`PR #${prNumber} was not merged within the timeout period`);
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.prepare-release.outputs.version }}"
+          
+          # Extract the changelog section for this version
+          CHANGELOG=$(awk -v ver="## [$VERSION]" '
+            $0 ~ ver {flag=1; next}
+            /^## \[/ && flag {exit}
+            flag {print}
+          ' CHANGELOG.md)
+          
+          # Save to file to handle multiline content
+          echo "$CHANGELOG" > release_notes.md
+          echo "Extracted changelog for version $VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.prepare-release.outputs.version }}
+          name: v${{ needs.prepare-release.outputs.version }}
+          body_path: release_notes.md
+          prerelease: ${{ github.event.inputs.prerelease }}
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}

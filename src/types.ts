@@ -74,6 +74,37 @@ export interface RenderOptions {
   customRenderers?: Record<string, (content: string) => string>;
 }
 
+export interface ErrorHandlingOptions {
+  retryConfig?: {
+    maxAttempts?: number;
+    baseDelay?: number;
+    maxDelay?: number;
+    exponentialBackoff?: boolean;
+  };
+  gracefulDegradation?: boolean;
+  showErrorDetails?: boolean;
+  enableErrorLogging?: boolean;
+  customErrorMessages?: Record<string, string>;
+}
+
+export interface PerformanceOptions {
+  cacheSize?: number;
+  enablePersistentCache?: boolean;
+  enablePerformanceMonitoring?: boolean;
+  enableMemoryManagement?: boolean;
+  preloadStrategy?: 'none' | 'visible' | 'adjacent' | 'all';
+  lazyLoading?: {
+    enabled?: boolean;
+    threshold?: number;
+    rootMargin?: string;
+  };
+  searchOptions?: {
+    debounceDelay?: number;
+    indexUpdateThrottle?: number;
+    cacheSearchResults?: boolean;
+  };
+}
+
 export interface DocumentationConfig {
   container: string | HTMLElement;
   source: DocumentSource;
@@ -81,13 +112,72 @@ export interface DocumentationConfig {
   search?: SearchOptions;
   navigation?: NavigationOptions;
   render?: RenderOptions;
+  errorHandling?: ErrorHandlingOptions;
+  performance?: PerformanceOptions;
+  mobile?: MobileOptions;
   title?: string;
   logo?: string;
   footer?: string;
   onDocumentLoad?: (doc: Document) => void;
   onError?: (error: Error) => void;
+  onPerformanceMetrics?: (metrics: Record<string, any>) => void;
   responsive?: boolean;
   routing?: 'hash' | 'memory' | 'none';
+}
+
+export interface MobileOptions {
+  enabled?: boolean;
+  breakpoints?: {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+    xxl?: number;
+  };
+  touchTargets?: {
+    minimum?: number;
+    comfortable?: number;
+    large?: number;
+  };
+  typography?: {
+    baseFontSize?: {
+      xs?: number;
+      sm?: number;
+      md?: number;
+      lg?: number;
+      xl?: number;
+      xxl?: number;
+    };
+    lineHeight?: {
+      tight?: number;
+      normal?: number;
+      relaxed?: number;
+    };
+    scaleRatio?: number;
+  };
+  navigation?: {
+    swipeGestures?: boolean;
+    collapseBehavior?: 'overlay' | 'push' | 'reveal';
+    showBackdrop?: boolean;
+    closeOnOutsideClick?: boolean;
+  };
+  gestures?: {
+    swipeToNavigate?: boolean;
+    pinchToZoom?: boolean;
+    doubleTapToZoom?: boolean;
+    swipeThreshold?: number;
+  };
+  layout?: {
+    containerPadding?: number;
+    contentSpacing?: number;
+    borderRadius?: number;
+  };
+  performance?: {
+    enableTouchOptimizations?: boolean;
+    preventDefaultTouch?: boolean;
+    optimizeScrolling?: boolean;
+  };
 }
 
 export interface ViewerState {
@@ -98,4 +188,55 @@ export interface ViewerState {
   loading: boolean;
   error: Error | null;
   sidebarOpen: boolean;
+}
+
+export type ExportFormat = 'pdf' | 'html';
+
+export interface ExportOptions {
+  format: ExportFormat;
+  documentIds?: string[];
+  filename?: string;
+  title?: string;
+  includeTheme?: boolean;
+  includeTOC?: boolean;
+  embedAssets?: boolean;
+  locale?: string;
+  pdfOptions?: {
+    format?: 'a4' | 'a3' | 'letter' | 'legal';
+    orientation?: 'portrait' | 'landscape';
+    margin?: number | { top?: number; right?: number; bottom?: number; left?: number };
+  };
+}
+
+export interface I18nConfig {
+  locale: string;
+  fallbackLocale?: string;
+  messages: Record<string, I18nMessages>;
+}
+
+export interface I18nMessages {
+  [key: string]: string | I18nMessages;
+}
+
+export interface AdvancedSearchOptions extends SearchOptions {
+  filters?: {
+    categories?: string[];
+    tags?: string[];
+    dateRange?: {
+      from?: Date;
+      to?: Date;
+    };
+  };
+  highlighting?: boolean;
+  searchHistory?: boolean;
+  maxHistoryItems?: number;
+}
+
+export interface TableOfContentsOptions {
+  enabled?: boolean;
+  maxDepth?: number;
+  sticky?: boolean;
+  scrollSpy?: boolean;
+  collapsible?: boolean;
+  position?: 'left' | 'right' | 'inline';
 }
