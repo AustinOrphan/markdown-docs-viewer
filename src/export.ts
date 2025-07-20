@@ -14,7 +14,7 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * Basic HTML sanitizer for markdown-generated content
+ * Comprehensive HTML sanitizer for markdown-generated content
  * Removes potentially dangerous tags while preserving safe formatting
  * For production use with untrusted content, consider using DOMPurify
  */
@@ -29,23 +29,59 @@ function sanitizeHtml(html: string): string {
     'a', 'img', 'hr', 'div', 'span'
   ];
   
-  // Remove script tags and event handlers
+  // Remove dangerous elements completely with improved patterns
   let sanitized = html
-    .replace(/<script[^>]*>.*?<\/script>/gis, '')
-    .replace(/<style[^>]*>.*?<\/style>/gis, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/javascript:/gi, '');
+    // Remove script tags with flexible whitespace handling
+    .replace(/<script[^>]*>[\s\S]*?<\/script\s*>/gis, '')
+    // Remove style tags with flexible whitespace handling  
+    .replace(/<style[^>]*>[\s\S]*?<\/style\s*>/gis, '')
+    // Remove all forms of event handlers more comprehensively
+    .replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\s*on\w+\s*=\s*[^"'\s>][^\s>]*/gi, '')
+    // Remove dangerous URL schemes globally
+    .replace(/javascript\s*:/gi, 'removed:')
+    .replace(/data\s*:/gi, 'removed:')
+    .replace(/vbscript\s*:/gi, 'removed:')
+    // Remove other dangerous patterns
+    .replace(/<iframe[^>]*>[\s\S]*?<\/iframe\s*>/gis, '')
+    .replace(/<object[^>]*>[\s\S]*?<\/object\s*>/gis, '')
+    .replace(/<embed[^>]*>/gis, '')
+    .replace(/<form[^>]*>[\s\S]*?<\/form\s*>/gis, '')
+    .replace(/<input[^>]*>/gis, '')
+    .replace(/<textarea[^>]*>[\s\S]*?<\/textarea\s*>/gis, '')
+    .replace(/<select[^>]*>[\s\S]*?<\/select\s*>/gis, '');
   
   // Basic tag filtering - remove tags not in allowedTags
   sanitized = sanitized.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g, (match, tagName) => {
     if (allowedTags.includes(tagName.toLowerCase())) {
-      // For links, ensure href is safe
+      // For links, ensure href is safe with comprehensive URL validation
       if (tagName.toLowerCase() === 'a') {
         return match.replace(/href\s*=\s*["']([^"']*)["']/gi, (hrefMatch, url) => {
-          if (url.startsWith('javascript:') || url.startsWith('data:') || url.startsWith('vbscript:')) {
+          const cleanUrl = url.toLowerCase().trim();
+          if (cleanUrl.startsWith('javascript:') || 
+              cleanUrl.startsWith('data:') || 
+              cleanUrl.startsWith('vbscript:') ||
+              cleanUrl.startsWith('livescript:') ||
+              cleanUrl.startsWith('mocha:') ||
+              cleanUrl.startsWith('about:') ||
+              cleanUrl.includes('javascript:') ||
+              cleanUrl.includes('data:') ||
+              cleanUrl.includes('vbscript:')) {
             return 'href="#"';
           }
           return hrefMatch;
+        });
+      }
+      // For images, ensure src is safe
+      if (tagName.toLowerCase() === 'img') {
+        return match.replace(/src\s*=\s*["']([^"']*)["']/gi, (srcMatch, url) => {
+          const cleanUrl = url.toLowerCase().trim();
+          if (cleanUrl.startsWith('javascript:') || 
+              cleanUrl.startsWith('data:') || 
+              cleanUrl.startsWith('vbscript:')) {
+            return 'src=""';
+          }
+          return srcMatch;
         });
       }
       return match;

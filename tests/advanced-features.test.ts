@@ -4,7 +4,6 @@ import { I18nManager, createI18nConfig, defaultMessages } from '../src/i18n';
 import { TableOfContents, addHeadingIds } from '../src/toc';
 import { AdvancedSearchManager } from '../src/advanced-search';
 import { generatePrintStyles } from '../src/print-styles';
-import { MarkdownDocsViewer } from '../src/viewer';
 import { Document } from '../src/types';
 
 // Mock marked module
