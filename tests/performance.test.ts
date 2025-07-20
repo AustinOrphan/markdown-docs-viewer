@@ -111,13 +111,14 @@ describe('Performance Optimizations', () => {
         removeItem: vi.fn(),
         clear: vi.fn(),
       };
-      global.localStorage = localStorageMock as any;
+      vi.stubGlobal('localStorage', localStorageMock as any);
       
       cache = new PersistentCache(3, 'test-cache');
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
+      vi.unstubAllGlobals();
     });
 
     it('should function as LRU cache when localStorage is available', () => {
@@ -335,14 +336,15 @@ describe('Performance Optimizations', () => {
         disconnect: vi.fn()
       };
       
-      global.IntersectionObserver = vi.fn().mockImplementation((callback) => {
+      vi.stubGlobal('IntersectionObserver', vi.fn().mockImplementation((callback) => {
         mockObserver.callback = callback;
         return mockObserver;
-      });
+      }));
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
+      vi.unstubAllGlobals();
     });
 
     it('should observe elements for intersection', () => {
@@ -495,13 +497,23 @@ describe('Performance Optimizations', () => {
     beforeEach(() => {
       performanceMonitor = new PerformanceMonitor();
       
-      // Mock performance.now
+      // Mock performance object and performance.now
       let mockTime = 0;
-      vi.spyOn(performance, 'now').mockImplementation(() => mockTime += 10);
+      const mockPerformance = {
+        now: vi.fn().mockImplementation(() => mockTime += 10),
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByType: vi.fn().mockReturnValue([]),
+        clearMarks: vi.fn(),
+        clearMeasures: vi.fn()
+      };
+      
+      vi.stubGlobal('performance', mockPerformance);
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
+      vi.unstubAllGlobals();
     });
 
     it('should measure timing metrics', () => {
