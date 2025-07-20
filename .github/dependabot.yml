@@ -36,7 +36,7 @@ updates:
     ignore:
       # Don't update TypeScript automatically to avoid breaking changes
       - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
       # Don't update marked major versions automatically
       - dependency-name: "marked"
         update-types: ["version-update:semver-major"]

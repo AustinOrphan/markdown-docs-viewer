@@ -14,82 +14,134 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * Comprehensive HTML sanitizer for markdown-generated content
- * Removes potentially dangerous tags while preserving safe formatting
- * For production use with untrusted content, consider using DOMPurify
+ * Secure HTML sanitizer using DOM-based approach
+ * Completely removes dangerous elements while preserving safe markdown formatting
+ * Uses allowlist approach for maximum security
  */
 function sanitizeHtml(html: string): string {
   if (typeof html !== 'string') return '';
   
-  // Allow safe HTML tags for markdown content
-  const allowedTags = [
-    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'code', 'pre', 
+  // Create a temporary DOM element to parse HTML safely
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+  
+  // Define allowed elements and their permitted attributes
+  const allowedElements = new Set([
+    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'code', 'pre',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'ul', 'ol', 'li', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'td', 'th',
     'a', 'img', 'hr', 'div', 'span'
-  ];
+  ]);
   
-  // Remove dangerous elements completely with improved patterns
-  let sanitized = html
-    // Remove script tags with flexible whitespace handling
-    .replace(/<script[^>]*>[\s\S]*?<\/script\s*>/gis, '')
-    // Remove style tags with flexible whitespace handling  
-    .replace(/<style[^>]*>[\s\S]*?<\/style\s*>/gis, '')
-    // Remove all forms of event handlers more comprehensively
-    .replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/\s*on\w+\s*=\s*[^"'\s>][^\s>]*/gi, '')
-    // Remove dangerous URL schemes globally
-    .replace(/javascript\s*:/gi, 'removed:')
-    .replace(/data\s*:/gi, 'removed:')
-    .replace(/vbscript\s*:/gi, 'removed:')
-    // Remove other dangerous patterns
-    .replace(/<iframe[^>]*>[\s\S]*?<\/iframe\s*>/gis, '')
-    .replace(/<object[^>]*>[\s\S]*?<\/object\s*>/gis, '')
-    .replace(/<embed[^>]*>/gis, '')
-    .replace(/<form[^>]*>[\s\S]*?<\/form\s*>/gis, '')
-    .replace(/<input[^>]*>/gis, '')
-    .replace(/<textarea[^>]*>[\s\S]*?<\/textarea\s*>/gis, '')
-    .replace(/<select[^>]*>[\s\S]*?<\/select\s*>/gis, '');
+  const allowedAttributes = new Map([
+    ['a', new Set(['href', 'title'])],
+    ['img', new Set(['src', 'alt', 'title', 'width', 'height'])],
+    ['*', new Set(['id', 'class'])] // Global attributes
+  ]);
   
-  // Basic tag filtering - remove tags not in allowedTags
-  sanitized = sanitized.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g, (match, tagName) => {
-    if (allowedTags.includes(tagName.toLowerCase())) {
-      // For links, ensure href is safe with comprehensive URL validation
-      if (tagName.toLowerCase() === 'a') {
-        return match.replace(/href\s*=\s*["']([^"']*)["']/gi, (hrefMatch, url) => {
-          const cleanUrl = url.toLowerCase().trim();
-          if (cleanUrl.startsWith('javascript:') || 
-              cleanUrl.startsWith('data:') || 
-              cleanUrl.startsWith('vbscript:') ||
-              cleanUrl.startsWith('livescript:') ||
-              cleanUrl.startsWith('mocha:') ||
-              cleanUrl.startsWith('about:') ||
-              cleanUrl.includes('javascript:') ||
-              cleanUrl.includes('data:') ||
-              cleanUrl.includes('vbscript:')) {
-            return 'href="#"';
-          }
-          return hrefMatch;
-        });
-      }
-      // For images, ensure src is safe
-      if (tagName.toLowerCase() === 'img') {
-        return match.replace(/src\s*=\s*["']([^"']*)["']/gi, (srcMatch, url) => {
-          const cleanUrl = url.toLowerCase().trim();
-          if (cleanUrl.startsWith('javascript:') || 
-              cleanUrl.startsWith('data:') || 
-              cleanUrl.startsWith('vbscript:')) {
-            return 'src=""';
-          }
-          return srcMatch;
-        });
-      }
-      return match;
+  // Recursively sanitize all elements
+  function sanitizeElement(element: Element): Element | null {
+    const tagName = element.tagName.toLowerCase();
+    
+    // Remove disallowed elements completely
+    if (!allowedElements.has(tagName)) {
+      return null;
     }
-    return '';
-  });
+    
+    // Create a new clean element
+    const cleanElement = document.createElement(tagName);
+    
+    // Copy only allowed attributes
+    const elementAllowedAttrs = allowedAttributes.get(tagName) || new Set();
+    const globalAttrs = allowedAttributes.get('*') || new Set();
+    
+    for (const attr of element.attributes) {
+      const attrName = attr.name.toLowerCase();
+      
+      // Skip all event handlers (on*)
+      if (attrName.startsWith('on')) {
+        continue;
+      }
+      
+      // Check if attribute is allowed for this element or globally
+      if (elementAllowedAttrs.has(attrName) || globalAttrs.has(attrName)) {
+        let attrValue = attr.value;
+        
+        // Special handling for URLs
+        if (attrName === 'href' || attrName === 'src') {
+          attrValue = sanitizeUrl(attrValue);
+          if (!attrValue) continue; // Skip if URL is completely invalid
+        }
+        
+        cleanElement.setAttribute(attrName, attrValue);
+      }
+    }
+    
+    // Recursively process child nodes
+    for (const child of Array.from(element.childNodes)) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        // Preserve text content
+        cleanElement.appendChild(document.createTextNode(child.textContent || ''));
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const sanitizedChild = sanitizeElement(child as Element);
+        if (sanitizedChild) {
+          cleanElement.appendChild(sanitizedChild);
+        }
+      }
+    }
+    
+    return cleanElement;
+  }
   
-  return sanitized;
+  // Sanitize URL to prevent XSS
+  function sanitizeUrl(url: string): string {
+    if (!url || typeof url !== 'string') return '';
+    
+    const trimmedUrl = url.trim().toLowerCase();
+    
+    // Block dangerous protocols
+    const dangerousProtocols = [
+      'javascript:', 'data:', 'vbscript:', 'livescript:', 'mocha:', 'about:',
+      'file:', 'ftp:', 'jar:', 'view-source:'
+    ];
+    
+    for (const protocol of dangerousProtocols) {
+      if (trimmedUrl.startsWith(protocol)) {
+        return '';
+      }
+    }
+    
+    // Allow http, https, mailto, and relative URLs
+    if (trimmedUrl.startsWith('http://') || 
+        trimmedUrl.startsWith('https://') || 
+        trimmedUrl.startsWith('mailto:') ||
+        trimmedUrl.startsWith('#') ||
+        trimmedUrl.startsWith('/') ||
+        trimmedUrl.startsWith('./') ||
+        trimmedUrl.startsWith('../') ||
+        !trimmedUrl.includes(':')) {
+      return url.trim(); // Return original case for valid URLs
+    }
+    
+    return ''; // Block everything else
+  }
+  
+  // Create container for sanitized content
+  const sanitizedContainer = document.createElement('div');
+  
+  // Process all child nodes
+  for (const child of Array.from(tempDiv.childNodes)) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      sanitizedContainer.appendChild(document.createTextNode(child.textContent || ''));
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      const sanitizedChild = sanitizeElement(child as Element);
+      if (sanitizedChild) {
+        sanitizedContainer.appendChild(sanitizedChild);
+      }
+    }
+  }
+  
+  return sanitizedContainer.innerHTML;
 }
 
 /**
@@ -141,7 +193,7 @@ export class ExportManager {
   private async exportPDF(options: ExportOptions): Promise<Blob> {
     if (!this.html2pdfAvailable) {
       throw new MarkdownDocsError(
-        ErrorCode.INVALID_CONFIG, // A missing dependency can be considered an invalid configuration
+        ErrorCode.MISSING_DEPENDENCY,
         'html2pdf.js is required for PDF export. Please include it in your project.',
         'PDF export requires the html2pdf.js library to be included in your project.',
         ErrorSeverity.HIGH,

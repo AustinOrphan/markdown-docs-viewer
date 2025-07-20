@@ -480,7 +480,7 @@ export class MarkdownDocsViewer {
       errorMessage = error.userMessage;
       
       if (error.isRetryable) {
-        retryButton = '<button class="mdv-retry-button" onclick="window.location.reload()">Try Again</button>';
+        retryButton = '<button class="mdv-retry-button">Try Again</button>';
       }
       
       if (showDetails) {
@@ -596,6 +596,13 @@ export class MarkdownDocsViewer {
                 button.textContent = 'Copy';
               }, 2000);
             }
+          });
+        });
+
+        // Retry buttons
+        this.container.querySelectorAll('.mdv-retry-button').forEach(button => {
+          button.addEventListener('click', () => {
+            window.location.reload();
           });
         });
       },

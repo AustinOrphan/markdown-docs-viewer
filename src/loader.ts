@@ -7,7 +7,9 @@ import {
   RetryConfig,
   DEFAULT_RETRY_CONFIG,
   ErrorLogger,
-  ConsoleErrorLogger 
+  ConsoleErrorLogger,
+  ErrorCode,
+  ErrorSeverity
 } from './errors';
 import { PersistentCache, PerformanceMonitor, MemoryManager } from './performance';
 
@@ -143,20 +145,20 @@ export class DocumentLoader {
   private validateSource(): void {
     if (!this.source) {
       throw new MarkdownDocsError(
-        'INVALID_SOURCE' as any,
+        ErrorCode.INVALID_SOURCE,
         'Document source is not defined',
         'Invalid document source configuration.',
-        'high' as any,
+        ErrorSeverity.HIGH,
         false
       );
     }
 
     if (!this.source.documents || this.source.documents.length === 0) {
       throw new MarkdownDocsError(
-        'INVALID_SOURCE' as any,
+        ErrorCode.INVALID_SOURCE,
         'No documents defined in source',
         'No documents are configured to load.',
-        'medium' as any,
+        ErrorSeverity.MEDIUM,
         false
       );
     }
@@ -185,10 +187,10 @@ export class DocumentLoader {
         break;
       default:
         throw new MarkdownDocsError(
-          'INVALID_SOURCE' as any,
+          ErrorCode.INVALID_SOURCE,
           `Unknown source type: ${this.source.type}`,
           'Unsupported document source type.',
-          'high' as any,
+          ErrorSeverity.HIGH,
           false
         );
     }
@@ -210,18 +212,18 @@ export class DocumentLoader {
       case 'content':
         // Content should be provided in doc.content
         throw new MarkdownDocsError(
-          'DOCUMENT_LOAD_FAILED' as any,
+          ErrorCode.DOCUMENT_LOAD_FAILED,
           'Content source should not load from path',
           'Internal error: Content source attempted to load from file path.',
-          'medium' as any,
+          ErrorSeverity.MEDIUM,
           false
         );
       default:
         throw new MarkdownDocsError(
-          'INVALID_SOURCE' as any,
+          ErrorCode.INVALID_SOURCE,
           `Unknown source type: ${this.source.type}`,
           'Unsupported document source type.',
-          'high' as any,
+          ErrorSeverity.HIGH,
           false
         );
     }
@@ -261,10 +263,10 @@ export class DocumentLoader {
       }
 
       throw new MarkdownDocsError(
-        'FILE_READ_ERROR' as any,
+        ErrorCode.FILE_READ_ERROR,
         `Failed to load local file ${path}: ${error}`,
         'Unable to load the requested file. Please check if the file exists and is accessible.',
-        'medium' as any,
+        ErrorSeverity.MEDIUM,
         true,
         { 
           operation: 'loadLocal', 
@@ -292,10 +294,10 @@ export class DocumentLoader {
         
         if (response.status === 403 || response.status === 401) {
           throw new MarkdownDocsError(
-            'UNAUTHORIZED_ACCESS' as any,
+            ErrorCode.UNAUTHORIZED_ACCESS,
             `Unauthorized access to ${url}: ${response.statusText}`,
             'Access denied. Please check your credentials or permissions.',
-            'high' as any,
+            ErrorSeverity.HIGH,
             false,
             { 
               operation: 'loadFromUrl',
@@ -306,10 +308,10 @@ export class DocumentLoader {
 
         if (response.status === 429) {
           throw new MarkdownDocsError(
-            'RATE_LIMITED' as any,
+            ErrorCode.RATE_LIMITED,
             `Rate limited when accessing ${url}`,
             'Too many requests. Please wait and try again.',
-            'medium' as any,
+            ErrorSeverity.MEDIUM,
             true,
             { 
               operation: 'loadFromUrl',
@@ -339,10 +341,10 @@ export class DocumentLoader {
       }
 
       throw new MarkdownDocsError(
-        'NETWORK_ERROR' as any,
+        ErrorCode.NETWORK_ERROR,
         `Failed to load from URL ${url}: ${error}`,
         'Unable to load content from the specified URL. Please check your connection and try again.',
-        'medium' as any,
+        ErrorSeverity.MEDIUM,
         true,
         { 
           operation: 'loadFromUrl', 
@@ -358,10 +360,10 @@ export class DocumentLoader {
     const parts = path.split('/');
     if (parts.length < 3) {
       throw new MarkdownDocsError(
-        'INVALID_CONFIG' as any,
+        ErrorCode.INVALID_CONFIG,
         'Invalid GitHub path format. Expected: owner/repo/branch/path/to/file',
         'Invalid GitHub file path format.',
-        'high' as any,
+        ErrorSeverity.HIGH,
         false,
         { 
           operation: 'loadFromGithub',
@@ -417,10 +419,10 @@ export class DocumentLoader {
       // Handle different response types
       if (Array.isArray(data)) {
         throw new MarkdownDocsError(
-          'GITHUB_API_ERROR' as any,
+          ErrorCode.GITHUB_API_ERROR,
           'GitHub path points to a directory, not a file',
           'The specified GitHub path is a directory. Please specify a file path.',
-          'medium' as any,
+          ErrorSeverity.MEDIUM,
           false,
           { 
             operation: 'loadFromGithub',
@@ -431,10 +433,10 @@ export class DocumentLoader {
 
       if (!data.content) {
         throw new MarkdownDocsError(
-          'GITHUB_API_ERROR' as any,
+          ErrorCode.GITHUB_API_ERROR,
           'No content found in GitHub response',
           'The requested GitHub file appears to be empty or inaccessible.',
-          'medium' as any,
+          ErrorSeverity.MEDIUM,
           false,
           { 
             operation: 'loadFromGithub',
@@ -464,10 +466,10 @@ export class DocumentLoader {
       }
 
       throw new MarkdownDocsError(
-        'GITHUB_API_ERROR' as any,
+        ErrorCode.GITHUB_API_ERROR,
         `Failed to load from GitHub ${path}: ${error}`,
         'Unable to load content from GitHub. Please check the file path and try again.',
-        'medium' as any,
+        ErrorSeverity.MEDIUM,
         true,
         { 
           operation: 'loadFromGithub', 
