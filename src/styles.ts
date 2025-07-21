@@ -28,6 +28,14 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       display: flex;
       align-items: center;
       gap: ${unit * 2}px;
+      position: relative;
+    }
+    
+    .mdv-header-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: ${unit * 2}px;
     }
 
     .mdv-mobile-toggle {

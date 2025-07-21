@@ -49,6 +49,12 @@ export interface Theme {
   };
   borderRadius: string;
   customCSS?: string;
+  enablePersistence?: boolean;
+  storageKey?: string;
+  switcherPosition?: 'header' | 'footer' | 'sidebar' | 'floating';
+  showPreview?: boolean;
+  showDescription?: boolean;
+  allowCustomThemes?: boolean;
 }
 
 export interface SearchOptions {
@@ -124,6 +130,7 @@ export interface DocumentationConfig {
   onDocumentLoad?: (doc: Document) => void;
   onError?: (error: Error) => void;
   onPerformanceMetrics?: (metrics: Record<string, any>) => void;
+  onThemeChange?: (theme: Theme) => void;
   responsive?: boolean;
   routing?: 'hash' | 'memory' | 'none';
 }

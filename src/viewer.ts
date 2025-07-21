@@ -28,6 +28,8 @@ import {
   getCurrentBreakpoint,
   BREAKPOINTS
 } from './mobile-styles';
+import { ThemeManager } from './theme-manager';
+import { ThemeSwitcher } from './theme-switcher';
 
 export class MarkdownDocsViewer {
   private config: DocumentationConfig;
@@ -38,6 +40,8 @@ export class MarkdownDocsViewer {
   private styles: HTMLStyleElement | null = null;
   private errorBoundary: ErrorBoundary;
   private logger: ErrorLogger;
+  private themeManager: ThemeManager;
+  private themeSwitcher: ThemeSwitcher;
 
   constructor(config: DocumentationConfig) {
     try {
@@ -72,6 +76,26 @@ export class MarkdownDocsViewer {
         : DEFAULT_RETRY_CONFIG;
       
       this.loader = new DocumentLoader(this.config.source, retryConfig, this.logger);
+
+      // Initialize theme manager
+      this.themeManager = new ThemeManager({
+        enablePersistence: this.config.theme?.enablePersistence !== false,
+        storageKey: this.config.theme?.storageKey || 'mdv-theme',
+        onThemeChange: (theme) => {
+          this.applyTheme(theme);
+          if (this.config.onThemeChange) {
+            this.config.onThemeChange(theme);
+          }
+        }
+      });
+
+      // Initialize theme switcher
+      this.themeSwitcher = new ThemeSwitcher(this.themeManager, {
+        position: this.config.theme?.switcherPosition || 'header',
+        showPreview: this.config.theme?.showPreview !== false,
+        showDescription: this.config.theme?.showDescription !== false,
+        allowCustomThemes: this.config.theme?.allowCustomThemes !== false
+      });
 
       // Initialize the viewer
       this.init();
@@ -229,8 +253,11 @@ export class MarkdownDocsViewer {
         // Configure marked with error handling
         this.configureMarked();
         
-        // Apply theme with error handling
-        this.applyTheme(this.config.theme!);
+        // Apply initial theme
+        const initialTheme = this.config.theme?.name 
+          ? this.themeManager.getTheme(this.config.theme.name) || this.config.theme
+          : this.themeManager.getCurrentTheme();
+        this.applyTheme(initialTheme);
         
         // Load documents with error handling
         await this.loadDocuments();
@@ -293,6 +320,9 @@ export class MarkdownDocsViewer {
   private applyTheme(theme: Theme): void {
     this.errorBoundary.execute(
       async () => {
+        // Apply CSS variables through theme manager
+        this.themeManager.applyCSSVariables(theme);
+        
         // Remove existing styles
         if (this.styles) {
           this.styles.remove();
@@ -306,6 +336,9 @@ export class MarkdownDocsViewer {
         if (this.config.responsive && this.config.mobile?.enabled !== false) {
           cssContent += generateMobileCSS(this.config);
         }
+        
+        // Add theme switcher styles
+        cssContent += this.themeSwitcher.getStyles();
         
         this.styles.textContent = cssContent;
         document.head.appendChild(this.styles);
@@ -395,11 +428,15 @@ export class MarkdownDocsViewer {
   }
 
   private renderHeader(): string {
+    const showThemeSwitcher = this.config.theme?.switcherPosition === 'header' || 
+                            (!this.config.theme?.switcherPosition && this.config.theme !== undefined);
+    
     return `
       <header class="mdv-header">
         <button class="mdv-mobile-toggle" aria-label="Toggle navigation">☰</button>
         ${this.config.logo ? `<img src="${this.config.logo}" alt="Logo" class="mdv-logo">` : ''}
         <h1 class="mdv-title">${this.config.title || 'Documentation'}</h1>
+        ${showThemeSwitcher ? `<div class="mdv-header-actions">${this.themeSwitcher.render()}</div>` : ''}
       </header>
     `;
   }
@@ -552,6 +589,12 @@ export class MarkdownDocsViewer {
 
         // Mobile touch gestures and interactions
         this.setupMobileInteractions();
+
+        // Theme switcher
+        const themeSwitcherContainer = this.container.querySelector('.mdv-theme-switcher');
+        if (themeSwitcherContainer) {
+          this.themeSwitcher.attachTo(themeSwitcherContainer as HTMLElement);
+        }
 
         // Navigation links
         this.container.querySelectorAll('.mdv-nav-link').forEach(link => {
@@ -939,9 +982,28 @@ export class MarkdownDocsViewer {
     );
   }
 
-  public setTheme(theme: Theme): void {
-    this.config.theme = theme;
-    this.applyTheme(theme);
+  public setTheme(theme: Theme | string): void {
+    if (typeof theme === 'string') {
+      const themeObj = this.themeManager.setTheme(theme);
+      if (themeObj) {
+        this.config.theme = themeObj;
+      }
+    } else {
+      this.config.theme = theme;
+      this.applyTheme(theme);
+    }
+  }
+  
+  public getAvailableThemes(): Theme[] {
+    return this.themeManager.getAvailableThemes();
+  }
+  
+  public registerTheme(theme: Theme): void {
+    this.themeManager.registerTheme(theme as any);
+  }
+  
+  public createCustomTheme(name: string, overrides: Partial<Theme>): Theme {
+    return this.themeManager.createCustomTheme(name, overrides);
   }
 
   public getDocument(id: string): Document | null {

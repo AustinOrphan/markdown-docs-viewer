@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Docs Viewer - CDN Example</title>
+    
+    <!-- Load syntax highlighting styles -->
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f6f8fa;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .controls button {
+            padding: 8px 16px;
+            border: 1px solid #d1d9e0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .controls button:hover {
+            background: #f6f8fa;
+        }
+        .controls button.active {
+            background: #0969da;
+            color: white;
+            border-color: #0969da;
+        }
+        .viewer-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #cce7ff; color: #0969da; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Markdown Documentation Viewer</h1>
+        <p>Complete CDN Example - No Build Step Required</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="loadBasicExample()" class="active">Basic Example</button>
+        <button onclick="loadGitHubExample()">GitHub Docs</button>
+        <button onclick="loadAdvancedExample()">Advanced Features</button>
+        <button onclick="switchTheme()">Toggle Theme</button>
+        <button onclick="testErrorHandling()">Test Error Handling</button>
+    </div>
+
+    <div id="status"></div>
+    
+    <div class="viewer-wrapper">
+        <div id="docs-viewer"></div>
+    </div>
+
+    <!-- Load all dependencies from CDN -->
+    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
+    
+    <!-- Load highlight.js core and languages -->
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/typescript.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/python.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/css.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/json.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/bash.min.js"></script>
+    
+    <!-- Load the markdown docs viewer -->
+    <script src="../dist/index.umd.cjs"></script>
+
+    <script>
+        // Get the viewer classes from global
+        const { MarkdownDocsViewer, defaultTheme, darkTheme, createCustomTheme } = window.MarkdownDocsViewer;
+        
+        let currentViewer = null;
+        let currentTheme = defaultTheme;
+        
+        function showStatus(type, message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        function destroyCurrentViewer() {
+            if (currentViewer) {
+                currentViewer.destroy();
+                currentViewer = null;
+            }
+        }
+        
+        function setActiveButton(buttonText) {
+            document.querySelectorAll('.controls button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === buttonText) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        function loadBasicExample() {
+            setActiveButton('Basic Example');
+            showStatus('info', 'Loading basic example...');
+            destroyCurrentViewer();
+            
+            try {
+                currentViewer = new MarkdownDocsViewer({
+                    container: '#docs-viewer',
+                    title: 'Getting Started Guide',
+                    theme: currentTheme,
+                    source: {
+                        type: 'local',
+                        documents: [
+                            {
+                                id: 'introduction',
+                                title: 'Introduction',
+                                category: 'Getting Started',
+                                tags: ['intro', 'basics'],
+                                content: `# Introduction
+
+Welcome to the Markdown Documentation Viewer! This is a powerful, flexible tool for creating beautiful documentation sites.
+
+## Features
+
+- 📚 **Multiple Sources**: Load docs from local files, URLs, or GitHub repositories
+- 🎨 **Themeable**: Built-in themes plus custom theme support
+- 🔍 **Search**: Full-text search across all documents
+- 📱 **Responsive**: Works great on desktop and mobile
+- ⚡ **Fast**: Optimized for performance with lazy loading
+
+## Quick Start
+
+\`\`\`javascript
+const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    source: {
+        type: 'local',
+        documents: [
+            {
+                id: 'intro',
+                title: 'Introduction',
+                content: '# Hello World'
+            }
+        ]
+    }
+});
+\`\`\`
+
+That's it! Your documentation viewer is ready to use.
+`
+                            },
+                            {
+                                id: 'installation',
+                                title: 'Installation',
+                                category: 'Getting Started',
+                                tags: ['install', 'setup'],
+                                content: `# Installation
+
+## Via CDN (Recommended for quick start)
+
+\`\`\`html
+<!-- Load dependencies -->
+<script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+
+<!-- Load the viewer -->
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+\`\`\`
+
+## Via NPM (For build tools)
+
+\`\`\`bash
+npm install @austinorphan/markdown-docs-viewer marked highlight.js
+\`\`\`
+
+\`\`\`javascript
+import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
+\`\`\`
+
+## Via ES Modules
+
+\`\`\`html
+<script type="module">
+import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.es.js';
+</script>
+\`\`\`
+`
+                            },
+                            {
+                                id: 'configuration',
+                                title: 'Configuration',
+                                category: 'Guide',
+                                tags: ['config', 'options'],
+                                content: `# Configuration
+
+The viewer accepts a configuration object with many options:
+
+\`\`\`typescript
+interface DocumentationConfig {
+    container: string | HTMLElement;  // Required
+    source: DocumentSource;           // Required
+    title?: string;
+    logo?: string;
+    theme?: Theme;
+    navigation?: NavigationConfig;
+    search?: SearchConfig;
+    render?: RenderConfig;
+    onDocumentLoad?: (doc: Document) => void;
+    onError?: (error: Error) => void;
+}
+\`\`\`
+
+## Document Sources
+
+### Local Documents
+
+\`\`\`javascript
+source: {
+    type: 'local',
+    documents: [
+        {
+            id: 'doc1',
+            title: 'Document 1',
+            content: '# Content here',
+            category: 'Category',
+            tags: ['tag1', 'tag2']
+        }
+    ]
+}
+\`\`\`
+
+### GitHub Repository
+
+\`\`\`javascript
+source: {
+    type: 'github',
+    repository: 'owner/repo',
+    branch: 'main',
+    docsPath: 'docs'
+}
+\`\`\`
+
+### URL-based
+
+\`\`\`javascript
+source: {
+    type: 'url',
+    baseUrl: 'https://api.example.com/docs',
+    documents: [
+        { file: '/intro.md' },
+        { file: '/guide.md' }
+    ]
+}
+\`\`\`
+`
+                            }
+                        ]
+                    },
+                    navigation: {
+                        showCategories: true,
+                        showTags: true,
+                        collapsible: true
+                    },
+                    search: {
+                        enabled: true,
+                        placeholder: 'Search documentation...'
+                    },
+                    render: {
+                        syntaxHighlighting: true,
+                        copyCodeButton: true
+                    },
+                    onDocumentLoad: (doc) => {
+                        showStatus('success', `Loaded: ${doc.title}`);
+                    },
+                    onError: (error) => {
+                        showStatus('error', `Error: ${error.message}`);
+                    }
+                });
+                
+                showStatus('success', 'Basic example loaded successfully!');
+            } catch (error) {
+                showStatus('error', `Failed to load: ${error.message}`);
+            }
+        }
+        
+        function loadGitHubExample() {
+            setActiveButton('GitHub Docs');
+            showStatus('info', 'This would load from GitHub (demo uses local content)...');
+            destroyCurrentViewer();
+            
+            try {
+                currentViewer = new MarkdownDocsViewer({
+                    container: '#docs-viewer',
+                    title: 'GitHub Repository Docs',
+                    theme: currentTheme,
+                    source: {
+                        // In real usage, this would be:
+                        // type: 'github',
+                        // repository: 'microsoft/typescript',
+                        // branch: 'main',
+                        // docsPath: 'doc'
+                        
+                        // For demo, using local content
+                        type: 'local',
+                        documents: [
+                            {
+                                id: 'github-demo',
+                                title: 'GitHub Integration',
+                                content: `# GitHub Repository Integration
+
+This demonstrates loading documentation from a GitHub repository.
+
+## Real Configuration
+
+\`\`\`javascript
+const viewer = new MarkdownDocsViewer({
+    source: {
+        type: 'github',
+        repository: 'microsoft/typescript',
+        branch: 'main',
+        docsPath: 'doc'
+    }
+});
+\`\`\`
+
+## Features
+
+- Automatically discovers markdown files
+- Respects directory structure
+- Supports custom branch selection
+- Handles GitHub API rate limiting
+
+## Benefits
+
+- 📦 No manual file management
+- 🔄 Always up-to-date with repository
+- 🌿 Branch-specific documentation
+- 🔗 Direct links to source files
+`
+                            }
+                        ]
+                    }
+                });
+                
+                showStatus('success', 'GitHub example loaded!');
+            } catch (error) {
+                showStatus('error', `Failed to load: ${error.message}`);
+            }
+        }
+        
+        function loadAdvancedExample() {
+            setActiveButton('Advanced Features');
+            showStatus('info', 'Loading advanced features demo...');
+            destroyCurrentViewer();
+            
+            const customTheme = createCustomTheme({
+                colors: {
+                    primary: '#ff6b6b',
+                    background: '#fefefe',
+                    surface: '#fff5f5',
+                    border: '#ffe0e0'
+                }
+            });
+            
+            try {
+                currentViewer = new MarkdownDocsViewer({
+                    container: '#docs-viewer',
+                    title: 'Advanced Features Demo',
+                    logo: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff6b6b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    theme: customTheme,
+                    source: {
+                        type: 'local',
+                        documents: [
+                            {
+                                id: 'syntax-highlighting',
+                                title: 'Syntax Highlighting',
+                                category: 'Features',
+                                tags: ['code', 'highlighting'],
+                                content: `# Syntax Highlighting
+
+The viewer supports syntax highlighting for many languages:
+
+## JavaScript
+\`\`\`javascript
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10)); // 55
+\`\`\`
+
+## Python
+\`\`\`python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(10))  # 55
+\`\`\`
+
+## CSS
+\`\`\`css
+.highlight {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+\`\`\`
+
+## JSON
+\`\`\`json
+{
+    "name": "@austinorphan/markdown-docs-viewer",
+    "version": "1.0.0",
+    "description": "A themeable markdown documentation viewer",
+    "features": ["theming", "search", "responsive"]
+}
+\`\`\`
+`
+                            },
+                            {
+                                id: 'theming',
+                                title: 'Custom Theming',
+                                category: 'Features', 
+                                tags: ['theme', 'customization'],
+                                content: `# Custom Theming
+
+This page demonstrates a custom theme! 
+
+## Creating Custom Themes
+
+\`\`\`javascript
+import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+
+const myTheme = createCustomTheme({
+    colors: {
+        primary: '#ff6b6b',
+        background: '#fefefe',
+        surface: '#fff5f5',
+        text: '#2d3436',
+        border: '#ffe0e0'
+    },
+    fonts: {
+        body: 'Georgia, serif',
+        heading: 'Helvetica, sans-serif',
+        code: 'Monaco, monospace'
+    }
+});
+\`\`\`
+
+## Built-in Themes
+
+- **Default Theme**: Clean, professional look
+- **Dark Theme**: Easy on the eyes for night reading
+- **Custom Themes**: Unlimited customization
+
+## Dynamic Theme Switching
+
+You can switch themes at runtime:
+
+\`\`\`javascript
+viewer.setTheme(darkTheme);
+\`\`\`
+`
+                            },
+                            {
+                                id: 'responsive',
+                                title: 'Responsive Design',
+                                category: 'Features',
+                                tags: ['mobile', 'responsive'],
+                                content: `# Responsive Design
+
+The viewer is fully responsive and works great on all devices.
+
+## Mobile Features
+
+- 📱 **Touch-friendly navigation**
+- 👆 **Swipe gestures**
+- 🔄 **Collapsible sidebar**
+- 📏 **Adaptive typography**
+
+## Desktop Features
+
+- ⌨️ **Keyboard shortcuts**
+- 🖱️ **Rich hover states**
+- 📖 **Multi-column layouts**
+- 🔍 **Advanced search**
+
+## Try It
+
+Resize your browser window to see the responsive behavior in action!
+`
+                            }
+                        ]
+                    },
+                    navigation: {
+                        showCategories: true,
+                        showTags: true,
+                        collapsible: true,
+                        showDescription: true
+                    },
+                    search: {
+                        enabled: true,
+                        placeholder: 'Search advanced features...',
+                        maxResults: 15
+                    },
+                    render: {
+                        syntaxHighlighting: true,
+                        copyCodeButton: true,
+                        linkTarget: '_blank'
+                    }
+                });
+                
+                showStatus('success', 'Advanced example loaded with custom theme!');
+            } catch (error) {
+                showStatus('error', `Failed to load: ${error.message}`);
+            }
+        }
+        
+        function switchTheme() {
+            if (!currentViewer) {
+                showStatus('error', 'No viewer loaded. Please load an example first.');
+                return;
+            }
+            
+            currentTheme = currentTheme === defaultTheme ? darkTheme : defaultTheme;
+            currentViewer.setTheme(currentTheme);
+            
+            const themeName = currentTheme === defaultTheme ? 'Default' : 'Dark';
+            showStatus('success', `Switched to ${themeName} theme`);
+        }
+        
+        function testErrorHandling() {
+            setActiveButton('Test Error Handling');
+            showStatus('info', 'Testing error handling...');
+            destroyCurrentViewer();
+            
+            try {
+                // This will trigger a container not found error
+                currentViewer = new MarkdownDocsViewer({
+                    container: '#non-existent-container',
+                    source: {
+                        type: 'local',
+                        documents: []
+                    },
+                    onError: (error) => {
+                        showStatus('error', `Handled error: ${error.userMessage}`);
+                    }
+                });
+            } catch (error) {
+                showStatus('error', `Caught initialization error: ${error.message}`);
+                
+                // Show error in viewer container
+                const container = document.getElementById('docs-viewer');
+                container.innerHTML = `
+                    <div style="padding: 40px; text-align: center;">
+                        <h2 style="color: #721c24; margin-bottom: 16px;">⚠️ Error Demonstration</h2>
+                        <p style="color: #721c24; background: #f8d7da; padding: 16px; border-radius: 6px; margin: 0;">
+                            <strong>Error:</strong> ${error.message}
+                        </p>
+                        <p style="margin-top: 16px; color: #6a737d; font-size: 14px;">
+                            This demonstrates how the viewer handles configuration errors gracefully.
+                        </p>
+                        <button onclick="loadBasicExample()" style="margin-top: 16px; padding: 8px 16px; background: #0969da; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Load Working Example
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load basic example on page load
+        window.addEventListener('load', () => {
+            setTimeout(loadBasicExample, 100);
+        });
+    </script>
+</body>
+</html>
