@@ -25,7 +25,8 @@ export default defineConfig({
         'vitest.config.ts',
         'src/theme-builder.ts',
         'src/theme-manager.ts',
-        'src/theme-switcher.ts'
+        'src/theme-switcher.ts',
+        'src/dark-mode-toggle.ts'
       ],
       thresholds: {
         functions: 80,
