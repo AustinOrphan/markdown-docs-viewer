@@ -384,19 +384,43 @@ export function generateMobileLayout(): string {
     
     /* Mobile navigation */
     @media (max-width: ${BREAKPOINTS.md - 1}px) {
+      /* Adjust header layout on mobile */
+      .mdv-header {
+        padding-left: calc(var(--mdv-touch-target-comfortable) + var(--mdv-spacing-lg) + var(--mdv-spacing-md));
+        position: relative;
+        min-height: 60px;
+      }
+      
       .mdv-mobile-toggle {
         display: flex;
         align-items: center;
         justify-content: center;
-        position: fixed;
-        top: var(--mdv-spacing-md);
+        position: absolute;
+        top: 50%;
         left: var(--mdv-spacing-md);
+        transform: translateY(-50%);
         z-index: var(--mdv-z-fixed);
-        background: var(--mdv-primary-color);
+        background: var(--mdv-primary-color, #0969da);
         color: white;
         border: none;
         border-radius: var(--mdv-mobile-border-radius);
         cursor: pointer;
+        width: var(--mdv-touch-target-comfortable);
+        height: var(--mdv-touch-target-comfortable);
+        font-size: 1.25rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      
+      .mdv-mobile-toggle:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .mdv-mobile-toggle:active {
+        transform: translateY(-50%) scale(0.95);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       
       .mdv-sidebar {
@@ -409,9 +433,17 @@ export function generateMobileLayout(): string {
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
-        background: var(--mdv-background-color);
+        /* Slightly transparent background with blur for readability */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Dark theme support for sidebar */
+      [data-theme="dark"] .mdv-sidebar {
+        background: rgba(24, 24, 27, 0.95);
       }
       
       .mdv-sidebar.open {
