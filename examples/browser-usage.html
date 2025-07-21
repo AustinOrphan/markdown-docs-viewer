@@ -107,9 +107,9 @@ const viewer = new MarkdownDocsViewer({
                 
 This is your documentation viewer!
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 console.log('Hello, world!');
-${'```'}
+${TRIPLE_BACKTICK}
                 `
             }
         ]
@@ -307,6 +307,9 @@ function showErrorMessage(message) {
     <script src="../dist/index.umd.cjs"></script>
 
     <script>
+        // Create triple backticks constant to avoid template literal parsing issues
+        const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
+        
         function showStatus(elementId, type, message) {
             const statusEl = document.getElementById(elementId);
             statusEl.className = `status ${type}`;
@@ -340,9 +343,9 @@ This viewer was loaded using ES modules approach.
 - Tree shaking support
 - Better for bundlers
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
-${'```'}
+${TRIPLE_BACKTICK}
                                 `
                             }
                         ]
@@ -380,12 +383,12 @@ This viewer was loaded using the UMD build.
 - No build step required
 - Global variable access
 
-${'```'}html
+${TRIPLE_BACKTICK}html
 <script src="path/to/index.umd.cjs"></script>
 <script>
   const viewer = new MarkdownDocsViewer(config);
 </script>
-${'```'}
+${TRIPLE_BACKTICK}
                                 `
                             }
                         ]

@@ -98,6 +98,9 @@
     <script src="../dist/index.umd.cjs"></script>
 
     <script>
+        // Create triple backticks constant to avoid template literal parsing issues
+        const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
+        
         let viewer;
         
         try {
@@ -152,7 +155,7 @@ The viewer comes with several built-in themes:
 
 ## Code Example
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Initialize with a specific theme
 const viewer = new MarkdownDocsViewer({
     container: '#docs',
@@ -169,20 +172,20 @@ viewer.setTheme('github');
 // Get available themes
 const themes = viewer.getAvailableThemes();
 console.log(themes);
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## CSS Variables
 
 All theme colors are exposed as CSS custom properties:
 
-${'```'}css
+${TRIPLE_BACKTICK}css
 :root {
     --mdv-color-primary: #3b82f6;
     --mdv-color-background: #ffffff;
     --mdv-color-text-primary: #111827;
     /* ... and many more */
 }
-${'```'}
+${TRIPLE_BACKTICK}
                             `
                         },
                         {
@@ -195,7 +198,7 @@ ${'```'}
 
 A theme consists of colors, fonts, spacing, and other visual properties:
 
-${'```'}typescript
+${TRIPLE_BACKTICK}typescript
 interface Theme {
     name: string;
     colors: {
@@ -228,13 +231,13 @@ interface Theme {
     borderRadius: string;
     customCSS?: string;
 }
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## Theme Manager
 
 The ThemeManager handles theme registration, switching, and persistence:
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Access the theme manager
 const themeManager = viewer.themeManager;
 
@@ -263,13 +266,13 @@ const isAccessible = themeManager.isAccessible(
     '#ffffff', // background
     'AA'       // level
 );
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## Creating Custom Themes
 
 ### Method 1: Extend Existing Theme
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 const customTheme = viewer.createCustomTheme('my-custom', {
     colors: {
         primary: '#e91e63',
@@ -278,11 +281,11 @@ const customTheme = viewer.createCustomTheme('my-custom', {
 });
 
 viewer.setTheme('my-custom');
-${'```'}
+${TRIPLE_BACKTICK}
 
 ### Method 2: Complete Theme Object
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 viewer.registerTheme({
     name: 'company-brand',
     colors: {
@@ -314,11 +317,11 @@ viewer.registerTheme({
     },
     borderRadius: '0.375rem'
 });
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## Theme Import/Export
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Export theme as JSON
 const themeJson = viewer.themeManager.exportTheme(
     viewer.getCurrentTheme()
@@ -330,7 +333,7 @@ const imported = viewer.themeManager.importTheme(themeJson);
 if (imported) {
     viewer.setTheme(imported.name);
 }
-${'```'}
+${TRIPLE_BACKTICK}
                             `
                         },
                         {
@@ -364,7 +367,7 @@ When creating custom themes, consider the psychological impact of colors:
 
 ### Testing Your Theme
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Check all text contrasts
 function checkThemeAccessibility(theme) {
     const tm = viewer.themeManager;
@@ -389,7 +392,7 @@ function checkThemeAccessibility(theme) {
         console.log(\`\${name}: \${ratio.toFixed(2)} - \${aa ? '✅' : '❌'}\`);
     });
 }
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## Advanced Customization
 
@@ -397,7 +400,7 @@ ${'```'}
 
 Add custom CSS to your theme for advanced styling:
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 const advancedTheme = {
     name: 'advanced',
     colors: { /* ... */ },
@@ -437,13 +440,13 @@ const advancedTheme = {
         }
     \`
 };
-${'```'}
+${TRIPLE_BACKTICK}
 
 ### Dynamic Theme Switching
 
 Create a theme that responds to system preferences:
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Listen for system theme changes
 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -457,7 +460,7 @@ applySystemTheme();
 
 // Listen for changes
 mediaQuery.addEventListener('change', applySystemTheme);
-${'```'}
+${TRIPLE_BACKTICK}
 
 ## Best Practices
 
@@ -469,7 +472,7 @@ ${'```'}
 
 ## Example: Corporate Theme
 
-${'```'}javascript
+${TRIPLE_BACKTICK}javascript
 // Example corporate theme with brand colors
 const corporateTheme = {
     name: 'acme-corp',
@@ -533,7 +536,7 @@ const corporateTheme = {
 // Register and use
 viewer.registerTheme(corporateTheme);
 viewer.setTheme('acme-corp');
-${'```'}
+${TRIPLE_BACKTICK}
                             `
                         }
                     ]
