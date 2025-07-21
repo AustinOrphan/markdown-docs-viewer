@@ -1,474 +1,344 @@
-# Theming Guide
+# Theme System Documentation
 
-The Markdown Docs Viewer includes a comprehensive theming system that allows you to customize the appearance of your documentation to match your brand or preferences.
+The Markdown Docs Viewer provides a comprehensive theming system with both a full theme switcher and a convenient dark mode toggle for end users.
 
-## Table of Contents
+## Overview
 
-- [Quick Start](#quick-start)
-- [Built-in Themes](#built-in-themes)
-- [Theme Configuration](#theme-configuration)
-- [Creating Custom Themes](#creating-custom-themes)
-- [Theme API Reference](#theme-api-reference)
-- [CSS Variables](#css-variables)
-- [Accessibility](#accessibility)
-- [Examples](#examples)
-
-## Quick Start
-
-### Using a Built-in Theme
-
-```javascript
-import { MarkdownDocsViewer, darkTheme } from 'markdown-docs-viewer';
-
-const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    theme: darkTheme, // Use the built-in dark theme
-    source: {
-        type: 'local',
-        documents: [/* ... */]
-    }
-});
-```
-
-### Enabling Theme Switching
-
-```javascript
-const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    theme: {
-        name: 'default',
-        switcherPosition: 'header', // Show theme switcher in header
-        allowCustomThemes: true,
-        enablePersistence: true // Remember user's choice
-    },
-    source: {
-        type: 'local',
-        documents: [/* ... */]
-    }
-});
-```
+The theming system includes:
+- **Theme Switcher**: Full theme selection with preview and multiple built-in themes
+- **Dark Mode Toggle**: Quick toggle between light and dark modes
+- **Theme Persistence**: User preferences are saved in localStorage
+- **Custom Themes**: Ability to create and register custom themes
+- **Mobile Responsive**: Both components work seamlessly on mobile devices
 
 ## Built-in Themes
 
-The viewer includes 8 professionally designed themes:
+The library includes several built-in themes:
+- `default` - Clean modern light theme
+- `dark` - Dark theme with good contrast
+- `high-contrast` - High contrast theme for accessibility
+- `github` - GitHub-inspired theme
+- `dracula` - Popular dark theme with vibrant colors
+- `solarized-light` - Solarized light theme
+- `solarized-dark` - Solarized dark theme
+- `material` - Material Design inspired theme
 
-### Light Themes
+## Quick Setup
 
-1. **Default** - Clean and modern light theme
-   - Primary: Blue (#3b82f6)
-   - Best for: General documentation
+### Basic Configuration
 
-2. **GitHub** - GitHub-inspired theme
-   - Primary: GitHub Blue (#0969da)
-   - Best for: Developer documentation
+```javascript
+import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
 
-3. **Solarized Light** - Precision colors for reduced eye strain
-   - Primary: Blue (#268bd2)
-   - Best for: Long reading sessions
+const viewer = new MarkdownDocsViewer({
+  container: '#docs',
+  source: {
+    type: 'local',
+    documents: [/* your documents */]
+  },
+  theme: {
+    // Theme switcher configuration
+    switcherPosition: 'header', // 'header' | 'footer' | 'sidebar' | 'floating'
+    showPreview: true,
+    showDescription: true,
+    allowCustomThemes: true,
+    
+    // Dark mode toggle configuration
+    darkTogglePosition: 'header', // 'header' | 'footer' | 'floating'
+    showDarkModeLabel: true,
+    compactDarkToggle: false,
+    
+    // Persistence
+    enablePersistence: true,
+    storageKey: 'mdv-theme'
+  }
+});
+```
 
-4. **Material** - Material Design inspired
-   - Primary: Material Blue (#1976d2)
-   - Best for: Modern web applications
+### Standalone Usage
 
-### Dark Themes
+You can also use the components independently:
 
-5. **Dark** - Easy on the eyes dark theme
-   - Background: Navy (#0f172a)
-   - Best for: Night time reading
+```javascript
+import { ThemeManager, ThemeSwitcher, DarkModeToggle } from '@austinorphan/markdown-docs-viewer';
 
-6. **Dracula** - Popular dark theme with vibrant colors
-   - Background: Dark Purple (#282a36)
-   - Best for: Developers who love Dracula theme
+// Initialize theme manager
+const themeManager = new ThemeManager({
+  enablePersistence: true,
+  onThemeChange: (theme) => {
+    console.log('Theme changed to:', theme.name);
+  }
+});
 
-7. **Solarized Dark** - Precision colors (dark variant)
-   - Background: Dark Blue (#002b36)
-   - Best for: Terminal enthusiasts
+// Create theme switcher
+const themeSwitcher = new ThemeSwitcher(themeManager, {
+  position: 'header',
+  showPreview: true,
+  showDescription: true
+});
 
-### Accessibility
+// Create dark mode toggle
+const darkModeToggle = new DarkModeToggle(themeManager, {
+  position: 'header',
+  showLabel: true,
+  compact: false
+});
 
-8. **High Contrast** - WCAG AAA compliant
-   - Maximum contrast ratios
-   - Best for: Users with visual impairments
+// Add to your HTML
+document.getElementById('theme-controls').innerHTML = `
+  ${darkModeToggle.render()}
+  ${themeSwitcher.render()}
+`;
 
-## Theme Configuration
+// Attach event listeners
+darkModeToggle.attachTo(document.querySelector('.mdv-dark-mode-toggle'));
+themeSwitcher.attachTo(document.querySelector('.mdv-theme-switcher'));
+```
+
+## Theme Switcher
 
 ### Configuration Options
 
 ```typescript
-interface ThemeConfig {
-    // Theme name or theme object
-    name?: string;
-    
-    // Theme switcher options
-    switcherPosition?: 'header' | 'footer' | 'sidebar' | 'floating';
-    showPreview?: boolean;      // Show color preview in switcher
-    showDescription?: boolean;   // Show theme descriptions
-    allowCustomThemes?: boolean; // Allow custom theme creation
-    
-    // Persistence options
-    enablePersistence?: boolean; // Save theme choice to localStorage
-    storageKey?: string;        // Custom storage key (default: 'mdv-theme')
-    
-    // Callbacks
-    onThemeChange?: (theme: Theme) => void;
+interface ThemeSwitcherOptions {
+  position?: 'header' | 'footer' | 'sidebar' | 'floating';
+  showPreview?: boolean;        // Show color preview dots
+  showDescription?: boolean;    // Show theme descriptions
+  allowCustomThemes?: boolean;  // Enable custom theme creation
+  onThemeChange?: (theme: Theme) => void;
 }
 ```
 
-### Example Configuration
+### Usage Examples
 
+#### Header Theme Switcher
 ```javascript
-const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    theme: {
-        name: 'github',
-        switcherPosition: 'floating',
-        showPreview: true,
-        showDescription: true,
-        allowCustomThemes: true,
-        enablePersistence: true,
-        storageKey: 'my-docs-theme'
-    },
-    onThemeChange: (theme) => {
-        console.log('Theme changed to:', theme.name);
-        // Update other UI elements if needed
-    }
+const themeSwitcher = new ThemeSwitcher(themeManager, {
+  position: 'header',
+  showPreview: true,
+  showDescription: true,
+  allowCustomThemes: true
 });
 ```
 
-## Creating Custom Themes
+#### Floating Theme Switcher
+```javascript
+const themeSwitcher = new ThemeSwitcher(themeManager, {
+  position: 'floating',
+  showPreview: false,
+  showDescription: false
+});
+```
 
-### Method 1: Extend an Existing Theme
+### Features
+
+- **Visual Preview**: Color swatches show theme colors before selection
+- **Keyboard Navigation**: Full keyboard support with arrow keys
+- **Accessibility**: ARIA labels and screen reader support
+- **Mobile Optimized**: Responsive dropdown that adapts to mobile screens
+- **Custom Themes**: Button to create custom themes (when enabled)
+
+## Dark Mode Toggle
+
+### Configuration Options
+
+```typescript
+interface DarkModeToggleOptions {
+  position?: 'header' | 'footer' | 'floating';
+  showLabel?: boolean;   // Show "Light/Dark Mode" text
+  compact?: boolean;     // Smaller toggle for tight spaces
+  onToggle?: (isDark: boolean, theme: Theme) => void;
+}
+```
+
+### Usage Examples
+
+#### Standard Toggle with Label
+```javascript
+const darkModeToggle = new DarkModeToggle(themeManager, {
+  position: 'header',
+  showLabel: true,
+  compact: false
+});
+```
+
+#### Compact Toggle
+```javascript
+const darkModeToggle = new DarkModeToggle(themeManager, {
+  position: 'header',
+  showLabel: false,
+  compact: true
+});
+```
+
+#### Floating Toggle
+```javascript
+const darkModeToggle = new DarkModeToggle(themeManager, {
+  position: 'floating',
+  showLabel: false,
+  compact: true
+});
+```
+
+### Features
+
+- **Smooth Animation**: Toggle switch with smooth transitions
+- **Visual Icons**: Sun and moon icons indicate current mode
+- **Touch Friendly**: Large enough for mobile interaction
+- **System Preference**: Respects user's OS theme preference initially
+- **Accessibility**: Full ARIA support and keyboard navigation
+
+## Advanced Configuration
+
+### Custom Theme Creation
 
 ```javascript
-// Create a custom theme based on the default theme
-const customTheme = viewer.createCustomTheme('my-brand', {
-    colors: {
-        primary: '#e91e63',      // Pink
-        secondary: '#9c27b0',    // Purple
-        link: '#e91e63',
-        linkHover: '#d81b60'
-    }
+// Create a custom theme
+const customTheme = themeManager.createCustomTheme('my-theme', {
+  colors: {
+    primary: '#ff6b6b',
+    secondary: '#4ecdc4',
+    background: '#f8f9fa',
+    surface: '#ffffff',
+    // ... other color overrides
+  },
+  fonts: {
+    heading: 'Inter, sans-serif',
+    body: 'Inter, sans-serif',
+    code: 'JetBrains Mono, monospace'
+  }
 });
 
 // Apply the custom theme
-viewer.setTheme('my-brand');
+themeManager.setTheme('my-theme');
 ```
 
-### Method 2: Complete Theme Definition
+### Theme Events
 
 ```javascript
-const brandTheme = {
-    name: 'company-brand',
-    colors: {
-        // Primary colors
-        primary: '#ff6b6b',
-        secondary: '#4ecdc4',
-        
-        // Background colors
-        background: '#ffffff',
-        surface: '#f7f9fc',
-        
-        // Text colors
-        text: '#2d3748',
-        textPrimary: '#1a202c',
-        textSecondary: '#718096',
-        
-        // UI colors
-        border: '#e2e8f0',
-        code: '#805ad5',
-        codeBackground: '#f7fafc',
-        
-        // Interactive colors
-        link: '#3182ce',
-        linkHover: '#2c5aa0',
-        
-        // Status colors
-        error: '#e53e3e',
-        warning: '#dd6b20',
-        success: '#38a169'
-    },
-    fonts: {
-        body: '"Inter", -apple-system, sans-serif',
-        heading: '"Inter", -apple-system, sans-serif',
-        code: '"Fira Code", "Consolas", monospace'
-    },
-    spacing: {
-        unit: 8,
-        containerMaxWidth: '1200px',
-        sidebarWidth: '320px'
-    },
-    borderRadius: '0.5rem',
-    customCSS: `
-        /* Add custom styles */
-        .mdv-header {
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-    `
-};
+// Listen for theme changes
+document.addEventListener('mdv-theme-changed', (e) => {
+  console.log('Theme changed:', e.detail.theme);
+});
 
-// Register and use the theme
-viewer.registerTheme(brandTheme);
-viewer.setTheme('company-brand');
-```
-
-### Method 3: Dynamic Theme Creation
-
-```javascript
-// Create a theme from user input
-function createUserTheme(name, primaryColor) {
-    // Generate a complete color palette from a primary color
-    const theme = viewer.createCustomTheme(name, {
-        colors: {
-            primary: primaryColor,
-            secondary: adjustBrightness(primaryColor, -20),
-            link: primaryColor,
-            linkHover: adjustBrightness(primaryColor, -10)
-        }
-    });
-    
-    return theme;
-}
-
-// Helper function to adjust color brightness
-function adjustBrightness(hex, percent) {
-    // Implementation details...
-}
-```
-
-## Theme API Reference
-
-### Viewer Methods
-
-```javascript
-// Set theme by name or object
-viewer.setTheme('dark');
-viewer.setTheme(customThemeObject);
-
-// Get current theme
-const currentTheme = viewer.getTheme();
-
-// Get all available themes
-const themes = viewer.getAvailableThemes();
-
-// Register a new theme
-viewer.registerTheme(myTheme);
-
-// Create custom theme
-const custom = viewer.createCustomTheme(name, overrides);
-```
-
-### ThemeManager Methods
-
-```javascript
-// Access the theme manager
-const themeManager = viewer.themeManager;
-
-// Apply CSS variables
-themeManager.applyCSSVariables(theme);
-
-// Check contrast ratios
-const ratio = themeManager.getContrastRatio('#000000', '#ffffff');
-
-// Check WCAG compliance
-const isAccessible = themeManager.isAccessible(
-    foregroundColor,
-    backgroundColor,
-    'AA' // or 'AAA'
-);
-
-// Export/Import themes
-const json = themeManager.exportTheme(theme);
-const imported = themeManager.importTheme(json);
-```
-
-## CSS Variables
-
-All theme colors are exposed as CSS custom properties:
-
-```css
-/* Color variables */
---mdv-color-primary
---mdv-color-secondary
---mdv-color-background
---mdv-color-surface
---mdv-color-text
---mdv-color-text-primary
---mdv-color-text-secondary
---mdv-color-border
---mdv-color-code
---mdv-color-code-background
---mdv-color-link
---mdv-color-link-hover
---mdv-color-error
---mdv-color-warning
---mdv-color-success
-
-/* RGB versions for opacity */
---mdv-color-primary-rgb
---mdv-color-secondary-rgb
-/* ... etc */
-
-/* Font variables */
---mdv-font-body
---mdv-font-heading
---mdv-font-code
-
-/* Spacing variables */
---mdv-spacing-unit
---mdv-container-max-width
---mdv-sidebar-width
---mdv-border-radius
-```
-
-### Using CSS Variables
-
-```css
-/* Custom component using theme variables */
-.my-custom-button {
-    background-color: var(--mdv-color-primary);
-    color: white;
-    border-radius: var(--mdv-border-radius);
-    padding: calc(var(--mdv-spacing-unit) * 2);
-}
-
-/* Semi-transparent background */
-.my-overlay {
-    background-color: rgba(var(--mdv-color-primary-rgb), 0.1);
-}
-```
-
-## Accessibility
-
-### Contrast Requirements
-
-The theme system includes built-in contrast checking:
-
-```javascript
-// Check theme accessibility
-function auditTheme(theme) {
-    const tm = viewer.themeManager;
-    
-    const critical = [
-        ['textPrimary', 'background', 4.5],    // Normal text
-        ['textSecondary', 'background', 4.5],  // Secondary text
-        ['link', 'background', 4.5],           // Links
-        ['primary', 'surface', 3.0]            // Large text
-    ];
-    
-    critical.forEach(([fg, bg, required]) => {
-        const ratio = tm.getContrastRatio(
-            theme.colors[fg],
-            theme.colors[bg]
-        );
-        
-        if (ratio < required) {
-            console.warn(`Low contrast: ${fg} on ${bg} (${ratio.toFixed(2)}:1)`);
-        }
-    });
-}
-```
-
-### Best Practices
-
-1. **Test all color combinations** - Ensure text is readable on all backgrounds
-2. **Provide high contrast option** - Include at least one high contrast theme
-3. **Consider color blindness** - Test themes with color blindness simulators
-4. **Use semantic colors** - Keep error=red, success=green, warning=yellow
-5. **Test in different lighting** - Themes should work in various environments
-
-## Examples
-
-### Example 1: Minimal Theme
-
-```javascript
-const minimalTheme = viewer.createCustomTheme('minimal', {
-    colors: {
-        primary: '#000000',
-        background: '#ffffff',
-        border: '#000000'
-    },
-    borderRadius: '0'
+// Listen for dark mode toggles
+document.addEventListener('mdv-dark-mode-toggled', (e) => {
+  console.log('Dark mode:', e.detail.isDark);
+  console.log('New theme:', e.detail.theme);
 });
 ```
 
-### Example 2: Gradient Theme
+### Programmatic Control
 
 ```javascript
-const gradientTheme = {
-    name: 'gradient',
-    colors: defaultTheme.colors,
-    fonts: defaultTheme.fonts,
-    spacing: defaultTheme.spacing,
-    borderRadius: '1rem',
-    customCSS: `
-        .mdv-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .mdv-nav-link.active {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-    `
-};
+// Check current theme
+const currentTheme = themeManager.getCurrentTheme();
+
+// Set theme programmatically
+themeManager.setTheme('dark');
+
+// Toggle dark mode
+darkModeToggle.toggle();
+
+// Check if dark mode is active
+const isDark = darkModeToggle.isDarkMode();
+
+// Set dark mode state
+darkModeToggle.setDarkMode(true);
 ```
 
-### Example 3: System Theme Sync
+## Styling and Customization
 
-```javascript
-// Sync with system dark mode preference
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+### CSS Custom Properties
 
-function syncSystemTheme() {
-    viewer.setTheme(mediaQuery.matches ? 'dark' : 'default');
-}
+The theme system uses CSS custom properties that you can override:
 
-// Initial sync
-syncSystemTheme();
-
-// Listen for changes
-mediaQuery.addEventListener('change', syncSystemTheme);
-```
-
-### Example 4: Theme from URL
-
-```javascript
-// Load theme from URL parameter
-const params = new URLSearchParams(window.location.search);
-const themeName = params.get('theme');
-
-if (themeName && viewer.getAvailableThemes().find(t => t.name === themeName)) {
-    viewer.setTheme(themeName);
+```css
+:root {
+  --mdv-color-primary: #3b82f6;
+  --mdv-color-background: #ffffff;
+  --mdv-color-surface: #f3f4f6;
+  --mdv-color-text: #111827;
+  --mdv-border-radius: 0.5rem;
+  /* ... many more properties */
 }
 ```
 
-## Theme Gallery
+### Custom Styling
 
-Visit our [Theme Demo](../examples/theme-demo.html) to:
-- Preview all built-in themes
-- Create custom themes interactively
-- Export/import theme configurations
-- Check contrast ratios
-- Test theme accessibility
+```css
+/* Customize theme switcher */
+.mdv-theme-switcher .mdv-theme-trigger {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Customize dark mode toggle */
+.mdv-dark-mode-toggle .mdv-dark-toggle-btn {
+  transform: scale(0.8);
+}
+
+/* Header actions layout */
+.mdv-header-actions {
+  gap: 16px;
+}
+```
+
+## Mobile Responsiveness
+
+Both components automatically adapt to mobile screens:
+
+- **Theme Switcher**: Dropdown becomes full-screen modal on mobile
+- **Dark Mode Toggle**: Touch-friendly sizing and spacing
+- **Header Layout**: Components stack appropriately on small screens
+
+## Accessibility Features
+
+### Theme Switcher
+- ARIA labels and descriptions
+- Keyboard navigation with arrow keys
+- Screen reader announcements
+- High contrast mode support
+
+### Dark Mode Toggle
+- ARIA switch role
+- Keyboard activation (Enter/Space)
+- Visual focus indicators
+- Reduced motion support
+
+## Best Practices
+
+1. **Positioning**: Use `header` position for primary controls, `floating` for secondary access
+2. **User Choice**: Don't force a theme; respect user preferences and system settings
+3. **Persistence**: Enable theme persistence for better user experience
+4. **Performance**: Themes are applied via CSS custom properties for optimal performance
+5. **Accessibility**: Always test with screen readers and keyboard navigation
+6. **Mobile**: Ensure touch targets are at least 44px for mobile usability
 
 ## Troubleshooting
 
-### Theme not persisting
-- Check if `enablePersistence` is set to `true`
-- Verify localStorage is available
-- Check for browser privacy settings
+### Common Issues
 
-### Custom CSS not applying
-- Ensure CSS selectors are specific enough
-- Check for syntax errors in customCSS
-- Verify theme is properly registered
+**Theme not persisting**:
+```javascript
+// Ensure persistence is enabled
+const themeManager = new ThemeManager({
+  enablePersistence: true,
+  storageKey: 'my-app-theme'
+});
+```
 
-### Poor contrast warnings
-- Use the contrast checker tool
-- Adjust color values for better ratios
-- Consider providing alternative themes
+**Components not appearing**:
+```javascript
+// Ensure CSS styles are included
+const cssContent = themeSwitcher.getStyles() + darkModeToggle.getStyles();
+const styleSheet = document.createElement('style');
+styleSheet.textContent = cssContent;
+document.head.appendChild(styleSheet);
+```
 
-### Theme switcher not appearing
-- Verify `switcherPosition` is set correctly
-- Check if theme configuration is valid
-- Ensure container has enough space
+**Mobile dropdown issues**:
+```javascript
+// Add viewport meta tag
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
