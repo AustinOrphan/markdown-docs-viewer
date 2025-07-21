@@ -25,7 +25,7 @@ describe('DOM Integration Tests', () => {
 
     beforeEach(() => {
         // Mock the init method to prevent async operations in tests
-        const initMock = vi.spyOn(MarkdownDocsViewer.prototype as any, 'init').mockImplementation(async function(this: any) {
+        vi.spyOn(MarkdownDocsViewer.prototype as any, 'init').mockImplementation(async function(this: any) {
             // Set up minimal state needed for tests
             this.state.loading = false;
             this.state.documents = this.config.source.documents || [];

@@ -87,7 +87,7 @@ describe('SearchManager', () => {
     })
 
     it('should create debounced search function', () => {
-      const sm = new SearchManager({})
+      new SearchManager({})
       expect(debounce).toHaveBeenCalledWith(expect.any(Function), 300)
     })
   })

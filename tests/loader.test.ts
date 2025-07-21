@@ -2,10 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { DocumentLoader } from '../src/loader'
 import { Document, DocumentSource } from '../src/types'
 import { 
-  MarkdownDocsError, 
-  ErrorFactory, 
-  ErrorCode,
-  ErrorSeverity,
   ConsoleErrorLogger
 } from '../src/errors'
 import { PersistentCache, PerformanceMonitor, MemoryManager } from '../src/performance'
@@ -18,7 +14,7 @@ vi.mock('../src/performance', () => {
   }
   
   return {
-    PersistentCache: vi.fn().mockImplementation((size: number, namespace: string) => ({
+    PersistentCache: vi.fn().mockImplementation((size: number, _namespace: string) => ({
       has: vi.fn().mockReturnValue(false),
       get: vi.fn(),
       set: vi.fn(),
@@ -42,7 +38,6 @@ vi.mock('../src/performance', () => {
 global.fetch = vi.fn()
 
 describe('DocumentLoader', () => {
-  let loader: DocumentLoader
   let mockFetch: any
   let mockCache: any
   let mockPerformanceMonitor: any

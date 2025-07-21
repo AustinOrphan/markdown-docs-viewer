@@ -468,4 +468,22 @@ describe('MarkdownDocsViewer', () => {
             }
         })
     })
+
+    describe('Theme Methods', () => {
+        it('should get current theme', () => {
+            const theme = viewer.getTheme()
+            
+            expect(theme).toBeDefined()
+            expect(theme.colors).toBeDefined()
+            expect(theme.fonts).toBeDefined()
+        })
+
+        it('should get theme styles', () => {
+            const styles = viewer.getThemeStyles()
+            
+            expect(styles).toBeTypeOf('string')
+            expect(styles.length).toBeGreaterThan(0)
+            expect(styles).toContain('.mdv-app')
+        })
+    })
 })

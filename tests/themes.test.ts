@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { defaultTheme, darkTheme } from '../src/themes'
+import { defaultTheme, darkTheme, createCustomTheme } from '../src/themes'
 
 describe('Themes', () => {
     describe('defaultTheme', () => {
@@ -195,6 +195,71 @@ describe('Themes', () => {
             
             expect(brandTheme.colors.primary).toBe('#3b82f6')
             expect(brandTheme.fonts.body).toBe('Inter, sans-serif')
+        })
+    })
+
+    describe('createCustomTheme', () => {
+        it('should create custom theme based on default theme', () => {
+            const customTheme = createCustomTheme({
+                colors: {
+                    primary: '#ff0000'
+                }
+            })
+            
+            expect(customTheme.colors.primary).toBe('#ff0000')
+            expect(customTheme.colors.background).toBe(defaultTheme.colors.background)
+            expect(customTheme.fonts).toEqual(defaultTheme.fonts)
+        })
+
+        it('should create custom theme based on dark theme when name is dark', () => {
+            const customDarkTheme = createCustomTheme({
+                name: 'dark',
+                colors: {
+                    primary: '#00ff00'
+                }
+            })
+            
+            expect(customDarkTheme.colors.primary).toBe('#00ff00')
+            expect(customDarkTheme.colors.background).toBe(darkTheme.colors.background)
+            expect(customDarkTheme.fonts).toEqual(darkTheme.fonts)
+        })
+
+        it('should merge all theme properties', () => {
+            const customTheme = createCustomTheme({
+                colors: {
+                    primary: '#123456'
+                },
+                fonts: {
+                    body: 'Custom Font'
+                },
+                spacing: {
+                    xs: '0.25rem'
+                }
+            })
+            
+            expect(customTheme.colors.primary).toBe('#123456')
+            expect(customTheme.colors.background).toBe(defaultTheme.colors.background)
+            expect(customTheme.fonts.body).toBe('Custom Font')
+            expect(customTheme.fonts.heading).toBe(defaultTheme.fonts.heading)
+            expect(customTheme.spacing.xs).toBe('0.25rem')
+        })
+
+        it('should handle empty overrides', () => {
+            const customTheme = createCustomTheme({})
+            
+            expect(customTheme).toEqual(defaultTheme)
+        })
+
+        it('should handle overrides with undefined values', () => {
+            const customTheme = createCustomTheme({
+                colors: undefined,
+                fonts: undefined,
+                spacing: undefined
+            })
+            
+            expect(customTheme.colors).toEqual(defaultTheme.colors)
+            expect(customTheme.fonts).toEqual(defaultTheme.fonts)
+            expect(customTheme.spacing).toEqual(defaultTheme.spacing)
         })
     })
 })

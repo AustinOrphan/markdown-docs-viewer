@@ -1,14 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { Router, RoutingMode } from '../src/router'
+import { Router } from '../src/router'
 
 describe('Router', () => {
   let router: Router
   let onRouteChange: any
-  let originalHash: string
 
   beforeEach(() => {
     onRouteChange = vi.fn()
-    originalHash = window.location.hash
     // Force clear the hash completely
     window.history.replaceState(null, '', window.location.pathname + window.location.search)
     window.location.hash = ''

@@ -208,13 +208,20 @@ describe('Error Handling System', () => {
         return Promise.reject(error)
       })
       
-      const promise = withRetry(operation, { maxAttempts: 2 })
+      // Start the retry operation
+      const retryPromise = withRetry(operation, { maxAttempts: 2 })
       
       // Advance timers to handle retries
       await vi.advanceTimersByTimeAsync(2000)
       
-      await expect(promise).rejects.toThrow(error)
-      expect(attempts).toBe(2)
+      // Properly handle the rejection
+      try {
+        await retryPromise
+        expect.fail('Should have thrown an error')
+      } catch (thrownError) {
+        expect(thrownError).toBe(error)
+        expect(attempts).toBe(2)
+      }
     })
 
     it('should handle non-MarkdownDocsError exceptions', async () => {
@@ -247,7 +254,7 @@ describe('Error Handling System', () => {
         return Promise.reject(error)
       })
       
-      const promise = withRetry(operation, { 
+      const retryPromise = withRetry(operation, { 
         maxAttempts: 3, 
         baseDelay: 100,
         exponentialBackoff: true 
@@ -257,8 +264,14 @@ describe('Error Handling System', () => {
       // First retry: 100ms, Second retry: 200ms, Third attempt happens
       await vi.advanceTimersByTimeAsync(500)
       
-      await expect(promise).rejects.toThrow()
-      expect(attempts).toBe(3)
+      // Properly handle the rejection
+      try {
+        await retryPromise
+        expect.fail('Should have thrown an error')
+      } catch (thrownError) {
+        expect(thrownError).toBe(error)
+        expect(attempts).toBe(3)
+      }
     })
   })
 

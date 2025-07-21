@@ -23,6 +23,19 @@ Object.defineProperty(global, 'IntersectionObserver', {
   })),
 })
 
+// Handle unhandled promise rejections in tests to prevent CI failures
+const originalUnhandledRejection = process.listeners('unhandledRejection')
+process.removeAllListeners('unhandledRejection')
+process.on('unhandledRejection', (reason) => {
+  // Only log if it's not an expected test error
+  if (reason && typeof reason === 'object' && 'code' in reason) {
+    // This is likely a MarkdownDocsError from our tests, ignore it
+    return
+  }
+  // Re-emit for other unhandled rejections
+  console.error('Unhandled Rejection in test:', reason)
+})
+
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { TableOfContents, TOCItem } from '../src/toc'
+import { TableOfContents } from '../src/toc'
 import { TableOfContentsOptions } from '../src/types'
 import { marked } from 'marked'
 
