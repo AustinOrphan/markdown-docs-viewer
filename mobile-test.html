@@ -30,11 +30,19 @@
     
     <div id="docs-container"></div>
 
-    <!-- Load dependencies -->
-    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+    <!-- Load dependencies with SRI for security -->
+    <script src="https://unpkg.com/marked@12.0.0/marked.min.js" 
+            integrity="sha384-NNQgBjjuhtXzPmmy4gurS5X7P4uTt1DThyevz4Ua0IVK5+kazYQI1W27JHjbbxQz"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js" 
+            integrity="sha384-HmAiqROJLzg/FeRL2ueeROz3x2p5GJ7P1R2gPgv/quVAK51+QLespCbGOY237AgJ"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js" 
+            integrity="sha384-NcvHzdvInr1Xz4wcXZ66eOmu9gIby7JMvo/5H1f4JdFyCnwbphFkTtPF75l944Ru"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js" 
+            integrity="sha384-dV5nFKTQsd/rhftsM2qmstuyNM9ZFhqDigBHUoblzX1MolhJpZlPLo2bfJdVTCYs"
+            crossorigin="anonymous"></script>
 
     <!-- Load the viewer -->
     <script src="dist/index.umd.cjs"></script>
@@ -54,7 +62,7 @@
             
             console.log('Creating viewer with mobile features...');
             
-            const viewer = new MarkdownDocsViewer({
+            new MarkdownDocsViewer({
                 container: '#docs-container',
                 title: 'Mobile Test Documentation',
                 theme: defaultTheme,
