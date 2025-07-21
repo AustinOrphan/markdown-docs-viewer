@@ -152,7 +152,7 @@ The viewer comes with several built-in themes:
 
 ## Code Example
 
-\`\`\`javascript
+${'```'}javascript
 // Initialize with a specific theme
 const viewer = new MarkdownDocsViewer({
     container: '#docs',
@@ -169,20 +169,20 @@ viewer.setTheme('github');
 // Get available themes
 const themes = viewer.getAvailableThemes();
 console.log(themes);
-\`\`\`
+${'```'}
 
 ## CSS Variables
 
 All theme colors are exposed as CSS custom properties:
 
-\`\`\`css
+${'```'}css
 :root {
     --mdv-color-primary: #3b82f6;
     --mdv-color-background: #ffffff;
     --mdv-color-text-primary: #111827;
     /* ... and many more */
 }
-\`\`\`
+${'```'}
                             `
                         },
                         {
@@ -195,7 +195,7 @@ All theme colors are exposed as CSS custom properties:
 
 A theme consists of colors, fonts, spacing, and other visual properties:
 
-\`\`\`typescript
+${'```'}typescript
 interface Theme {
     name: string;
     colors: {
@@ -228,13 +228,13 @@ interface Theme {
     borderRadius: string;
     customCSS?: string;
 }
-\`\`\`
+${'```'}
 
 ## Theme Manager
 
 The ThemeManager handles theme registration, switching, and persistence:
 
-\`\`\`javascript
+${'```'}javascript
 // Access the theme manager
 const themeManager = viewer.themeManager;
 
@@ -263,13 +263,13 @@ const isAccessible = themeManager.isAccessible(
     '#ffffff', // background
     'AA'       // level
 );
-\`\`\`
+${'```'}
 
 ## Creating Custom Themes
 
 ### Method 1: Extend Existing Theme
 
-\`\`\`javascript
+${'```'}javascript
 const customTheme = viewer.createCustomTheme('my-custom', {
     colors: {
         primary: '#e91e63',
@@ -278,11 +278,11 @@ const customTheme = viewer.createCustomTheme('my-custom', {
 });
 
 viewer.setTheme('my-custom');
-\`\`\`
+${'```'}
 
 ### Method 2: Complete Theme Object
 
-\`\`\`javascript
+${'```'}javascript
 viewer.registerTheme({
     name: 'company-brand',
     colors: {
@@ -314,11 +314,11 @@ viewer.registerTheme({
     },
     borderRadius: '0.375rem'
 });
-\`\`\`
+${'```'}
 
 ## Theme Import/Export
 
-\`\`\`javascript
+${'```'}javascript
 // Export theme as JSON
 const themeJson = viewer.themeManager.exportTheme(
     viewer.getCurrentTheme()
@@ -330,7 +330,7 @@ const imported = viewer.themeManager.importTheme(themeJson);
 if (imported) {
     viewer.setTheme(imported.name);
 }
-\`\`\`
+${'```'}
                             `
                         },
                         {
@@ -364,7 +364,7 @@ When creating custom themes, consider the psychological impact of colors:
 
 ### Testing Your Theme
 
-\`\`\`javascript
+${'```'}javascript
 // Check all text contrasts
 function checkThemeAccessibility(theme) {
     const tm = viewer.themeManager;
@@ -389,7 +389,7 @@ function checkThemeAccessibility(theme) {
         console.log(\`\${name}: \${ratio.toFixed(2)} - \${aa ? '✅' : '❌'}\`);
     });
 }
-\`\`\`
+${'```'}
 
 ## Advanced Customization
 
@@ -397,7 +397,7 @@ function checkThemeAccessibility(theme) {
 
 Add custom CSS to your theme for advanced styling:
 
-\`\`\`javascript
+${'```'}javascript
 const advancedTheme = {
     name: 'advanced',
     colors: { /* ... */ },
@@ -437,13 +437,13 @@ const advancedTheme = {
         }
     \`
 };
-\`\`\`
+${'```'}
 
 ### Dynamic Theme Switching
 
 Create a theme that responds to system preferences:
 
-\`\`\`javascript
+${'```'}javascript
 // Listen for system theme changes
 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -457,7 +457,7 @@ applySystemTheme();
 
 // Listen for changes
 mediaQuery.addEventListener('change', applySystemTheme);
-\`\`\`
+${'```'}
 
 ## Best Practices
 
@@ -469,7 +469,7 @@ mediaQuery.addEventListener('change', applySystemTheme);
 
 ## Example: Corporate Theme
 
-\`\`\`javascript
+${'```'}javascript
 // Example corporate theme with brand colors
 const corporateTheme = {
     name: 'acme-corp',
@@ -533,7 +533,7 @@ const corporateTheme = {
 // Register and use
 viewer.registerTheme(corporateTheme);
 viewer.setTheme('acme-corp');
-\`\`\`
+${'```'}
                             `
                         }
                     ]

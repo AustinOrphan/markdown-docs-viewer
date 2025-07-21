@@ -155,7 +155,7 @@ Welcome to the Markdown Documentation Viewer! This is a powerful, flexible tool 
 
 ## Quick Start
 
-\`\`\`javascript
+${'```'}javascript
 const viewer = new MarkdownDocsViewer({
     container: '#docs',
     source: {
@@ -169,7 +169,7 @@ const viewer = new MarkdownDocsViewer({
         ]
     }
 });
-\`\`\`
+${'```'}
 
 That's it! Your documentation viewer is ready to use.
 `
@@ -183,32 +183,32 @@ That's it! Your documentation viewer is ready to use.
 
 ## Via CDN (Recommended for quick start)
 
-\`\`\`html
+${'```'}html
 <!-- Load dependencies -->
 <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
 <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
 
 <!-- Load the viewer -->
 <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
-\`\`\`
+${'```'}
 
 ## Via NPM (For build tools)
 
-\`\`\`bash
+${'```'}bash
 npm install @austinorphan/markdown-docs-viewer marked highlight.js
-\`\`\`
+${'```'}
 
-\`\`\`javascript
+${'```'}javascript
 import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
-\`\`\`
+${'```'}
 
 ## Via ES Modules
 
-\`\`\`html
+${'```'}html
 <script type="module">
 import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.es.js';
 </script>
-\`\`\`
+${'```'}
 `
                             },
                             {
@@ -220,7 +220,7 @@ import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-doc
 
 The viewer accepts a configuration object with many options:
 
-\`\`\`typescript
+${'```'}typescript
 interface DocumentationConfig {
     container: string | HTMLElement;  // Required
     source: DocumentSource;           // Required
@@ -233,13 +233,13 @@ interface DocumentationConfig {
     onDocumentLoad?: (doc: Document) => void;
     onError?: (error: Error) => void;
 }
-\`\`\`
+${'```'}
 
 ## Document Sources
 
 ### Local Documents
 
-\`\`\`javascript
+${'```'}javascript
 source: {
     type: 'local',
     documents: [
@@ -252,22 +252,22 @@ source: {
         }
     ]
 }
-\`\`\`
+${'```'}
 
 ### GitHub Repository
 
-\`\`\`javascript
+${'```'}javascript
 source: {
     type: 'github',
     repository: 'owner/repo',
     branch: 'main',
     docsPath: 'docs'
 }
-\`\`\`
+${'```'}
 
 ### URL-based
 
-\`\`\`javascript
+${'```'}javascript
 source: {
     type: 'url',
     baseUrl: 'https://api.example.com/docs',
@@ -276,7 +276,7 @@ source: {
         { file: '/guide.md' }
     ]
 }
-\`\`\`
+${'```'}
 `
                             }
                         ]
@@ -337,7 +337,7 @@ This demonstrates loading documentation from a GitHub repository.
 
 ## Real Configuration
 
-\`\`\`javascript
+${'```'}javascript
 const viewer = new MarkdownDocsViewer({
     source: {
         type: 'github',
@@ -346,7 +346,7 @@ const viewer = new MarkdownDocsViewer({
         docsPath: 'doc'
     }
 });
-\`\`\`
+${'```'}
 
 ## Features
 
@@ -406,44 +406,44 @@ const viewer = new MarkdownDocsViewer({
 The viewer supports syntax highlighting for many languages:
 
 ## JavaScript
-\`\`\`javascript
+${'```'}javascript
 function fibonacci(n) {
     if (n <= 1) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 console.log(fibonacci(10)); // 55
-\`\`\`
+${'```'}
 
 ## Python
-\`\`\`python
+${'```'}python
 def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n - 1) + fibonacci(n - 2)
 
 print(fibonacci(10))  # 55
-\`\`\`
+${'```'}
 
 ## CSS
-\`\`\`css
+${'```'}css
 .highlight {
     background: linear-gradient(45deg, #ff6b6b, #feca57);
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-\`\`\`
+${'```'}
 
 ## JSON
-\`\`\`json
+${'```'}json
 {
     "name": "@austinorphan/markdown-docs-viewer",
     "version": "1.0.0",
     "description": "A themeable markdown documentation viewer",
     "features": ["theming", "search", "responsive"]
 }
-\`\`\`
+${'```'}
 `
                             },
                             {
@@ -457,7 +457,7 @@ This page demonstrates a custom theme!
 
 ## Creating Custom Themes
 
-\`\`\`javascript
+${'```'}javascript
 import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
 
 const myTheme = createCustomTheme({
@@ -474,7 +474,7 @@ const myTheme = createCustomTheme({
         code: 'Monaco, monospace'
     }
 });
-\`\`\`
+${'```'}
 
 ## Built-in Themes
 
@@ -486,9 +486,9 @@ const myTheme = createCustomTheme({
 
 You can switch themes at runtime:
 
-\`\`\`javascript
+${'```'}javascript
 viewer.setTheme(darkTheme);
-\`\`\`
+${'```'}
 `
                             },
                             {
