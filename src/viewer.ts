@@ -15,6 +15,8 @@ import { DocumentLoader } from './loader';
 import { Router } from './router';
 import {
   MarkdownDocsError,
+  ErrorCode,
+  ErrorSeverity,
   ErrorFactory,
   ErrorBoundary,
   ErrorLogger,
@@ -42,7 +44,8 @@ export class MarkdownDocsViewer {
   constructor(config: DocumentationConfig) {
     try {
       // Initialize logger first
-      this.logger = new ConsoleErrorLogger(process?.env?.NODE_ENV === 'development');
+      const isDevelopment = typeof process !== 'undefined' && process?.env?.NODE_ENV === 'development';
+      this.logger = new ConsoleErrorLogger(isDevelopment);
       
       // Initialize error boundary
       this.errorBoundary = new ErrorBoundary((error) => {
@@ -51,6 +54,9 @@ export class MarkdownDocsViewer {
 
       // Validate and set up configuration
       this.config = this.validateAndMergeConfig(config);
+
+      // Validate required dependencies
+      this.validateDependencies();
       
       // Initialize state
       this.state = {
@@ -91,6 +97,62 @@ export class MarkdownDocsViewer {
       this.handleError(wrappedError);
       throw wrappedError;
     }
+  }
+
+  private validateDependencies(): void {
+    const missing: string[] = [];
+    const warnings: string[] = [];
+
+    // Check for marked
+    if (typeof marked === 'undefined') {
+      missing.push('marked - Markdown parser is required');
+    }
+
+    // Check for highlight.js (optional but recommended)
+    if (typeof hljs === 'undefined') {
+      warnings.push('highlight.js - Syntax highlighting will be disabled');
+    } else {
+      // Check if highlight.js has required methods
+      if (typeof hljs.highlight !== 'function') {
+        warnings.push('highlight.js.highlight - Some highlighting features may not work');
+      }
+      if (typeof hljs.highlightElement !== 'function') {
+        warnings.push('highlight.js.highlightElement - Auto-highlighting will be disabled');
+      }
+    }
+
+    // Check for markedHighlight (optional)
+    if (typeof markedHighlight === 'undefined' && this.config?.render?.syntaxHighlighting) {
+      warnings.push('marked-highlight - Advanced syntax highlighting will be disabled');
+    }
+
+    // Check browser environment
+    if (typeof document === 'undefined') {
+      missing.push('DOM environment - This library requires a browser environment');
+    }
+    if (typeof window === 'undefined') {
+      missing.push('Window object - Browser environment is required');
+    }
+
+    // Log warnings
+    warnings.forEach(warning => {
+      this.logger.warn(`Optional dependency missing: ${warning}`);
+    });
+
+    // Throw error for critical missing dependencies
+    if (missing.length > 0) {
+      const error = new MarkdownDocsError(
+        ErrorCode.MISSING_DEPENDENCY,
+        `Missing required dependencies: ${missing.join(', ')}`,
+        'Some required libraries are not available. Please ensure all dependencies are properly loaded.',
+        ErrorSeverity.CRITICAL,
+        false,
+        { operation: 'validateDependencies', additionalData: { missingDependencies: missing, warnings } }
+      );
+      throw error;
+    }
+
+    this.logger.debug('Dependency validation completed', { warnings: warnings.length });
   }
 
   private validateContainer(container: string | HTMLElement): HTMLElement {
@@ -266,18 +328,29 @@ export class MarkdownDocsViewer {
   private configureMarked(): void {
     try {
       if (this.config.render?.syntaxHighlighting) {
-        marked.use(markedHighlight({
-          langPrefix: 'hljs language-',
-          highlight(code, lang) {
-            try {
-              const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-              return hljs.highlight(code, { language }).value;
-            } catch (error) {
-              // Fallback to plain text if highlighting fails
-              return code;
+        // Check if highlighting dependencies are available
+        if (typeof hljs !== 'undefined' && typeof markedHighlight !== 'undefined') {
+          marked.use(markedHighlight({
+            langPrefix: 'hljs language-',
+            highlight(code, lang) {
+              try {
+                if (typeof hljs.getLanguage === 'function' && typeof hljs.highlight === 'function') {
+                  const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                  return hljs.highlight(code, { language }).value;
+                }
+                return code;
+              } catch (error) {
+                // Fallback to plain text if highlighting fails
+                return code;
+              }
             }
-          }
-        }));
+          }));
+        } else {
+          this.logger.warn('Syntax highlighting enabled but dependencies not available', {
+            hljs: typeof hljs !== 'undefined',
+            markedHighlight: typeof markedHighlight !== 'undefined'
+          });
+        }
       }
 
       marked.setOptions({
@@ -397,7 +470,7 @@ export class MarkdownDocsViewer {
   private renderHeader(): string {
     return `
       <header class="mdv-header">
-        <button class="mdv-mobile-toggle" aria-label="Toggle navigation">☰</button>
+        <button class="mdv-mobile-toggle" aria-label="Toggle navigation"></button>
         ${this.config.logo ? `<img src="${this.config.logo}" alt="Logo" class="mdv-logo">` : ''}
         <h1 class="mdv-title">${this.config.title || 'Documentation'}</h1>
       </header>
@@ -906,22 +979,37 @@ export class MarkdownDocsViewer {
   }
 
   private handleError(error: MarkdownDocsError): void {
-    this.state.error = error;
-    this.state.loading = false;
+    // Check if state is initialized before accessing it
+    if (this.state) {
+      this.state.error = error;
+      this.state.loading = false;
+    }
     
-    // Log the error
-    this.logger.log(error);
+    // Log the error if logger exists
+    if (this.logger) {
+      this.logger.log(error);
+    } else {
+      // Fallback to console if logger not initialized
+      console.error('MarkdownDocsViewer Error:', error);
+    }
     
     // Call user-provided error handler
-    if (this.config.onError) {
+    if (this.config?.onError) {
       try {
         this.config.onError(error);
       } catch (handlerError) {
-        this.logger.error('Error in user error handler', { handlerError });
+        if (this.logger) {
+          this.logger.error('Error in user error handler', { handlerError });
+        } else {
+          console.error('Error in user error handler:', handlerError);
+        }
       }
     }
     
-    this.render();
+    // Only render if state and container exist
+    if (this.state && this.container) {
+      this.render();
+    }
   }
 
   // Public API methods
