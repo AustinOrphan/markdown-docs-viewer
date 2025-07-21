@@ -65,6 +65,8 @@ export interface ErrorContext {
   originalError?: unknown;
   stackTrace?: string;
   additionalData?: Record<string, unknown>;
+  missingDependencies?: string[];
+  warnings?: string[];
 }
 
 export class MarkdownDocsError extends Error {

@@ -15,19 +15,43 @@ A generic, themeable, and highly configurable markdown documentation viewer that
 
 ## Installation
 
+### NPM (Recommended for build tools)
+
 ```bash
-npm install @austinorphan/markdown-docs-viewer
+npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+```
+
+### CDN (Quick start for browsers)
+
+```html
+<!-- Load dependencies -->
+<script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+
+<!-- Load the viewer -->
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+```
+
+### ES Modules (Modern browsers)
+
+```html
+<script type="module">
+import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+</script>
 ```
 
 ## Quick Start
 
-```javascript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+### NPM/Bundler Usage
 
-const viewer = createViewer({
+```javascript
+import { MarkdownDocsViewer, defaultTheme } from '@austinorphan/markdown-docs-viewer';
+
+const viewer = new MarkdownDocsViewer({
   container: '#docs',
+  theme: defaultTheme,
   source: {
-    type: 'content',
+    type: 'local',
     documents: [
       {
         id: 'intro',
@@ -42,6 +66,31 @@ const viewer = createViewer({
     ]
   }
 });
+```
+
+### CDN/Browser Usage
+
+```html
+<div id="docs"></div>
+
+<script>
+const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+
+const viewer = new MarkdownDocsViewer({
+  container: '#docs',
+  theme: defaultTheme,
+  source: {
+    type: 'local',
+    documents: [
+      {
+        id: 'intro',
+        title: 'Introduction', 
+        content: '# Welcome\n\nThis is the introduction.'
+      }
+    ]
+  }
+});
+</script>
 ```
 
 ## Configuration
@@ -474,12 +523,43 @@ monitor.endMeasure('operation');
 const metrics = monitor.getMetrics();
 ```
 
+## Documentation
+
+- 📖 **[Browser Usage Guide](docs/BROWSER_USAGE.md)** - Complete guide for using in browsers
+- 🌐 **[CDN Example](examples/cdn-example.html)** - Working CDN example  
+- 💻 **[Browser Examples](examples/browser-usage.html)** - Multiple usage examples
+- ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - Detailed configuration options
+- 🎨 **[API Reference](docs/API.md)** - Complete API documentation
+
 ## Browser Support
 
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers
+- ✅ Chrome/Edge (latest)
+- ✅ Firefox (latest) 
+- ✅ Safari (latest)
+- ✅ Mobile browsers
+- ✅ ES Modules and UMD support
+
+## Troubleshooting
+
+### Common Issues
+
+**"require is not defined"** - Use UMD build or ES modules in browser:
+```html
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+```
+
+**"Cannot read properties of undefined (reading 'highlightElement')"** - Load highlight.js:
+```html
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+```
+
+**"Container element not found"** - Ensure container exists:
+```javascript
+// Wait for DOM or ensure element exists
+const viewer = new MarkdownDocsViewer({ container: '#existing-element' });
+```
+
+See the [Browser Usage Guide](docs/BROWSER_USAGE.md) for more troubleshooting.
 
 ## License
 

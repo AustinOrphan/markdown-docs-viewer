@@ -1,6 +1,6 @@
 export { MarkdownDocsViewer } from './viewer';
 export * from './types';
-export { defaultTheme, darkTheme } from './themes';
+export { defaultTheme, darkTheme, createCustomTheme } from './themes';
 export { createViewer } from './factory';
 export {
   MarkdownDocsError,
@@ -27,3 +27,5 @@ export { I18nManager, createI18nConfig, defaultMessages, createLocaleMessages } 
 export { TableOfContents, addHeadingIds } from './toc';
 export { AdvancedSearchManager } from './advanced-search';
 export { generatePrintStyles, addPrintUtilities, generatePrintPreview } from './print-styles';
+export { ThemeManager, type ThemePreset } from './theme-manager';
+export { ThemeSwitcher, type ThemeSwitcherOptions } from './theme-switcher';

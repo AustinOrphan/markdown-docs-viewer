@@ -31,6 +31,13 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       position: relative;
       min-height: 60px;
     }
+    
+    .mdv-header-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: ${unit * 2}px;
+    }
 
     .mdv-mobile-toggle {
       display: none;
