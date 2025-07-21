@@ -242,13 +242,14 @@ export class ThemeSwitcher {
         newIndex = currentIndex === 0 ? options.length - 1 : currentIndex - 1;
         break;
       case 'Enter':
-      case ' ':
+      case ' ': {
         e.preventDefault();
         const focusedOption = document.activeElement as HTMLElement;
         if (focusedOption?.dataset.theme) {
           this.selectTheme(focusedOption.dataset.theme);
         }
         return;
+      }
       case 'Escape':
         e.preventDefault();
         this.closeDropdown();
