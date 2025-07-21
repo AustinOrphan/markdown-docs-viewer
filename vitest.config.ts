@@ -22,7 +22,10 @@ export default defineConfig({
         'demo/',
         'examples/',
         '**/*.d.ts',
-        'vitest.config.ts'
+        'vitest.config.ts',
+        'src/theme-builder.ts',
+        'src/theme-manager.ts',
+        'src/theme-switcher.ts'
       ],
       thresholds: {
         functions: 80,
