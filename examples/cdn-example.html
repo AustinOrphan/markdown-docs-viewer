@@ -99,7 +99,7 @@
         const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
         
         // Get the viewer classes from global
-        const { MarkdownDocsViewer, defaultTheme, darkTheme, createCustomTheme } = window.MarkdownDocsViewer;
+        const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
         
         let currentViewer = null;
         let currentTheme = defaultTheme;
@@ -188,11 +188,11 @@ That's it! Your documentation viewer is ready to use.
 
 ${TRIPLE_BACKTICK}html
 <!-- Load dependencies -->
-<script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+<script src="https://unpkg.com/marked@12.0.0/marked.min.js"><\/script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"><\/script>
 
 <!-- Load the viewer -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"><\/script>
 ${TRIPLE_BACKTICK}
 
 ## Via NPM (For build tools)
@@ -210,7 +210,7 @@ ${TRIPLE_BACKTICK}
 ${TRIPLE_BACKTICK}html
 <script type="module">
 import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.es.js';
-</script>
+<\/script>
 ${TRIPLE_BACKTICK}
 `
                             },
@@ -381,14 +381,38 @@ ${TRIPLE_BACKTICK}
             showStatus('info', 'Loading advanced features demo...');
             destroyCurrentViewer();
             
-            const customTheme = createCustomTheme({
+            const customTheme = {
+                name: 'custom-demo',
                 colors: {
                     primary: '#ff6b6b',
+                    secondary: '#4ecdc4',
                     background: '#fefefe',
                     surface: '#fff5f5',
-                    border: '#ffe0e0'
-                }
-            });
+                    text: '#2d3436',
+                    textPrimary: '#2d3436',
+                    textSecondary: '#636e72',
+                    textLight: '#b2bec3',
+                    border: '#ffe0e0',
+                    code: '#6c5ce7',
+                    codeBackground: '#f5f3ff',
+                    link: '#0984e3',
+                    linkHover: '#0063c4',
+                    error: '#d63031',
+                    warning: '#fdcb6e',
+                    success: '#00b894'
+                },
+                fonts: {
+                    body: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    heading: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    code: 'monospace'
+                },
+                spacing: {
+                    unit: 8,
+                    containerMaxWidth: '1200px',
+                    sidebarWidth: '280px'
+                },
+                borderRadius: '0.375rem'
+            };
             
             try {
                 currentViewer = new MarkdownDocsViewer({

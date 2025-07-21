@@ -586,12 +586,39 @@ ${TRIPLE_BACKTICK}
             const secondary = prompt('Secondary color (hex):', '#9c27b0');
             
             if (primary && secondary) {
-                const theme = viewer.createCustomTheme(name, {
+                const customTheme = {
+                    name: name,
                     colors: {
-                        primary,
-                        secondary
-                    }
-                });
+                        primary: primary,
+                        secondary: secondary,
+                        background: '#ffffff',
+                        surface: '#f7f9fc',
+                        text: '#2d3748',
+                        textPrimary: '#1a202c',
+                        textSecondary: '#718096',
+                        textLight: '#a0aec0',
+                        border: '#e2e8f0',
+                        code: primary,
+                        codeBackground: '#f7fafc',
+                        link: primary,
+                        linkHover: secondary,
+                        error: '#e53e3e',
+                        warning: '#dd6b20',
+                        success: '#38a169'
+                    },
+                    fonts: {
+                        body: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        heading: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        code: 'monospace'
+                    },
+                    spacing: {
+                        unit: 8,
+                        containerMaxWidth: '1200px',
+                        sidebarWidth: '280px'
+                    },
+                    borderRadius: '0.375rem'
+                };
+                viewer.registerTheme(customTheme);
                 viewer.setTheme(name);
                 showThemeInfo(`Created and applied theme: ${name}`);
             }
