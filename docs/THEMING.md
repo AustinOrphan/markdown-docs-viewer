@@ -147,6 +147,8 @@ interface DarkModeToggleOptions {
   position?: 'header' | 'footer' | 'floating';
   showLabel?: boolean;   // Show "Light/Dark Mode" text
   compact?: boolean;     // Smaller toggle for tight spaces
+  lightThemeName?: string; // Theme to use for light mode (default: 'default')
+  darkThemeName?: string;  // Theme to use for dark mode (default: 'dark')
   onToggle?: (isDark: boolean, theme: Theme) => void;
 }
 ```
@@ -177,6 +179,17 @@ const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'floating',
   showLabel: false,
   compact: true
+});
+```
+
+#### Custom Theme Names
+```javascript
+// Use different themes for light/dark modes
+const darkModeToggle = new DarkModeToggle(themeManager, {
+  position: 'header',
+  lightThemeName: 'github',      // Use GitHub theme for light mode
+  darkThemeName: 'dracula',      // Use Dracula theme for dark mode
+  showLabel: true
 });
 ```
 

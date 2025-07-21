@@ -438,8 +438,8 @@ const ratio = themeManager.getContrastRatio('#000', '#fff');
 
 // Validate accessibility
 const isAccessible = themeManager.isAccessible(
-  foregroundColor,
-  backgroundColor,
+  '#3b82f6', // Example foreground color (blue)
+  '#ffffff', // Example background color (white)
   'AA' // or 'AAA'
 );
 ```

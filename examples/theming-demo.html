@@ -56,6 +56,22 @@
         #docs-container {
             height: calc(100vh - 200px);
         }
+        .import-dialog {
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .dialog-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .demo-button-secondary {
+            background: #6b7280;
+        }
+        .demo-button-secondary:hover {
+            background: #4b5563;
+        }
     </style>
 </head>
 <body>
@@ -76,12 +92,12 @@
     <div id="docs-container"></div>
 
     <!-- Theme import dialog (hidden by default) -->
-    <dialog id="import-dialog" style="padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
+    <dialog id="import-dialog" class="import-dialog">
         <h3>Import Theme</h3>
         <textarea id="theme-json" rows="10" cols="50" placeholder="Paste theme JSON here..."></textarea>
-        <div style="margin-top: 10px; display: flex; gap: 10px;">
+        <div class="dialog-actions">
             <button onclick="confirmImport()" class="demo-button">Import</button>
-            <button onclick="document.getElementById('import-dialog').close()" class="demo-button" style="background: #6b7280;">Cancel</button>
+            <button onclick="document.getElementById('import-dialog').close()" class="demo-button demo-button-secondary">Cancel</button>
         </div>
     </dialog>
 

@@ -5,10 +5,13 @@ export interface DarkModeToggleOptions {
   position?: 'header' | 'footer' | 'floating';
   showLabel?: boolean;
   compact?: boolean;
+  lightThemeName?: string;
+  darkThemeName?: string;
   onToggle?: (isDark: boolean, theme: Theme) => void;
 }
 
 export class DarkModeToggle {
+  private static instanceCounter = 0;
   private themeManager: ThemeManager;
   private options: DarkModeToggleOptions;
   private container: HTMLElement | null = null;
@@ -20,15 +23,18 @@ export class DarkModeToggle {
       position: 'header',
       showLabel: true,
       compact: false,
+      lightThemeName: 'default',
+      darkThemeName: 'dark',
       ...options
     };
     
     // Determine initial state based on current theme
-    this.isDark = this.themeManager.getCurrentTheme().name === 'dark';
+    const currentThemeName = this.themeManager.getCurrentTheme().name;
+    this.isDark = currentThemeName === this.options.darkThemeName;
   }
   
   public render(): string {
-    const toggleId = `mdv-dark-toggle-${Date.now()}`;
+    const toggleId = `mdv-dark-toggle-${++DarkModeToggle.instanceCounter}`;
     
     return `
       <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''} ${this.options.compact ? 'mdv-dark-toggle-compact' : ''}">
@@ -93,7 +99,8 @@ export class DarkModeToggle {
     // Listen for theme changes from other sources
     document.addEventListener('mdv-theme-changed', (e: Event) => {
       const customEvent = e as CustomEvent;
-      const isDark = customEvent.detail?.theme?.name === 'dark';
+      const themeName = customEvent.detail?.theme?.name;
+      const isDark = themeName === this.options.darkThemeName;
       if (isDark !== this.isDark) {
         this.isDark = isDark;
         this.updateUI();
@@ -102,7 +109,7 @@ export class DarkModeToggle {
   }
   
   public toggle(): void {
-    const newTheme = this.isDark ? 'default' : 'dark';
+    const newTheme = this.isDark ? this.options.lightThemeName! : this.options.darkThemeName!;
     const theme = this.themeManager.setTheme(newTheme);
     
     if (theme) {
