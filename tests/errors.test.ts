@@ -200,28 +200,35 @@ describe('Error Handling System', () => {
         ErrorSeverity.MEDIUM,
         true
       )
-      const operation = vi.fn().mockRejectedValue(error)
+      const operation = vi.fn()
       
-      const retryPromise = withRetry(operation, { maxAttempts: 2 })
+      let attempts = 0
+      operation.mockImplementation(() => {
+        attempts++
+        return Promise.reject(error)
+      })
       
-      // Advance timers for retries
+      const promise = withRetry(operation, { maxAttempts: 2 })
+      
+      // Advance timers to handle retries
       await vi.advanceTimersByTimeAsync(2000)
       
-      await expect(retryPromise).rejects.toThrow(error)
-      expect(operation).toHaveBeenCalledTimes(2)
+      await expect(promise).rejects.toThrow(error)
+      expect(attempts).toBe(2)
     })
 
     it('should handle non-MarkdownDocsError exceptions', async () => {
       const error = new Error('Generic error')
-      const operation = vi.fn().mockRejectedValue(error)
+      const operation = vi.fn()
       
-      const retryPromise = withRetry(operation)
+      let attempts = 0
+      operation.mockImplementation(() => {
+        attempts++
+        return Promise.reject(error)
+      })
       
-      // Even though this won't retry, we need to advance timers for the initial attempt
-      await vi.runAllTimersAsync()
-      
-      await expect(retryPromise).rejects.toThrow(error)
-      expect(operation).toHaveBeenCalledTimes(1) // Should not retry generic errors
+      await expect(withRetry(operation)).rejects.toThrow(error)
+      expect(attempts).toBe(1) // Should not retry generic errors
     })
 
     it('should apply exponential backoff delays', async () => {
@@ -232,19 +239,26 @@ describe('Error Handling System', () => {
         ErrorSeverity.MEDIUM,
         true
       )
-      const operation = vi.fn().mockRejectedValue(error)
+      const operation = vi.fn()
       
-      const retryPromise = withRetry(operation, { 
+      let attempts = 0
+      operation.mockImplementation(() => {
+        attempts++
+        return Promise.reject(error)
+      })
+      
+      const promise = withRetry(operation, { 
         maxAttempts: 3, 
         baseDelay: 100,
         exponentialBackoff: true 
-      });
+      })
       
-      // Advance timers to trigger all retry delays
-      await vi.advanceTimersByTimeAsync(1000);
+      // Advance timers to handle all retries with exponential backoff
+      // First retry: 100ms, Second retry: 200ms, Third attempt happens
+      await vi.advanceTimersByTimeAsync(500)
       
-      await expect(retryPromise).rejects.toThrow()
-      expect(operation).toHaveBeenCalledTimes(3)
+      await expect(promise).rejects.toThrow()
+      expect(attempts).toBe(3)
     })
   })
 

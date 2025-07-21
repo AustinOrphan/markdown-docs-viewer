@@ -92,19 +92,22 @@ export class TableOfContents {
     const stack: TOCItem[] = [];
 
     for (const heading of this.headings) {
-      // Remove items from stack that are same or lower level
+      // Find the appropriate parent for this heading
+      // Remove items from stack until we find a heading with lower level
       while (stack.length > 0 && stack[stack.length - 1].level >= heading.level) {
         stack.pop();
       }
 
       if (stack.length === 0) {
-        // Top level heading
+        // No parent found, this is a top level heading
         tree.push(heading);
       } else {
-        // Child heading
-        stack[stack.length - 1].children.push(heading);
+        // Add as child to the last item in stack (which has lower level)
+        const parent = stack[stack.length - 1];
+        parent.children.push(heading);
       }
 
+      // Add this heading to the stack for potential future children
       stack.push(heading);
     }
 

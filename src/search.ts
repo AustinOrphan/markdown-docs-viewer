@@ -224,13 +224,14 @@ export class SearchManager {
   }
 
   private highlightQuery(text: string, query: string): string {
-    if (!query || this.options.caseSensitive === false) {
-      const regex = new RegExp(`(${this.escapeRegex(query)})`, 'gi');
-      return this.escapeHtml(text).replace(regex, '<mark>$1</mark>');
-    } else {
-      const regex = new RegExp(`(${this.escapeRegex(query)})`, 'g');
-      return this.escapeHtml(text).replace(regex, '<mark>$1</mark>');
+    if (!query) {
+      return this.escapeHtml(text);
     }
+    
+    // Default to case-insensitive if not explicitly set to true
+    const flags = this.options.caseSensitive === true ? 'g' : 'gi';
+    const regex = new RegExp(`(${this.escapeRegex(query)})`, flags);
+    return this.escapeHtml(text).replace(regex, '<mark>$1</mark>');
   }
 
   private showResults(): void {

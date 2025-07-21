@@ -118,7 +118,6 @@ describe('Performance Optimizations', () => {
 
     afterEach(() => {
       vi.restoreAllMocks();
-      vi.unstubAllGlobals();
     });
 
     it('should function as LRU cache when localStorage is available', () => {
@@ -356,15 +355,15 @@ describe('Performance Optimizations', () => {
         disconnect: vi.fn()
       };
       
-      vi.stubGlobal('IntersectionObserver', vi.fn().mockImplementation((callback) => {
+      // IntersectionObserver is already mocked in setup.ts, so we'll override the implementation
+      vi.mocked(IntersectionObserver).mockImplementation((callback) => {
         mockObserver.callback = callback;
         return mockObserver;
-      }));
+      });
     });
 
     afterEach(() => {
       vi.restoreAllMocks();
-      vi.unstubAllGlobals();
     });
 
     it('should observe elements for intersection', () => {
@@ -533,7 +532,6 @@ describe('Performance Optimizations', () => {
 
     afterEach(() => {
       vi.restoreAllMocks();
-      vi.unstubAllGlobals();
     });
 
     it('should measure timing metrics', () => {
