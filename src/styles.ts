@@ -29,6 +29,7 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       align-items: center;
       gap: ${unit * 2}px;
       position: relative;
+      min-height: 60px;
     }
     
     .mdv-header-actions {
@@ -40,12 +41,26 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
 
     .mdv-mobile-toggle {
       display: none;
-      background: none;
+      background: ${colors.primary};
+      color: white;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       cursor: pointer;
-      color: ${colors.textPrimary};
-      padding: ${unit}px;
+      padding: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Ensure hamburger icon is visible */
+    .mdv-mobile-toggle::before {
+      content: '☰';
+      display: block;
+      line-height: 1;
     }
 
     .mdv-logo {
