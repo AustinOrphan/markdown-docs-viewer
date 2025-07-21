@@ -90,7 +90,7 @@ describe('DocumentLoader', () => {
   describe('Constructor', () => {
     it('should initialize with default configuration', () => {
       const source = createSource('local')
-      const loader = new DocumentLoader(source)
+      new DocumentLoader(source)
       
       expect(PersistentCache).toHaveBeenCalledWith(50, 'mdv-cache-local')
       expect(PerformanceMonitor).toHaveBeenCalled()
@@ -99,7 +99,7 @@ describe('DocumentLoader', () => {
 
     it('should initialize with custom cache size', () => {
       const source = createSource('local')
-      const loader = new DocumentLoader(source, {}, undefined, 100)
+      new DocumentLoader(source, {}, undefined, 100)
       
       expect(PersistentCache).toHaveBeenCalledWith(100, 'mdv-cache-local')
     })

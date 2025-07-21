@@ -24,7 +24,6 @@ Object.defineProperty(global, 'IntersectionObserver', {
 })
 
 // Handle unhandled promise rejections in tests to prevent CI failures
-const originalUnhandledRejection = process.listeners('unhandledRejection')
 process.removeAllListeners('unhandledRejection')
 process.on('unhandledRejection', (reason) => {
   // Only log if it's not an expected test error
