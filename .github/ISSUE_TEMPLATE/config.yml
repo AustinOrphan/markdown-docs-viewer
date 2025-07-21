@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/AustinOrphan/markdown-docs-viewer/discussions/new?category=q-a
+    about: Ask questions and discuss with other community members
+  - name: Documentation
+    url: https://github.com/AustinOrphan/markdown-docs-viewer#readme
+    about: Check out our documentation for usage examples and API reference
+  - name: npm Package
+    url: https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer
+    about: View the package on npm

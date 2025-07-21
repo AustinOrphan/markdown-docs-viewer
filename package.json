@@ -1,11 +1,18 @@
 {
-  "name": "@yourusername/markdown-docs-viewer",
+  "name": "@austinorphan/markdown-docs-viewer",
   "version": "1.0.0",
   "description": "A generic, themeable markdown documentation viewer",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/index.umd.cjs",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist",
     "themes"
@@ -15,7 +22,15 @@
     "build": "vite build && tsc",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "typecheck": "tsc --noEmit",
+    "demo:dev": "cd demo && vite",
+    "demo:build": "cd demo && vite build",
+    "demo:preview": "cd demo && vite preview"
   },
   "keywords": [
     "markdown",
@@ -23,7 +38,7 @@
     "viewer",
     "docs"
   ],
-  "author": "",
+  "author": "Austin Orphan <austin@austinorphan.com>",
   "license": "MIT",
   "peerDependencies": {
     "marked": ">=12.0.0",
@@ -32,6 +47,13 @@
   "devDependencies": {
     "@types/marked": "^6.0.0",
     "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jsdom": "^24.0.0",
     "typescript": "^5.0.0",
     "vite": "^5.0.0",
     "vitest": "^1.0.0"
@@ -43,10 +65,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/markdown-docs-viewer.git"
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/markdown-docs-viewer/issues"
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer/issues"
   },
-  "homepage": "https://github.com/yourusername/markdown-docs-viewer#readme"
+  "homepage": "https://github.com/AustinOrphan/markdown-docs-viewer#readme"
 }

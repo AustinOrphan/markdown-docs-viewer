@@ -4,13 +4,15 @@ export class Router {
   private mode: RoutingMode;
   private onRouteChange: (docId: string) => void;
   private currentRoute: string = '';
+  private boundHashChangeHandler: (() => void) | null = null;
 
   constructor(mode: RoutingMode, onRouteChange: (docId: string) => void) {
     this.mode = mode;
     this.onRouteChange = onRouteChange;
     
     if (mode === 'hash') {
-      window.addEventListener('hashchange', this.handleHashChange.bind(this));
+      this.boundHashChangeHandler = this.handleHashChange.bind(this);
+      window.addEventListener('hashchange', this.boundHashChangeHandler);
       this.handleHashChange();
     }
   }
@@ -39,8 +41,9 @@ export class Router {
   }
 
   destroy(): void {
-    if (this.mode === 'hash') {
-      window.removeEventListener('hashchange', this.handleHashChange.bind(this));
+    if (this.mode === 'hash' && this.boundHashChangeHandler) {
+      window.removeEventListener('hashchange', this.boundHashChangeHandler);
+      this.boundHashChangeHandler = null;
     }
   }
 }

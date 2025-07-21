@@ -1,0 +1,212 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.0, 1.0.0-beta.1)'
+        required: true
+        type: string
+      tag:
+        description: 'npm tag (latest, beta, next)'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - beta
+          - next
+          - canary
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine version and tag
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}" # Remove 'v' prefix if present
+            
+            # Determine tag based on version
+            if [[ "$VERSION" == *"-beta"* ]]; then
+              TAG="beta"
+            elif [[ "$VERSION" == *"-alpha"* ]]; then
+              TAG="alpha"
+            elif [[ "$VERSION" == *"-rc"* ]]; then
+              TAG="next"
+            else
+              TAG="latest"
+            fi
+          else
+            VERSION="${{ github.event.inputs.version }}"
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Publishing version $VERSION with tag $TAG"
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            echo "Expected format: X.Y.Z or X.Y.Z-tag.N"
+            exit 1
+          fi
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build library
+        run: npm run build
+
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    environment: npm-publish
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Update package version
+        run: |
+          npm version ${{ needs.validate.outputs.version }} --no-git-tag-version
+          
+          # Update the version in the source file if needed
+          if [ -f "src/version.ts" ]; then
+            echo "export const VERSION = '${{ needs.validate.outputs.version }}';" > src/version.ts
+          fi
+
+      - name: Create npm package
+        run: npm pack
+
+      - name: Dry run publish
+        run: |
+          npm publish --dry-run *.tgz
+          echo "Dry run successful"
+
+      - name: Publish to npm
+        run: |
+          npm publish *.tgz --tag ${{ needs.validate.outputs.tag }} --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'npm',
+              description: `npm@${{ needs.validate.outputs.version }}`,
+              production_environment: ${{ needs.validate.outputs.tag == 'latest' }},
+              required_contexts: []
+            });
+            
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: 'success',
+              environment_url: `https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer/v/${{ needs.validate.outputs.version }}`,
+              description: 'Published to npm'
+            });
+
+  verify:
+    name: Verify Publication
+    runs-on: ubuntu-latest
+    needs: [validate, publish]
+    
+    steps:
+      - name: Wait for npm propagation
+        run: sleep 30
+
+      - name: Verify package on npm
+        run: |
+          npm view @austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}
+          
+          # Test installation
+          mkdir test-install
+          cd test-install
+          npm init -y
+          npm install @austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}
+          
+          # Verify the package works
+          node -e "const viewer = require('@austinorphan/markdown-docs-viewer'); console.log('Package verified:', viewer);"
+
+      - name: Update release notes
+        if: github.event_name == 'release'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const release = await github.rest.repos.getRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id
+            });
+            
+            const npmLink = `\n\n### npm Package\n\n📦 [@austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}](https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer/v/${{ needs.validate.outputs.version }})`;
+            
+            if (!release.data.body.includes('npm Package')) {
+              await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: context.payload.release.id,
+                body: release.data.body + npmLink
+              });
+            }

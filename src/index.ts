@@ -2,3 +2,28 @@ export { MarkdownDocsViewer } from './viewer';
 export * from './types';
 export { defaultTheme, darkTheme } from './themes';
 export { createViewer } from './factory';
+export {
+  MarkdownDocsError,
+  ErrorCode,
+  ErrorSeverity,
+  ErrorFactory,
+  withRetry,
+  ErrorBoundary,
+  ConsoleErrorLogger
+} from './errors';
+export {
+  LRUCache,
+  PersistentCache,
+  SearchIndex,
+  debounce,
+  throttle,
+  LazyLoader,
+  MemoryManager,
+  PerformanceMonitor
+} from './performance';
+export { SearchManager } from './search';
+export { ExportManager, createExportOptions } from './export';
+export { I18nManager, createI18nConfig, defaultMessages, createLocaleMessages } from './i18n';
+export { TableOfContents, addHeadingIds } from './toc';
+export { AdvancedSearchManager } from './advanced-search';
+export { generatePrintStyles, addPrintUtilities, generatePrintPreview } from './print-styles';

@@ -1,6 +1,6 @@
 import { Theme, DocumentationConfig } from './types';
 
-export function generateStyles(theme: Theme, config: DocumentationConfig): string {
+export function generateStyles(theme: Theme, _config: DocumentationConfig): string {
   const { colors, fonts, spacing, borderRadius } = theme;
   const unit = spacing.unit;
 
@@ -358,34 +358,7 @@ export function generateStyles(theme: Theme, config: DocumentationConfig): strin
       font-size: 0.875rem;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .mdv-mobile-toggle {
-        display: block;
-      }
-
-      .mdv-sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100vh;
-        z-index: 1000;
-        transform: translateX(-100%);
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .mdv-sidebar.open {
-        transform: translateX(0);
-      }
-
-      .mdv-document {
-        padding: ${unit * 2}px;
-      }
-
-      .mdv-document-title {
-        font-size: 2rem;
-      }
-    }
+    /* Responsive styles will be injected by mobile-styles module */
 
     /* Scrollbar */
     .mdv-navigation::-webkit-scrollbar,

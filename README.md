@@ -16,13 +16,13 @@ A generic, themeable, and highly configurable markdown documentation viewer that
 ## Installation
 
 ```bash
-npm install @yourusername/markdown-docs-viewer
+npm install @austinorphan/markdown-docs-viewer
 ```
 
 ## Quick Start
 
 ```javascript
-import { createViewer } from '@yourusername/markdown-docs-viewer';
+import { createViewer } from '@austinorphan/markdown-docs-viewer';
 
 const viewer = createViewer({
   container: '#docs',
@@ -114,7 +114,7 @@ const viewer = createViewer({
 
 #### Using Built-in Themes
 ```javascript
-import { createViewer, darkTheme } from '@yourusername/markdown-docs-viewer';
+import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
 
 const viewer = createViewer({
   container: '#docs',
@@ -125,7 +125,7 @@ const viewer = createViewer({
 
 #### Custom Theme
 ```javascript
-import { createCustomTheme } from '@yourusername/markdown-docs-viewer';
+import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
 
 const myTheme = createCustomTheme({
   name: 'my-theme',
@@ -295,6 +295,183 @@ createViewer({
     collapsible: true
   }
 });
+```
+
+## Advanced Features
+
+### Export Documentation
+
+Export your documentation to PDF or HTML:
+
+```javascript
+import { ExportManager, createExportOptions } from '@austinorphan/markdown-docs-viewer';
+
+const exportManager = new ExportManager(viewer);
+
+// Export to PDF (requires html2pdf.js)
+const pdfOptions = createExportOptions({
+  format: 'pdf',
+  filename: 'documentation.pdf',
+  includeTheme: true,
+  includeTOC: true,
+  pdfOptions: {
+    format: 'a4',
+    orientation: 'portrait'
+  }
+});
+
+const pdfBlob = await exportManager.export(pdfOptions);
+
+// Export to HTML
+const htmlOptions = createExportOptions({
+  format: 'html',
+  includeTheme: true,
+  embedAssets: true
+});
+
+const htmlString = await exportManager.export(htmlOptions);
+```
+
+### Internationalization (i18n)
+
+Add multi-language support:
+
+```javascript
+import { I18nManager, createI18nConfig } from '@austinorphan/markdown-docs-viewer';
+
+const i18nConfig = createI18nConfig({
+  locale: 'es',
+  fallbackLocale: 'en',
+  messages: {
+    es: {
+      app: {
+        title: 'Documentación',
+        loading: 'Cargando...',
+        welcome: 'Bienvenido a la Documentación'
+      }
+    }
+  }
+});
+
+const i18n = new I18nManager(i18nConfig);
+
+// Use in your app
+const title = i18n.t('app.title');
+i18n.setLocale('en'); // Switch languages
+```
+
+### Table of Contents
+
+Auto-generate table of contents:
+
+```javascript
+import { TableOfContents } from '@austinorphan/markdown-docs-viewer';
+
+const toc = new TableOfContents({
+  enabled: true,
+  maxDepth: 3,
+  sticky: true,
+  scrollSpy: true,
+  position: 'right'
+});
+
+// Generate TOC from markdown
+const tocItems = toc.generate(markdownContent);
+const tocHtml = toc.render();
+
+// Initialize scroll spy
+toc.initScrollSpy(contentContainer);
+```
+
+### Advanced Search
+
+Enhanced search with filters and highlighting:
+
+```javascript
+import { AdvancedSearchManager } from '@austinorphan/markdown-docs-viewer';
+
+const searchManager = new AdvancedSearchManager(documents, {
+  highlighting: true,
+  searchHistory: true,
+  filters: {
+    categories: ['Guides', 'API'],
+    tags: ['javascript', 'typescript'],
+    dateRange: {
+      from: new Date('2024-01-01'),
+      to: new Date()
+    }
+  }
+});
+
+// Search with filters
+const results = searchManager.search('async functions');
+
+// Get search suggestions
+const suggestions = searchManager.getSuggestions('java');
+
+// Access search history
+const history = searchManager.getSearchHistory();
+```
+
+### Print Styles
+
+Optimized printing support:
+
+```javascript
+import { generatePrintStyles, addPrintUtilities } from '@austinorphan/markdown-docs-viewer';
+
+// Add print styles to your theme
+const printStyles = generatePrintStyles(theme);
+
+// Add print utilities (print button, page breaks)
+addPrintUtilities(container);
+
+// Generate print preview
+const preview = generatePrintPreview(content, theme);
+```
+
+## Performance Features
+
+### Caching
+
+```javascript
+import { LRUCache, PersistentCache } from '@austinorphan/markdown-docs-viewer';
+
+// LRU Cache for in-memory caching
+const cache = new LRUCache(50); // 50 items max
+cache.set('key', 'value');
+
+// Persistent cache with localStorage
+const persistentCache = new PersistentCache('docs-cache');
+persistentCache.set('key', 'value');
+```
+
+### Lazy Loading
+
+```javascript
+import { LazyLoader } from '@austinorphan/markdown-docs-viewer';
+
+const lazyLoader = new LazyLoader({
+  threshold: 0.1,
+  rootMargin: '50px'
+});
+
+lazyLoader.observe(element, () => {
+  // Load content when element is visible
+});
+```
+
+### Performance Monitoring
+
+```javascript
+import { PerformanceMonitor } from '@austinorphan/markdown-docs-viewer';
+
+const monitor = PerformanceMonitor.getInstance();
+monitor.startMeasure('operation');
+// ... do work
+monitor.endMeasure('operation');
+
+const metrics = monitor.getMetrics();
 ```
 
 ## Browser Support

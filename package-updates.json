@@ -1,0 +1,163 @@
+{
+  "package.json": {
+    "name": "@yourusername/markdown-docs-viewer",
+    "version": "1.0.0",
+    "description": "A generic, themeable markdown documentation viewer for web applications",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.es.js",
+    "types": "dist/index.d.ts",
+    "files": [
+      "dist",
+      "themes",
+      "README.md",
+      "LICENSE"
+    ],
+    "scripts": {
+      "dev": "vite dev --host",
+      "build": "vite build && tsc",
+      "preview": "vite preview",
+      "prepublishOnly": "npm run build",
+      "test": "vitest",
+      "test:ui": "vitest --ui",
+      "test:coverage": "vitest --coverage",
+      "test:watch": "vitest --watch",
+      "demo": "cd demo && npx http-server -p 3000 -c-1",
+      "lint": "tsc --noEmit",
+      "format": "prettier --write \"src/**/*.{ts,js}\"",
+      "clean": "rm -rf dist"
+    },
+    "keywords": [
+      "markdown",
+      "documentation",
+      "viewer",
+      "docs",
+      "typescript",
+      "responsive",
+      "themeable",
+      "component",
+      "web-component",
+      "spa",
+      "static-site",
+      "github-pages",
+      "api-docs",
+      "technical-writing"
+    ],
+    "author": {
+      "name": "[TO_BE_REPLACED]",
+      "email": "[TO_BE_REPLACED]",
+      "url": "[TO_BE_REPLACED]"
+    },
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/[USERNAME]/markdown-docs-viewer.git"
+    },
+    "bugs": {
+      "url": "https://github.com/[USERNAME]/markdown-docs-viewer/issues"
+    },
+    "homepage": "https://github.com/[USERNAME]/markdown-docs-viewer#readme",
+    "engines": {
+      "node": ">=16.0.0"
+    },
+    "browserslist": [
+      "> 1%",
+      "last 2 versions",
+      "not dead",
+      "not ie <= 11"
+    ],
+    "peerDependencies": {
+      "marked": ">=12.0.0",
+      "highlight.js": ">=11.0.0"
+    },
+    "devDependencies": {
+      "@types/marked": "^6.0.0",
+      "@types/node": "^20.0.0",
+      "@vitest/ui": "^1.6.0",
+      "c8": "^8.0.1",
+      "happy-dom": "^12.10.3",
+      "http-server": "^14.1.1",
+      "prettier": "^3.0.0",
+      "typescript": "^5.0.0",
+      "vite": "^5.0.0",
+      "vitest": "^1.0.0"
+    },
+    "dependencies": {
+      "marked": "^12.0.0",
+      "marked-highlight": "^2.1.0",
+      "highlight.js": "^11.9.0"
+    }
+  },
+  "demo/package.json": {
+    "name": "markdown-docs-viewer-demo",
+    "version": "1.0.0",
+    "description": "Demo for Markdown Documentation Viewer",
+    "private": true,
+    "type": "module",
+    "scripts": {
+      "start": "npx http-server -p 3000 -c-1",
+      "build": "npm run build --prefix .."
+    },
+    "devDependencies": {
+      "http-server": "^14.1.1"
+    }
+  },
+  "vitest.config.ts": {
+    "imports": [
+      "defineConfig from 'vitest/config'"
+    ],
+    "config": {
+      "test": {
+        "globals": true,
+        "environment": "happy-dom",
+        "setupFiles": ["./tests/setup.ts"],
+        "coverage": {
+          "provider": "v8",
+          "reporter": ["text", "json", "html"],
+          "exclude": [
+            "node_modules/",
+            "tests/",
+            "demo/",
+            "dist/",
+            "**/*.d.ts",
+            "**/*.config.*"
+          ],
+          "thresholds": {
+            "global": {
+              "branches": 80,
+              "functions": 80,
+              "lines": 80,
+              "statements": 80
+            }
+          }
+        }
+      }
+    }
+  },
+  ".npmignore": [
+    "# Development files",
+    "src/",
+    "tests/",
+    "demo/",
+    "examples/",
+    "docs/",
+    "",
+    "# Config files",
+    "tsconfig.json",
+    "vite.config.ts",
+    "vitest.config.ts",
+    ".gitignore",
+    "",
+    "# CI/CD",
+    ".github/",
+    "",
+    "# Documentation (keep README)",
+    "*.md",
+    "!README.md",
+    "",
+    "# Misc",
+    ".DS_Store",
+    "*.log",
+    "coverage/"
+  ]
+}
