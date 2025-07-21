@@ -7,7 +7,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'MarkdownDocsViewer',
       formats: ['es', 'umd'],
-      fileName: (format) => `index.${format}.js`
+      fileName: (format) => format === 'umd' ? 'index.umd.cjs' : `index.${format}.js`
     },
     rollupOptions: {
       external: ['marked', 'marked-highlight', 'highlight.js'],
