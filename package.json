@@ -42,6 +42,7 @@
   "license": "MIT",
   "peerDependencies": {
     "marked": ">=12.0.0",
+    "marked-highlight": ">=2.0.0",
     "highlight.js": ">=11.0.0"
   },
   "devDependencies": {
@@ -53,15 +54,13 @@
     "@vitest/ui": "^1.0.0",
     "@testing-library/jest-dom": "^6.0.0",
     "eslint": "^8.0.0",
+    "highlight.js": "^11.9.0",
     "jsdom": "^24.0.0",
+    "marked": "^12.0.0",
+    "marked-highlight": "^2.1.0",
     "typescript": "^5.0.0",
     "vite": "^5.0.0",
     "vitest": "^1.0.0"
-  },
-  "dependencies": {
-    "marked": "^12.0.0",
-    "marked-highlight": "^2.1.0",
-    "highlight.js": "^11.9.0"
   },
   "repository": {
     "type": "git",
