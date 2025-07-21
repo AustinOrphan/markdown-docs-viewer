@@ -324,7 +324,7 @@ function showErrorMessage(message) {
                 // For demo purposes, we'll use the UMD build
                 const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
                 
-                const viewer = new MarkdownDocsViewer({
+                new MarkdownDocsViewer({
                     container: '#esm-container',
                     title: 'ES Module Example',
                     theme: defaultTheme,
@@ -364,7 +364,7 @@ ${TRIPLE_BACKTICK}
                 
                 const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
                 
-                const viewer = new MarkdownDocsViewer({
+                new MarkdownDocsViewer({
                     container: '#umd-container',
                     title: 'UMD Example',
                     theme: darkTheme,
