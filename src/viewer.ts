@@ -518,10 +518,8 @@ export class MarkdownDocsViewer {
   }
 
   private renderHeader(): string {
-    const showThemeSwitcher = this.config.theme?.switcherPosition === 'header' || 
-                            (!this.config.theme?.switcherPosition && this.config.theme !== undefined);
-    const showDarkToggle = this.config.theme?.darkTogglePosition === 'header' || 
-                         (!this.config.theme?.darkTogglePosition && this.config.theme !== undefined);
+    const showThemeSwitcher = (this.config.theme?.switcherPosition || 'header') === 'header';
+    const showDarkToggle = (this.config.theme?.darkTogglePosition || 'header') === 'header';
     
     const headerActions = [];
     if (showDarkToggle) {
