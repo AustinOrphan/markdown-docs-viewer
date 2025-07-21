@@ -107,17 +107,6 @@ describe('Index Exports', () => {
     // Check that types namespace exists (they won't be defined at runtime but we can check the exports object)
     const exportKeys = Object.keys(exports);
     
-    // Common type exports that might be included
-    const expectedTypes = [
-      'DocumentationConfig',
-      'Document', 
-      'Theme',
-      'ViewerState',
-      'SearchOptions',
-      'NavigationOptions',
-      'RenderOptions'
-    ];
-    
     // Since types are erased at runtime, we can't directly check them
     // But we can ensure the module exports what we expect
     expect(exportKeys.length).toBeGreaterThan(20); // We have many exports
