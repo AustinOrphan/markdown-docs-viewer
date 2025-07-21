@@ -18,11 +18,11 @@ The Markdown Docs Viewer includes a comprehensive theming system that allows you
 ### Using a Built-in Theme
 
 ```javascript
-import { MarkdownDocsViewer } from 'markdown-docs-viewer';
+import { MarkdownDocsViewer, darkTheme } from 'markdown-docs-viewer';
 
 const viewer = new MarkdownDocsViewer({
     container: '#docs',
-    theme: 'dark', // Use the built-in dark theme
+    theme: darkTheme, // Use the built-in dark theme
     source: {
         type: 'local',
         documents: [/* ... */]

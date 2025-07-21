@@ -432,7 +432,9 @@ export class ThemeManager {
     
     const requiredColors = [
       'primary', 'secondary', 'background', 'surface', 
-      'text', 'textPrimary', 'textSecondary', 'border'
+      'text', 'textPrimary', 'textSecondary', 'textLight', 'border',
+      'code', 'codeBackground', 'link', 'linkHover', 
+      'error', 'warning', 'success'
     ];
     
     for (const color of requiredColors) {

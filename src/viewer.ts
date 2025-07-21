@@ -1077,8 +1077,16 @@ export class MarkdownDocsViewer {
         this.config.theme = themeObj;
       }
     } else {
+      // For theme objects, still use ThemeManager for consistent state management
+      if (theme.name && this.themeManager.getTheme(theme.name)) {
+        this.themeManager.setTheme(theme.name);
+      } else {
+        // Create a temporary theme if not registered
+        const tempThemeName = `temp-${Date.now()}`;
+        this.themeManager.registerTheme({ ...theme, name: tempThemeName });
+        this.themeManager.setTheme(tempThemeName);
+      }
       this.config.theme = theme;
-      this.applyTheme(theme);
     }
   }
   
