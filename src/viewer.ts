@@ -15,6 +15,8 @@ import { DocumentLoader } from './loader';
 import { Router } from './router';
 import {
   MarkdownDocsError,
+  ErrorCode,
+  ErrorSeverity,
   ErrorFactory,
   ErrorBoundary,
   ErrorLogger,
@@ -50,11 +52,11 @@ export class MarkdownDocsViewer {
         this.handleError(error);
       });
 
-      // Validate required dependencies
-      this.validateDependencies();
-
       // Validate and set up configuration
       this.config = this.validateAndMergeConfig(config);
+
+      // Validate required dependencies
+      this.validateDependencies();
       
       // Initialize state
       this.state = {
@@ -140,12 +142,12 @@ export class MarkdownDocsViewer {
     // Throw error for critical missing dependencies
     if (missing.length > 0) {
       const error = new MarkdownDocsError(
-        'INVALID_CONFIG' as any,
+        ErrorCode.MISSING_DEPENDENCY,
         `Missing required dependencies: ${missing.join(', ')}`,
         'Some required libraries are not available. Please ensure all dependencies are properly loaded.',
-        'critical' as any,
+        ErrorSeverity.CRITICAL,
         false,
-        { missingDependencies: missing, warnings }
+        { operation: 'validateDependencies', additionalData: { missingDependencies: missing, warnings } }
       );
       throw error;
     }
