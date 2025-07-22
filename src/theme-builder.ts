@@ -99,7 +99,7 @@ export class ThemeBuilder {
     };
 
     this.originalTheme = themeManager.getCurrentTheme();
-    this.currentTheme = { ...this.originalTheme };
+    this.currentTheme = this.deepCloneTheme(this.originalTheme);
   }
 
   public render(): string {
@@ -405,22 +405,27 @@ export class ThemeBuilder {
 
     // Color inputs
     this.colorInputs.forEach(input => {
-      const colorInput = this.container!.querySelector(`#color-${input.key}`) as HTMLInputElement;
-      const textInput = this.container!.querySelector(
-        `#color-text-${input.key}`
-      ) as HTMLInputElement;
+      if (!this.container) return;
 
-      colorInput?.addEventListener('input', e => {
+      const colorInput = this.container.querySelector<HTMLInputElement>(`#color-${input.key}`);
+      const textInput = this.container.querySelector<HTMLInputElement>(`#color-text-${input.key}`);
+
+      if (!colorInput || !textInput) {
+        console.warn(`Color inputs not found for: ${input.key}`);
+        return;
+      }
+
+      colorInput.addEventListener('input', e => {
         const value = (e.target as HTMLInputElement).value;
         this.updateColor(input.key, value);
-        if (textInput) textInput.value = value;
+        textInput.value = value;
       });
 
-      textInput?.addEventListener('input', e => {
+      textInput.addEventListener('input', e => {
         const value = (e.target as HTMLInputElement).value;
         if (this.isValidColor(value)) {
           this.updateColor(input.key, value);
-          if (colorInput) colorInput.value = value;
+          colorInput.value = value;
         }
       });
     });
@@ -428,8 +433,14 @@ export class ThemeBuilder {
     // Font inputs
     const fontKeys: (keyof ThemeFonts)[] = ['body', 'heading', 'code'];
     fontKeys.forEach(key => {
-      const input = this.container!.querySelector(`#font-${key}`) as HTMLInputElement;
-      input?.addEventListener('input', e => {
+      if (!this.container) return;
+
+      const input = this.container.querySelector<HTMLInputElement>(`#font-${key}`);
+      if (!input) {
+        console.warn(`Font input not found: font-${key}`);
+        return;
+      }
+      input.addEventListener('input', e => {
         this.updateFont(key, (e.target as HTMLInputElement).value);
       });
     });
@@ -437,8 +448,14 @@ export class ThemeBuilder {
     // Spacing inputs
     const spacingKeys: (keyof ThemeSpacing)[] = ['unit', 'containerMaxWidth', 'sidebarWidth'];
     spacingKeys.forEach(key => {
-      const input = this.container!.querySelector(`#spacing-${key}`) as HTMLInputElement;
-      input?.addEventListener('input', e => {
+      if (!this.container) return;
+
+      const input = this.container.querySelector<HTMLInputElement>(`#spacing-${key}`);
+      if (!input) {
+        console.warn(`Spacing input not found: spacing-${key}`);
+        return;
+      }
+      input.addEventListener('input', e => {
         const value =
           key === 'unit'
             ? parseInt((e.target as HTMLInputElement).value)
@@ -448,23 +465,29 @@ export class ThemeBuilder {
     });
 
     // Border radius
-    const borderRadiusInput = this.container.querySelector('#border-radius') as HTMLInputElement;
-    borderRadiusInput?.addEventListener('input', e => {
-      this.currentTheme.borderRadius = (e.target as HTMLInputElement).value;
-      this.updatePreview();
-    });
+    const borderRadiusInput = this.container.querySelector<HTMLInputElement>('#border-radius');
+    if (borderRadiusInput) {
+      borderRadiusInput.addEventListener('input', e => {
+        this.currentTheme.borderRadius = (e.target as HTMLInputElement).value;
+        this.updatePreview();
+      });
+    }
 
     // Theme name
-    const themeNameInput = this.container.querySelector('#theme-name') as HTMLInputElement;
-    themeNameInput?.addEventListener('input', e => {
-      this.currentTheme.name = (e.target as HTMLInputElement).value;
-    });
+    const themeNameInput = this.container.querySelector<HTMLInputElement>('#theme-name');
+    if (themeNameInput) {
+      themeNameInput.addEventListener('input', e => {
+        this.currentTheme.name = (e.target as HTMLInputElement).value;
+      });
+    }
 
     // Base theme selection
-    const baseThemeSelect = this.container.querySelector('#base-theme') as HTMLSelectElement;
-    baseThemeSelect?.addEventListener('change', e => {
-      this.loadBaseTheme((e.target as HTMLSelectElement).value);
-    });
+    const baseThemeSelect = this.container.querySelector<HTMLSelectElement>('#base-theme');
+    if (baseThemeSelect) {
+      baseThemeSelect.addEventListener('change', e => {
+        this.loadBaseTheme((e.target as HTMLSelectElement).value);
+      });
+    }
 
     // Action buttons
     const saveBtn = this.container.querySelector('#save-theme');
@@ -547,7 +570,7 @@ export class ThemeBuilder {
   private loadBaseTheme(themeName: string): void {
     const baseTheme = this.themeManager.getTheme(themeName);
     if (baseTheme) {
-      this.currentTheme = { ...baseTheme };
+      this.currentTheme = this.deepCloneTheme(baseTheme);
       this.refreshInputs();
       this.updatePreview();
       this.updateAccessibilityCheck();
@@ -559,10 +582,10 @@ export class ThemeBuilder {
 
     // Update color inputs
     this.colorInputs.forEach(input => {
-      const colorInput = this.container!.querySelector(`#color-${input.key}`) as HTMLInputElement;
-      const textInput = this.container!.querySelector(
-        `#color-text-${input.key}`
-      ) as HTMLInputElement;
+      if (!this.container) return;
+
+      const colorInput = this.container.querySelector<HTMLInputElement>(`#color-${input.key}`);
+      const textInput = this.container.querySelector<HTMLInputElement>(`#color-text-${input.key}`);
 
       if (colorInput) colorInput.value = this.currentTheme.colors[input.key];
       if (textInput) textInput.value = this.currentTheme.colors[input.key];
@@ -584,7 +607,9 @@ export class ThemeBuilder {
     ];
 
     inputs.forEach(({ selector, value }) => {
-      const input = this.container!.querySelector(selector) as HTMLInputElement;
+      if (!this.container) return;
+
+      const input = this.container.querySelector<HTMLInputElement>(selector);
       if (input) input.value = value;
     });
   }
@@ -603,7 +628,7 @@ export class ThemeBuilder {
   }
 
   private resetTheme(): void {
-    this.currentTheme = { ...this.originalTheme };
+    this.currentTheme = this.deepCloneTheme(this.originalTheme);
     this.refreshInputs();
     this.updatePreview();
     this.updateAccessibilityCheck();
@@ -638,7 +663,7 @@ export class ThemeBuilder {
             const importedTheme = this.themeManager.importTheme(themeJson);
 
             if (importedTheme) {
-              this.currentTheme = { ...importedTheme };
+              this.currentTheme = this.deepCloneTheme(importedTheme);
               this.refreshInputs();
               this.updatePreview();
               this.updateAccessibilityCheck();
@@ -660,6 +685,16 @@ export class ThemeBuilder {
 
   private kebabCase(str: string): string {
     return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+  }
+
+  private deepCloneTheme(theme: Theme): Theme {
+    // Use structuredClone if available (modern browsers)
+    if (typeof structuredClone !== 'undefined') {
+      return structuredClone(theme);
+    }
+
+    // Fallback to JSON parse/stringify for older browsers
+    return JSON.parse(JSON.stringify(theme));
   }
 
   public getStyles(): string {
