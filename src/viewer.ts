@@ -385,6 +385,7 @@ export class MarkdownDocsViewer {
                   }
                   return code;
                 } catch {
+                  this.logger.warn('Syntax highlighting failed, falling back to plain text.');
                   // Fallback to plain text if highlighting fails
                   return code;
                 }
