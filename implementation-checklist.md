@@ -3,6 +3,7 @@
 ## 🚀 Quick Start Checklist (Essential Tasks Only)
 
 ### Day 1: Core Demo & Testing
+
 - [ ] **Create demo/index.html** - Basic HTML structure with theme switcher
 - [ ] **Create demo/demo.js** - JavaScript to initialize viewer with examples
 - [ ] **Create demo/demo.css** - Styling for demo page
@@ -10,7 +11,8 @@
 - [ ] **Create tests/viewer.test.ts** - Basic viewer functionality tests
 - [ ] **Update package.json** - Replace placeholder values with real metadata
 
-### Day 2: Content & Examples  
+### Day 2: Content & Examples
+
 - [ ] **Create demo content** - Sample markdown files for testing
 - [ ] **Create examples/basic** - Simple usage example
 - [ ] **Add more tests** - loader.test.ts, themes.test.ts
@@ -18,6 +20,7 @@
 - [ ] **Test demo functionality** - Verify all features work
 
 ### Day 3: Polish & Documentation
+
 - [ ] **Create LICENSE** - MIT license file
 - [ ] **Update README.md** - Improve with actual examples
 - [ ] **Create CONTRIBUTING.md** - Contribution guidelines
@@ -31,6 +34,7 @@
 ## Phase 1: Essential Fixes & Demo (HIGH PRIORITY)
 
 ### 1.1 Demo Page Creation
+
 - [ ] **File: demo/index.html**
   - [ ] HTML5 doctype and semantic structure
   - [ ] Responsive viewport meta tag
@@ -60,6 +64,7 @@
   - [ ] Development server configuration
 
 ### 1.2 Content Creation
+
 - [ ] **File: demo/content/getting-started.md**
   - [ ] Introduction and overview
   - [ ] Key features list
@@ -85,6 +90,7 @@
   - [ ] Example themes
 
 ### 1.3 Test Suite Setup
+
 - [ ] **File: vitest.config.ts**
   - [ ] Test environment configuration (happy-dom)
   - [ ] Coverage settings
@@ -118,6 +124,7 @@
   - [ ] CSS generation tests
 
 ### 1.4 Package Configuration
+
 - [ ] **Update package.json**
   - [ ] Replace @yourusername with actual username
   - [ ] Add proper author information
@@ -138,6 +145,7 @@
   - [ ] Optimize package size
 
 ### 1.5 Examples Creation
+
 - [ ] **Directory: examples/basic/**
   - [ ] index.html with simple viewer setup
   - [ ] example.js with basic configuration
@@ -155,6 +163,7 @@
 ## Phase 2: Documentation & Polish (MEDIUM PRIORITY)
 
 ### 2.1 Comprehensive Documentation
+
 - [ ] **File: docs/API.md**
   - [ ] Complete API reference
   - [ ] Method documentation with examples
@@ -186,6 +195,7 @@
   - [ ] Pull request process
 
 ### 2.2 Error Handling Enhancement
+
 - [ ] **File: src/errors/viewer-error.ts**
   - [ ] Custom error classes
   - [ ] Error codes and categories
@@ -205,6 +215,7 @@
   - [ ] Cache error recovery
 
 ### 2.3 Performance Optimization
+
 - [ ] **Update src/navigation.ts**
   - [ ] Virtual scrolling for large lists
   - [ ] Lazy rendering
@@ -228,6 +239,7 @@
 ## Phase 3: Production Ready (MEDIUM PRIORITY)
 
 ### 3.1 CI/CD Pipeline
+
 - [ ] **File: .github/workflows/ci.yml**
   - [ ] Automated testing on push/PR
   - [ ] Multiple Node.js versions
@@ -247,6 +259,7 @@
   - [ ] Cache management
 
 ### 3.2 Community Templates
+
 - [ ] **File: .github/ISSUE_TEMPLATE/bug_report.md**
   - [ ] Bug report template
   - [ ] Environment information
@@ -266,6 +279,7 @@
   - [ ] Documentation updates
 
 ### 3.3 Advanced Features
+
 - [ ] **File: src/toc.ts**
   - [ ] Table of contents generation
   - [ ] Heading hierarchy parsing
@@ -289,6 +303,7 @@
 ## Phase 4: Future Enhancements (LOW PRIORITY)
 
 ### 4.1 Plugin System
+
 - [ ] **File: src/plugins/plugin-manager.ts**
   - [ ] Plugin registration system
   - [ ] Lifecycle management
@@ -302,6 +317,7 @@
   - [ ] Documentation
 
 ### 4.2 Example Plugins
+
 - [ ] **Directory: examples/plugins/math-renderer/**
   - [ ] KaTeX integration plugin
   - [ ] Math equation rendering
@@ -319,6 +335,7 @@
 ## 🔍 Quality Assurance Checklist
 
 ### Code Quality
+
 - [ ] **TypeScript Compliance**
   - [ ] No TypeScript errors
   - [ ] Strict mode enabled
@@ -338,6 +355,7 @@
   - [ ] Multiple output formats
 
 ### User Experience
+
 - [ ] **Functionality**
   - [ ] All documented features work
   - [ ] Error states handled gracefully
@@ -351,6 +369,7 @@
   - [ ] Troubleshooting helpful
 
 ### Production Readiness
+
 - [ ] **Security**
   - [ ] No known vulnerabilities
   - [ ] Input validation
@@ -374,6 +393,7 @@
 ## 📝 Completion Validation
 
 ### Phase 1 Validation
+
 ```bash
 # Build and test
 npm install
@@ -387,6 +407,7 @@ npm start
 ```
 
 ### Phase 2 Validation
+
 ```bash
 # Documentation review
 # Check all links work
@@ -395,6 +416,7 @@ npm start
 ```
 
 ### Phase 3 Validation
+
 ```bash
 # CI/CD validation
 # Run all workflows
@@ -403,6 +425,7 @@ npm start
 ```
 
 ### Final Release Checklist
+
 - [ ] All tests passing
 - [ ] Documentation complete
 - [ ] Examples working

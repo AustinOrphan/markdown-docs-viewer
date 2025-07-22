@@ -9,15 +9,14 @@ The simplest configuration requires only a title and document sources:
 ```typescript
 const config = {
   title: 'My Documentation',
-  sources: [
-    { type: 'local', path: './docs/' }
-  ]
+  sources: [{ type: 'local', path: './docs/' }],
 };
 ```
 
 ## Document Sources
 
 ### Local Files
+
 Load markdown files from a local directory:
 
 ```typescript
@@ -28,6 +27,7 @@ Load markdown files from a local directory:
 ```
 
 ### Remote URLs
+
 Load markdown files from URLs:
 
 ```typescript
@@ -38,6 +38,7 @@ Load markdown files from URLs:
 ```
 
 ### GitHub Repository
+
 Load documentation directly from a GitHub repository:
 
 ```typescript
@@ -51,6 +52,7 @@ Load documentation directly from a GitHub repository:
 ```
 
 ### Inline Content
+
 Provide markdown content directly:
 
 ```typescript
@@ -66,6 +68,7 @@ Provide markdown content directly:
 ```
 
 ### Multiple Sources
+
 Combine different source types:
 
 ```typescript
@@ -73,14 +76,15 @@ Combine different source types:
   sources: [
     { type: 'local', path: './docs/' },
     { type: 'github', owner: 'company', repo: 'api-docs' },
-    { type: 'url', url: 'https://external.com/integration.md' }
-  ]
+    { type: 'url', url: 'https://external.com/integration.md' },
+  ];
 }
 ```
 
 ## Theme Configuration
 
 ### Basic Theme Setup
+
 ```typescript
 {
   theme: {
@@ -91,6 +95,7 @@ Combine different source types:
 ```
 
 ### Custom Themes
+
 Define custom color schemes:
 
 ```typescript
@@ -127,6 +132,7 @@ Define custom color schemes:
 ```
 
 ### Brand Colors
+
 Create a branded theme:
 
 ```typescript
@@ -153,6 +159,7 @@ Create a branded theme:
 ## Navigation Configuration
 
 ### Basic Navigation
+
 ```typescript
 {
   navigation: {
@@ -165,6 +172,7 @@ Create a branded theme:
 ```
 
 ### Custom Navigation Items
+
 Add custom links and sections:
 
 ```typescript
@@ -194,12 +202,13 @@ Add custom links and sections:
 ```
 
 ### Hide Navigation
+
 For embedded use cases:
 
 ```typescript
 {
   navigation: {
-    enabled: false
+    enabled: false;
   }
 }
 ```
@@ -207,6 +216,7 @@ For embedded use cases:
 ## Search Configuration
 
 ### Basic Search
+
 ```typescript
 {
   search: {
@@ -219,6 +229,7 @@ For embedded use cases:
 ```
 
 ### Advanced Search Options
+
 ```typescript
 {
   search: {
@@ -234,10 +245,11 @@ For embedded use cases:
 ```
 
 ### Disable Search
+
 ```typescript
 {
   search: {
-    enabled: false
+    enabled: false;
   }
 }
 ```
@@ -245,6 +257,7 @@ For embedded use cases:
 ## Feature Configuration
 
 ### Enable/Disable Features
+
 ```typescript
 {
   features: {
@@ -259,6 +272,7 @@ For embedded use cases:
 ```
 
 ### Code Highlighting
+
 ```typescript
 {
   features: {
@@ -274,6 +288,7 @@ For embedded use cases:
 ## Callback Configuration
 
 ### Event Handlers
+
 ```typescript
 {
   callbacks: {
@@ -282,25 +297,25 @@ For embedded use cases:
       // Update page title
       document.title = `${document.title} - My Docs`;
     },
-    
+
     onThemeChange: (theme) => {
       console.log(`Theme changed to: ${theme}`);
       // Store user preference
       localStorage.setItem('docs-theme', theme);
     },
-    
+
     onSearchQuery: (query, results) => {
       console.log(`Search: "${query}" (${results.length} results)`);
       // Analytics tracking
       analytics.track('documentation_search', { query, resultCount: results.length });
     },
-    
+
     onError: (error, context) => {
       console.error(`Error in ${context}:`, error);
       // Error reporting
       errorReporting.captureException(error, { context });
     },
-    
+
     onNavigationChange: (path) => {
       console.log(`Navigated to: ${path}`);
       // Update URL without page reload
@@ -315,17 +330,17 @@ For embedded use cases:
 ```typescript
 const config = {
   title: 'Acme Corp Documentation',
-  
+
   sources: [
     { type: 'local', path: './docs/' },
-    { 
-      type: 'github', 
-      owner: 'acmecorp', 
+    {
+      type: 'github',
+      owner: 'acmecorp',
       repo: 'api-docs',
-      branch: 'main'
-    }
+      branch: 'main',
+    },
   ],
-  
+
   theme: {
     default: 'corporate',
     allowUserToggle: true,
@@ -339,17 +354,17 @@ const config = {
           text: '#1e293b',
           textSecondary: '#64748b',
           border: '#e2e8f0',
-          accent: '#3b82f6'
+          accent: '#3b82f6',
         },
         fonts: {
           body: 'Inter, system-ui, sans-serif',
           heading: 'Inter, system-ui, sans-serif',
-          code: 'JetBrains Mono, monospace'
-        }
-      }
-    }
+          code: 'JetBrains Mono, monospace',
+        },
+      },
+    },
   },
-  
+
   navigation: {
     enabled: true,
     showSearch: true,
@@ -359,83 +374,84 @@ const config = {
       {
         type: 'link',
         title: 'API Reference',
-        url: 'https://api.acmecorp.com'
+        url: 'https://api.acmecorp.com',
       },
       {
-        type: 'separator'
+        type: 'separator',
       },
       {
         type: 'section',
         title: 'Support',
         items: [
           { title: 'Help Center', url: 'https://help.acmecorp.com' },
-          { title: 'Contact Us', url: 'mailto:support@acmecorp.com' }
-        ]
-      }
-    ]
+          { title: 'Contact Us', url: 'mailto:support@acmecorp.com' },
+        ],
+      },
+    ],
   },
-  
+
   search: {
     enabled: true,
     placeholder: 'Search Acme documentation...',
     minQueryLength: 2,
     maxResults: 30,
     highlightResults: true,
-    fuzzySearch: true
+    fuzzySearch: true,
   },
-  
+
   features: {
     codeHighlighting: true,
     mathRendering: false,
     mermaidDiagrams: true,
     tableOfContents: true,
     printMode: true,
-    responsiveDesign: true
+    responsiveDesign: true,
   },
-  
+
   callbacks: {
-    onDocumentLoad: (document) => {
+    onDocumentLoad: document => {
       document.title = `${document.title} - Acme Docs`;
       // Google Analytics page view
       gtag('config', 'GA_MEASUREMENT_ID', {
         page_title: document.title,
-        page_location: window.location.href
+        page_location: window.location.href,
       });
     },
-    
-    onThemeChange: (theme) => {
+
+    onThemeChange: theme => {
       localStorage.setItem('acme-docs-theme', theme);
     },
-    
+
     onSearchQuery: (query, results) => {
       // Track search analytics
       gtag('event', 'search', {
         search_term: query,
-        number_of_results: results.length
+        number_of_results: results.length,
       });
     },
-    
+
     onError: (error, context) => {
       console.error(`Docs error in ${context}:`, error);
       // Send to error tracking service
-      Sentry.captureException(error, { 
+      Sentry.captureException(error, {
         tags: { context },
-        extra: { timestamp: new Date().toISOString() }
+        extra: { timestamp: new Date().toISOString() },
       });
-    }
-  }
+    },
+  },
 };
 ```
 
 ## Environment-Specific Configurations
 
 ### Development
+
 ```typescript
 const devConfig = {
   ...baseConfig,
   features: {
     ...baseConfig.features,
-    debugMode: true
+    debugMode: true,
   },
   callbacks: {
     ...baseConfig.callbacks,
@@ -443,26 +459,27 @@ const devConfig = {
       console.error(`DEV ERROR in ${context}:`, error);
       // Show detailed error in development
       throw error;
-    }
-  }
+    },
+  },
 };
 ```
 
 ### Production
+
 ```typescript
 const prodConfig = {
   ...baseConfig,
   features: {
     ...baseConfig.features,
-    debugMode: false
+    debugMode: false,
   },
   callbacks: {
     ...baseConfig.callbacks,
     onError: (error, context) => {
       // Silent error handling in production
       errorReporting.captureException(error, { context });
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -474,7 +491,7 @@ The library validates all configuration options and provides sensible defaults:
 // Minimal valid configuration
 const minConfig = {
   title: 'Documentation',
-  sources: [{ type: 'local', path: './docs/' }]
+  sources: [{ type: 'local', path: './docs/' }],
 };
 
 // All other options will use defaults:

@@ -1,15 +1,15 @@
 import { Document, DocumentSource } from './types';
-import { 
-  MarkdownDocsError, 
-  ErrorFactory, 
-  withRetry, 
-  ErrorBoundary, 
+import {
+  MarkdownDocsError,
+  ErrorFactory,
+  withRetry,
+  ErrorBoundary,
   RetryConfig,
   DEFAULT_RETRY_CONFIG,
   ErrorLogger,
   ConsoleErrorLogger,
   ErrorCode,
-  ErrorSeverity
+  ErrorSeverity,
 } from './errors';
 import { PersistentCache, PerformanceMonitor, MemoryManager } from './performance';
 
@@ -24,7 +24,7 @@ export class DocumentLoader {
   private loadingPromises: Map<string, Promise<string>> = new Map();
 
   constructor(
-    source: DocumentSource, 
+    source: DocumentSource,
     retryConfig: Partial<RetryConfig> = {},
     logger?: ErrorLogger,
     cacheSize: number = 50
@@ -32,11 +32,11 @@ export class DocumentLoader {
     this.source = source;
     this.retryConfig = { ...DEFAULT_RETRY_CONFIG, ...retryConfig };
     this.logger = logger || new ConsoleErrorLogger();
-    this.errorBoundary = new ErrorBoundary((error) => this.logger.log(error));
+    this.errorBoundary = new ErrorBoundary(error => this.logger.log(error));
     this.cache = new PersistentCache(cacheSize, `mdv-cache-${this.source.type}`);
     this.performanceMonitor = new PerformanceMonitor();
     this.memoryManager = MemoryManager.getInstance();
-    
+
     // Add cleanup task for memory management
     this.memoryManager.addCleanupTask(() => {
       this.clearOldCacheEntries();
@@ -47,10 +47,10 @@ export class DocumentLoader {
     return this.errorBoundary.execute(
       async () => {
         this.logger.debug('Loading all documents', { sourceType: this.source.type });
-        
+
         // Validate source configuration
         this.validateSource();
-        
+
         return this.source.documents;
       },
       () => {
@@ -65,7 +65,7 @@ export class DocumentLoader {
     return this.errorBoundary.execute(
       async () => {
         const endTiming = this.performanceMonitor.startTiming('document-load');
-        
+
         try {
           // Check cache first
           if (this.cache.has(doc.id)) {
@@ -77,20 +77,22 @@ export class DocumentLoader {
 
           // Check if already loading to prevent duplicate requests
           if (this.loadingPromises.has(doc.id)) {
-            this.logger.debug('Document already loading, waiting for existing promise', { documentId: doc.id });
+            this.logger.debug('Document already loading, waiting for existing promise', {
+              documentId: doc.id,
+            });
             const result = await this.loadingPromises.get(doc.id)!;
             endTiming();
             return result;
           }
 
-          this.logger.debug('Loading document', { 
-            documentId: doc.id, 
+          this.logger.debug('Loading document', {
+            documentId: doc.id,
             hasContent: !!doc.content,
-            hasFile: !!doc.file 
+            hasFile: !!doc.file,
           });
 
           let content = '';
-          
+
           // Create loading promise to prevent duplicates
           const loadingPromise = (async () => {
             if (doc.content) {
@@ -98,20 +100,17 @@ export class DocumentLoader {
               content = doc.content;
             } else if (doc.file) {
               // Load from file with retry logic
-              content = await withRetry(
-                () => this.loadFromSource(doc.file!),
-                this.retryConfig
-              );
+              content = await withRetry(() => this.loadFromSource(doc.file!), this.retryConfig);
             } else {
               throw ErrorFactory.documentNotFound(doc.id);
             }
 
             // Cache the loaded content
             this.cache.set(doc.id, content);
-            this.logger.debug('Document loaded successfully', { 
-              documentId: doc.id, 
+            this.logger.debug('Document loaded successfully', {
+              documentId: doc.id,
               contentLength: content.length,
-              cacheSize: this.cache.size() 
+              cacheSize: this.cache.size(),
             });
 
             // Check memory usage after loading
@@ -119,9 +118,9 @@ export class DocumentLoader {
 
             return content;
           })();
-          
+
           this.loadingPromises.set(doc.id, loadingPromise);
-          
+
           try {
             content = await loadingPromise;
             return content;
@@ -135,7 +134,9 @@ export class DocumentLoader {
         }
       },
       () => {
-        this.logger.warn('Failed to load document, returning empty content', { documentId: doc.id });
+        this.logger.warn('Failed to load document, returning empty content', {
+          documentId: doc.id,
+        });
         return '';
       },
       { operation: 'loadDocument', documentId: doc.id }
@@ -181,7 +182,7 @@ export class DocumentLoader {
         const missingContent = this.source.documents.filter(doc => !doc.content);
         if (missingContent.length > 0) {
           this.logger.warn('Content source has documents without content', {
-            missingContentIds: missingContent.map(doc => doc.id)
+            missingContentIds: missingContent.map(doc => doc.id),
           });
         }
         break;
@@ -198,9 +199,9 @@ export class DocumentLoader {
   }
 
   private async loadFromSource(path: string): Promise<string> {
-    this.logger.debug('Loading from source', { 
-      path, 
-      sourceType: this.source.type 
+    this.logger.debug('Loading from source', {
+      path,
+      sourceType: this.source.type,
     });
 
     switch (this.source.type) {
@@ -232,26 +233,26 @@ export class DocumentLoader {
 
   private async loadLocal(path: string): Promise<string> {
     const fullPath = this.source.basePath ? `${this.source.basePath}/${path}` : path;
-    
+
     this.logger.debug('Loading local file', { path, fullPath });
 
     try {
       const response = await fetch(fullPath);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw ErrorFactory.documentNotFound(path);
         }
-        
+
         throw ErrorFactory.networkError(fullPath, response.status, response.statusText);
       }
-      
+
       const content = await response.text();
-      this.logger.debug('Local file loaded successfully', { 
-        path, 
-        contentLength: content.length 
+      this.logger.debug('Local file loaded successfully', {
+        path,
+        contentLength: content.length,
       });
-      
+
       return content;
     } catch (error) {
       if (error instanceof MarkdownDocsError) {
@@ -269,10 +270,10 @@ export class DocumentLoader {
         'Unable to load the requested file. Please check if the file exists and is accessible.',
         ErrorSeverity.MEDIUM,
         true,
-        { 
-          operation: 'loadLocal', 
+        {
+          operation: 'loadLocal',
           originalError: error,
-          additionalData: { path, fullPath }
+          additionalData: { path, fullPath },
         }
       );
     }
@@ -280,19 +281,19 @@ export class DocumentLoader {
 
   private async loadFromUrl(path: string): Promise<string> {
     const url = this.source.baseUrl ? `${this.source.baseUrl}/${path}` : path;
-    
+
     this.logger.debug('Loading from URL', { path, url });
 
     try {
       const response = await fetch(url, {
-        headers: this.source.headers || {}
+        headers: this.source.headers || {},
       });
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw ErrorFactory.documentNotFound(path);
         }
-        
+
         if (response.status === 403 || response.status === 401) {
           throw new MarkdownDocsError(
             ErrorCode.UNAUTHORIZED_ACCESS,
@@ -300,9 +301,9 @@ export class DocumentLoader {
             'Access denied. Please check your credentials or permissions.',
             ErrorSeverity.HIGH,
             false,
-            { 
+            {
               operation: 'loadFromUrl',
-              additionalData: { url, status: response.status }
+              additionalData: { url, status: response.status },
             }
           );
         }
@@ -314,22 +315,22 @@ export class DocumentLoader {
             'Too many requests. Please wait and try again.',
             ErrorSeverity.MEDIUM,
             true,
-            { 
+            {
               operation: 'loadFromUrl',
-              additionalData: { url, status: response.status }
+              additionalData: { url, status: response.status },
             }
           );
         }
-        
+
         throw ErrorFactory.networkError(url, response.status, response.statusText);
       }
-      
+
       const content = await response.text();
-      this.logger.debug('URL content loaded successfully', { 
-        url, 
-        contentLength: content.length 
+      this.logger.debug('URL content loaded successfully', {
+        url,
+        contentLength: content.length,
       });
-      
+
       return content;
     } catch (error) {
       if (error instanceof MarkdownDocsError) {
@@ -347,10 +348,10 @@ export class DocumentLoader {
         'Unable to load content from the specified URL. Please check your connection and try again.',
         ErrorSeverity.MEDIUM,
         true,
-        { 
-          operation: 'loadFromUrl', 
+        {
+          operation: 'loadFromUrl',
           originalError: error,
-          additionalData: { path, url }
+          additionalData: { path, url },
         }
       );
     }
@@ -366,9 +367,9 @@ export class DocumentLoader {
         'Invalid GitHub file path format.',
         ErrorSeverity.HIGH,
         false,
-        { 
+        {
           operation: 'loadFromGithub',
-          additionalData: { path, expectedFormat: 'owner/repo/branch/path/to/file' }
+          additionalData: { path, expectedFormat: 'owner/repo/branch/path/to/file' },
         }
       );
     }
@@ -376,22 +377,22 @@ export class DocumentLoader {
     const [owner, repo, branch = 'main', ...filePath] = parts;
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath.join('/')}?ref=${branch}`;
 
-    this.logger.debug('Loading from GitHub', { 
-      path, 
-      owner, 
-      repo, 
-      branch, 
+    this.logger.debug('Loading from GitHub', {
+      path,
+      owner,
+      repo,
+      branch,
       filePath: filePath.join('/'),
-      apiUrl 
+      apiUrl,
     });
 
     try {
       const response = await fetch(apiUrl, {
         headers: {
-          'Accept': 'application/vnd.github.v3+json',
+          Accept: 'application/vnd.github.v3+json',
           'User-Agent': 'MarkdownDocsViewer/1.0',
-          ...(this.source.headers || {})
-        }
+          ...(this.source.headers || {}),
+        },
       });
 
       if (!response.ok) {
@@ -401,13 +402,13 @@ export class DocumentLoader {
 
         if (response.status === 403) {
           const rateLimitReset = response.headers.get('X-RateLimit-Reset');
-          
+
           let message = 'GitHub API rate limit exceeded';
           if (rateLimitReset) {
             const resetTime = new Date(parseInt(rateLimitReset) * 1000);
             message += `. Rate limit resets at ${resetTime.toISOString()}`;
           }
-          
+
           throw ErrorFactory.githubApiError(path, 403, message);
         }
 
@@ -416,7 +417,7 @@ export class DocumentLoader {
       }
 
       const data = await response.json();
-      
+
       // Handle different response types
       if (Array.isArray(data)) {
         throw new MarkdownDocsError(
@@ -425,9 +426,9 @@ export class DocumentLoader {
           'The specified GitHub path is a directory. Please specify a file path.',
           ErrorSeverity.MEDIUM,
           false,
-          { 
+          {
             operation: 'loadFromGithub',
-            additionalData: { path, responseType: 'directory' }
+            additionalData: { path, responseType: 'directory' },
           }
         );
       }
@@ -439,22 +440,22 @@ export class DocumentLoader {
           'The requested GitHub file appears to be empty or inaccessible.',
           ErrorSeverity.MEDIUM,
           false,
-          { 
+          {
             operation: 'loadFromGithub',
-            additionalData: { path, data }
+            additionalData: { path, data },
           }
         );
       }
-      
+
       // Decode base64 content
       const content = atob(data.content.replace(/\s/g, ''));
-      
-      this.logger.debug('GitHub content loaded successfully', { 
-        path, 
+
+      this.logger.debug('GitHub content loaded successfully', {
+        path,
         contentLength: content.length,
-        sha: data.sha 
+        sha: data.sha,
       });
-      
+
       return content;
     } catch (error) {
       if (error instanceof MarkdownDocsError) {
@@ -472,10 +473,10 @@ export class DocumentLoader {
         'Unable to load content from GitHub. Please check the file path and try again.',
         ErrorSeverity.MEDIUM,
         true,
-        { 
-          operation: 'loadFromGithub', 
+        {
+          operation: 'loadFromGithub',
           originalError: error,
-          additionalData: { path, apiUrl, owner, repo, branch }
+          additionalData: { path, apiUrl, owner, repo, branch },
         }
       );
     }
@@ -503,7 +504,7 @@ export class DocumentLoader {
     return {
       size: this.cache.size(),
       capacity: this.cache.getCapacity(),
-      memoryUsage: this.cache.getMemoryUsage()
+      memoryUsage: this.cache.getMemoryUsage(),
     };
   }
 
@@ -534,25 +535,23 @@ export class DocumentLoader {
   // Preload documents for better performance
   async preloadDocuments(docIds: string[]): Promise<void> {
     const endTiming = this.performanceMonitor.startTiming('preload-documents');
-    
+
     try {
-      const documentsToLoad = this.source.documents.filter(doc => 
-        docIds.includes(doc.id) && !this.cache.has(doc.id)
+      const documentsToLoad = this.source.documents.filter(
+        doc => docIds.includes(doc.id) && !this.cache.has(doc.id)
       );
 
       if (documentsToLoad.length > 0) {
-        this.logger.debug('Preloading documents', { 
+        this.logger.debug('Preloading documents', {
           count: documentsToLoad.length,
-          docIds 
+          docIds,
         });
 
         // Load documents in parallel with concurrency limit
         const concurrencyLimit = 3;
         for (let i = 0; i < documentsToLoad.length; i += concurrencyLimit) {
           const batch = documentsToLoad.slice(i, i + concurrencyLimit);
-          await Promise.allSettled(
-            batch.map(doc => this.loadDocument(doc))
-          );
+          await Promise.allSettled(batch.map(doc => this.loadDocument(doc)));
         }
       }
     } finally {

@@ -1,12 +1,7 @@
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
-import { 
-  DocumentationConfig, 
-  Document, 
-  ViewerState, 
-  Theme
-} from './types';
+import { DocumentationConfig, Document, ViewerState, Theme } from './types';
 import { defaultTheme } from './themes';
 import { generateStyles } from './styles';
 import { createNavigation } from './navigation';
@@ -21,14 +16,14 @@ import {
   ErrorBoundary,
   ErrorLogger,
   ConsoleErrorLogger,
-  DEFAULT_RETRY_CONFIG
+  DEFAULT_RETRY_CONFIG,
 } from './errors';
-import { 
-  generateMobileCSS, 
-  addViewportMeta, 
+import {
+  generateMobileCSS,
+  addViewportMeta,
   isMobileViewport,
   getCurrentBreakpoint,
-  BREAKPOINTS
+  BREAKPOINTS,
 } from './mobile-styles';
 import { ThemeManager } from './theme-manager';
 import { ThemeSwitcher } from './theme-switcher';
@@ -50,11 +45,12 @@ export class MarkdownDocsViewer {
   constructor(config: DocumentationConfig) {
     try {
       // Initialize logger first
-      const isDevelopment = typeof process !== 'undefined' && process?.env?.NODE_ENV === 'development';
+      const isDevelopment =
+        typeof process !== 'undefined' && process?.env?.NODE_ENV === 'development';
       this.logger = new ConsoleErrorLogger(isDevelopment);
-      
+
       // Initialize error boundary
-      this.errorBoundary = new ErrorBoundary((error) => {
+      this.errorBoundary = new ErrorBoundary(error => {
         this.handleError(error);
       });
 
@@ -63,7 +59,7 @@ export class MarkdownDocsViewer {
 
       // Validate required dependencies
       this.validateDependencies();
-      
+
       // Initialize state
       this.state = {
         currentDocument: null,
@@ -72,29 +68,29 @@ export class MarkdownDocsViewer {
         searchResults: [],
         loading: false,
         error: null,
-        sidebarOpen: false
+        sidebarOpen: false,
       };
 
       // Find and validate container
       this.container = this.validateContainer(config.container);
 
       // Initialize loader with error handling configuration
-      const retryConfig = config.errorHandling?.retryConfig 
+      const retryConfig = config.errorHandling?.retryConfig
         ? { ...DEFAULT_RETRY_CONFIG, ...config.errorHandling.retryConfig }
         : DEFAULT_RETRY_CONFIG;
-      
+
       this.loader = new DocumentLoader(this.config.source, retryConfig, this.logger);
 
       // Initialize theme manager
       this.themeManager = new ThemeManager({
         enablePersistence: this.config.theme?.enablePersistence !== false,
         storageKey: this.config.theme?.storageKey || 'mdv-theme',
-        onThemeChange: (theme) => {
+        onThemeChange: theme => {
           this.applyTheme(theme);
           if (this.config.onThemeChange) {
             this.config.onThemeChange(theme);
           }
-        }
+        },
       });
 
       // Initialize theme switcher
@@ -102,7 +98,7 @@ export class MarkdownDocsViewer {
         position: this.config.theme?.switcherPosition || 'header',
         showPreview: this.config.theme?.showPreview !== false,
         showDescription: this.config.theme?.showDescription !== false,
-        allowCustomThemes: this.config.theme?.allowCustomThemes !== false
+        allowCustomThemes: this.config.theme?.allowCustomThemes !== false,
       });
 
       // Initialize dark mode toggle
@@ -114,24 +110,25 @@ export class MarkdownDocsViewer {
           if (this.config.onThemeChange) {
             this.config.onThemeChange(theme);
           }
-        }
+        },
       });
 
       // Initialize the viewer
       this.init();
     } catch (error) {
       // Handle initialization errors
-      const wrappedError = error instanceof MarkdownDocsError 
-        ? error 
-        : new MarkdownDocsError(
-            'UNKNOWN_ERROR' as any,
-            `Initialization failed: ${error}`,
-            'Failed to initialize the documentation viewer. Please check your configuration.',
-            'critical' as any,
-            false,
-            { operation: 'initialization', originalError: error }
-          );
-      
+      const wrappedError =
+        error instanceof MarkdownDocsError
+          ? error
+          : new MarkdownDocsError(
+              'UNKNOWN_ERROR' as any,
+              `Initialization failed: ${error}`,
+              'Failed to initialize the documentation viewer. Please check your configuration.',
+              'critical' as any,
+              false,
+              { operation: 'initialization', originalError: error }
+            );
+
       this.handleError(wrappedError);
       throw wrappedError;
     }
@@ -185,7 +182,10 @@ export class MarkdownDocsViewer {
         'Some required libraries are not available. Please ensure all dependencies are properly loaded.',
         ErrorSeverity.CRITICAL,
         false,
-        { operation: 'validateDependencies', additionalData: { missingDependencies: missing, warnings } }
+        {
+          operation: 'validateDependencies',
+          additionalData: { missingDependencies: missing, warnings },
+        }
       );
       throw error;
     }
@@ -195,7 +195,7 @@ export class MarkdownDocsViewer {
 
   private validateContainer(container: string | HTMLElement): HTMLElement {
     let element: HTMLElement | null;
-    
+
     if (typeof container === 'string') {
       element = document.querySelector(container);
       if (!element) {
@@ -245,16 +245,16 @@ export class MarkdownDocsViewer {
     return {
       theme: defaultTheme,
       search: { enabled: true },
-      navigation: { 
-        showCategories: true, 
+      navigation: {
+        showCategories: true,
         showTags: false,
         collapsible: true,
-        showDescription: true
+        showDescription: true,
       },
       render: {
         syntaxHighlighting: true,
         copyCodeButton: true,
-        linkTarget: '_self'
+        linkTarget: '_self',
       },
       errorHandling: {
         gracefulDegradation: true,
@@ -263,8 +263,8 @@ export class MarkdownDocsViewer {
         retryConfig: {
           maxAttempts: 3,
           baseDelay: 1000,
-          exponentialBackoff: true
-        }
+          exponentialBackoff: true,
+        },
       },
       responsive: true,
       mobile: {
@@ -273,7 +273,7 @@ export class MarkdownDocsViewer {
         touchTargets: {
           minimum: 44,
           comfortable: 48,
-          large: 56
+          large: 56,
         },
         typography: {
           baseFontSize: {
@@ -282,40 +282,40 @@ export class MarkdownDocsViewer {
             md: 16,
             lg: 16,
             xl: 16,
-            xxl: 16
+            xxl: 16,
           },
           lineHeight: {
             tight: 1.25,
             normal: 1.5,
-            relaxed: 1.75
+            relaxed: 1.75,
           },
-          scaleRatio: 1.2
+          scaleRatio: 1.2,
         },
         navigation: {
           swipeGestures: true,
           collapseBehavior: 'overlay',
           showBackdrop: true,
-          closeOnOutsideClick: true
+          closeOnOutsideClick: true,
         },
         gestures: {
           swipeToNavigate: true,
           pinchToZoom: false,
           doubleTapToZoom: false,
-          swipeThreshold: 50
+          swipeThreshold: 50,
         },
         layout: {
           containerPadding: 16,
           contentSpacing: 24,
-          borderRadius: 8
+          borderRadius: 8,
         },
         performance: {
           enableTouchOptimizations: true,
           preventDefaultTouch: true,
-          optimizeScrolling: true
-        }
+          optimizeScrolling: true,
+        },
       },
       routing: 'hash',
-      ...config
+      ...config,
     };
   }
 
@@ -325,37 +325,37 @@ export class MarkdownDocsViewer {
         this.state.loading = true;
         this.state.error = null;
         this.render(); // Show loading state
-        
+
         // Configure marked with error handling
         this.configureMarked();
-        
+
         // Apply initial theme
-        const initialTheme = this.config.theme?.name 
+        const initialTheme = this.config.theme?.name
           ? this.themeManager.getTheme(this.config.theme.name) || this.config.theme
           : this.themeManager.getCurrentTheme();
         this.applyTheme(initialTheme);
-        
+
         // Load documents with error handling
         await this.loadDocuments();
-        
+
         // Setup routing with error handling
         if (this.config.routing !== 'none') {
           this.setupRouting();
         }
-        
+
         // Render UI
         this.render();
-        
+
         // Load initial document
         await this.loadInitialDocument();
-        
+
         this.state.loading = false;
         this.render();
-        
+
         this.logger.debug('MarkdownDocsViewer initialized successfully', {
           documentCount: this.state.documents.length,
           hasRouter: !!this.router,
-          theme: this.config.theme?.name
+          theme: this.config.theme?.name,
         });
       },
       () => {
@@ -371,32 +371,37 @@ export class MarkdownDocsViewer {
       if (this.config.render?.syntaxHighlighting) {
         // Check if highlighting dependencies are available
         if (typeof hljs !== 'undefined' && typeof markedHighlight !== 'undefined') {
-          marked.use(markedHighlight({
-            langPrefix: 'hljs language-',
-            highlight(code, lang) {
-              try {
-                if (typeof hljs.getLanguage === 'function' && typeof hljs.highlight === 'function') {
-                  const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                  return hljs.highlight(code, { language }).value;
+          marked.use(
+            markedHighlight({
+              langPrefix: 'hljs language-',
+              highlight(code, lang) {
+                try {
+                  if (
+                    typeof hljs.getLanguage === 'function' &&
+                    typeof hljs.highlight === 'function'
+                  ) {
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                  }
+                  return code;
+                } catch (error) {
+                  // Fallback to plain text if highlighting fails
+                  return code;
                 }
-                return code;
-              } catch (error) {
-                // Fallback to plain text if highlighting fails
-                return code;
-              }
-            }
-          }));
+              },
+            })
+          );
         } else {
           this.logger.warn('Syntax highlighting enabled but dependencies not available', {
             hljs: typeof hljs !== 'undefined',
-            markedHighlight: typeof markedHighlight !== 'undefined'
+            markedHighlight: typeof markedHighlight !== 'undefined',
           });
         }
       }
 
       marked.setOptions({
         gfm: true,
-        breaks: true
+        breaks: true,
       });
     } catch (error) {
       this.logger.warn('Failed to configure markdown parser', { error });
@@ -409,7 +414,7 @@ export class MarkdownDocsViewer {
       async () => {
         // Apply CSS variables through theme manager
         this.themeManager.applyCSSVariables(theme);
-        
+
         // Remove existing styles
         if (this.styles) {
           this.styles.remove();
@@ -418,21 +423,21 @@ export class MarkdownDocsViewer {
         // Generate and apply new styles
         this.styles = document.createElement('style');
         let cssContent = generateStyles(theme, this.config);
-        
+
         // Add mobile-responsive styles if enabled
         if (this.config.responsive && this.config.mobile?.enabled !== false) {
           cssContent += generateMobileCSS(this.config);
         }
-        
+
         // Add theme switcher styles
         cssContent += this.themeSwitcher.getStyles();
-        
+
         // Add dark mode toggle styles
         cssContent += this.darkModeToggle.getStyles();
-        
+
         this.styles.textContent = cssContent;
         document.head.appendChild(this.styles);
-        
+
         // Add viewport meta tag for mobile optimization
         if (this.config.mobile?.enabled !== false) {
           addViewportMeta();
@@ -450,7 +455,7 @@ export class MarkdownDocsViewer {
       async () => {
         const documents = await this.loader.loadAll();
         this.state.documents = documents;
-        
+
         if (documents.length === 0) {
           this.logger.warn('No documents loaded');
         }
@@ -466,7 +471,7 @@ export class MarkdownDocsViewer {
   private setupRouting(): void {
     this.errorBoundary.execute(
       async () => {
-        this.router = new Router(this.config.routing!, (docId) => {
+        this.router = new Router(this.config.routing!, docId => {
           this.loadDocument(docId).catch(error => {
             this.logger.error('Router-triggered document load failed', { docId, error });
           });
@@ -511,7 +516,8 @@ export class MarkdownDocsViewer {
         this.attachEventListeners();
       },
       () => {
-        this.container.innerHTML = '<div class="mdv-error">Failed to render viewer interface.</div>';
+        this.container.innerHTML =
+          '<div class="mdv-error">Failed to render viewer interface.</div>';
       },
       { operation: 'render' }
     );
@@ -520,7 +526,7 @@ export class MarkdownDocsViewer {
   private renderHeader(): string {
     const showThemeSwitcher = (this.config.theme?.switcherPosition || 'header') === 'header';
     const showDarkToggle = (this.config.theme?.darkTogglePosition || 'header') === 'header';
-    
+
     const headerActions = [];
     if (showDarkToggle) {
       headerActions.push(this.darkModeToggle.render());
@@ -528,7 +534,7 @@ export class MarkdownDocsViewer {
     if (showThemeSwitcher) {
       headerActions.push(this.themeSwitcher.render());
     }
-    
+
     return `
       <header class="mdv-header">
         <button class="mdv-mobile-toggle" aria-label="Toggle navigation"></button>
@@ -546,9 +552,7 @@ export class MarkdownDocsViewer {
       this.config.navigation!
     );
 
-    const search = this.config.search?.enabled 
-      ? createSearch(this.config.search)
-      : '';
+    const search = this.config.search?.enabled ? createSearch(this.config.search) : '';
 
     return `
       <aside class="mdv-sidebar ${this.state.sidebarOpen ? 'open' : ''}">
@@ -591,8 +595,10 @@ export class MarkdownDocsViewer {
       <main class="mdv-content">
         <article class="mdv-document">
           <h1 class="mdv-document-title">${this.state.currentDocument.title}</h1>
-          ${this.state.currentDocument.description ? 
-            `<p class="mdv-document-description">${this.state.currentDocument.description}</p>` : ''
+          ${
+            this.state.currentDocument.description
+              ? `<p class="mdv-document-description">${this.state.currentDocument.description}</p>`
+              : ''
           }
           <div class="mdv-document-content">
             ${this.renderMarkdown(this.state.currentDocument.content || '')}
@@ -605,18 +611,18 @@ export class MarkdownDocsViewer {
   private renderError(error: Error): string {
     const isMarkdownError = error instanceof MarkdownDocsError;
     const showDetails = this.config.errorHandling?.showErrorDetails;
-    
+
     let errorMessage = 'An unexpected error occurred.';
     let errorDetails = '';
     let retryButton = '';
 
     if (isMarkdownError) {
       errorMessage = error.userMessage;
-      
+
       if (error.isRetryable) {
         retryButton = '<button class="mdv-retry-button">Try Again</button>';
       }
-      
+
       if (showDetails) {
         errorDetails = `
           <details class="mdv-error-details">
@@ -656,10 +662,13 @@ export class MarkdownDocsViewer {
   private renderMarkdown(content: string): string {
     try {
       let html = marked(content) as string;
-      
+
       // Add copy buttons to code blocks if enabled
       if (this.config.render?.copyCodeButton) {
-        html = html.replace(/<pre><code/g, '<div class="mdv-code-block"><button class="mdv-copy-button">Copy</button><pre><code');
+        html = html.replace(
+          /<pre><code/g,
+          '<div class="mdv-code-block"><button class="mdv-copy-button">Copy</button><pre><code'
+        );
         html = html.replace(/<\/code><\/pre>/g, '</code></pre></div>');
       }
 
@@ -702,7 +711,7 @@ export class MarkdownDocsViewer {
 
         // Navigation links
         this.container.querySelectorAll('.mdv-nav-link').forEach(link => {
-          link.addEventListener('click', (e) => {
+          link.addEventListener('click', e => {
             e.preventDefault();
             const docId = link.getAttribute('data-doc-id');
             if (docId) {
@@ -715,7 +724,7 @@ export class MarkdownDocsViewer {
 
         // Search
         const searchInput = this.container.querySelector('.mdv-search-input') as HTMLInputElement;
-        searchInput?.addEventListener('input', (e) => {
+        searchInput?.addEventListener('input', e => {
           try {
             this.handleSearch((e.target as HTMLInputElement).value);
           } catch (error) {
@@ -725,7 +734,7 @@ export class MarkdownDocsViewer {
 
         // Copy buttons
         this.container.querySelectorAll('.mdv-copy-button').forEach(button => {
-          button.addEventListener('click', async (e) => {
+          button.addEventListener('click', async e => {
             try {
               const codeBlock = (e.target as HTMLElement).nextElementSibling?.querySelector('code');
               if (codeBlock && navigator.clipboard) {
@@ -762,20 +771,20 @@ export class MarkdownDocsViewer {
   private updateSidebar(): void {
     const sidebar = this.container.querySelector('.mdv-sidebar');
     const backdrop = this.container.querySelector('.mdv-sidebar-backdrop');
-    
+
     if (sidebar) {
       sidebar.classList.toggle('open', this.state.sidebarOpen);
     }
-    
+
     if (backdrop) {
       backdrop.classList.toggle('show', this.state.sidebarOpen);
     }
-    
+
     // Update ARIA attributes for accessibility
     if (sidebar) {
       sidebar.setAttribute('aria-hidden', this.state.sidebarOpen ? 'false' : 'true');
     }
-    
+
     // Prevent body scroll when sidebar is open on mobile
     if (isMobileViewport()) {
       document.body.style.overflow = this.state.sidebarOpen ? 'hidden' : '';
@@ -789,17 +798,17 @@ export class MarkdownDocsViewer {
       async () => {
         // Add mobile backdrop for sidebar overlay
         this.setupSidebarBackdrop();
-        
+
         // Setup swipe gestures if enabled
         if (this.config.mobile?.gestures?.swipeToNavigate) {
           this.setupSwipeGestures();
         }
-        
+
         // Setup touch optimizations
         if (this.config.mobile?.performance?.enableTouchOptimizations) {
           this.setupTouchOptimizations();
         }
-        
+
         // Handle window resize for responsive behavior
         this.setupResponsiveHandlers();
       },
@@ -812,14 +821,14 @@ export class MarkdownDocsViewer {
 
   private setupSidebarBackdrop(): void {
     if (!this.config.mobile?.navigation?.showBackdrop) return;
-    
+
     let backdrop = this.container.querySelector('.mdv-sidebar-backdrop') as HTMLElement;
     if (!backdrop) {
       backdrop = document.createElement('div');
       backdrop.className = 'mdv-sidebar-backdrop';
       this.container.appendChild(backdrop);
     }
-    
+
     // Close sidebar when clicking backdrop
     if (this.config.mobile.navigation?.closeOnOutsideClick) {
       backdrop.addEventListener('click', () => {
@@ -834,12 +843,12 @@ export class MarkdownDocsViewer {
     let startY = 0;
     let isSwipe = false;
     const threshold = this.config.mobile?.gestures?.swipeThreshold || 50;
-    
+
     const sidebar = this.container.querySelector('.mdv-sidebar') as HTMLElement;
     const content = this.container.querySelector('.mdv-content') as HTMLElement;
-    
+
     if (!sidebar || !content) return;
-    
+
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
         startX = e.touches[0].clientX;
@@ -847,16 +856,16 @@ export class MarkdownDocsViewer {
         isSwipe = false;
       }
     };
-    
+
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 1 && !isSwipe) {
         const deltaX = e.touches[0].clientX - startX;
         const deltaY = e.touches[0].clientY - startY;
-        
+
         // Check if this is a horizontal swipe
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
           isSwipe = true;
-          
+
           // Prevent default scroll if mobile optimizations are enabled
           if (this.config.mobile?.performance?.preventDefaultTouch) {
             e.preventDefault();
@@ -864,11 +873,11 @@ export class MarkdownDocsViewer {
         }
       }
     };
-    
+
     const handleTouchEnd = (e: TouchEvent) => {
       if (isSwipe && e.changedTouches.length === 1) {
         const deltaX = e.changedTouches[0].clientX - startX;
-        
+
         // Only trigger on mobile viewports
         if (isMobileViewport()) {
           // Swipe right to open sidebar (from left edge)
@@ -883,15 +892,15 @@ export class MarkdownDocsViewer {
           }
         }
       }
-      
+
       isSwipe = false;
     };
-    
+
     // Add touch event listeners
     content.addEventListener('touchstart', handleTouchStart, { passive: true });
     content.addEventListener('touchmove', handleTouchMove, { passive: false });
     content.addEventListener('touchend', handleTouchEnd, { passive: true });
-    
+
     sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
     sidebar.addEventListener('touchmove', handleTouchMove, { passive: false });
     sidebar.addEventListener('touchend', handleTouchEnd, { passive: true });
@@ -902,11 +911,11 @@ export class MarkdownDocsViewer {
     const elements = this.container.querySelectorAll(
       '.mdv-button, .mdv-nav-item, .mdv-mobile-toggle, .mdv-search-input, .mdv-toc-item'
     );
-    
+
     elements.forEach(element => {
       (element as HTMLElement).style.touchAction = 'manipulation';
     });
-    
+
     // Optimize scrolling on mobile
     if (this.config.mobile?.performance?.optimizeScrolling) {
       const scrollElements = this.container.querySelectorAll('.mdv-navigation, .mdv-content');
@@ -921,24 +930,24 @@ export class MarkdownDocsViewer {
     // Handle window resize to update responsive behavior
     const handleResize = () => {
       const currentBreakpoint = getCurrentBreakpoint();
-      
+
       // Auto-close sidebar on larger screens
       if (currentBreakpoint !== 'xs' && currentBreakpoint !== 'sm' && this.state.sidebarOpen) {
         this.state.sidebarOpen = false;
         this.updateSidebar();
       }
-      
+
       // Update any responsive-dependent UI
       this.updateResponsiveUI();
     };
-    
+
     // Throttle resize events for performance
     let resizeTimeout: number;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = window.setTimeout(handleResize, 150);
     });
-    
+
     // Handle orientation change
     window.addEventListener('orientationchange', () => {
       // Small delay to allow orientation change to complete
@@ -949,18 +958,18 @@ export class MarkdownDocsViewer {
   private updateResponsiveUI(): void {
     // Update any UI elements that depend on current screen size
     const currentBreakpoint = getCurrentBreakpoint();
-    
+
     // Add breakpoint class to container for CSS targeting
     const container = this.container;
-    
+
     // Remove existing breakpoint classes
     Object.keys(BREAKPOINTS).forEach(bp => {
       container.classList.remove(`mdv-breakpoint-${bp}`);
     });
-    
+
     // Add current breakpoint class
     container.classList.add(`mdv-breakpoint-${currentBreakpoint}`);
-    
+
     // Update mobile toggle visibility
     const toggle = container.querySelector('.mdv-mobile-toggle') as HTMLElement;
     if (toggle) {
@@ -987,7 +996,7 @@ export class MarkdownDocsViewer {
 
         this.state.currentDocument = doc;
         this.state.loading = false;
-        
+
         if (this.router) {
           this.router.setRoute(docId);
         }
@@ -997,10 +1006,10 @@ export class MarkdownDocsViewer {
         }
 
         this.render();
-        
+
         // Scroll to top
         this.container.querySelector('.mdv-content')?.scrollTo(0, 0);
-        
+
         // Close mobile sidebar
         if (isMobileViewport()) {
           this.state.sidebarOpen = false;
@@ -1019,7 +1028,7 @@ export class MarkdownDocsViewer {
 
   private handleSearch(query: string): void {
     this.state.searchQuery = query;
-    
+
     if (!query.trim()) {
       this.state.searchResults = [];
       this.render();
@@ -1034,9 +1043,11 @@ export class MarkdownDocsViewer {
             doc.title,
             doc.description || '',
             doc.content || '',
-            ...(doc.tags || [])
-          ].join(' ').toLowerCase();
-          
+            ...(doc.tags || []),
+          ]
+            .join(' ')
+            .toLowerCase();
+
           return searchIn.includes(query.toLowerCase());
         } catch (error) {
           this.logger.warn('Error during document search', { docId: doc.id, error });
@@ -1058,7 +1069,7 @@ export class MarkdownDocsViewer {
       this.state.error = error;
       this.state.loading = false;
     }
-    
+
     // Log the error if logger exists
     if (this.logger) {
       this.logger.log(error);
@@ -1066,7 +1077,7 @@ export class MarkdownDocsViewer {
       // Fallback to console if logger not initialized
       console.error('MarkdownDocsViewer Error:', error);
     }
-    
+
     // Call user-provided error handler
     if (this.config?.onError) {
       try {
@@ -1079,7 +1090,7 @@ export class MarkdownDocsViewer {
         }
       }
     }
-    
+
     // Only render if state and container exist
     if (this.state && this.container) {
       this.render();
@@ -1120,15 +1131,15 @@ export class MarkdownDocsViewer {
       this.config.theme = theme;
     }
   }
-  
+
   public getAvailableThemes(): Theme[] {
     return this.themeManager.getAvailableThemes();
   }
-  
+
   public registerTheme(theme: Theme): void {
     this.themeManager.registerTheme(theme as any);
   }
-  
+
   public createCustomTheme(name: string, overrides: Partial<Theme>): Theme {
     return this.themeManager.createCustomTheme(name, overrides);
   }
@@ -1142,7 +1153,7 @@ export class MarkdownDocsViewer {
   }
 
   public async search(query: string): Promise<Document[]> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.handleSearch(query);
       resolve([...this.state.searchResults]);
     });
@@ -1181,13 +1192,13 @@ export class MarkdownDocsViewer {
     if (doc.content) {
       return doc.content;
     }
-    
+
     if (doc.file) {
       const content = await this.loader.loadDocument(doc);
       doc.content = content;
       return content;
     }
-    
+
     return '';
   }
 

@@ -16,7 +16,7 @@ export function quickStart(container: string | HTMLElement, documents: any[]): M
     container,
     source: {
       type: 'content',
-      documents
-    }
+      documents,
+    },
   });
 }

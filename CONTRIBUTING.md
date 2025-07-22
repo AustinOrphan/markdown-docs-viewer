@@ -35,17 +35,20 @@ By participating in this project, you agree to abide by our code of conduct:
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/markdown-docs-viewer.git
    cd markdown-docs-viewer
    ```
 
 3. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 4. **Run the demo** to verify everything works:
+
    ```bash
    npm run demo
    ```
@@ -67,6 +70,7 @@ By participating in this project, you agree to abide by our code of conduct:
 ### Making Changes
 
 1. **Create a new branch** from `main`:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```

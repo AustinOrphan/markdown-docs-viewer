@@ -9,7 +9,7 @@ export class Router {
   constructor(mode: RoutingMode, onRouteChange: (docId: string) => void) {
     this.mode = mode;
     this.onRouteChange = onRouteChange;
-    
+
     if (mode === 'hash') {
       this.boundHashChangeHandler = this.handleHashChange.bind(this);
       window.addEventListener('hashchange', this.boundHashChangeHandler);
@@ -27,7 +27,7 @@ export class Router {
 
   setRoute(docId: string): void {
     this.currentRoute = docId;
-    
+
     if (this.mode === 'hash') {
       window.location.hash = docId;
     }

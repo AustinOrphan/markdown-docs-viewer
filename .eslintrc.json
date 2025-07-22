@@ -1,12 +1,8 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "extends": [
-    "eslint:recommended"
-  ],
+  "plugins": ["@typescript-eslint"],
+  "extends": ["eslint:recommended"],
   "env": {
     "browser": true,
     "es2022": true,
@@ -27,10 +23,5 @@
     "prefer-const": "error",
     "no-var": "error"
   },
-  "ignorePatterns": [
-    "dist/**",
-    "demo/**",
-    "node_modules/**",
-    "*.js"
-  ]
+  "ignorePatterns": ["dist/**", "demo/**", "node_modules/**", "*.js"]
 }

@@ -16,7 +16,7 @@ export class DarkModeToggle {
   private options: DarkModeToggleOptions;
   private container: HTMLElement | null = null;
   private isDark: boolean = false;
-  
+
   constructor(themeManager: ThemeManager, options: DarkModeToggleOptions = {}) {
     this.themeManager = themeManager;
     this.options = {
@@ -25,24 +25,28 @@ export class DarkModeToggle {
       compact: false,
       lightThemeName: 'default',
       darkThemeName: 'dark',
-      ...options
+      ...options,
     };
-    
+
     // Determine initial state based on current theme
     const currentThemeName = this.themeManager.getCurrentTheme().name;
     this.isDark = currentThemeName === this.options.darkThemeName;
   }
-  
+
   public render(): string {
     const toggleId = `mdv-dark-toggle-${++DarkModeToggle.instanceCounter}`;
-    
+
     return `
       <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''} ${this.options.compact ? 'mdv-dark-toggle-compact' : ''}">
-        ${this.options.showLabel && !this.options.compact ? `
+        ${
+          this.options.showLabel && !this.options.compact
+            ? `
           <span class="mdv-dark-toggle-label">
             ${this.isDark ? 'Dark' : 'Light'} Mode
           </span>
-        ` : ''}
+        `
+            : ''
+        }
         <button 
           class="mdv-dark-toggle-btn ${this.isDark ? 'dark' : 'light'}" 
           id="${toggleId}"
@@ -63,7 +67,7 @@ export class DarkModeToggle {
       </div>
     `;
   }
-  
+
   private getSunIcon(): string {
     return `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
@@ -72,7 +76,7 @@ export class DarkModeToggle {
       </svg>
     `;
   }
-  
+
   private getMoonIcon(): string {
     return `
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
@@ -80,22 +84,22 @@ export class DarkModeToggle {
       </svg>
     `;
   }
-  
+
   public attachTo(container: HTMLElement): void {
     this.container = container;
     this.setupEventListeners();
   }
-  
+
   private setupEventListeners(): void {
     if (!this.container) return;
-    
+
     const button = this.container.querySelector('.mdv-dark-toggle-btn');
     if (!button) return;
-    
+
     button.addEventListener('click', () => {
       this.toggle();
     });
-    
+
     // Listen for theme changes from other sources
     document.addEventListener('mdv-theme-changed', (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -107,59 +111,64 @@ export class DarkModeToggle {
       }
     });
   }
-  
+
   public toggle(): void {
     const newTheme = this.isDark ? this.options.lightThemeName! : this.options.darkThemeName!;
     const theme = this.themeManager.setTheme(newTheme);
-    
+
     if (theme) {
       this.isDark = !this.isDark;
       this.updateUI();
-      
+
       // Dispatch custom event
-      document.dispatchEvent(new CustomEvent('mdv-dark-mode-toggled', {
-        detail: { isDark: this.isDark, theme }
-      }));
-      
+      document.dispatchEvent(
+        new CustomEvent('mdv-dark-mode-toggled', {
+          detail: { isDark: this.isDark, theme },
+        })
+      );
+
       if (this.options.onToggle) {
         this.options.onToggle(this.isDark, theme);
       }
     }
   }
-  
+
   private updateUI(): void {
     if (!this.container) return;
-    
+
     const button = this.container.querySelector('.mdv-dark-toggle-btn');
     const label = this.container.querySelector('.mdv-dark-toggle-label');
     const icon = this.container.querySelector('.mdv-dark-toggle-icon');
-    
+
     if (button) {
       button.className = `mdv-dark-toggle-btn ${this.isDark ? 'dark' : 'light'}`;
       button.setAttribute('aria-checked', this.isDark.toString());
-      button.setAttribute('aria-label', this.isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      button.setAttribute(
+        'aria-label',
+        this.isDark ? 'Switch to light mode' : 'Switch to dark mode'
+      );
       button.setAttribute('title', this.isDark ? 'Switch to light mode' : 'Switch to dark mode');
     }
-    
+
     if (label) {
       label.textContent = `${this.isDark ? 'Dark' : 'Light'} Mode`;
     }
-    
+
     if (icon) {
       icon.innerHTML = this.isDark ? this.getMoonIcon() : this.getSunIcon();
     }
   }
-  
+
   public setDarkMode(isDark: boolean): void {
     if (isDark !== this.isDark) {
       this.toggle();
     }
   }
-  
+
   public isDarkMode(): boolean {
     return this.isDark;
   }
-  
+
   public getStyles(): string {
     return `
       .mdv-dark-mode-toggle {

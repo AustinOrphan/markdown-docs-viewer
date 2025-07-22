@@ -110,7 +110,7 @@ export class PersistentCache extends LRUCache<string, string> {
     super(capacity);
     this.storageKey = storageKey;
     this.useStorage = this.isStorageAvailable();
-    
+
     if (this.useStorage) {
       this.loadFromStorage();
     }
@@ -118,7 +118,7 @@ export class PersistentCache extends LRUCache<string, string> {
 
   set(key: string, value: string): void {
     super.set(key, value);
-    
+
     if (this.useStorage) {
       this.saveToStorage();
     }
@@ -126,7 +126,7 @@ export class PersistentCache extends LRUCache<string, string> {
 
   clear(): void {
     super.clear();
-    
+
     if (this.useStorage) {
       try {
         localStorage.removeItem(this.storageKey);
@@ -165,7 +165,7 @@ export class PersistentCache extends LRUCache<string, string> {
     try {
       const data = {
         entries: Array.from(this.entries()),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       localStorage.setItem(this.storageKey, JSON.stringify(data));
     } catch (error) {
@@ -182,9 +182,35 @@ export class SearchIndex {
   private tagIndex: Map<string, Set<number>> = new Map();
   private searchCache: Map<string, Document[]> = new Map();
   private stopWords = new Set([
-    'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
-    'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
-    'to', 'was', 'were', 'will', 'with', 'but', 'or', 'not', 'can'
+    'a',
+    'an',
+    'and',
+    'are',
+    'as',
+    'at',
+    'be',
+    'by',
+    'for',
+    'from',
+    'has',
+    'he',
+    'in',
+    'is',
+    'it',
+    'its',
+    'of',
+    'on',
+    'that',
+    'the',
+    'to',
+    'was',
+    'were',
+    'will',
+    'with',
+    'but',
+    'or',
+    'not',
+    'can',
   ]);
 
   updateIndex(documents: Document[], contentCache: Map<string, string>): void {
@@ -195,7 +221,7 @@ export class SearchIndex {
     documents.forEach((doc, index) => {
       // Index title
       this.indexText(doc.title, this.titleIndex, index);
-      
+
       // Index description
       if (doc.description) {
         this.indexText(doc.description, this.contentIndex, index);
@@ -218,14 +244,17 @@ export class SearchIndex {
     });
   }
 
-  search(query: string, options: {
-    searchInTags?: boolean;
-    fuzzySearch?: boolean;
-    caseSensitive?: boolean;
-    maxResults?: number;
-  } = {}): Document[] {
+  search(
+    query: string,
+    options: {
+      searchInTags?: boolean;
+      fuzzySearch?: boolean;
+      caseSensitive?: boolean;
+      maxResults?: number;
+    } = {}
+  ): Document[] {
     const cacheKey = JSON.stringify({ query, options });
-    
+
     if (this.searchCache.has(cacheKey)) {
       return this.searchCache.get(cacheKey)!;
     }
@@ -234,12 +263,12 @@ export class SearchIndex {
       searchInTags = true,
       fuzzySearch = false,
       caseSensitive = false,
-      maxResults = 10
+      maxResults = 10,
     } = options;
 
     const normalizedQuery = caseSensitive ? query : query.toLowerCase();
     const queryTerms = this.tokenize(normalizedQuery);
-    
+
     const results = new Map<number, { score: number; doc: Document }>();
 
     for (const term of queryTerms) {
@@ -247,10 +276,10 @@ export class SearchIndex {
 
       // Search in titles (highest priority)
       this.searchInIndex(term, this.titleIndex, results, 3, fuzzySearch);
-      
+
       // Search in content (medium priority)
       this.searchInIndex(term, this.contentIndex, results, 1, fuzzySearch);
-      
+
       // Search in tags (medium priority)
       if (searchInTags) {
         this.searchInIndex(term, this.tagIndex, results, 2, fuzzySearch);
@@ -275,7 +304,7 @@ export class SearchIndex {
 
   private indexText(text: string, index: Map<string, Set<number>>, docIndex: number): void {
     const tokens = this.tokenize(text.toLowerCase());
-    
+
     for (const token of tokens) {
       if (!this.stopWords.has(token)) {
         if (!index.has(token)) {
@@ -305,8 +334,8 @@ export class SearchIndex {
   }
 
   private searchInIndex(
-    term: string, 
-    index: Map<string, Set<number>>, 
+    term: string,
+    index: Map<string, Set<number>>,
     results: Map<number, { score: number; doc: Document }>,
     weight: number,
     fuzzySearch: boolean
@@ -363,7 +392,9 @@ export class SearchIndex {
   }
 
   private levenshteinDistance(a: string, b: string): number {
-    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+    const matrix = Array(b.length + 1)
+      .fill(null)
+      .map(() => Array(a.length + 1).fill(null));
 
     for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
     for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
@@ -389,13 +420,13 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | undefined;
-  
+
   return (...args: Parameters<T>): void => {
     const later = () => {
       timeout = undefined;
       func(...args);
     };
-    
+
     if (timeout) {
       clearTimeout(timeout);
     }
@@ -409,12 +440,12 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
-  
+
   return (...args: Parameters<T>): void => {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }
@@ -434,7 +465,7 @@ export class LazyLoader {
     }
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting && !this.loadedElements.has(entry.target)) {
             callback();
@@ -447,7 +478,7 @@ export class LazyLoader {
       {
         rootMargin: '50px',
         threshold: 0.1,
-        ...options
+        ...options,
       }
     );
 
@@ -503,7 +534,7 @@ export class MemoryManager {
         console.warn('Cleanup task failed:', error);
       }
     });
-    
+
     // Force garbage collection if available (mainly for Node.js)
     if (global.gc) {
       global.gc();
@@ -514,7 +545,7 @@ export class MemoryManager {
     if ('memory' in performance) {
       const memInfo = (performance as any).memory;
       const usedJSHeapSize = memInfo.usedJSHeapSize;
-      
+
       if (usedJSHeapSize > this.memoryWarningThreshold) {
         console.warn(`High memory usage detected: ${Math.round(usedJSHeapSize / 1024 / 1024)}MB`);
         this.cleanup();
@@ -530,7 +561,7 @@ export class MemoryManager {
       return {
         used: Math.round(memInfo.usedJSHeapSize / 1024 / 1024),
         total: Math.round(memInfo.totalJSHeapSize / 1024 / 1024),
-        limit: Math.round(memInfo.jsHeapSizeLimit / 1024 / 1024)
+        limit: Math.round(memInfo.jsHeapSizeLimit / 1024 / 1024),
       };
     }
     return {};
@@ -544,7 +575,7 @@ export class PerformanceMonitor {
 
   startTiming(label: string): () => void {
     const start = performance.now();
-    
+
     return () => {
       const duration = performance.now() - start;
       this.recordMetric(label, duration);
@@ -555,10 +586,10 @@ export class PerformanceMonitor {
     if (!this.metrics.has(label)) {
       this.metrics.set(label, []);
     }
-    
+
     const values = this.metrics.get(label)!;
     values.push(value);
-    
+
     // Keep only last 100 measurements
     if (values.length > 100) {
       values.shift();
@@ -567,7 +598,7 @@ export class PerformanceMonitor {
 
   getMetrics(label: string): { avg: number; min: number; max: number; count: number } {
     const values = this.metrics.get(label) || [];
-    
+
     if (values.length === 0) {
       return { avg: 0, min: 0, max: 0, count: 0 };
     }
@@ -577,17 +608,17 @@ export class PerformanceMonitor {
       avg: sum / values.length,
       min: Math.min(...values),
       max: Math.max(...values),
-      count: values.length
+      count: values.length,
     };
   }
 
   getAllMetrics(): Record<string, ReturnType<typeof this.getMetrics>> {
     const result: Record<string, ReturnType<typeof this.getMetrics>> = {};
-    
+
     for (const label of this.metrics.keys()) {
       result[label] = this.getMetrics(label);
     }
-    
+
     return result;
   }
 
@@ -597,7 +628,7 @@ export class PerformanceMonitor {
 
   observeResourceTiming(): void {
     if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
           if (entry.entryType === 'resource') {
@@ -605,7 +636,7 @@ export class PerformanceMonitor {
           }
         });
       });
-      
+
       try {
         observer.observe({ entryTypes: ['resource'] });
         this.observers.push(observer);

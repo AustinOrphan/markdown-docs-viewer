@@ -28,7 +28,7 @@ export class SearchManager {
     this.options = options;
     this.searchIndex = new SearchIndex();
     this.onDocumentSelect = onDocumentSelect;
-    
+
     // Create debounced search function
     this.debouncedSearch = debounce(
       (query: string) => this.performSearch(query),
@@ -80,7 +80,7 @@ export class SearchManager {
 
     const results = this.searchResults.querySelectorAll('.mdv-search-result');
     const activeResult = this.searchResults.querySelector('.mdv-search-result.active');
-    
+
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
@@ -119,8 +119,8 @@ export class SearchManager {
   }
 
   private navigateResults(
-    results: NodeListOf<Element>, 
-    activeResult: Element | null, 
+    results: NodeListOf<Element>,
+    activeResult: Element | null,
     direction: number
   ): void {
     if (results.length === 0) return;
@@ -175,7 +175,7 @@ export class SearchManager {
       searchInTags: this.options.searchInTags,
       fuzzySearch: this.options.fuzzySearch,
       caseSensitive: this.options.caseSensitive,
-      maxResults: this.options.maxResults || 10
+      maxResults: this.options.maxResults || 10,
     });
 
     this.renderResults(results, query);
@@ -194,12 +194,17 @@ export class SearchManager {
       return;
     }
 
-    const resultsHtml = results.map((doc, index) => {
-      const highlightedTitle = this.highlightQuery(doc.title, query);
-      const description = doc.description ? this.highlightQuery(doc.description, query) : '';
-      const tags = doc.tags ? doc.tags.map(tag => `<span class="mdv-search-tag">${this.escapeHtml(tag)}</span>`).join('') : '';
-      
-      return `
+    const resultsHtml = results
+      .map((doc, index) => {
+        const highlightedTitle = this.highlightQuery(doc.title, query);
+        const description = doc.description ? this.highlightQuery(doc.description, query) : '';
+        const tags = doc.tags
+          ? doc.tags
+              .map(tag => `<span class="mdv-search-tag">${this.escapeHtml(tag)}</span>`)
+              .join('')
+          : '';
+
+        return `
         <div class="mdv-search-result ${index === 0 ? 'active' : ''}" data-doc-id="${this.escapeHtml(doc.id)}">
           <div class="mdv-search-result-title">${highlightedTitle}</div>
           ${description ? `<div class="mdv-search-result-description">${description}</div>` : ''}
@@ -207,15 +212,18 @@ export class SearchManager {
           ${doc.category ? `<div class="mdv-search-result-category">${this.escapeHtml(doc.category)}</div>` : ''}
         </div>
       `;
-    }).join('');
+      })
+      .join('');
 
     this.searchResults.innerHTML = resultsHtml;
-    
+
     // Add click handlers
     this.searchResults.querySelectorAll('.mdv-search-result').forEach(result => {
       result.addEventListener('click', () => this.selectResult(result));
       result.addEventListener('mouseenter', () => {
-        this.searchResults?.querySelectorAll('.mdv-search-result').forEach(r => r.classList.remove('active'));
+        this.searchResults
+          ?.querySelectorAll('.mdv-search-result')
+          .forEach(r => r.classList.remove('active'));
         result.classList.add('active');
       });
     });
@@ -227,7 +235,7 @@ export class SearchManager {
     if (!query) {
       return this.escapeHtml(text);
     }
-    
+
     // Default to case-insensitive if not explicitly set to true
     const flags = this.options.caseSensitive === true ? 'g' : 'gi';
     const regex = new RegExp(`(${this.escapeRegex(query)})`, flags);

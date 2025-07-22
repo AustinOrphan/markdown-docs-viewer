@@ -21,7 +21,7 @@ describe('ThemeManager', () => {
     // Reset localStorage mock
     vi.clearAllMocks();
     localStorageMock.getItem.mockReturnValue(null);
-    
+
     // Reset document styles
     document.documentElement.style.cssText = '';
     document.documentElement.removeAttribute('data-mdv-theme');
@@ -34,7 +34,7 @@ describe('ThemeManager', () => {
   describe('Constructor', () => {
     it('should initialize with default options', () => {
       themeManager = new ThemeManager();
-      
+
       expect(themeManager.getCurrentTheme().name).toBe('default');
       expect(themeManager.getAvailableThemes()).toHaveLength(8); // Built-in themes
     });
@@ -44,34 +44,34 @@ describe('ThemeManager', () => {
       themeManager = new ThemeManager({
         enablePersistence: false,
         storageKey: 'custom-key',
-        onThemeChange
+        onThemeChange,
       });
-      
+
       expect(themeManager.getCurrentTheme().name).toBe('default');
     });
 
     it('should load saved theme from localStorage', () => {
       localStorageMock.getItem.mockReturnValue('dark');
-      
+
       themeManager = new ThemeManager();
-      
+
       expect(themeManager.getCurrentTheme().name).toBe('dark');
       expect(localStorageMock.getItem).toHaveBeenCalledWith('mdv-theme');
     });
 
     it('should fall back to default theme if saved theme not found', () => {
       localStorageMock.getItem.mockReturnValue('nonexistent');
-      
+
       themeManager = new ThemeManager();
-      
+
       expect(themeManager.getCurrentTheme().name).toBe('default');
     });
 
     it('should use custom storage key', () => {
       localStorageMock.getItem.mockReturnValue('dark');
-      
+
       themeManager = new ThemeManager({ storageKey: 'my-theme' });
-      
+
       expect(localStorageMock.getItem).toHaveBeenCalledWith('my-theme');
     });
   });
@@ -84,7 +84,7 @@ describe('ThemeManager', () => {
     it('should have all expected built-in themes', () => {
       const themes = themeManager.getAvailableThemes();
       const themeNames = themes.map(t => t.name);
-      
+
       expect(themeNames).toContain('default');
       expect(themeNames).toContain('dark');
       expect(themeNames).toContain('high-contrast');
@@ -97,7 +97,7 @@ describe('ThemeManager', () => {
 
     it('should have proper theme structure for all built-in themes', () => {
       const themes = themeManager.getAvailableThemes();
-      
+
       themes.forEach(theme => {
         expect(theme.name).toBeTruthy();
         expect(theme.colors).toBeTruthy();
@@ -123,11 +123,11 @@ describe('ThemeManager', () => {
         colors: { ...defaultTheme.colors, primary: '#ff0000' },
         fonts: defaultTheme.fonts,
         spacing: defaultTheme.spacing,
-        borderRadius: '0.5rem'
+        borderRadius: '0.5rem',
       };
-      
+
       themeManager.registerTheme(customTheme);
-      
+
       const registeredTheme = themeManager.getTheme('custom');
       expect(registeredTheme).toEqual(customTheme);
     });
@@ -139,11 +139,11 @@ describe('ThemeManager', () => {
         colors: { ...defaultTheme.colors, primary: '#ff0000' },
         fonts: defaultTheme.fonts,
         spacing: defaultTheme.spacing,
-        borderRadius: '0.5rem'
+        borderRadius: '0.5rem',
       };
-      
+
       themeManager.registerTheme(modifiedDefault);
-      
+
       const theme = themeManager.getTheme('default');
       expect(theme?.colors.primary).toBe('#ff0000');
       expect(theme?.description).toBe('Modified default');
@@ -157,7 +157,7 @@ describe('ThemeManager', () => {
 
     it('should set theme and return the theme object', () => {
       const result = themeManager.setTheme('dark');
-      
+
       expect(result).toBeTruthy();
       expect(result?.name).toBe('dark');
       expect(themeManager.getCurrentTheme().name).toBe('dark');
@@ -165,45 +165,47 @@ describe('ThemeManager', () => {
 
     it('should return null for non-existent theme', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
+
       const result = themeManager.setTheme('nonexistent');
-      
+
       expect(result).toBeNull();
       expect(consoleSpy).toHaveBeenCalledWith('Theme "nonexistent" not found');
       expect(themeManager.getCurrentTheme().name).toBe('default'); // Should remain unchanged
-      
+
       consoleSpy.mockRestore();
     });
 
     it('should save theme to localStorage when persistence enabled', () => {
       themeManager.setTheme('dark');
-      
+
       expect(localStorageMock.setItem).toHaveBeenCalledWith('mdv-theme', 'dark');
     });
 
     it('should not save theme when persistence disabled', () => {
       themeManager = new ThemeManager({ enablePersistence: false });
-      
+
       themeManager.setTheme('dark');
-      
+
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
 
     it('should call onThemeChange callback', () => {
       const onThemeChange = vi.fn();
       themeManager = new ThemeManager({ onThemeChange });
-      
+
       const result = themeManager.setTheme('dark');
-      
+
       expect(onThemeChange).toHaveBeenCalledWith(result);
     });
 
     it('should apply CSS variables', () => {
       themeManager.setTheme('dark');
-      
+
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-color-primary')).toBe(darkTheme.colors.primary);
-      expect(root.style.getPropertyValue('--mdv-color-background')).toBe(darkTheme.colors.background);
+      expect(root.style.getPropertyValue('--mdv-color-background')).toBe(
+        darkTheme.colors.background
+      );
       expect(root.getAttribute('data-mdv-theme')).toBe('dark');
     });
 
@@ -212,12 +214,15 @@ describe('ThemeManager', () => {
         throw new Error('Storage error');
       });
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
+
       const result = themeManager.setTheme('dark');
-      
+
       expect(result).toBeTruthy();
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to save theme preference:', expect.any(Error));
-      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to save theme preference:',
+        expect.any(Error)
+      );
+
       consoleSpy.mockRestore();
     });
   });
@@ -230,7 +235,7 @@ describe('ThemeManager', () => {
     it('should return current theme', () => {
       const current = themeManager.getCurrentTheme();
       expect(current.name).toBe('default');
-      
+
       themeManager.setTheme('dark');
       const updated = themeManager.getCurrentTheme();
       expect(updated.name).toBe('dark');
@@ -255,11 +260,11 @@ describe('ThemeManager', () => {
         colors: defaultTheme.colors,
         fonts: defaultTheme.fonts,
         spacing: defaultTheme.spacing,
-        borderRadius: '0.5rem'
+        borderRadius: '0.5rem',
       };
-      
+
       themeManager.registerTheme(customTheme);
-      
+
       const themes = themeManager.getAvailableThemes();
       expect(themes.some(theme => theme.name === 'custom')).toBe(true);
     });
@@ -288,9 +293,9 @@ describe('ThemeManager', () => {
 
     it('should create custom theme based on current theme', () => {
       const customTheme = themeManager.createCustomTheme('my-theme', {
-        colors: { primary: '#ff0000' }
+        colors: { primary: '#ff0000' },
       });
-      
+
       expect(customTheme.name).toBe('my-theme');
       expect(customTheme.colors.primary).toBe('#ff0000');
       expect(customTheme.colors.background).toBe(defaultTheme.colors.background); // Inherited
@@ -300,14 +305,14 @@ describe('ThemeManager', () => {
 
     it('should merge all properties correctly', () => {
       themeManager.setTheme('dark'); // Change base theme
-      
+
       const customTheme = themeManager.createCustomTheme('dark-custom', {
         colors: { primary: '#purple' },
         fonts: { body: 'Comic Sans' },
         spacing: { unit: 16 },
-        borderRadius: '1rem'
+        borderRadius: '1rem',
       });
-      
+
       expect(customTheme.colors.primary).toBe('#purple');
       expect(customTheme.colors.background).toBe(darkTheme.colors.background); // From dark theme
       expect(customTheme.fonts.body).toBe('Comic Sans');
@@ -318,7 +323,7 @@ describe('ThemeManager', () => {
 
     it('should register the custom theme', () => {
       themeManager.createCustomTheme('registered', {});
-      
+
       const theme = themeManager.getTheme('registered');
       expect(theme).toBeTruthy();
     });
@@ -331,16 +336,20 @@ describe('ThemeManager', () => {
 
     it('should apply all color variables', () => {
       themeManager.applyCSSVariables(darkTheme);
-      
+
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-color-primary')).toBe(darkTheme.colors.primary);
-      expect(root.style.getPropertyValue('--mdv-color-background')).toBe(darkTheme.colors.background);
-      expect(root.style.getPropertyValue('--mdv-color-text-primary')).toBe(darkTheme.colors.textPrimary);
+      expect(root.style.getPropertyValue('--mdv-color-background')).toBe(
+        darkTheme.colors.background
+      );
+      expect(root.style.getPropertyValue('--mdv-color-text-primary')).toBe(
+        darkTheme.colors.textPrimary
+      );
     });
 
     it('should apply RGB versions of colors', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
       const rgbValue = root.style.getPropertyValue('--mdv-color-primary-rgb');
       expect(rgbValue).toBeTruthy();
@@ -349,7 +358,7 @@ describe('ThemeManager', () => {
 
     it('should apply font variables', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-font-body')).toBe(defaultTheme.fonts.body);
       expect(root.style.getPropertyValue('--mdv-font-heading')).toBe(defaultTheme.fonts.heading);
@@ -358,23 +367,29 @@ describe('ThemeManager', () => {
 
     it('should apply spacing variables', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
-      expect(root.style.getPropertyValue('--mdv-spacing-unit')).toBe(`${defaultTheme.spacing.unit}px`);
-      expect(root.style.getPropertyValue('--mdv-container-max-width')).toBe(defaultTheme.spacing.containerMaxWidth);
-      expect(root.style.getPropertyValue('--mdv-sidebar-width')).toBe(defaultTheme.spacing.sidebarWidth);
+      expect(root.style.getPropertyValue('--mdv-spacing-unit')).toBe(
+        `${defaultTheme.spacing.unit}px`
+      );
+      expect(root.style.getPropertyValue('--mdv-container-max-width')).toBe(
+        defaultTheme.spacing.containerMaxWidth
+      );
+      expect(root.style.getPropertyValue('--mdv-sidebar-width')).toBe(
+        defaultTheme.spacing.sidebarWidth
+      );
     });
 
     it('should apply border radius', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-border-radius')).toBe(defaultTheme.borderRadius);
     });
 
     it('should set theme data attribute', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       expect(document.documentElement.getAttribute('data-mdv-theme')).toBe('default');
     });
   });
@@ -423,7 +438,7 @@ describe('ThemeManager', () => {
         // A combination that passes AA but not AAA
         const passesAA = themeManager.isAccessible('#767676', '#ffffff', 'AA');
         const passesAAA = themeManager.isAccessible('#767676', '#ffffff', 'AAA');
-        
+
         expect(passesAA).toBe(true);
         expect(passesAAA).toBe(false);
       });
@@ -439,7 +454,7 @@ describe('ThemeManager', () => {
       it('should export theme as JSON string', () => {
         const exported = themeManager.exportTheme(defaultTheme);
         const parsed = JSON.parse(exported);
-        
+
         expect(parsed.name).toBe(defaultTheme.name);
         expect(parsed.colors).toEqual(defaultTheme.colors);
       });
@@ -458,11 +473,11 @@ describe('ThemeManager', () => {
           colors: defaultTheme.colors,
           fonts: defaultTheme.fonts,
           spacing: defaultTheme.spacing,
-          borderRadius: '0.5rem'
+          borderRadius: '0.5rem',
         };
-        
+
         const result = themeManager.importTheme(JSON.stringify(themeData));
-        
+
         expect(result).toBeTruthy();
         expect(result?.name).toBe('imported');
         expect(themeManager.getTheme('imported')).toBeTruthy();
@@ -470,40 +485,40 @@ describe('ThemeManager', () => {
 
       it('should return null for invalid JSON', () => {
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-        
+
         const result = themeManager.importTheme('invalid json');
-        
+
         expect(result).toBeNull();
         expect(consoleSpy).toHaveBeenCalled();
-        
+
         consoleSpy.mockRestore();
       });
 
       it('should validate theme structure', () => {
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-        
+
         const invalidTheme = { invalidProperty: true };
         const result = themeManager.importTheme(JSON.stringify(invalidTheme));
-        
+
         expect(result).toBeNull();
         expect(consoleSpy).toHaveBeenCalled();
-        
+
         consoleSpy.mockRestore();
       });
 
       it('should validate required colors', () => {
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-        
+
         const incompleteTheme = {
           name: 'incomplete',
-          colors: { primary: '#ff0000' } // Missing required colors
+          colors: { primary: '#ff0000' }, // Missing required colors
         };
-        
+
         const result = themeManager.importTheme(JSON.stringify(incompleteTheme));
-        
+
         expect(result).toBeNull();
         expect(consoleSpy).toHaveBeenCalled();
-        
+
         consoleSpy.mockRestore();
       });
     });
@@ -514,18 +529,18 @@ describe('ThemeManager', () => {
       // Mock localStorage as undefined
       Object.defineProperty(window, 'localStorage', {
         value: undefined,
-        configurable: true
+        configurable: true,
       });
-      
+
       expect(() => {
         themeManager = new ThemeManager();
         themeManager.setTheme('dark');
       }).not.toThrow();
-      
+
       // Restore localStorage
       Object.defineProperty(window, 'localStorage', {
         value: localStorageMock,
-        configurable: true
+        configurable: true,
       });
     });
 
@@ -533,11 +548,11 @@ describe('ThemeManager', () => {
       localStorageMock.getItem.mockImplementation(() => {
         throw new Error('Storage error');
       });
-      
+
       expect(() => {
         themeManager = new ThemeManager();
       }).not.toThrow();
-      
+
       expect(themeManager.getCurrentTheme().name).toBe('default');
     });
   });
@@ -550,7 +565,7 @@ describe('ThemeManager', () => {
     it('should convert camelCase to kebab-case', () => {
       // Test the kebabCase method indirectly through CSS variable application
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-color-text-primary')).toBeTruthy();
       expect(root.style.getPropertyValue('--mdv-color-text-secondary')).toBeTruthy();
@@ -558,7 +573,7 @@ describe('ThemeManager', () => {
 
     it('should handle hex to RGB conversion', () => {
       themeManager.applyCSSVariables(defaultTheme);
-      
+
       const root = document.documentElement;
       const rgbValue = root.style.getPropertyValue('--mdv-color-primary-rgb');
       expect(rgbValue).toMatch(/^\d+, \d+, \d+$/);

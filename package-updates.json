@@ -7,12 +7,7 @@
     "main": "dist/index.js",
     "module": "dist/index.es.js",
     "types": "dist/index.d.ts",
-    "files": [
-      "dist",
-      "themes",
-      "README.md",
-      "LICENSE"
-    ],
+    "files": ["dist", "themes", "README.md", "LICENSE"],
     "scripts": {
       "dev": "vite dev --host",
       "build": "vite build && tsc",
@@ -60,12 +55,7 @@
     "engines": {
       "node": ">=16.0.0"
     },
-    "browserslist": [
-      "> 1%",
-      "last 2 versions",
-      "not dead",
-      "not ie <= 11"
-    ],
+    "browserslist": ["> 1%", "last 2 versions", "not dead", "not ie <= 11"],
     "peerDependencies": {
       "marked": ">=12.0.0",
       "highlight.js": ">=11.0.0"
@@ -103,9 +93,7 @@
     }
   },
   "vitest.config.ts": {
-    "imports": [
-      "defineConfig from 'vitest/config'"
-    ],
+    "imports": ["defineConfig from 'vitest/config'"],
     "config": {
       "test": {
         "globals": true,
@@ -114,14 +102,7 @@
         "coverage": {
           "provider": "v8",
           "reporter": ["text", "json", "html"],
-          "exclude": [
-            "node_modules/",
-            "tests/",
-            "demo/",
-            "dist/",
-            "**/*.d.ts",
-            "**/*.config.*"
-          ],
+          "exclude": ["node_modules/", "tests/", "demo/", "dist/", "**/*.d.ts", "**/*.config.*"],
           "thresholds": {
             "global": {
               "branches": 80,

@@ -15,7 +15,7 @@ export class TableOfContents {
   private options: TableOfContentsOptions;
   private headings: TOCItem[] = [];
   private activeId: string | null = null;
-  
+
   constructor(options: TableOfContentsOptions = {}) {
     this.options = {
       enabled: true,
@@ -24,7 +24,7 @@ export class TableOfContents {
       scrollSpy: true,
       collapsible: false,
       position: 'right',
-      ...options
+      ...options,
     };
   }
 
@@ -62,7 +62,7 @@ export class TableOfContents {
       }
       return this.buildTree();
     }
-    
+
     this.extractHeadings(tokens);
     return this.buildTree();
   }
@@ -78,7 +78,7 @@ export class TableOfContents {
           id,
           text: token.text,
           level: token.depth,
-          children: []
+          children: [],
         });
       }
     }
@@ -164,11 +164,12 @@ export class TableOfContents {
       return '';
     }
 
-    const listItems = items.map(item => {
-      const hasChildren = item.children.length > 0;
-      const active = item.id === this.activeId ? 'mdv-toc-active' : '';
-      
-      return `
+    const listItems = items
+      .map(item => {
+        const hasChildren = item.children.length > 0;
+        const active = item.id === this.activeId ? 'mdv-toc-active' : '';
+
+        return `
         <li class="mdv-toc-item mdv-toc-level-${level} ${active}">
           <a href="#${item.id}" class="mdv-toc-link" data-toc-id="${item.id}">
             ${item.text}
@@ -176,7 +177,8 @@ export class TableOfContents {
           ${hasChildren ? this.renderTree(item.children, level + 1) : ''}
         </li>
       `;
-    }).join('');
+      })
+      .join('');
 
     return `<ul class="mdv-toc-list mdv-toc-list-${level}">${listItems}</ul>`;
   }
@@ -190,7 +192,7 @@ export class TableOfContents {
     }
 
     const headingElements: HTMLElement[] = [];
-    
+
     // Collect all heading elements
     this.headings.forEach(heading => {
       const element = container.querySelector(`#${heading.id}`) as HTMLElement;
@@ -201,7 +203,7 @@ export class TableOfContents {
 
     // Create intersection observer
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             this.setActiveHeading(entry.target.id);
@@ -210,7 +212,7 @@ export class TableOfContents {
       },
       {
         rootMargin: '-20% 0% -70% 0%',
-        threshold: 0
+        threshold: 0,
       }
     );
 
@@ -257,19 +259,19 @@ export class TableOfContents {
    */
   private setActiveHeading(id: string): void {
     this.activeId = id;
-    
+
     // Update DOM
     document.querySelectorAll('.mdv-toc-link').forEach(link => {
       link.classList.remove('mdv-toc-active');
       if (link.getAttribute('data-toc-id') === id) {
         link.classList.add('mdv-toc-active');
-        
+
         // Ensure active item is visible in TOC
         const tocContainer = link.closest('.mdv-toc');
         if (tocContainer && this.options.sticky) {
           const linkRect = link.getBoundingClientRect();
           const containerRect = tocContainer.getBoundingClientRect();
-          
+
           if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
             link.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
@@ -406,18 +408,18 @@ export function addHeadingIds(html: string): string {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
-  
+
   const usedIds = new Set<string>();
-  
-  headings.forEach((heading) => {
+
+  headings.forEach(heading => {
     if (!heading.id) {
-      const id = heading.textContent!
-        .toLowerCase()
+      const id = heading
+        .textContent!.toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .trim();
-      
+
       // Ensure uniqueness
       let counter = 1;
       let uniqueId = id;
@@ -425,11 +427,11 @@ export function addHeadingIds(html: string): string {
         uniqueId = `${id}-${counter}`;
         counter++;
       }
-      
+
       usedIds.add(uniqueId);
       heading.id = uniqueId;
     }
   });
-  
+
   return doc.body.innerHTML;
 }

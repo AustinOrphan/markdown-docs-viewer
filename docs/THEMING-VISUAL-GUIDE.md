@@ -28,11 +28,11 @@ const viewer = new MarkdownDocsViewer({
     switcherPosition: 'header',
     darkTogglePosition: 'header',
     showDarkModeLabel: true,
-    enablePersistence: true
+    enablePersistence: true,
   },
   source: {
     // Your documents
-  }
+  },
 });
 ```
 
@@ -44,8 +44,8 @@ const viewer = new MarkdownDocsViewer({
   theme: {
     darkTogglePosition: 'header',
     compactDarkToggle: true,
-    showDarkModeLabel: false
-  }
+    showDarkModeLabel: false,
+  },
 });
 ```
 
@@ -67,17 +67,21 @@ theme: {
 ### Visual Examples
 
 #### Header Position (Default)
+
 The theme switcher appears in the top right of the header, showing the current theme name with a dropdown arrow.
 
 #### Floating Position
+
 ```javascript
 theme: {
-  switcherPosition: 'floating'
+  switcherPosition: 'floating';
 }
 ```
+
 Creates a floating button in the bottom right corner of the viewport.
 
 #### Custom Styling
+
 ```css
 /* Customize the theme switcher appearance */
 .mdv-theme-switcher .mdv-theme-trigger {
@@ -109,22 +113,26 @@ theme: {
 ### Visual States
 
 #### Light Mode
+
 - Sun icon displayed
 - Light background on toggle track
 - Label shows "Light Mode" (if enabled)
 
 #### Dark Mode
+
 - Moon icon displayed
 - Primary color background on toggle track
 - Label shows "Dark Mode" (if enabled)
 
 ### Compact Mode
+
 ```javascript
 theme: {
   compactDarkToggle: true,
   showDarkModeLabel: false
 }
 ```
+
 Creates a smaller toggle without labels, perfect for tight spaces.
 
 ## Built-in Themes
@@ -132,26 +140,32 @@ Creates a smaller toggle without labels, perfect for tight spaces.
 ### Light Themes
 
 #### Default Theme
+
 ```javascript
 import { defaultTheme } from '@austinorphan/markdown-docs-viewer';
 viewer.setTheme('default');
 ```
+
 - Clean, modern design
 - Blue primary color (#3b82f6)
 - High readability
 
 #### GitHub Theme
+
 ```javascript
 viewer.setTheme('github');
 ```
+
 - GitHub-inspired colors
 - Familiar developer experience
 - Optimized for code
 
 #### Material Theme
+
 ```javascript
 viewer.setTheme('material');
 ```
+
 - Material Design principles
 - Subtle shadows and depth
 - Roboto font family
@@ -159,18 +173,22 @@ viewer.setTheme('material');
 ### Dark Themes
 
 #### Dark Theme
+
 ```javascript
 import { darkTheme } from '@austinorphan/markdown-docs-viewer';
 viewer.setTheme('dark');
 ```
+
 - Easy on the eyes
 - High contrast text
 - Blue accent colors
 
 #### Dracula Theme
+
 ```javascript
 viewer.setTheme('dracula');
 ```
+
 - Popular dark theme
 - Vibrant colors
 - Purple and green accents
@@ -178,9 +196,11 @@ viewer.setTheme('dracula');
 ### Accessibility Theme
 
 #### High Contrast
+
 ```javascript
 viewer.setTheme('high-contrast');
 ```
+
 - Maximum contrast ratios
 - WCAG AAA compliant
 - Clear focus indicators
@@ -194,8 +214,8 @@ viewer.setTheme('high-contrast');
 const myTheme = viewer.createCustomTheme('my-theme', {
   colors: {
     primary: '#e91e63',
-    secondary: '#9c27b0'
-  }
+    secondary: '#9c27b0',
+  },
 });
 
 // Method 2: Complete theme object
@@ -217,19 +237,19 @@ viewer.registerTheme({
     linkHover: '#0056b3',
     error: '#d63031',
     warning: '#fdcb6e',
-    success: '#00b894'
+    success: '#00b894',
   },
   fonts: {
     body: 'Inter, -apple-system, sans-serif',
     heading: 'Inter, -apple-system, sans-serif',
-    code: 'JetBrains Mono, monospace'
+    code: 'JetBrains Mono, monospace',
   },
   spacing: {
     unit: 8,
     containerMaxWidth: '1200px',
-    sidebarWidth: '300px'
+    sidebarWidth: '300px',
   },
-  borderRadius: '0.5rem'
+  borderRadius: '0.5rem',
 });
 ```
 
@@ -268,7 +288,7 @@ viewer.registerTheme({
       background: var(--mdv-color-primary);
       border-radius: 4px;
     }
-  `
+  `,
 });
 ```
 
@@ -316,7 +336,7 @@ viewer.registerTheme({
   .mdv-header-actions {
     gap: 8px;
   }
-  
+
   .mdv-dark-toggle-label,
   .mdv-theme-name {
     display: none;
@@ -327,6 +347,7 @@ viewer.registerTheme({
 ### Layout Examples
 
 #### Side-by-Side in Header
+
 ```css
 .mdv-header-actions {
   display: flex;
@@ -337,6 +358,7 @@ viewer.registerTheme({
 ```
 
 #### Stacked Vertically
+
 ```css
 .mdv-header-actions {
   display: flex;
@@ -347,6 +369,7 @@ viewer.registerTheme({
 ```
 
 #### Custom Positions
+
 ```javascript
 // Place controls in custom container
 const controls = document.getElementById('my-controls');
@@ -363,6 +386,7 @@ viewer.themeSwitcher.attachTo(controls.querySelector('.mdv-theme-switcher'));
 ### Default Behavior
 
 Themes are automatically saved to localStorage:
+
 - Key: `mdv-theme` (default)
 - Persists across sessions
 - Respects user preference
@@ -392,19 +416,19 @@ viewer.setTheme('default');
 
 ```javascript
 // Listen for any theme change
-document.addEventListener('mdv-theme-changed', (e) => {
+document.addEventListener('mdv-theme-changed', e => {
   console.log('New theme:', e.detail.theme);
   // Update other UI elements
   updateAppTheme(e.detail.theme);
 });
 
 // Listen for dark mode toggle
-document.addEventListener('mdv-dark-mode-toggled', (e) => {
+document.addEventListener('mdv-dark-mode-toggled', e => {
   console.log('Dark mode:', e.detail.isDark);
   console.log('Theme:', e.detail.theme);
   // Track user preference
   analytics.track('dark_mode_toggled', {
-    isDark: e.detail.isDark
+    isDark: e.detail.isDark,
   });
 });
 ```
@@ -449,10 +473,11 @@ const isAccessible = themeManager.isAccessible(
 ### Common Issues
 
 #### Theme Not Persisting
+
 ```javascript
 // Ensure persistence is enabled
 theme: {
-  enablePersistence: true
+  enablePersistence: true;
 }
 
 // Check localStorage is available
@@ -464,6 +489,7 @@ if (typeof Storage !== 'undefined') {
 ```
 
 #### Controls Not Appearing
+
 ```javascript
 // Verify container exists
 const container = document.querySelector('.mdv-header-actions');
@@ -475,13 +501,12 @@ console.log('Theme config:', viewer.config.theme);
 // Manually render if needed
 if (!container.querySelector('.mdv-dark-mode-toggle')) {
   container.innerHTML += viewer.darkModeToggle.render();
-  viewer.darkModeToggle.attachTo(
-    container.querySelector('.mdv-dark-mode-toggle')
-  );
+  viewer.darkModeToggle.attachTo(container.querySelector('.mdv-dark-mode-toggle'));
 }
 ```
 
 #### Styles Not Applied
+
 ```javascript
 // Ensure styles are loaded
 const styles = document.querySelector('style');
@@ -492,6 +517,7 @@ viewer.applyTheme(viewer.getCurrentTheme());
 ```
 
 #### Mobile Layout Issues
+
 ```css
 /* Ensure viewport meta tag */
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -501,7 +527,7 @@ viewer.applyTheme(viewer.getCurrentTheme());
   .mdv-header {
     flex-wrap: wrap;
   }
-  
+
   .mdv-header-actions {
     width: 100%;
     justify-content: center;
@@ -526,11 +552,11 @@ viewer.applyTheme(viewer.getCurrentTheme());
 viewer.logger = {
   log: (...args) => console.log('[Theme]', ...args),
   warn: (...args) => console.warn('[Theme]', ...args),
-  error: (...args) => console.error('[Theme]', ...args)
+  error: (...args) => console.error('[Theme]', ...args),
 };
 
 // Log all theme operations
-viewer.themeManager.on('themeChange', (theme) => {
+viewer.themeManager.on('themeChange', theme => {
   console.log('Theme changed:', theme);
 });
 ```

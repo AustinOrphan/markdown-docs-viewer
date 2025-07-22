@@ -6,14 +6,14 @@ export function createNavigation(
   options: NavigationOptions
 ): string {
   // Group documents by category if enabled
-  const grouped = options.showCategories 
+  const grouped = options.showCategories
     ? groupByCategory(documents)
     : { 'All Documents': documents };
 
   // Sort documents
   const sortedGroups = Object.entries(grouped).map(([category, docs]) => ({
     category,
-    documents: sortDocuments(docs, options.sortBy || 'order')
+    documents: sortDocuments(docs, options.sortBy || 'order'),
   }));
 
   return `
@@ -24,14 +24,17 @@ export function createNavigation(
 }
 
 function groupByCategory(documents: Document[]): Record<string, Document[]> {
-  return documents.reduce((acc, doc) => {
-    const category = doc.category || 'Uncategorized';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(doc);
-    return acc;
-  }, {} as Record<string, Document[]>);
+  return documents.reduce(
+    (acc, doc) => {
+      const category = doc.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(doc);
+      return acc;
+    },
+    {} as Record<string, Document[]>
+  );
 }
 
 function sortDocuments(documents: Document[], sortBy: string): Document[] {
@@ -53,15 +56,19 @@ function renderGroup(
   options: NavigationOptions
 ): string {
   const isCollapsible = options.collapsible && group.documents.length > 1;
-  
+
   return `
     <li class="mdv-nav-group">
-      ${group.category !== 'All Documents' ? `
+      ${
+        group.category !== 'All Documents'
+          ? `
         <div class="mdv-nav-category ${isCollapsible ? 'collapsible' : ''}">
           ${group.category}
           ${isCollapsible ? '<span class="mdv-collapse-icon">▼</span>' : ''}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
       <ul class="mdv-nav-sublist">
         ${group.documents.map(doc => renderDocument(doc, currentDoc, options)).join('')}
       </ul>
@@ -76,9 +83,10 @@ function renderDocument(
 ): string {
   const isActive = currentDoc?.id === doc.id;
   const tags = options.showTags && doc.tags ? renderTags(doc.tags) : '';
-  const description = options.showDescription && doc.description 
-    ? `<div class="mdv-nav-description">${doc.description}</div>` 
-    : '';
+  const description =
+    options.showDescription && doc.description
+      ? `<div class="mdv-nav-description">${doc.description}</div>`
+      : '';
 
   return `
     <li class="mdv-nav-item">

@@ -298,7 +298,7 @@ export function addPrintUtilities(container: HTMLElement): void {
   printButton.className = 'mdv-print-button no-print';
   printButton.textContent = 'Print';
   printButton.onclick = () => window.print();
-  
+
   // Find a suitable place to add the button
   const header = container.querySelector('.mdv-header');
   if (header) {

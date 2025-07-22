@@ -17,10 +17,8 @@ describe('Factory Functions', () => {
         container: '#test',
         source: {
           type: 'content',
-          documents: [
-            { id: 'doc1', title: 'Test Document', content: '# Test' }
-          ]
-        }
+          documents: [{ id: 'doc1', title: 'Test Document', content: '# Test' }],
+        },
       };
 
       const viewer = createViewer(config);
@@ -38,23 +36,23 @@ describe('Factory Functions', () => {
         source: {
           type: 'local',
           basePath: '/docs',
-          documents: []
+          documents: [],
         },
         search: {
           enabled: true,
-          placeholder: 'Search...'
+          placeholder: 'Search...',
         },
         navigation: {
           showCategories: true,
-          collapsible: true
+          collapsible: true,
         },
         render: {
           syntaxHighlighting: true,
-          copyCodeButton: true
+          copyCodeButton: true,
         },
         routing: 'hash',
         onDocumentLoad: vi.fn(),
-        onError: vi.fn()
+        onError: vi.fn(),
       };
 
       createViewer(config);
@@ -67,7 +65,7 @@ describe('Factory Functions', () => {
     it('should create viewer with minimal configuration using string container', () => {
       const documents = [
         { id: 'doc1', title: 'Document 1', content: '# Doc 1' },
-        { id: 'doc2', title: 'Document 2', content: '# Doc 2' }
+        { id: 'doc2', title: 'Document 2', content: '# Doc 2' },
       ];
 
       const viewer = quickStart('#app', documents);
@@ -76,17 +74,15 @@ describe('Factory Functions', () => {
         container: '#app',
         source: {
           type: 'content',
-          documents
-        }
+          documents,
+        },
       });
       expect(viewer).toBeInstanceOf(MarkdownDocsViewer);
     });
 
     it('should create viewer with minimal configuration using HTMLElement container', () => {
       const containerElement = document.createElement('div');
-      const documents = [
-        { id: 'doc1', title: 'Document 1', content: '# Doc 1' }
-      ];
+      const documents = [{ id: 'doc1', title: 'Document 1', content: '# Doc 1' }];
 
       const viewer = quickStart(containerElement, documents);
 
@@ -94,8 +90,8 @@ describe('Factory Functions', () => {
         container: containerElement,
         source: {
           type: 'content',
-          documents
-        }
+          documents,
+        },
       });
       expect(viewer).toBeInstanceOf(MarkdownDocsViewer);
     });
@@ -107,8 +103,8 @@ describe('Factory Functions', () => {
         container: '#app',
         source: {
           type: 'content',
-          documents: []
-        }
+          documents: [],
+        },
       });
       expect(viewer).toBeInstanceOf(MarkdownDocsViewer);
     });

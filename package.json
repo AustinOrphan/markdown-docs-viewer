@@ -27,7 +27,11 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint:check": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "prepare": "husky",
     "demo:dev": "cd demo && vite",
     "demo:build": "cd demo && vite build",
     "demo:preview": "cd demo && vite preview"
@@ -41,23 +45,26 @@
   "author": "Austin Orphan <austin@austinorphan.com>",
   "license": "MIT",
   "peerDependencies": {
+    "highlight.js": ">=11.0.0",
     "marked": ">=12.0.0",
-    "marked-highlight": ">=2.0.0",
-    "highlight.js": ">=11.0.0"
+    "marked-highlight": ">=2.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.0.0",
     "@types/marked": "^6.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
-    "@testing-library/jest-dom": "^6.0.0",
     "eslint": "^8.0.0",
     "highlight.js": "^11.9.0",
+    "husky": "^9.1.7",
     "jsdom": "^24.0.0",
+    "lint-staged": "^16.1.2",
     "marked": "^12.0.0",
     "marked-highlight": "^2.1.0",
+    "prettier": "^3.6.2",
     "typescript": "^5.0.0",
     "vite": "^5.0.0",
     "vitest": "^1.0.0"
@@ -69,5 +76,14 @@
   "bugs": {
     "url": "https://github.com/AustinOrphan/markdown-docs-viewer/issues"
   },
-  "homepage": "https://github.com/AustinOrphan/markdown-docs-viewer#readme"
+  "homepage": "https://github.com/AustinOrphan/markdown-docs-viewer#readme",
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{js,jsx,json,md,html,css}": [
+      "prettier --write"
+    ]
+  }
 }

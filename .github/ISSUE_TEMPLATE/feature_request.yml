@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest an idea for this project
-title: "[Feature]: "
-labels: ["enhancement"]
+title: '[Feature]: '
+labels: ['enhancement']
 assignees: []
 
 body:
@@ -39,7 +39,7 @@ body:
       render: javascript
       placeholder: |
         import { createViewer } from '@austinorphan/markdown-docs-viewer';
-        
+
         const viewer = createViewer({
           // Example of proposed feature usage
           newFeature: {

@@ -8,51 +8,51 @@ export enum ErrorCode {
   INVALID_CONFIG = 'INVALID_CONFIG',
   CONTAINER_NOT_FOUND = 'CONTAINER_NOT_FOUND',
   INVALID_SOURCE = 'INVALID_SOURCE',
-  
+
   // Document loading errors
   DOCUMENT_NOT_FOUND = 'DOCUMENT_NOT_FOUND',
   DOCUMENT_LOAD_FAILED = 'DOCUMENT_LOAD_FAILED',
   DOCUMENT_PARSE_FAILED = 'DOCUMENT_PARSE_FAILED',
-  
+
   // Network errors
   NETWORK_ERROR = 'NETWORK_ERROR',
   NETWORK_TIMEOUT = 'NETWORK_TIMEOUT',
   UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
   RATE_LIMITED = 'RATE_LIMITED',
-  
+
   // File system errors
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
   FILE_READ_ERROR = 'FILE_READ_ERROR',
   PERMISSION_DENIED = 'PERMISSION_DENIED',
-  
+
   // GitHub API errors
   GITHUB_API_ERROR = 'GITHUB_API_ERROR',
   GITHUB_RATE_LIMIT = 'GITHUB_RATE_LIMIT',
   GITHUB_NOT_FOUND = 'GITHUB_NOT_FOUND',
-  
+
   // Search errors
   SEARCH_FAILED = 'SEARCH_FAILED',
   SEARCH_TIMEOUT = 'SEARCH_TIMEOUT',
-  
+
   // Rendering errors
   MARKDOWN_PARSE_ERROR = 'MARKDOWN_PARSE_ERROR',
   SYNTAX_HIGHLIGHT_ERROR = 'SYNTAX_HIGHLIGHT_ERROR',
-  
+
   // Theme errors
   THEME_LOAD_ERROR = 'THEME_LOAD_ERROR',
   INVALID_THEME = 'INVALID_THEME',
-  
+
   // Generic errors
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
   OPERATION_CANCELLED = 'OPERATION_CANCELLED',
-  MISSING_DEPENDENCY = 'MISSING_DEPENDENCY'
+  MISSING_DEPENDENCY = 'MISSING_DEPENDENCY',
 }
 
 export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface ErrorContext {
@@ -95,7 +95,7 @@ export class MarkdownDocsError extends Error {
       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
       url: typeof window !== 'undefined' && window.location ? window.location.href : undefined,
       stackTrace: this.stack,
-      ...context
+      ...context,
     };
 
     // Maintain proper prototype chain
@@ -110,7 +110,7 @@ export class MarkdownDocsError extends Error {
       userMessage: this.userMessage,
       severity: this.severity,
       isRetryable: this.isRetryable,
-      context: this.context
+      context: this.context,
     };
   }
 }
@@ -118,14 +118,7 @@ export class MarkdownDocsError extends Error {
 // Specific error classes for better error categorization
 export class ConfigurationError extends MarkdownDocsError {
   constructor(message: string, userMessage: string, context?: Partial<ErrorContext>) {
-    super(
-      ErrorCode.INVALID_CONFIG,
-      message,
-      userMessage,
-      ErrorSeverity.HIGH,
-      false,
-      context
-    );
+    super(ErrorCode.INVALID_CONFIG, message, userMessage, ErrorSeverity.HIGH, false, context);
     this.name = 'ConfigurationError';
   }
 }
@@ -190,45 +183,41 @@ export const ErrorFactory = {
   },
 
   networkError(url: string, status?: number, statusText?: string): NetworkError {
-    const message = status 
+    const message = status
       ? `Network request failed: ${status} ${statusText}`
       : 'Network request failed';
-    
+
     return new NetworkError(
       ErrorCode.NETWORK_ERROR,
       message,
       'Unable to load content due to a network error. Please check your connection and try again.',
       true,
-      { 
+      {
         operation: 'networkRequest',
-        additionalData: { url, status, statusText }
+        additionalData: { url, status, statusText },
       }
     );
   },
 
   githubApiError(path: string, status: number, message: string): GitHubError {
-    const code = status === 404 
-      ? ErrorCode.GITHUB_NOT_FOUND 
-      : status === 403 
-        ? ErrorCode.GITHUB_RATE_LIMIT 
-        : ErrorCode.GITHUB_API_ERROR;
+    const code =
+      status === 404
+        ? ErrorCode.GITHUB_NOT_FOUND
+        : status === 403
+          ? ErrorCode.GITHUB_RATE_LIMIT
+          : ErrorCode.GITHUB_API_ERROR;
 
-    const userMessage = status === 404
-      ? 'The requested GitHub file was not found.'
-      : status === 403
-        ? 'GitHub API rate limit reached. Please try again later.'
-        : 'Unable to load content from GitHub. Please try again later.';
+    const userMessage =
+      status === 404
+        ? 'The requested GitHub file was not found.'
+        : status === 403
+          ? 'GitHub API rate limit reached. Please try again later.'
+          : 'Unable to load content from GitHub. Please try again later.';
 
-    return new GitHubError(
-      code,
-      `GitHub API error: ${message}`,
-      userMessage,
-      status === 403,
-      {
-        operation: 'githubRequest',
-        additionalData: { path, status, responseMessage: message }
-      }
-    );
+    return new GitHubError(code, `GitHub API error: ${message}`, userMessage, status === 403, {
+      operation: 'githubRequest',
+      additionalData: { path, status, responseMessage: message },
+    });
   },
 
   parseError(content: string, originalError: unknown): DocumentError {
@@ -240,10 +229,10 @@ export const ErrorFactory = {
       {
         operation: 'parseMarkdown',
         originalError,
-        additionalData: { contentLength: content.length }
+        additionalData: { contentLength: content.length },
       }
     );
-  }
+  },
 };
 
 // Retry configuration interface
@@ -264,8 +253,8 @@ export const DEFAULT_RETRY_CONFIG: RetryConfig = {
     ErrorCode.NETWORK_ERROR,
     ErrorCode.NETWORK_TIMEOUT,
     ErrorCode.RATE_LIMITED,
-    ErrorCode.GITHUB_RATE_LIMIT
-  ]
+    ErrorCode.GITHUB_RATE_LIMIT,
+  ],
 };
 
 // Utility function for retrying operations
@@ -327,7 +316,7 @@ export class ErrorBoundary {
       return await operation();
     } catch (error) {
       const wrappedError = this.wrapError(error, context);
-      
+
       if (this.errorHandler) {
         this.errorHandler(wrappedError);
       }
@@ -380,7 +369,7 @@ export class ConsoleErrorLogger implements ErrorLogger {
 
   log(error: MarkdownDocsError): void {
     const logMethod = this.getLogMethod(error.severity);
-    
+
     if (this.isDevelopment) {
       logMethod('MarkdownDocsViewer Error:', {
         code: error.code,
@@ -388,7 +377,7 @@ export class ConsoleErrorLogger implements ErrorLogger {
         userMessage: error.userMessage,
         severity: error.severity,
         context: error.context,
-        stack: error.stack
+        stack: error.stack,
       });
     } else {
       logMethod(`[${error.code}] ${error.userMessage}`);

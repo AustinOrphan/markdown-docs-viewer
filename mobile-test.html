@@ -1,79 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mobile Test - Markdown Docs Viewer</title>
     <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .test-info {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 9999;
-        }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      .test-info {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 9999;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="test-info">
-        <div id="viewport-size"></div>
-        <div id="mobile-status"></div>
+      <div id="viewport-size"></div>
+      <div id="mobile-status"></div>
     </div>
-    
+
     <div id="docs-container"></div>
 
     <!-- Load dependencies with SRI for security -->
-    <script src="https://unpkg.com/marked@12.0.0/marked.min.js" 
-            integrity="sha384-NNQgBjjuhtXzPmmy4gurS5X7P4uTt1DThyevz4Ua0IVK5+kazYQI1W27JHjbbxQz"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js" 
-            integrity="sha384-HmAiqROJLzg/FeRL2ueeROz3x2p5GJ7P1R2gPgv/quVAK51+QLespCbGOY237AgJ"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js" 
-            integrity="sha384-NcvHzdvInr1Xz4wcXZ66eOmu9gIby7JMvo/5H1f4JdFyCnwbphFkTtPF75l944Ru"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js" 
-            integrity="sha384-dV5nFKTQsd/rhftsM2qmstuyNM9ZFhqDigBHUoblzX1MolhJpZlPLo2bfJdVTCYs"
-            crossorigin="anonymous"></script>
+    <script
+      src="https://unpkg.com/marked@12.0.0/marked.min.js"
+      integrity="sha384-NNQgBjjuhtXzPmmy4gurS5X7P4uTt1DThyevz4Ua0IVK5+kazYQI1W27JHjbbxQz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"
+      integrity="sha384-HmAiqROJLzg/FeRL2ueeROz3x2p5GJ7P1R2gPgv/quVAK51+QLespCbGOY237AgJ"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"
+      integrity="sha384-NcvHzdvInr1Xz4wcXZ66eOmu9gIby7JMvo/5H1f4JdFyCnwbphFkTtPF75l944Ru"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"
+      integrity="sha384-dV5nFKTQsd/rhftsM2qmstuyNM9ZFhqDigBHUoblzX1MolhJpZlPLo2bfJdVTCYs"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Load the viewer -->
     <script src="dist/index.umd.cjs"></script>
 
     <script>
-        // Update viewport info
-        function updateViewportInfo() {
-            document.getElementById('viewport-size').textContent = `${window.innerWidth}x${window.innerHeight}`;
-            document.getElementById('mobile-status').textContent = window.innerWidth < 768 ? 'Mobile' : 'Desktop';
-        }
-        
-        updateViewportInfo();
-        window.addEventListener('resize', updateViewportInfo);
-        
-        try {
-            const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
-            
-            console.log('Creating viewer with mobile features...');
-            
-            new MarkdownDocsViewer({
-                container: '#docs-container',
-                title: 'Mobile Test Documentation',
-                theme: defaultTheme,
-                source: {
-                    type: 'local',
-                    documents: [
-                        {
-                            id: 'mobile-test',
-                            title: '📱 Mobile Features Test',
-                            category: 'Testing',
-                            content: `# Mobile Features Test
+      // Update viewport info
+      function updateViewportInfo() {
+        document.getElementById('viewport-size').textContent =
+          `${window.innerWidth}x${window.innerHeight}`;
+        document.getElementById('mobile-status').textContent =
+          window.innerWidth < 768 ? 'Mobile' : 'Desktop';
+      }
+
+      updateViewportInfo();
+      window.addEventListener('resize', updateViewportInfo);
+
+      try {
+        const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+
+        console.log('Creating viewer with mobile features...');
+
+        new MarkdownDocsViewer({
+          container: '#docs-container',
+          title: 'Mobile Test Documentation',
+          theme: defaultTheme,
+          source: {
+            type: 'local',
+            documents: [
+              {
+                id: 'mobile-test',
+                title: '📱 Mobile Features Test',
+                category: 'Testing',
+                content: `# Mobile Features Test
 
 This page tests mobile functionality:
 
@@ -113,13 +123,13 @@ const mobileViewer = new MarkdownDocsViewer({
 | Responsive Text | Testing | Should scale properly |
 
 > This is a blockquote to test mobile formatting and readability.
-                            `
-                        },
-                        {
-                            id: 'navigation-test',
-                            title: '🧭 Navigation Test',
-                            category: 'Testing',
-                            content: `# Navigation Test Page
+                            `,
+              },
+              {
+                id: 'navigation-test',
+                title: '🧭 Navigation Test',
+                category: 'Testing',
+                content: `# Navigation Test Page
 
 Switch between this page and the mobile test page to verify:
 
@@ -145,50 +155,49 @@ Switch between this page and the mobile test page to verify:
 - All interactive elements have 44px+ touch targets
 - Smooth animations and transitions
 - Proper focus states for accessibility
-            `
-                        }
-                    ]
-                },
-                navigation: {
-                    showCategories: true,
-                    collapsible: true
-                },
-                search: {
-                    enabled: true,
-                    placeholder: 'Search mobile docs...'
-                },
-                render: {
-                    syntaxHighlighting: true,
-                    copyCodeButton: true
-                },
-                onDocumentLoad: (doc) => {
-                    console.log('📄 Document loaded:', doc.title);
-                },
-                onError: (error) => {
-                    console.error('❌ Error:', error);
-                    alert(`Error: ${error.userMessage}`);
-                }
-            });
-            
-            console.log('✅ Viewer created successfully');
-            
-            // Test mobile detection
-            console.log('🔍 Mobile detection:', {
-                isMobile: window.innerWidth < 768,
-                viewport: `${window.innerWidth}x${window.innerHeight}`,
-                userAgent: navigator.userAgent
-            });
-            
-        } catch (error) {
-            console.error('❌ Failed to create viewer:', error);
-            document.getElementById('docs-container').innerHTML = `
+            `,
+              },
+            ],
+          },
+          navigation: {
+            showCategories: true,
+            collapsible: true,
+          },
+          search: {
+            enabled: true,
+            placeholder: 'Search mobile docs...',
+          },
+          render: {
+            syntaxHighlighting: true,
+            copyCodeButton: true,
+          },
+          onDocumentLoad: doc => {
+            console.log('📄 Document loaded:', doc.title);
+          },
+          onError: error => {
+            console.error('❌ Error:', error);
+            alert(`Error: ${error.userMessage}`);
+          },
+        });
+
+        console.log('✅ Viewer created successfully');
+
+        // Test mobile detection
+        console.log('🔍 Mobile detection:', {
+          isMobile: window.innerWidth < 768,
+          viewport: `${window.innerWidth}x${window.innerHeight}`,
+          userAgent: navigator.userAgent,
+        });
+      } catch (error) {
+        console.error('❌ Failed to create viewer:', error);
+        document.getElementById('docs-container').innerHTML = `
                 <div style="padding: 20px; background: #f8d7da; color: #721c24; margin: 20px; border-radius: 4px;">
                     <strong>Error:</strong> ${error.message}
                     <br><br>
                     Check the browser console for more details.
                 </div>
             `;
-        }
+      }
     </script>
-</body>
+  </body>
 </html>

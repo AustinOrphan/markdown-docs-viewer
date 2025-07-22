@@ -5,11 +5,13 @@ Welcome to the Markdown Documentation Viewer! This comprehensive guide will help
 ## Quick Installation
 
 ### NPM Installation
+
 ```bash
 npm install @austinorphan/markdown-docs-viewer
 ```
 
 ### CDN Usage
+
 ```html
 <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer"></script>
 ```
@@ -22,38 +24,42 @@ Here's a minimal example to get you started:
 import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
 
 const viewer = new MarkdownDocsViewer({
-    container: '#documentation',
-    source: {
-        type: 'local',
-        documents: [
-            {
-                id: 'intro',
-                title: 'Introduction',
-                content: '# Welcome\n\nThis is your first document!'
-            }
-        ]
-    }
+  container: '#documentation',
+  source: {
+    type: 'local',
+    documents: [
+      {
+        id: 'intro',
+        title: 'Introduction',
+        content: '# Welcome\n\nThis is your first document!',
+      },
+    ],
+  },
 });
 ```
 
 ## Key Features
 
 ### 📚 Multiple Document Sources
+
 - **Local documents**: Embedded in your application
 - **Remote URLs**: Load from any web source
 - **GitHub repositories**: Direct integration with GitHub repos
 
 ### 🎨 Customizable Themes
+
 - Built-in light and dark themes
 - Fully customizable color schemes
 - Typography and spacing controls
 
 ### 🔍 Powerful Search
+
 - Full-text search across all documents
 - Configurable search options
 - Real-time filtering
 
 ### 📱 Responsive Design
+
 - Mobile-first approach
 - Touch-friendly navigation
 - Adaptive layouts

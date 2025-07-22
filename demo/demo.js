@@ -2,300 +2,302 @@
 import { MarkdownDocsViewer, defaultTheme, darkTheme } from '../dist/index.es.js';
 
 class DemoController {
-    constructor() {
-        this.viewer = null;
-        this.currentExample = 'basic';
-        this.currentTheme = 'default';
-        this.examples = this.getExampleConfigs();
-        this.themes = this.getThemes();
-        
-        this.init();
-    }
+  constructor() {
+    this.viewer = null;
+    this.currentExample = 'basic';
+    this.currentTheme = 'default';
+    this.examples = this.getExampleConfigs();
+    this.themes = this.getThemes();
 
-    init() {
-        // Initialize controls
-        this.setupControls();
-        
-        // Load initial example
-        this.loadExample('basic');
-        
-        // Set initial status
-        this.updateStatus('ready', 'Demo loaded successfully');
-    }
+    this.init();
+  }
 
-    setupControls() {
-        // Theme selector
-        const themeSelector = document.getElementById('theme-selector');
-        themeSelector.addEventListener('change', (e) => {
-            this.switchTheme(e.target.value);
-        });
+  init() {
+    // Initialize controls
+    this.setupControls();
 
-        // Example selector
-        const exampleSelector = document.getElementById('example-selector');
-        exampleSelector.addEventListener('change', (e) => {
-            this.loadExample(e.target.value);
-        });
+    // Load initial example
+    this.loadExample('basic');
 
-        // Reload button
-        const reloadBtn = document.getElementById('reload-btn');
-        reloadBtn.addEventListener('click', () => {
-            this.reloadViewer();
-        });
+    // Set initial status
+    this.updateStatus('ready', 'Demo loaded successfully');
+  }
 
-        // Fullscreen button
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        fullscreenBtn.addEventListener('click', () => {
-            this.toggleFullscreen();
-        });
-    }
+  setupControls() {
+    // Theme selector
+    const themeSelector = document.getElementById('theme-selector');
+    themeSelector.addEventListener('change', e => {
+      this.switchTheme(e.target.value);
+    });
 
-    getExampleConfigs() {
-        return {
-            basic: {
-                title: 'Basic Documentation',
-                source: {
-                    type: 'local',
-                    documents: [
-                        {
-                            id: 'getting-started',
-                            title: 'Getting Started',
-                            description: 'Quick start guide for the documentation viewer',
-                            content: this.getBasicContent(),
-                            category: 'Introduction',
-                            tags: ['setup', 'installation']
-                        },
-                        {
-                            id: 'configuration',
-                            title: 'Configuration',
-                            description: 'Learn how to configure the viewer',
-                            content: this.getConfigContent(),
-                            category: 'Guide',
-                            tags: ['config', 'options']
-                        },
-                        {
-                            id: 'theming',
-                            title: 'Theming',
-                            description: 'Customize the appearance',
-                            content: this.getThemingContent(),
-                            category: 'Guide',
-                            tags: ['themes', 'customization']
-                        }
-                    ]
-                },
-                navigation: {
-                    showCategories: true,
-                    showTags: true,
-                    collapsible: true
-                },
-                search: {
-                    enabled: true,
-                    placeholder: 'Search documentation...'
-                }
+    // Example selector
+    const exampleSelector = document.getElementById('example-selector');
+    exampleSelector.addEventListener('change', e => {
+      this.loadExample(e.target.value);
+    });
+
+    // Reload button
+    const reloadBtn = document.getElementById('reload-btn');
+    reloadBtn.addEventListener('click', () => {
+      this.reloadViewer();
+    });
+
+    // Fullscreen button
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn.addEventListener('click', () => {
+      this.toggleFullscreen();
+    });
+  }
+
+  getExampleConfigs() {
+    return {
+      basic: {
+        title: 'Basic Documentation',
+        source: {
+          type: 'local',
+          documents: [
+            {
+              id: 'getting-started',
+              title: 'Getting Started',
+              description: 'Quick start guide for the documentation viewer',
+              content: this.getBasicContent(),
+              category: 'Introduction',
+              tags: ['setup', 'installation'],
             },
-            github: {
-                title: 'GitHub Repository Docs',
-                source: {
-                    type: 'github',
-                    repository: 'microsoft/typescript',
-                    branch: 'main',
-                    docsPath: 'doc'
-                },
-                navigation: {
-                    showCategories: true,
-                    collapsible: true
-                },
-                search: {
-                    enabled: true
-                }
+            {
+              id: 'configuration',
+              title: 'Configuration',
+              description: 'Learn how to configure the viewer',
+              content: this.getConfigContent(),
+              category: 'Guide',
+              tags: ['config', 'options'],
             },
-            url: {
-                title: 'Remote Documentation',
-                source: {
-                    type: 'url',
-                    baseUrl: 'https://raw.githubusercontent.com/markdown-it/markdown-it/master',
-                    documents: [
-                        { file: '/README.md' },
-                        { file: '/docs/architecture.md' },
-                        { file: '/docs/development.md' }
-                    ]
-                },
-                navigation: {
-                    showCategories: false
-                }
+            {
+              id: 'theming',
+              title: 'Theming',
+              description: 'Customize the appearance',
+              content: this.getThemingContent(),
+              category: 'Guide',
+              tags: ['themes', 'customization'],
             },
-            advanced: {
-                title: 'Advanced Features Demo',
-                source: {
-                    type: 'local',
-                    documents: this.getAdvancedDocuments()
-                },
-                navigation: {
-                    showCategories: true,
-                    showTags: true,
-                    collapsible: true,
-                    showDescription: true
-                },
-                search: {
-                    enabled: true,
-                    maxResults: 20,
-                    placeholder: 'Search advanced features...'
-                },
-                render: {
-                    syntaxHighlighting: true,
-                    copyCodeButton: true,
-                    linkTarget: '_blank'
-                },
-                onDocumentLoad: (doc) => {
-                    this.updateStatus('success', `Loaded: ${doc.title}`);
-                }
-            },
-            'api-docs': {
-                title: 'API Documentation',
-                source: {
-                    type: 'local',
-                    documents: this.getApiDocuments()
-                },
-                navigation: {
-                    showCategories: true,
-                    collapsible: true
-                },
-                search: {
-                    enabled: true
-                },
-                render: {
-                    syntaxHighlighting: true,
-                    copyCodeButton: true
-                }
-            }
-        };
+          ],
+        },
+        navigation: {
+          showCategories: true,
+          showTags: true,
+          collapsible: true,
+        },
+        search: {
+          enabled: true,
+          placeholder: 'Search documentation...',
+        },
+      },
+      github: {
+        title: 'GitHub Repository Docs',
+        source: {
+          type: 'github',
+          repository: 'microsoft/typescript',
+          branch: 'main',
+          docsPath: 'doc',
+        },
+        navigation: {
+          showCategories: true,
+          collapsible: true,
+        },
+        search: {
+          enabled: true,
+        },
+      },
+      url: {
+        title: 'Remote Documentation',
+        source: {
+          type: 'url',
+          baseUrl: 'https://raw.githubusercontent.com/markdown-it/markdown-it/master',
+          documents: [
+            { file: '/README.md' },
+            { file: '/docs/architecture.md' },
+            { file: '/docs/development.md' },
+          ],
+        },
+        navigation: {
+          showCategories: false,
+        },
+      },
+      advanced: {
+        title: 'Advanced Features Demo',
+        source: {
+          type: 'local',
+          documents: this.getAdvancedDocuments(),
+        },
+        navigation: {
+          showCategories: true,
+          showTags: true,
+          collapsible: true,
+          showDescription: true,
+        },
+        search: {
+          enabled: true,
+          maxResults: 20,
+          placeholder: 'Search advanced features...',
+        },
+        render: {
+          syntaxHighlighting: true,
+          copyCodeButton: true,
+          linkTarget: '_blank',
+        },
+        onDocumentLoad: doc => {
+          this.updateStatus('success', `Loaded: ${doc.title}`);
+        },
+      },
+      'api-docs': {
+        title: 'API Documentation',
+        source: {
+          type: 'local',
+          documents: this.getApiDocuments(),
+        },
+        navigation: {
+          showCategories: true,
+          collapsible: true,
+        },
+        search: {
+          enabled: true,
+        },
+        render: {
+          syntaxHighlighting: true,
+          copyCodeButton: true,
+        },
+      },
+    };
+  }
+
+  getThemes() {
+    return {
+      default: defaultTheme,
+      dark: darkTheme,
+      custom: {
+        ...defaultTheme,
+        colors: {
+          primary: '#ff6b6b',
+          background: '#fef3e2',
+          surface: '#fff9f0',
+          text: '#2d3436',
+          textLight: '#636e72',
+          border: '#fab1a0',
+          code: '#6c5ce7',
+          codeBackground: '#f8f9fa',
+        },
+        fonts: {
+          body: 'Georgia, serif',
+          heading: 'Helvetica, Arial, sans-serif',
+          code: 'Monaco, monospace',
+        },
+      },
+    };
+  }
+
+  loadExample(exampleName) {
+    this.updateStatus('loading', 'Loading example...');
+    this.setProgress(30);
+
+    // Destroy existing viewer
+    if (this.viewer) {
+      this.viewer.destroy();
     }
 
-    getThemes() {
-        return {
-            default: defaultTheme,
-            dark: darkTheme,
-            custom: {
-                ...defaultTheme,
-                colors: {
-                    primary: '#ff6b6b',
-                    background: '#fef3e2',
-                    surface: '#fff9f0',
-                    text: '#2d3436',
-                    textLight: '#636e72',
-                    border: '#fab1a0',
-                    code: '#6c5ce7',
-                    codeBackground: '#f8f9fa'
-                },
-                fonts: {
-                    body: 'Georgia, serif',
-                    heading: 'Helvetica, Arial, sans-serif',
-                    code: 'Monaco, monospace'
-                }
-            }
-        };
+    // Get example config
+    const config = this.examples[exampleName];
+    if (!config) {
+      this.updateStatus('error', `Example "${exampleName}" not found`);
+      return;
     }
 
-    loadExample(exampleName) {
-        this.updateStatus('loading', 'Loading example...');
-        this.setProgress(30);
+    this.setProgress(60);
 
-        // Destroy existing viewer
-        if (this.viewer) {
-            this.viewer.destroy();
-        }
+    try {
+      // Create new viewer
+      this.viewer = new MarkdownDocsViewer({
+        ...config,
+        container: '#viewer-container',
+        theme: this.themes[this.currentTheme],
+        onError: error => {
+          this.updateStatus('error', error.message);
+        },
+      });
 
-        // Get example config
-        const config = this.examples[exampleName];
-        if (!config) {
-            this.updateStatus('error', `Example "${exampleName}" not found`);
-            return;
-        }
+      this.currentExample = exampleName;
+      this.setProgress(100);
 
-        this.setProgress(60);
-
-        try {
-            // Create new viewer
-            this.viewer = new MarkdownDocsViewer({
-                ...config,
-                container: '#viewer-container',
-                theme: this.themes[this.currentTheme],
-                onError: (error) => {
-                    this.updateStatus('error', error.message);
-                }
-            });
-
-            this.currentExample = exampleName;
-            this.setProgress(100);
-            
-            setTimeout(() => {
-                this.updateStatus('success', `Loaded "${config.title}"`);
-                this.hideProgress();
-            }, 500);
-
-        } catch (error) {
-            this.updateStatus('error', error.message);
-            this.hideProgress();
-        }
+      setTimeout(() => {
+        this.updateStatus('success', `Loaded "${config.title}"`);
+        this.hideProgress();
+      }, 500);
+    } catch (error) {
+      this.updateStatus('error', error.message);
+      this.hideProgress();
     }
+  }
 
-    switchTheme(themeName) {
-        const theme = this.themes[themeName];
-        if (!theme) return;
+  switchTheme(themeName) {
+    const theme = this.themes[themeName];
+    if (!theme) return;
 
-        this.currentTheme = themeName;
-        document.body.setAttribute('data-theme', themeName === 'dark' ? 'dark' : 'light');
+    this.currentTheme = themeName;
+    document.body.setAttribute('data-theme', themeName === 'dark' ? 'dark' : 'light');
 
-        if (this.viewer) {
-            this.viewer.setTheme(theme);
-            this.updateStatus('success', `Theme switched to ${themeName}`);
-        }
+    if (this.viewer) {
+      this.viewer.setTheme(theme);
+      this.updateStatus('success', `Theme switched to ${themeName}`);
     }
+  }
 
-    reloadViewer() {
-        this.loadExample(this.currentExample);
+  reloadViewer() {
+    this.loadExample(this.currentExample);
+  }
+
+  toggleFullscreen() {
+    const container = document.getElementById('viewer-container');
+
+    if (!document.fullscreenElement) {
+      container
+        .requestFullscreen()
+        .then(() => {
+          this.updateStatus('success', 'Entered fullscreen mode');
+        })
+        .catch(err => {
+          this.updateStatus('error', `Fullscreen error: ${err.message}`);
+        });
+    } else {
+      document.exitFullscreen();
+      this.updateStatus('success', 'Exited fullscreen mode');
     }
+  }
 
-    toggleFullscreen() {
-        const container = document.getElementById('viewer-container');
-        
-        if (!document.fullscreenElement) {
-            container.requestFullscreen().then(() => {
-                this.updateStatus('success', 'Entered fullscreen mode');
-            }).catch((err) => {
-                this.updateStatus('error', `Fullscreen error: ${err.message}`);
-            });
-        } else {
-            document.exitFullscreen();
-            this.updateStatus('success', 'Exited fullscreen mode');
-        }
-    }
+  updateStatus(type, message) {
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
 
-    updateStatus(type, message) {
-        const indicator = document.getElementById('status-indicator');
-        const text = document.getElementById('status-text');
-        
-        indicator.className = `status-indicator ${type}`;
-        text.textContent = message;
-    }
+    indicator.className = `status-indicator ${type}`;
+    text.textContent = message;
+  }
 
-    setProgress(percent) {
-        const progressBar = document.getElementById('loading-progress');
-        const loadingBar = document.getElementById('loading-bar');
-        
-        loadingBar.style.display = 'inline-block';
-        progressBar.style.width = `${percent}%`;
-    }
+  setProgress(percent) {
+    const progressBar = document.getElementById('loading-progress');
+    const loadingBar = document.getElementById('loading-bar');
 
-    hideProgress() {
-        const loadingBar = document.getElementById('loading-bar');
-        setTimeout(() => {
-            loadingBar.style.display = 'none';
-        }, 300);
-    }
+    loadingBar.style.display = 'inline-block';
+    progressBar.style.width = `${percent}%`;
+  }
 
-    // Content generators
-    getBasicContent() {
-        return `# Getting Started
+  hideProgress() {
+    const loadingBar = document.getElementById('loading-bar');
+    setTimeout(() => {
+      loadingBar.style.display = 'none';
+    }, 300);
+  }
+
+  // Content generators
+  getBasicContent() {
+    return `# Getting Started
 
 Welcome to the Markdown Documentation Viewer! This guide will help you get up and running quickly.
 
@@ -349,10 +351,10 @@ const viewer = new MarkdownDocsViewer({
 - Learn about [Theming](#theming)
 - Explore [Advanced Features](#advanced)
 `;
-    }
+  }
 
-    getConfigContent() {
-        return `# Configuration
+  getConfigContent() {
+    return `# Configuration
 
 The Markdown Documentation Viewer is highly configurable. Here are all available options:
 
@@ -439,10 +441,10 @@ search: {
 }
 \`\`\`
 `;
-    }
+  }
 
-    getThemingContent() {
-        return `# Theming
+  getThemingContent() {
+    return `# Theming
 
 Customize the appearance of your documentation with themes.
 
@@ -527,16 +529,16 @@ The viewer uses CSS custom properties that you can override:
 }
 \`\`\`
 `;
-    }
+  }
 
-    getAdvancedDocuments() {
-        return [
-            {
-                id: 'advanced-features',
-                title: 'Advanced Features',
-                category: 'Advanced',
-                tags: ['features', 'advanced'],
-                content: `# Advanced Features
+  getAdvancedDocuments() {
+    return [
+      {
+        id: 'advanced-features',
+        title: 'Advanced Features',
+        category: 'Advanced',
+        tags: ['features', 'advanced'],
+        content: `# Advanced Features
 
 ## Code Syntax Highlighting
 
@@ -584,14 +586,14 @@ graph TD
 - [x] Theme system
 - [ ] Plugin architecture
 - [ ] Export functionality
-`
-            },
-            {
-                id: 'plugins',
-                title: 'Plugin System',
-                category: 'Advanced',
-                tags: ['plugins', 'extensibility'],
-                content: `# Plugin System
+`,
+      },
+      {
+        id: 'plugins',
+        title: 'Plugin System',
+        category: 'Advanced',
+        tags: ['plugins', 'extensibility'],
+        content: `# Plugin System
 
 Extend the viewer with custom plugins:
 
@@ -627,14 +629,14 @@ const viewer = new MarkdownDocsViewer({
 - \`document:render\` - Before rendering
 - \`search:query\` - Search performed
 - \`theme:change\` - Theme changed
-`
-            },
-            {
-                id: 'performance',
-                title: 'Performance Optimization',
-                category: 'Advanced',
-                tags: ['performance', 'optimization'],
-                content: `# Performance Optimization
+`,
+      },
+      {
+        id: 'performance',
+        title: 'Performance Optimization',
+        category: 'Advanced',
+        tags: ['performance', 'optimization'],
+        content: `# Performance Optimization
 
 ## Lazy Loading
 
@@ -674,18 +676,18 @@ cache: {
     storage: 'localStorage'
 }
 \`\`\`
-`
-            }
-        ];
-    }
+`,
+      },
+    ];
+  }
 
-    getApiDocuments() {
-        return [
-            {
-                id: 'api-viewer',
-                title: 'MarkdownDocsViewer',
-                category: 'API Reference',
-                content: `# MarkdownDocsViewer
+  getApiDocuments() {
+    return [
+      {
+        id: 'api-viewer',
+        title: 'MarkdownDocsViewer',
+        category: 'API Reference',
+        content: `# MarkdownDocsViewer
 
 The main class for creating a documentation viewer.
 
@@ -736,13 +738,13 @@ viewer.on('document:load', (doc) => {
     console.log('Loaded:', doc.title);
 });
 \`\`\`
-`
-            },
-            {
-                id: 'api-types',
-                title: 'Type Definitions',
-                category: 'API Reference',
-                content: `# Type Definitions
+`,
+      },
+      {
+        id: 'api-types',
+        title: 'Type Definitions',
+        category: 'API Reference',
+        content: `# Type Definitions
 
 ## DocumentationConfig
 
@@ -810,13 +812,13 @@ interface Theme {
     };
 }
 \`\`\`
-`
-            },
-            {
-                id: 'api-utilities',
-                title: 'Utility Functions',
-                category: 'API Reference',
-                content: `# Utility Functions
+`,
+      },
+      {
+        id: 'api-utilities',
+        title: 'Utility Functions',
+        category: 'API Reference',
+        content: `# Utility Functions
 
 ## createViewer
 
@@ -855,24 +857,24 @@ async function loadGitHubDocs(
     options?: GitHubOptions
 ): Promise<Document[]>
 \`\`\`
-`
-            }
-        ];
-    }
+`,
+      },
+    ];
+  }
 }
 
 // Initialize demo when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.demoController = new DemoController();
-    });
-} else {
+  document.addEventListener('DOMContentLoaded', () => {
     window.demoController = new DemoController();
+  });
+} else {
+  window.demoController = new DemoController();
 }
 
 // Make loadExample available globally for footer links
-window.loadExample = function(exampleName) {
-    if (window.demoController) {
-        window.demoController.loadExample(exampleName);
-    }
+window.loadExample = function (exampleName) {
+  if (window.demoController) {
+    window.demoController.loadExample(exampleName);
+  }
 };

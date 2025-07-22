@@ -5,6 +5,7 @@ Framework-specific integration examples and best practices for the Markdown Docu
 ## React Integration
 
 ### Basic Setup
+
 ```jsx
 import React, { useEffect, useRef } from 'react';
 import { MarkdownDocsViewer } from 'markdown-docs-viewer';
@@ -16,13 +17,11 @@ function DocumentationPage() {
   useEffect(() => {
     const config = {
       title: 'React App Documentation',
-      sources: [
-        { type: 'local', path: './docs/' }
-      ],
+      sources: [{ type: 'local', path: './docs/' }],
       theme: {
         default: 'light',
-        allowUserToggle: true
-      }
+        allowUserToggle: true,
+      },
     };
 
     viewerRef.current = new MarkdownDocsViewer(containerRef.current, config);
@@ -42,6 +41,7 @@ export default DocumentationPage;
 ```
 
 ### React Hook
+
 Create a custom hook for easier integration:
 
 ```jsx
@@ -59,7 +59,7 @@ export function useMarkdownViewer(config) {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         viewerRef.current = new MarkdownDocsViewer(containerRef.current, {
           ...config,
           callbacks: {
@@ -67,10 +67,10 @@ export function useMarkdownViewer(config) {
             onError: (err, context) => {
               setError({ error: err, context });
               config.callbacks?.onError?.(err, context);
-            }
-          }
+            },
+          },
         });
-        
+
         await viewerRef.current.initialize();
         setIsLoading(false);
       } catch (err) {
@@ -94,7 +94,7 @@ export function useMarkdownViewer(config) {
     containerRef,
     viewer: viewerRef.current,
     isLoading,
-    error
+    error,
   };
 }
 
@@ -102,7 +102,7 @@ export function useMarkdownViewer(config) {
 function DocsPage() {
   const config = {
     title: 'My Docs',
-    sources: [{ type: 'local', path: './docs/' }]
+    sources: [{ type: 'local', path: './docs/' }],
   };
 
   const { containerRef, viewer, isLoading, error } = useMarkdownViewer(config);
@@ -115,6 +115,7 @@ function DocsPage() {
 ```
 
 ### Next.js Integration
+
 ```jsx
 // pages/docs.js
 import dynamic from 'next/dynamic';
@@ -165,6 +166,7 @@ export default function DocsViewer() {
 ## Vue.js Integration
 
 ### Vue 3 Composition API
+
 ```vue
 <template>
   <div ref="docsContainer" class="docs-container"></div>
@@ -180,8 +182,8 @@ let viewer = null;
 const props = defineProps({
   config: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 onMounted(async () => {
@@ -205,6 +207,7 @@ onUnmounted(() => {
 ```
 
 ### Vue 2 Options API
+
 ```vue
 <template>
   <div ref="docsContainer" class="docs-container"></div>
@@ -218,12 +221,12 @@ export default {
   props: {
     config: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      viewer: null
+      viewer: null,
     };
   },
   async mounted() {
@@ -234,12 +237,13 @@ export default {
     if (this.viewer) {
       this.viewer.destroy();
     }
-  }
+  },
 };
 </script>
 ```
 
 ### Nuxt.js Integration
+
 ```vue
 <!-- pages/docs.vue -->
 <template>
@@ -256,12 +260,10 @@ export default {
     return {
       docsConfig: {
         title: 'Nuxt.js Documentation',
-        sources: [
-          { type: 'local', path: './content/docs/' }
-        ]
-      }
+        sources: [{ type: 'local', path: './content/docs/' }],
+      },
     };
-  }
+  },
 };
 </script>
 ```
@@ -269,6 +271,7 @@ export default {
 ## Angular Integration
 
 ### Component Implementation
+
 ```typescript
 // docs-viewer.component.ts
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
@@ -277,12 +280,12 @@ import { MarkdownDocsViewer, DocumentationConfig } from 'markdown-docs-viewer';
 @Component({
   selector: 'app-docs-viewer',
   template: '<div #docsContainer class="docs-container"></div>',
-  styleUrls: ['./docs-viewer.component.css']
+  styleUrls: ['./docs-viewer.component.css'],
 })
 export class DocsViewerComponent implements OnInit, OnDestroy {
   @ViewChild('docsContainer', { static: true }) docsContainer!: ElementRef;
   @Input() config!: DocumentationConfig;
-  
+
   private viewer: MarkdownDocsViewer | null = null;
 
   ngOnInit() {
@@ -296,11 +299,8 @@ export class DocsViewerComponent implements OnInit, OnDestroy {
   }
 
   private async initializeViewer() {
-    this.viewer = new MarkdownDocsViewer(
-      this.docsContainer.nativeElement,
-      this.config
-    );
-    
+    this.viewer = new MarkdownDocsViewer(this.docsContainer.nativeElement, this.config);
+
     try {
       await this.viewer.initialize();
     } catch (error) {
@@ -319,6 +319,7 @@ export class DocsViewerComponent implements OnInit, OnDestroy {
 ```
 
 ### Module Configuration
+
 ```typescript
 // app.module.ts
 import { NgModule } from '@angular/core';
@@ -327,20 +328,16 @@ import { DocsViewerComponent } from './docs-viewer/docs-viewer.component';
 import { AppComponent } from './app.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DocsViewerComponent
-  ],
-  imports: [
-    BrowserModule
-  ],
+  declarations: [AppComponent, DocsViewerComponent],
+  imports: [BrowserModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
 ```
 
 ### Usage in Parent Component
+
 ```typescript
 // app.component.ts
 import { Component } from '@angular/core';
@@ -352,23 +349,21 @@ import { DocumentationConfig } from 'markdown-docs-viewer';
     <div class="app-container">
       <app-docs-viewer [config]="docsConfig"></app-docs-viewer>
     </div>
-  `
+  `,
 })
 export class AppComponent {
   docsConfig: DocumentationConfig = {
     title: 'Angular App Documentation',
-    sources: [
-      { type: 'local', path: './assets/docs/' }
-    ],
+    sources: [{ type: 'local', path: './assets/docs/' }],
     theme: {
       default: 'light',
-      allowUserToggle: true
+      allowUserToggle: true,
     },
     callbacks: {
-      onDocumentLoad: (document) => {
+      onDocumentLoad: document => {
         console.log('Loaded document:', document.title);
-      }
-    }
+      },
+    },
   };
 }
 ```
@@ -376,6 +371,7 @@ export class AppComponent {
 ## Svelte Integration
 
 ### Basic Component
+
 ```svelte
 <!-- DocsViewer.svelte -->
 <script>
@@ -383,7 +379,7 @@ export class AppComponent {
   import { MarkdownDocsViewer } from 'markdown-docs-viewer';
 
   export let config;
-  
+
   let docsContainer;
   let viewer;
 
@@ -410,6 +406,7 @@ export class AppComponent {
 ```
 
 ### SvelteKit Integration
+
 ```svelte
 <!-- src/routes/docs/+page.svelte -->
 <script>
@@ -438,72 +435,68 @@ export class AppComponent {
 ## Vanilla JavaScript
 
 ### Basic Setup
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Documentation</title>
-</head>
-<body>
-  <div id="docs-container"></div>
-  
-  <script type="module">
-    import { MarkdownDocsViewer } from './node_modules/markdown-docs-viewer/dist/index.js';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation</title>
+  </head>
+  <body>
+    <div id="docs-container"></div>
 
-    const config = {
-      title: 'My Documentation',
-      sources: [
-        { type: 'local', path: './docs/' }
-      ]
-    };
+    <script type="module">
+      import { MarkdownDocsViewer } from './node_modules/markdown-docs-viewer/dist/index.js';
 
-    const viewer = new MarkdownDocsViewer(
-      document.getElementById('docs-container'),
-      config
-    );
+      const config = {
+        title: 'My Documentation',
+        sources: [{ type: 'local', path: './docs/' }],
+      };
 
-    viewer.initialize();
-  </script>
-</body>
+      const viewer = new MarkdownDocsViewer(document.getElementById('docs-container'), config);
+
+      viewer.initialize();
+    </script>
+  </body>
 </html>
 ```
 
 ### ES5 with UMD Build
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Documentation</title>
-  <script src="./node_modules/markdown-docs-viewer/dist/index.umd.js"></script>
-</head>
-<body>
-  <div id="docs-container"></div>
-  
-  <script>
-    var config = {
-      title: 'Legacy Documentation',
-      sources: [
-        { type: 'url', url: './docs/getting-started.md' }
-      ]
-    };
+  <head>
+    <meta charset="UTF-8" />
+    <title>Documentation</title>
+    <script src="./node_modules/markdown-docs-viewer/dist/index.umd.js"></script>
+  </head>
+  <body>
+    <div id="docs-container"></div>
 
-    var viewer = new MarkdownDocsViewer.MarkdownDocsViewer(
-      document.getElementById('docs-container'),
-      config
-    );
+    <script>
+      var config = {
+        title: 'Legacy Documentation',
+        sources: [{ type: 'url', url: './docs/getting-started.md' }],
+      };
 
-    viewer.initialize();
-  </script>
-</body>
+      var viewer = new MarkdownDocsViewer.MarkdownDocsViewer(
+        document.getElementById('docs-container'),
+        config
+      );
+
+      viewer.initialize();
+    </script>
+  </body>
 </html>
 ```
 
 ## WordPress Integration
 
 ### Plugin Development
+
 ```php
 <?php
 // wp-content/plugins/markdown-docs/markdown-docs.php
@@ -526,7 +519,7 @@ function markdown_docs_shortcode($atts) {
     ), $atts);
 
     $unique_id = 'docs-' . uniqid();
-    
+
     ob_start();
     ?>
     <div id="<?php echo $unique_id; ?>" class="markdown-docs-container"></div>
@@ -551,6 +544,7 @@ add_shortcode('markdown_docs', 'markdown_docs_shortcode');
 ```
 
 ### Usage in WordPress
+
 ```
 [markdown_docs title="API Documentation" source="https://example.com/api-docs.md"]
 ```
@@ -558,42 +552,42 @@ add_shortcode('markdown_docs', 'markdown_docs_shortcode');
 ## Common Integration Patterns
 
 ### Dynamic Configuration
+
 ```javascript
 // Load configuration from API
 async function createViewer() {
   const response = await fetch('/api/docs-config');
   const config = await response.json();
-  
-  const viewer = new MarkdownDocsViewer(
-    document.getElementById('docs-container'),
-    config
-  );
-  
+
+  const viewer = new MarkdownDocsViewer(document.getElementById('docs-container'), config);
+
   await viewer.initialize();
   return viewer;
 }
 ```
 
 ### Multi-language Support
+
 ```javascript
 const config = {
   title: 'Documentation',
   sources: [
-    { 
-      type: 'local', 
-      path: `./docs/${getUserLanguage()}/` 
-    }
+    {
+      type: 'local',
+      path: `./docs/${getUserLanguage()}/`,
+    },
   ],
   callbacks: {
-    onDocumentLoad: (document) => {
+    onDocumentLoad: document => {
       // Update page language
       document.documentElement.lang = getUserLanguage();
-    }
-  }
+    },
+  },
 };
 ```
 
 ### Authentication Headers
+
 ```javascript
 const config = {
   sources: [
@@ -601,14 +595,15 @@ const config = {
       type: 'url',
       url: 'https://api.example.com/docs/secure.md',
       headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-      }
-    }
-  ]
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    },
+  ],
 };
 ```
 
 ### Error Boundaries (React)
+
 ```jsx
 class DocsErrorBoundary extends React.Component {
   constructor(props) {
@@ -629,9 +624,7 @@ class DocsErrorBoundary extends React.Component {
       return (
         <div className="error-fallback">
           <h2>Something went wrong loading the documentation.</h2>
-          <button onClick={() => this.setState({ hasError: false })}>
-            Try again
-          </button>
+          <button onClick={() => this.setState({ hasError: false })}>Try again</button>
         </div>
       );
     }
@@ -643,27 +636,31 @@ class DocsErrorBoundary extends React.Component {
 // Usage
 <DocsErrorBoundary>
   <DocsViewer config={config} />
-</DocsErrorBoundary>
+</DocsErrorBoundary>;
 ```
 
 ## Best Practices
 
 ### Performance
+
 - Load the viewer only when needed (lazy loading)
 - Use code splitting for large applications
 - Implement proper cleanup in component unmount handlers
 
 ### Accessibility
+
 - Ensure container has proper ARIA labels
 - Test with screen readers
 - Provide keyboard navigation alternatives
 
 ### SEO
+
 - Pre-render content for search engines when possible
 - Use semantic HTML structure
 - Implement proper meta tags for documentation pages
 
 ### Error Handling
+
 - Always implement error boundaries/handlers
 - Provide fallback content for failed loads
 - Log errors for debugging and monitoring

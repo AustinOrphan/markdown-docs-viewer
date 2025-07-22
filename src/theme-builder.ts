@@ -1,5 +1,9 @@
-import { Theme, ThemeColors, ThemeFonts, ThemeSpacing } from './types';
+import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
+
+type ThemeColors = Theme['colors'];
+type ThemeFonts = Theme['fonts'];
+type ThemeSpacing = Theme['spacing'];
 
 export interface ThemeBuilderOptions {
   onThemeCreate?: (theme: ThemePreset) => void;
@@ -25,35 +29,65 @@ export class ThemeBuilder {
   private currentTheme: Theme;
   private originalTheme: Theme;
   private isOpen: boolean = false;
-  
+
   private readonly colorInputs: ColorInput[] = [
     // Primary colors
     { key: 'primary', label: 'Primary', description: 'Main accent color', category: 'primary' },
-    { key: 'secondary', label: 'Secondary', description: 'Secondary accent color', category: 'primary' },
-    
+    {
+      key: 'secondary',
+      label: 'Secondary',
+      description: 'Secondary accent color',
+      category: 'primary',
+    },
+
     // Background colors
-    { key: 'background', label: 'Background', description: 'Main background color', category: 'background' },
-    { key: 'surface', label: 'Surface', description: 'Card and panel background', category: 'background' },
-    
+    {
+      key: 'background',
+      label: 'Background',
+      description: 'Main background color',
+      category: 'background',
+    },
+    {
+      key: 'surface',
+      label: 'Surface',
+      description: 'Card and panel background',
+      category: 'background',
+    },
+
     // Text colors
     { key: 'text', label: 'Text', description: 'Body text color', category: 'text' },
-    { key: 'textPrimary', label: 'Primary Text', description: 'Primary text color', category: 'text' },
-    { key: 'textSecondary', label: 'Secondary Text', description: 'Secondary text color', category: 'text' },
+    {
+      key: 'textPrimary',
+      label: 'Primary Text',
+      description: 'Primary text color',
+      category: 'text',
+    },
+    {
+      key: 'textSecondary',
+      label: 'Secondary Text',
+      description: 'Secondary text color',
+      category: 'text',
+    },
     { key: 'textLight', label: 'Light Text', description: 'Light text color', category: 'text' },
-    
+
     // Border and code
     { key: 'border', label: 'Border', description: 'Border color', category: 'background' },
     { key: 'code', label: 'Code Text', description: 'Inline code text color', category: 'text' },
-    { key: 'codeBackground', label: 'Code Background', description: 'Code block background', category: 'background' },
+    {
+      key: 'codeBackground',
+      label: 'Code Background',
+      description: 'Code block background',
+      category: 'background',
+    },
     { key: 'link', label: 'Link', description: 'Link color', category: 'primary' },
     { key: 'linkHover', label: 'Link Hover', description: 'Link hover color', category: 'primary' },
-    
+
     // Semantic colors
     { key: 'error', label: 'Error', description: 'Error state color', category: 'semantic' },
     { key: 'warning', label: 'Warning', description: 'Warning state color', category: 'semantic' },
-    { key: 'success', label: 'Success', description: 'Success state color', category: 'semantic' }
+    { key: 'success', label: 'Success', description: 'Success state color', category: 'semantic' },
   ];
-  
+
   constructor(themeManager: ThemeManager, options: ThemeBuilderOptions = {}) {
     this.themeManager = themeManager;
     this.options = {
@@ -61,13 +95,13 @@ export class ThemeBuilder {
       allowImport: true,
       showPreview: true,
       showAccessibilityCheck: true,
-      ...options
+      ...options,
     };
-    
+
     this.originalTheme = themeManager.getCurrentTheme();
     this.currentTheme = { ...this.originalTheme };
   }
-  
+
   public render(): string {
     return `
       <div class="mdv-theme-builder-overlay ${this.isOpen ? 'open' : ''}" aria-hidden="${!this.isOpen}">
@@ -94,11 +128,16 @@ export class ThemeBuilder {
               <div class="mdv-theme-builder-section">
                 <h3>Base Theme</h3>
                 <select id="base-theme" aria-label="Select base theme">
-                  ${this.themeManager.getAvailableThemes().map(theme => `
+                  ${this.themeManager
+                    .getAvailableThemes()
+                    .map(
+                      theme => `
                     <option value="${theme.name}" ${theme.name === this.originalTheme.name ? 'selected' : ''}>
                       ${theme.name}
                     </option>
-                  `).join('')}
+                  `
+                    )
+                    .join('')}
                 </select>
               </div>
               
@@ -128,16 +167,24 @@ export class ThemeBuilder {
               ${this.options.showAccessibilityCheck ? this.renderAccessibilityCheck() : ''}
               
               <div class="mdv-theme-builder-actions">
-                ${this.options.allowImport ? `
+                ${
+                  this.options.allowImport
+                    ? `
                   <button class="mdv-theme-builder-btn mdv-theme-builder-btn-secondary" id="import-theme">
                     Import Theme
                   </button>
-                ` : ''}
-                ${this.options.allowExport ? `
+                `
+                    : ''
+                }
+                ${
+                  this.options.allowExport
+                    ? `
                   <button class="mdv-theme-builder-btn mdv-theme-builder-btn-secondary" id="export-theme">
                     Export Theme
                   </button>
-                ` : ''}
+                `
+                    : ''
+                }
                 <button class="mdv-theme-builder-btn mdv-theme-builder-btn-secondary" id="reset-theme">
                   Reset
                 </button>
@@ -147,29 +194,36 @@ export class ThemeBuilder {
               </div>
             </div>
             
-            ${this.options.showPreview ? `
+            ${
+              this.options.showPreview
+                ? `
               <div class="mdv-theme-builder-preview">
                 <h3>Preview</h3>
                 <div class="mdv-theme-builder-preview-content" id="theme-preview">
                   ${this.renderPreview()}
                 </div>
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
         </div>
       </div>
     `;
   }
-  
+
   private renderColorInputs(): string {
     const categories = ['primary', 'background', 'text', 'semantic'] as const;
-    
-    return categories.map(category => {
-      const inputs = this.colorInputs.filter(input => input.category === category);
-      return `
+
+    return categories
+      .map(category => {
+        const inputs = this.colorInputs.filter(input => input.category === category);
+        return `
         <div class="mdv-theme-builder-color-category">
           <h4>${category.charAt(0).toUpperCase() + category.slice(1)}</h4>
-          ${inputs.map(input => `
+          ${inputs
+            .map(
+              input => `
             <div class="mdv-theme-builder-field mdv-theme-builder-color-field">
               <label for="color-${input.key}">${input.label}</label>
               <div class="mdv-theme-builder-color-input">
@@ -189,20 +243,29 @@ export class ThemeBuilder {
               </div>
               ${input.description ? `<small>${input.description}</small>` : ''}
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
-  
+
   private renderFontInputs(): string {
     const fonts = [
       { key: 'body' as keyof ThemeFonts, label: 'Body Font', description: 'Main text font family' },
-      { key: 'heading' as keyof ThemeFonts, label: 'Heading Font', description: 'Heading font family' },
-      { key: 'code' as keyof ThemeFonts, label: 'Code Font', description: 'Monospace font family' }
+      {
+        key: 'heading' as keyof ThemeFonts,
+        label: 'Heading Font',
+        description: 'Heading font family',
+      },
+      { key: 'code' as keyof ThemeFonts, label: 'Code Font', description: 'Monospace font family' },
     ];
-    
-    return fonts.map(font => `
+
+    return fonts
+      .map(
+        font => `
       <div class="mdv-theme-builder-field">
         <label for="font-${font.key}">${font.label}</label>
         <input 
@@ -213,17 +276,36 @@ export class ThemeBuilder {
         >
         <small>${font.description}</small>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
-  
+
   private renderSpacingInputs(): string {
     const spacingInputs = [
-      { key: 'unit' as keyof ThemeSpacing, label: 'Base Unit', description: 'Base spacing unit in pixels', type: 'number' },
-      { key: 'containerMaxWidth' as keyof ThemeSpacing, label: 'Container Max Width', description: 'Maximum container width', type: 'text' },
-      { key: 'sidebarWidth' as keyof ThemeSpacing, label: 'Sidebar Width', description: 'Sidebar width', type: 'text' }
+      {
+        key: 'unit' as keyof ThemeSpacing,
+        label: 'Base Unit',
+        description: 'Base spacing unit in pixels',
+        type: 'number',
+      },
+      {
+        key: 'containerMaxWidth' as keyof ThemeSpacing,
+        label: 'Container Max Width',
+        description: 'Maximum container width',
+        type: 'text',
+      },
+      {
+        key: 'sidebarWidth' as keyof ThemeSpacing,
+        label: 'Sidebar Width',
+        description: 'Sidebar width',
+        type: 'text',
+      },
     ];
-    
-    return spacingInputs.map(input => `
+
+    return spacingInputs
+      .map(
+        input => `
       <div class="mdv-theme-builder-field">
         <label for="spacing-${input.key}">${input.label}</label>
         <input 
@@ -234,13 +316,21 @@ export class ThemeBuilder {
         >
         <small>${input.description}</small>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
-  
+
   private renderAccessibilityCheck(): string {
-    const textBgRatio = this.themeManager.getContrastRatio(this.currentTheme.colors.textPrimary, this.currentTheme.colors.background);
-    const primaryBgRatio = this.themeManager.getContrastRatio(this.currentTheme.colors.primary, this.currentTheme.colors.background);
-    
+    const textBgRatio = this.themeManager.getContrastRatio(
+      this.currentTheme.colors.textPrimary,
+      this.currentTheme.colors.background
+    );
+    const primaryBgRatio = this.themeManager.getContrastRatio(
+      this.currentTheme.colors.primary,
+      this.currentTheme.colors.background
+    );
+
     return `
       <div class="mdv-theme-builder-section">
         <h3>Accessibility Check</h3>
@@ -261,7 +351,7 @@ export class ThemeBuilder {
       </div>
     `;
   }
-  
+
   private renderPreview(): string {
     return `
       <div class="mdv-theme-preview-sample">
@@ -281,12 +371,12 @@ export class ThemeBuilder {
       </div>
     `;
   }
-  
+
   public open(): void {
     this.isOpen = true;
     this.updateDisplay();
   }
-  
+
   public close(): void {
     this.isOpen = false;
     this.updateDisplay();
@@ -294,37 +384,39 @@ export class ThemeBuilder {
       this.options.onClose();
     }
   }
-  
+
   public attachTo(container: HTMLElement): void {
     this.container = container;
     this.setupEventListeners();
   }
-  
+
   private setupEventListeners(): void {
     if (!this.container) return;
-    
+
     // Close button
     const closeBtn = this.container.querySelector('.mdv-theme-builder-close');
     closeBtn?.addEventListener('click', () => this.close());
-    
+
     // Overlay click to close
     const overlay = this.container.querySelector('.mdv-theme-builder-overlay');
-    overlay?.addEventListener('click', (e) => {
+    overlay?.addEventListener('click', e => {
       if (e.target === overlay) this.close();
     });
-    
+
     // Color inputs
     this.colorInputs.forEach(input => {
       const colorInput = this.container!.querySelector(`#color-${input.key}`) as HTMLInputElement;
-      const textInput = this.container!.querySelector(`#color-text-${input.key}`) as HTMLInputElement;
-      
-      colorInput?.addEventListener('input', (e) => {
+      const textInput = this.container!.querySelector(
+        `#color-text-${input.key}`
+      ) as HTMLInputElement;
+
+      colorInput?.addEventListener('input', e => {
         const value = (e.target as HTMLInputElement).value;
         this.updateColor(input.key, value);
         if (textInput) textInput.value = value;
       });
-      
-      textInput?.addEventListener('input', (e) => {
+
+      textInput?.addEventListener('input', e => {
         const value = (e.target as HTMLInputElement).value;
         if (this.isValidColor(value)) {
           this.updateColor(input.key, value);
@@ -332,118 +424,126 @@ export class ThemeBuilder {
         }
       });
     });
-    
+
     // Font inputs
     const fontKeys: (keyof ThemeFonts)[] = ['body', 'heading', 'code'];
     fontKeys.forEach(key => {
       const input = this.container!.querySelector(`#font-${key}`) as HTMLInputElement;
-      input?.addEventListener('input', (e) => {
+      input?.addEventListener('input', e => {
         this.updateFont(key, (e.target as HTMLInputElement).value);
       });
     });
-    
+
     // Spacing inputs
     const spacingKeys: (keyof ThemeSpacing)[] = ['unit', 'containerMaxWidth', 'sidebarWidth'];
     spacingKeys.forEach(key => {
       const input = this.container!.querySelector(`#spacing-${key}`) as HTMLInputElement;
-      input?.addEventListener('input', (e) => {
-        const value = key === 'unit' ? parseInt((e.target as HTMLInputElement).value) : (e.target as HTMLInputElement).value;
+      input?.addEventListener('input', e => {
+        const value =
+          key === 'unit'
+            ? parseInt((e.target as HTMLInputElement).value)
+            : (e.target as HTMLInputElement).value;
         this.updateSpacing(key, value);
       });
     });
-    
+
     // Border radius
     const borderRadiusInput = this.container.querySelector('#border-radius') as HTMLInputElement;
-    borderRadiusInput?.addEventListener('input', (e) => {
+    borderRadiusInput?.addEventListener('input', e => {
       this.currentTheme.borderRadius = (e.target as HTMLInputElement).value;
       this.updatePreview();
     });
-    
+
     // Theme name
     const themeNameInput = this.container.querySelector('#theme-name') as HTMLInputElement;
-    themeNameInput?.addEventListener('input', (e) => {
+    themeNameInput?.addEventListener('input', e => {
       this.currentTheme.name = (e.target as HTMLInputElement).value;
     });
-    
+
     // Base theme selection
     const baseThemeSelect = this.container.querySelector('#base-theme') as HTMLSelectElement;
-    baseThemeSelect?.addEventListener('change', (e) => {
+    baseThemeSelect?.addEventListener('change', e => {
       this.loadBaseTheme((e.target as HTMLSelectElement).value);
     });
-    
+
     // Action buttons
     const saveBtn = this.container.querySelector('#save-theme');
     saveBtn?.addEventListener('click', () => this.saveTheme());
-    
+
     const resetBtn = this.container.querySelector('#reset-theme');
     resetBtn?.addEventListener('click', () => this.resetTheme());
-    
+
     const exportBtn = this.container.querySelector('#export-theme');
     exportBtn?.addEventListener('click', () => this.exportTheme());
-    
+
     const importBtn = this.container.querySelector('#import-theme');
     importBtn?.addEventListener('click', () => this.importTheme());
-    
+
     // Escape key to close
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && this.isOpen) {
         this.close();
       }
     });
   }
-  
+
   private updateColor(key: keyof ThemeColors, value: string): void {
     this.currentTheme.colors[key] = value;
     this.updatePreview();
     this.updateAccessibilityCheck();
   }
-  
+
   private updateFont(key: keyof ThemeFonts, value: string): void {
     this.currentTheme.fonts[key] = value;
     this.updatePreview();
   }
-  
+
   private updateSpacing(key: keyof ThemeSpacing, value: string | number): void {
     (this.currentTheme.spacing as any)[key] = value;
     this.updatePreview();
   }
-  
+
   private updatePreview(): void {
     if (!this.options.showPreview || !this.container) return;
-    
+
     const preview = this.container.querySelector('#theme-preview');
     if (preview) {
       preview.innerHTML = this.renderPreview();
     }
-    
+
     // Apply theme variables to preview
-    const previewContent = this.container.querySelector('.mdv-theme-builder-preview-content') as HTMLElement;
+    const previewContent = this.container.querySelector(
+      '.mdv-theme-builder-preview-content'
+    ) as HTMLElement;
     if (previewContent) {
       Object.entries(this.currentTheme.colors).forEach(([key, value]) => {
         previewContent.style.setProperty(`--mdv-color-${this.kebabCase(key)}`, value);
       });
     }
   }
-  
+
   private updateAccessibilityCheck(): void {
     if (!this.options.showAccessibilityCheck || !this.container) return;
-    
+
     const accessibilitySection = this.container.querySelector('.mdv-theme-builder-accessibility');
     if (accessibilitySection) {
-      accessibilitySection.innerHTML = this.renderAccessibilityCheck().match(/<div class="mdv-theme-builder-accessibility">(.*?)<\/div>/s)?.[1] || '';
+      accessibilitySection.innerHTML =
+        this.renderAccessibilityCheck().match(
+          /<div class="mdv-theme-builder-accessibility">(.*?)<\/div>/s
+        )?.[1] || '';
     }
   }
-  
+
   private updateDisplay(): void {
     if (!this.container) return;
-    
+
     const overlay = this.container.querySelector('.mdv-theme-builder-overlay');
     if (overlay) {
       overlay.classList.toggle('open', this.isOpen);
       overlay.setAttribute('aria-hidden', (!this.isOpen).toString());
     }
   }
-  
+
   private loadBaseTheme(themeName: string): void {
     const baseTheme = this.themeManager.getTheme(themeName);
     if (baseTheme) {
@@ -453,19 +553,21 @@ export class ThemeBuilder {
       this.updateAccessibilityCheck();
     }
   }
-  
+
   private refreshInputs(): void {
     if (!this.container) return;
-    
+
     // Update color inputs
     this.colorInputs.forEach(input => {
       const colorInput = this.container!.querySelector(`#color-${input.key}`) as HTMLInputElement;
-      const textInput = this.container!.querySelector(`#color-text-${input.key}`) as HTMLInputElement;
-      
+      const textInput = this.container!.querySelector(
+        `#color-text-${input.key}`
+      ) as HTMLInputElement;
+
       if (colorInput) colorInput.value = this.currentTheme.colors[input.key];
       if (textInput) textInput.value = this.currentTheme.colors[input.key];
     });
-    
+
     // Update other inputs
     const inputs = [
       { selector: '#theme-name', value: this.currentTheme.name },
@@ -474,38 +576,44 @@ export class ThemeBuilder {
       { selector: '#font-heading', value: this.currentTheme.fonts.heading },
       { selector: '#font-code', value: this.currentTheme.fonts.code },
       { selector: '#spacing-unit', value: this.currentTheme.spacing.unit.toString() },
-      { selector: '#spacing-containerMaxWidth', value: this.currentTheme.spacing.containerMaxWidth },
-      { selector: '#spacing-sidebarWidth', value: this.currentTheme.spacing.sidebarWidth }
+      {
+        selector: '#spacing-containerMaxWidth',
+        value: this.currentTheme.spacing.containerMaxWidth,
+      },
+      { selector: '#spacing-sidebarWidth', value: this.currentTheme.spacing.sidebarWidth },
     ];
-    
+
     inputs.forEach(({ selector, value }) => {
       const input = this.container!.querySelector(selector) as HTMLInputElement;
       if (input) input.value = value;
     });
   }
-  
+
   private saveTheme(): void {
-    const customTheme = this.themeManager.createCustomTheme(this.currentTheme.name, this.currentTheme);
-    
+    const customTheme = this.themeManager.createCustomTheme(
+      this.currentTheme.name,
+      this.currentTheme
+    );
+
     if (this.options.onThemeCreate) {
       this.options.onThemeCreate(customTheme);
     }
-    
+
     this.close();
   }
-  
+
   private resetTheme(): void {
     this.currentTheme = { ...this.originalTheme };
     this.refreshInputs();
     this.updatePreview();
     this.updateAccessibilityCheck();
   }
-  
+
   private exportTheme(): void {
     const themeJson = this.themeManager.exportTheme(this.currentTheme);
     const blob = new Blob([themeJson], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    
+
     const a = document.createElement('a');
     a.href = url;
     a.download = `${this.currentTheme.name}.json`;
@@ -514,21 +622,21 @@ export class ThemeBuilder {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-  
+
   private importTheme(): void {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
-    
-    input.onchange = (e) => {
+
+    input.onchange = e => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           try {
             const themeJson = e.target?.result as string;
             const importedTheme = this.themeManager.importTheme(themeJson);
-            
+
             if (importedTheme) {
               this.currentTheme = { ...importedTheme };
               this.refreshInputs();
@@ -542,18 +650,18 @@ export class ThemeBuilder {
         reader.readAsText(file);
       }
     };
-    
+
     input.click();
   }
-  
+
   private isValidColor(color: string): boolean {
     return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
   }
-  
+
   private kebabCase(str: string): string {
     return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
   }
-  
+
   public getStyles(): string {
     return `
       .mdv-theme-builder-overlay {

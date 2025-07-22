@@ -30,7 +30,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
             VERSION="${{ github.event.inputs.version }}"
             TAG="${{ github.event.inputs.tag }}"
           fi
-          
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Publishing version $VERSION with tag $TAG"
@@ -74,7 +74,7 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: validate
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate, test]
     environment: npm-publish
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -124,7 +124,7 @@ jobs:
       - name: Update package version
         run: |
           npm version ${{ needs.validate.outputs.version }} --no-git-tag-version
-          
+
           # Update the version in the source file if needed
           if [ -f "src/version.ts" ]; then
             echo "export const VERSION = '${{ needs.validate.outputs.version }}';" > src/version.ts
@@ -157,7 +157,7 @@ jobs:
               production_environment: ${{ needs.validate.outputs.tag == 'latest' }},
               required_contexts: []
             });
-            
+
             await github.rest.repos.createDeploymentStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -171,7 +171,7 @@ jobs:
     name: Verify Publication
     runs-on: ubuntu-latest
     needs: [validate, publish]
-    
+
     steps:
       - name: Wait for npm propagation
         run: sleep 30
@@ -179,13 +179,13 @@ jobs:
       - name: Verify package on npm
         run: |
           npm view @austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}
-          
+
           # Test installation
           mkdir test-install
           cd test-install
           npm init -y
           npm install @austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}
-          
+
           # Verify the package works
           node -e "const viewer = require('@austinorphan/markdown-docs-viewer'); console.log('Package verified:', viewer);"
 
@@ -199,9 +199,9 @@ jobs:
               repo: context.repo.repo,
               release_id: context.payload.release.id
             });
-            
+
             const npmLink = `\n\n### npm Package\n\n📦 [@austinorphan/markdown-docs-viewer@${{ needs.validate.outputs.version }}](https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer/v/${{ needs.validate.outputs.version }})`;
-            
+
             if (!release.data.body.includes('npm Package')) {
               await github.rest.repos.updateRelease({
                 owner: context.repo.owner,

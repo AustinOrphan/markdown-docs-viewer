@@ -16,7 +16,7 @@ export class ThemeSwitcher {
   private container: HTMLElement | null = null;
   private isOpen: boolean = false;
   private themeBuilder: ThemeBuilder | null = null;
-  
+
   constructor(themeManager: ThemeManager, options: ThemeSwitcherOptions = {}) {
     this.themeManager = themeManager;
     this.options = {
@@ -24,14 +24,14 @@ export class ThemeSwitcher {
       showPreview: true,
       showDescription: true,
       allowCustomThemes: true,
-      ...options
+      ...options,
     };
   }
-  
+
   public render(): string {
     const currentTheme = this.themeManager.getCurrentTheme();
     const themes = this.themeManager.getAvailableThemes();
-    
+
     return `
       <div class="mdv-theme-switcher ${this.options.position === 'floating' ? 'mdv-theme-switcher-floating' : ''}">
         <button class="mdv-theme-trigger" aria-label="Change theme" title="Change theme">
@@ -41,13 +41,17 @@ export class ThemeSwitcher {
         <div class="mdv-theme-dropdown ${this.isOpen ? 'open' : ''}" aria-hidden="${!this.isOpen}">
           <div class="mdv-theme-dropdown-header">
             <h3>Choose Theme</h3>
-            ${this.options.allowCustomThemes ? `
+            ${
+              this.options.allowCustomThemes
+                ? `
               <button class="mdv-theme-custom-btn" aria-label="Create custom theme">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
                 </svg>
               </button>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
           <div class="mdv-theme-list">
             ${themes.map(theme => this.renderThemeOption(theme, theme.name === currentTheme.name)).join('')}
@@ -56,7 +60,7 @@ export class ThemeSwitcher {
       </div>
     `;
   }
-  
+
   private renderThemeOption(theme: ThemePreset, isActive: boolean): string {
     return `
       <button 
@@ -68,21 +72,29 @@ export class ThemeSwitcher {
         <div class="mdv-theme-option-content">
           <div class="mdv-theme-option-info">
             <span class="mdv-theme-option-name">${theme.name}</span>
-            ${this.options.showDescription && theme.description ? `
+            ${
+              this.options.showDescription && theme.description
+                ? `
               <span class="mdv-theme-option-description">${theme.description}</span>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
           ${this.options.showPreview ? this.renderThemePreview(theme) : ''}
         </div>
-        ${isActive ? `
+        ${
+          isActive
+            ? `
           <svg class="mdv-theme-option-check" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
           </svg>
-        ` : ''}
+        `
+            : ''
+        }
       </button>
     `;
   }
-  
+
   private renderThemePreview(theme: ThemePreset): string {
     return `
       <div class="mdv-theme-preview" aria-hidden="true">
@@ -111,77 +123,77 @@ export class ThemeSwitcher {
       </div>
     `;
   }
-  
+
   private getThemeIcon(themeName: string): string {
     const icons: Record<string, string> = {
-      'default': '☀️',
-      'light': '☀️',
-      'dark': '🌙',
+      default: '☀️',
+      light: '☀️',
+      dark: '🌙',
       'high-contrast': '🔲',
-      'github': '🐙',
-      'dracula': '🦇',
+      github: '🐙',
+      dracula: '🦇',
       'solarized-light': '🌅',
       'solarized-dark': '🌃',
-      'material': '🎨'
+      material: '🎨',
     };
-    
+
     return icons[themeName] || '🎨';
   }
-  
+
   public attachTo(container: HTMLElement): void {
     this.container = container;
     this.setupEventListeners();
   }
-  
+
   private setupEventListeners(): void {
     if (!this.container) return;
-    
+
     // Toggle dropdown
     const trigger = this.container.querySelector('.mdv-theme-trigger');
-    trigger?.addEventListener('click', (e) => {
+    trigger?.addEventListener('click', e => {
       e.stopPropagation();
       this.toggleDropdown();
     });
-    
+
     // Theme selection
-    this.container.addEventListener('click', (e) => {
+    this.container.addEventListener('click', e => {
       const target = e.target as HTMLElement;
       const themeOption = target.closest('.mdv-theme-option') as HTMLElement;
-      
+
       if (themeOption && themeOption.dataset.theme) {
         this.selectTheme(themeOption.dataset.theme);
       }
     });
-    
+
     // Custom theme button
     const customBtn = this.container.querySelector('.mdv-theme-custom-btn');
     customBtn?.addEventListener('click', () => {
       this.openCustomThemeBuilder();
     });
-    
+
     // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
       if (!this.container?.contains(e.target as Node)) {
         this.closeDropdown();
       }
     });
-    
+
     // Keyboard navigation
-    this.container.addEventListener('keydown', (e) => {
+    this.container.addEventListener('keydown', e => {
       this.handleKeyboardNavigation(e as KeyboardEvent);
     });
   }
-  
+
   private toggleDropdown(): void {
     this.isOpen = !this.isOpen;
     this.updateDropdownState();
   }
-  
+
   private closeDropdown(): void {
     this.isOpen = false;
     this.updateDropdownState();
   }
-  
+
   private updateDropdownState(): void {
     const dropdown = this.container?.querySelector('.mdv-theme-dropdown');
     if (dropdown) {
@@ -189,24 +201,24 @@ export class ThemeSwitcher {
       dropdown.setAttribute('aria-hidden', (!this.isOpen).toString());
     }
   }
-  
+
   private selectTheme(themeName: string): void {
     const theme = this.themeManager.setTheme(themeName);
     if (theme) {
       this.updateUI();
       this.closeDropdown();
-      
+
       if (this.options.onThemeChange) {
         this.options.onThemeChange(theme);
       }
     }
   }
-  
+
   private updateUI(): void {
     if (!this.container) return;
-    
+
     const currentTheme = this.themeManager.getCurrentTheme();
-    
+
     // Update trigger
     const trigger = this.container.querySelector('.mdv-theme-trigger');
     if (trigger) {
@@ -215,7 +227,7 @@ export class ThemeSwitcher {
         <span class="mdv-theme-name">${currentTheme.name}</span>
       `;
     }
-    
+
     // Update active state
     this.container.querySelectorAll('.mdv-theme-option').forEach(option => {
       const isActive = option.getAttribute('data-theme') === currentTheme.name;
@@ -223,17 +235,17 @@ export class ThemeSwitcher {
       option.setAttribute('aria-current', isActive.toString());
     });
   }
-  
+
   private handleKeyboardNavigation(e: KeyboardEvent): void {
     if (!this.isOpen) return;
-    
+
     const options = Array.from(
       this.container?.querySelectorAll('.mdv-theme-option') || []
     ) as HTMLElement[];
-    
+
     const currentIndex = options.findIndex(opt => opt.classList.contains('active'));
     let newIndex = currentIndex;
-    
+
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -257,35 +269,35 @@ export class ThemeSwitcher {
         this.closeDropdown();
         return;
     }
-    
+
     if (newIndex !== currentIndex) {
       options[newIndex]?.focus();
     }
   }
-  
+
   private openCustomThemeBuilder(): void {
     if (!this.themeBuilder) {
       this.themeBuilder = new ThemeBuilder(this.themeManager, {
-        onThemeCreate: (theme) => {
+        onThemeCreate: theme => {
           this.selectTheme(theme.name);
         },
         onClose: () => {
           this.themeBuilder = null;
-        }
+        },
       });
-      
+
       // Create container for theme builder
       const builderContainer = document.createElement('div');
       builderContainer.innerHTML = this.themeBuilder.render();
       document.body.appendChild(builderContainer);
-      
+
       this.themeBuilder.attachTo(builderContainer);
     }
-    
+
     this.themeBuilder.open();
     this.closeDropdown();
   }
-  
+
   public getStyles(): string {
     return `
       .mdv-theme-switcher {

@@ -1,103 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Markdown Documentation Viewer - Interactive Demo</title>
-    <link rel="stylesheet" href="demo.css">
-    <meta name="description" content="Interactive demo showcasing the Markdown Documentation Viewer with live examples, theme switching, and configuration options.">
-</head>
-<body>
+    <link rel="stylesheet" href="demo.css" />
+    <meta
+      name="description"
+      content="Interactive demo showcasing the Markdown Documentation Viewer with live examples, theme switching, and configuration options."
+    />
+  </head>
+  <body>
     <!-- Header Section -->
     <header class="demo-header">
-        <div class="demo-container">
-            <h1 class="demo-title">
-                <span class="demo-icon">📚</span>
-                Markdown Documentation Viewer
-            </h1>
-            <p class="demo-subtitle">Interactive Demo & Examples</p>
-            
-            <!-- Control Panel -->
-            <div class="demo-controls">
-                <div class="control-group">
-                    <label for="theme-selector">Theme:</label>
-                    <select id="theme-selector" class="demo-select">
-                        <option value="default">Light Theme</option>
-                        <option value="dark">Dark Theme</option>
-                        <option value="custom">Custom Theme</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <label for="example-selector">Example:</label>
-                    <select id="example-selector" class="demo-select">
-                        <option value="basic">Basic Documentation</option>
-                        <option value="github">GitHub Repository</option>
-                        <option value="url">Remote Content</option>
-                        <option value="advanced">Advanced Features</option>
-                        <option value="api-docs">API Documentation</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <button id="reload-btn" class="demo-button">🔄 Reload</button>
-                    <button id="fullscreen-btn" class="demo-button">⛶ Fullscreen</button>
-                </div>
-            </div>
+      <div class="demo-container">
+        <h1 class="demo-title">
+          <span class="demo-icon">📚</span>
+          Markdown Documentation Viewer
+        </h1>
+        <p class="demo-subtitle">Interactive Demo & Examples</p>
+
+        <!-- Control Panel -->
+        <div class="demo-controls">
+          <div class="control-group">
+            <label for="theme-selector">Theme:</label>
+            <select id="theme-selector" class="demo-select">
+              <option value="default">Light Theme</option>
+              <option value="dark">Dark Theme</option>
+              <option value="custom">Custom Theme</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="example-selector">Example:</label>
+            <select id="example-selector" class="demo-select">
+              <option value="basic">Basic Documentation</option>
+              <option value="github">GitHub Repository</option>
+              <option value="url">Remote Content</option>
+              <option value="advanced">Advanced Features</option>
+              <option value="api-docs">API Documentation</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <button id="reload-btn" class="demo-button">🔄 Reload</button>
+            <button id="fullscreen-btn" class="demo-button">⛶ Fullscreen</button>
+          </div>
         </div>
+      </div>
     </header>
-    
+
     <!-- Demo Status -->
     <div class="demo-status" id="demo-status">
-        <div class="demo-container">
-            <span class="status-indicator" id="status-indicator">●</span>
-            <span class="status-text" id="status-text">Loading demo...</span>
-            <div class="loading-bar" id="loading-bar">
-                <div class="loading-progress" id="loading-progress"></div>
-            </div>
+      <div class="demo-container">
+        <span class="status-indicator" id="status-indicator">●</span>
+        <span class="status-text" id="status-text">Loading demo...</span>
+        <div class="loading-bar" id="loading-bar">
+          <div class="loading-progress" id="loading-progress"></div>
         </div>
+      </div>
     </div>
-    
+
     <!-- Main Viewer Container -->
     <main class="demo-main">
-        <div id="viewer-container" class="viewer-container"></div>
+      <div id="viewer-container" class="viewer-container"></div>
     </main>
-    
+
     <!-- Footer -->
     <footer class="demo-footer">
-        <div class="demo-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About This Demo</h3>
-                    <p>This interactive demo showcases all features of the Markdown Documentation Viewer. Try different themes and examples to see the flexibility.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#" onclick="loadExample('basic')">Basic Example</a></li>
-                        <li><a href="#" onclick="loadExample('advanced')">Advanced Features</a></li>
-                        <li><a href="https://github.com/[USERNAME]/markdown-docs-viewer" target="_blank">GitHub Repository</a></li>
-                        <li><a href="https://www.npmjs.com/package/@[USERNAME]/markdown-docs-viewer" target="_blank">NPM Package</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Features Shown</h3>
-                    <ul>
-                        <li>✅ Multiple Document Sources</li>
-                        <li>✅ Theme Switching</li>
-                        <li>✅ Responsive Design</li>
-                        <li>✅ Search Functionality</li>
-                        <li>✅ Syntax Highlighting</li>
-                        <li>✅ Navigation & Categories</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Markdown Documentation Viewer. MIT License.</p>
-            </div>
+      <div class="demo-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About This Demo</h3>
+            <p>
+              This interactive demo showcases all features of the Markdown Documentation Viewer. Try
+              different themes and examples to see the flexibility.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#" onclick="loadExample('basic')">Basic Example</a></li>
+              <li><a href="#" onclick="loadExample('advanced')">Advanced Features</a></li>
+              <li>
+                <a href="https://github.com/[USERNAME]/markdown-docs-viewer" target="_blank"
+                  >GitHub Repository</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.npmjs.com/package/@[USERNAME]/markdown-docs-viewer"
+                  target="_blank"
+                  >NPM Package</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Features Shown</h3>
+            <ul>
+              <li>✅ Multiple Document Sources</li>
+              <li>✅ Theme Switching</li>
+              <li>✅ Responsive Design</li>
+              <li>✅ Search Functionality</li>
+              <li>✅ Syntax Highlighting</li>
+              <li>✅ Navigation & Categories</li>
+            </ul>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Markdown Documentation Viewer. MIT License.</p>
+        </div>
+      </div>
     </footer>
-    
+
     <script type="module" src="demo.js"></script>
-</body>
+  </body>
 </html>

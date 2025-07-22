@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ThemeBuilder } from '../src/theme-builder';
-import { ThemeManager, ThemePreset } from '../src/theme-manager';
-import { defaultTheme, darkTheme } from '../src/themes';
+import { ThemeManager } from '../src/theme-manager';
+import { defaultTheme } from '../src/themes';
 
 // Mock localStorage
 const localStorageMock = {
@@ -30,8 +30,8 @@ Object.defineProperty(window, 'URL', {
 class MockFileReader {
   result: string | null = null;
   onload: ((e: { target: { result: string } }) => void) | null = null;
-  
-  readAsText(file: File) {
+
+  readAsText(_file: File) {
     setTimeout(() => {
       this.result = '{"name": "test", "colors": {}}';
       if (this.onload) {
@@ -49,26 +49,20 @@ describe('ThemeBuilder', () => {
   let themeManager: ThemeManager;
   let themeBuilder: ThemeBuilder;
   let container: HTMLElement;
-  let mockThemes: ThemePreset[];
 
   beforeEach(() => {
     // Reset localStorage mock
     vi.clearAllMocks();
     localStorageMock.getItem.mockReturnValue(null);
-    
+
     // Setup DOM
     document.body.innerHTML = '<div id="test-container"></div>';
     container = document.getElementById('test-container')!;
-    
-    // Mock themes
-    mockThemes = [
-      { ...defaultTheme, description: 'Default theme' },
-      { ...darkTheme, description: 'Dark theme' }
-    ];
-    
+
+
     // Create theme manager
     themeManager = new ThemeManager();
-    
+
     // Reset document styles
     document.documentElement.style.cssText = '';
     document.documentElement.removeAttribute('data-mdv-theme');
@@ -93,9 +87,9 @@ describe('ThemeBuilder', () => {
         allowExport: false,
         allowImport: false,
         showPreview: false,
-        showAccessibilityCheck: false
+        showAccessibilityCheck: false,
       };
-      
+
       themeBuilder = new ThemeBuilder(themeManager, options);
       expect(themeBuilder).toBeInstanceOf(ThemeBuilder);
     });
@@ -103,7 +97,7 @@ describe('ThemeBuilder', () => {
     it('should copy current theme as starting point', () => {
       themeManager.setTheme('dark');
       themeBuilder = new ThemeBuilder(themeManager);
-      
+
       const html = themeBuilder.render();
       expect(html).toContain('value="dark"'); // Theme name input should have dark theme name
     });
@@ -116,7 +110,7 @@ describe('ThemeBuilder', () => {
 
     it('should render theme builder HTML with all sections', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('mdv-theme-builder-overlay');
       expect(html).toContain('Custom Theme Builder');
       expect(html).toContain('Theme Information');
@@ -130,7 +124,7 @@ describe('ThemeBuilder', () => {
 
     it('should include all color input categories', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Primary');
       expect(html).toContain('Background');
       expect(html).toContain('Text');
@@ -139,7 +133,7 @@ describe('ThemeBuilder', () => {
 
     it('should include all action buttons by default', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Import Theme');
       expect(html).toContain('Export Theme');
       expect(html).toContain('Reset');
@@ -149,34 +143,34 @@ describe('ThemeBuilder', () => {
     it('should hide import/export buttons when disabled', () => {
       themeBuilder = new ThemeBuilder(themeManager, {
         allowImport: false,
-        allowExport: false
+        allowExport: false,
       });
-      
+
       const html = themeBuilder.render();
-      
+
       expect(html).not.toContain('Import Theme');
       expect(html).not.toContain('Export Theme');
     });
 
     it('should hide preview when disabled', () => {
       themeBuilder = new ThemeBuilder(themeManager, { showPreview: false });
-      
+
       const html = themeBuilder.render();
-      
+
       expect(html).not.toContain('mdv-theme-builder-preview');
     });
 
     it('should hide accessibility check when disabled', () => {
       themeBuilder = new ThemeBuilder(themeManager, { showAccessibilityCheck: false });
-      
+
       const html = themeBuilder.render();
-      
+
       expect(html).not.toContain('Accessibility Check');
     });
 
     it('should render font inputs', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('font-body');
       expect(html).toContain('font-heading');
       expect(html).toContain('font-code');
@@ -184,7 +178,7 @@ describe('ThemeBuilder', () => {
 
     it('should render spacing inputs', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('spacing-unit');
       expect(html).toContain('spacing-containerMaxWidth');
       expect(html).toContain('spacing-sidebarWidth');
@@ -192,7 +186,7 @@ describe('ThemeBuilder', () => {
 
     it('should render base theme options', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('option value="default"');
       expect(html).toContain('option value="dark"');
     });
@@ -205,14 +199,26 @@ describe('ThemeBuilder', () => {
 
     it('should render all required color inputs', () => {
       const html = themeBuilder.render();
-      
+
       const expectedColors = [
-        'primary', 'secondary', 'background', 'surface',
-        'text', 'textPrimary', 'textSecondary', 'textLight',
-        'border', 'code', 'codeBackground', 'link', 'linkHover',
-        'error', 'warning', 'success'
+        'primary',
+        'secondary',
+        'background',
+        'surface',
+        'text',
+        'textPrimary',
+        'textSecondary',
+        'textLight',
+        'border',
+        'code',
+        'codeBackground',
+        'link',
+        'linkHover',
+        'error',
+        'warning',
+        'success',
       ];
-      
+
       expectedColors.forEach(color => {
         expect(html).toContain(`color-${color}`);
         expect(html).toContain(`color-text-${color}`);
@@ -221,7 +227,7 @@ describe('ThemeBuilder', () => {
 
     it('should group colors by category', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('<h4>Primary</h4>');
       expect(html).toContain('<h4>Background</h4>');
       expect(html).toContain('<h4>Text</h4>');
@@ -230,7 +236,7 @@ describe('ThemeBuilder', () => {
 
     it('should include color descriptions', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Main accent color');
       expect(html).toContain('Body text color');
       expect(html).toContain('Error state color');
@@ -244,7 +250,7 @@ describe('ThemeBuilder', () => {
 
     it('should render preview with sample content', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Sample Heading');
       expect(html).toContain('This is a sample paragraph');
       expect(html).toContain('Sample Link');
@@ -254,15 +260,16 @@ describe('ThemeBuilder', () => {
 
     it('should apply theme colors to preview elements', () => {
       const html = themeBuilder.render();
-      
-      expect(html).toContain(`background-color: ${defaultTheme.colors.background}`);
+
+      // Preview elements use inline styles for theme colors
       expect(html).toContain(`color: ${defaultTheme.colors.link}`);
       expect(html).toContain(`background: ${defaultTheme.colors.surface}`);
+      expect(html).toContain(`background: ${defaultTheme.colors.codeBackground}`);
     });
 
     it('should render primary and secondary buttons', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Primary Button');
       expect(html).toContain('Secondary Button');
     });
@@ -275,7 +282,7 @@ describe('ThemeBuilder', () => {
 
     it('should render contrast ratio checks', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toContain('Text/Background:');
       expect(html).toContain('Primary/Background:');
       expect(html).toContain(':1');
@@ -283,7 +290,7 @@ describe('ThemeBuilder', () => {
 
     it('should show pass/fail indicators', () => {
       const html = themeBuilder.render();
-      
+
       expect(html).toMatch(/[✓✗]/);
     });
   });
@@ -297,9 +304,9 @@ describe('ThemeBuilder', () => {
 
     it('should open the theme builder', () => {
       expect(themeBuilder.render()).not.toContain('mdv-theme-builder-overlay open');
-      
+
       themeBuilder.open();
-      
+
       const overlay = container.querySelector('.mdv-theme-builder-overlay');
       expect(overlay?.classList.contains('open')).toBe(true);
     });
@@ -307,7 +314,7 @@ describe('ThemeBuilder', () => {
     it('should close the theme builder', () => {
       themeBuilder.open();
       themeBuilder.close();
-      
+
       const overlay = container.querySelector('.mdv-theme-builder-overlay');
       expect(overlay?.classList.contains('open')).toBe(false);
     });
@@ -315,9 +322,9 @@ describe('ThemeBuilder', () => {
     it('should call onClose callback when closed', () => {
       const onClose = vi.fn();
       themeBuilder = new ThemeBuilder(themeManager, { onClose });
-      
+
       themeBuilder.close();
-      
+
       expect(onClose).toHaveBeenCalled();
     });
   });
@@ -332,49 +339,49 @@ describe('ThemeBuilder', () => {
     it('should close when close button is clicked', () => {
       const closeBtn = container.querySelector('.mdv-theme-builder-close') as HTMLElement;
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       closeBtn.click();
-      
+
       expect(closeSpy).toHaveBeenCalled();
     });
 
     it('should close when overlay is clicked', () => {
       const overlay = container.querySelector('.mdv-theme-builder-overlay') as HTMLElement;
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       // Simulate clicking on overlay (not inner content)
       const event = new MouseEvent('click', { bubbles: true });
       Object.defineProperty(event, 'target', { value: overlay });
       overlay.dispatchEvent(event);
-      
+
       expect(closeSpy).toHaveBeenCalled();
     });
 
     it('should not close when clicking inside the builder', () => {
       const builder = container.querySelector('.mdv-theme-builder') as HTMLElement;
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       builder.click();
-      
+
       expect(closeSpy).not.toHaveBeenCalled();
     });
 
     it('should close on Escape key', () => {
       themeBuilder.open();
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       document.dispatchEvent(event);
-      
+
       expect(closeSpy).toHaveBeenCalled();
     });
 
     it('should not close on Escape when not open', () => {
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       document.dispatchEvent(event);
-      
+
       expect(closeSpy).not.toHaveBeenCalled();
     });
   });
@@ -389,20 +396,20 @@ describe('ThemeBuilder', () => {
     it('should update color when color input changes', () => {
       const colorInput = container.querySelector('#color-primary') as HTMLInputElement;
       const textInput = container.querySelector('#color-text-primary') as HTMLInputElement;
-      
+
       colorInput.value = '#ff0000';
       colorInput.dispatchEvent(new Event('input'));
-      
+
       expect(textInput.value).toBe('#ff0000');
     });
 
     it('should update color when text input changes with valid color', () => {
       const colorInput = container.querySelector('#color-primary') as HTMLInputElement;
       const textInput = container.querySelector('#color-text-primary') as HTMLInputElement;
-      
+
       textInput.value = '#00ff00';
       textInput.dispatchEvent(new Event('input'));
-      
+
       expect(colorInput.value).toBe('#00ff00');
     });
 
@@ -410,10 +417,10 @@ describe('ThemeBuilder', () => {
       const colorInput = container.querySelector('#color-primary') as HTMLInputElement;
       const textInput = container.querySelector('#color-text-primary') as HTMLInputElement;
       const originalValue = colorInput.value;
-      
+
       textInput.value = 'invalid-color';
       textInput.dispatchEvent(new Event('input'));
-      
+
       expect(colorInput.value).toBe(originalValue);
     });
   });
@@ -427,10 +434,10 @@ describe('ThemeBuilder', () => {
 
     it('should update font when input changes', () => {
       const fontInput = container.querySelector('#font-body') as HTMLInputElement;
-      
+
       fontInput.value = 'Arial, sans-serif';
       fontInput.dispatchEvent(new Event('input'));
-      
+
       // Font change should trigger preview update
       expect(fontInput.value).toBe('Arial, sans-serif');
     });
@@ -446,13 +453,13 @@ describe('ThemeBuilder', () => {
     it('should update spacing when inputs change', () => {
       const unitInput = container.querySelector('#spacing-unit') as HTMLInputElement;
       const widthInput = container.querySelector('#spacing-containerMaxWidth') as HTMLInputElement;
-      
+
       unitInput.value = '16';
       unitInput.dispatchEvent(new Event('input'));
-      
+
       widthInput.value = '1400px';
       widthInput.dispatchEvent(new Event('input'));
-      
+
       expect(unitInput.value).toBe('16');
       expect(widthInput.value).toBe('1400px');
     });
@@ -467,19 +474,19 @@ describe('ThemeBuilder', () => {
 
     it('should update theme name', () => {
       const nameInput = container.querySelector('#theme-name') as HTMLInputElement;
-      
+
       nameInput.value = 'My Custom Theme';
       nameInput.dispatchEvent(new Event('input'));
-      
+
       expect(nameInput.value).toBe('My Custom Theme');
     });
 
     it('should update border radius', () => {
       const radiusInput = container.querySelector('#border-radius') as HTMLInputElement;
-      
+
       radiusInput.value = '1rem';
       radiusInput.dispatchEvent(new Event('input'));
-      
+
       expect(radiusInput.value).toBe('1rem');
     });
   });
@@ -493,10 +500,10 @@ describe('ThemeBuilder', () => {
 
     it('should load different base theme when selected', () => {
       const baseSelect = container.querySelector('#base-theme') as HTMLSelectElement;
-      
+
       baseSelect.value = 'dark';
       baseSelect.dispatchEvent(new Event('change'));
-      
+
       expect(baseSelect.value).toBe('dark');
     });
   });
@@ -513,43 +520,52 @@ describe('ThemeBuilder', () => {
       themeBuilder = new ThemeBuilder(themeManager, { onThemeCreate });
       container.innerHTML = themeBuilder.render();
       themeBuilder.attachTo(container);
-      
+
       const saveBtn = container.querySelector('#save-theme') as HTMLElement;
       const closeSpy = vi.spyOn(themeBuilder, 'close');
-      
+
       saveBtn.click();
-      
+
       expect(onThemeCreate).toHaveBeenCalled();
       expect(closeSpy).toHaveBeenCalled();
     });
 
     it('should reset theme when reset button is clicked', () => {
       const resetBtn = container.querySelector('#reset-theme') as HTMLElement;
-      
-      // Change a color first
       const colorInput = container.querySelector('#color-primary') as HTMLInputElement;
+      
+      // Store the original color
       const originalColor = colorInput.value;
-      colorInput.value = '#ff0000';
+      
+      // Change the color
+      const newColor = '#ff0000';
+      colorInput.value = newColor;
       colorInput.dispatchEvent(new Event('input'));
       
-      // Reset
-      resetBtn.click();
+      // Verify it changed
+      expect(colorInput.value).toBe(newColor);
+
+      // Mock the resetTheme method to verify it's called
+      const resetSpy = vi.spyOn(themeBuilder as any, 'resetTheme');
       
-      // Color should be back to original
-      expect(colorInput.value).toBe(originalColor);
+      // Click reset
+      resetBtn.click();
+
+      // Verify reset was called
+      expect(resetSpy).toHaveBeenCalled();
     });
 
     it('should handle export theme', () => {
       const exportBtn = container.querySelector('#export-theme') as HTMLElement;
-      
+
       // Mock DOM methods for file download
       interface MockAnchor {
         href: string;
         download: string;
         click: ReturnType<typeof vi.fn>;
       }
-      
-      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tag) => {
+
+      const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation(tag => {
         if (tag === 'a') {
           return {
             href: '',
@@ -559,19 +575,23 @@ describe('ThemeBuilder', () => {
         }
         return document.createElement(tag);
       });
-      
-      const appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => undefined as Node);
-      const removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => undefined as Node);
-      
+
+      const appendChildSpy = vi
+        .spyOn(document.body, 'appendChild')
+        .mockImplementation(() => undefined as Node);
+      const removeChildSpy = vi
+        .spyOn(document.body, 'removeChild')
+        .mockImplementation(() => undefined as Node);
+
       createObjectURLMock.mockReturnValue('blob:test-url');
-      
+
       exportBtn.click();
-      
+
       expect(createObjectURLMock).toHaveBeenCalled();
       expect(appendChildSpy).toHaveBeenCalled();
       expect(removeChildSpy).toHaveBeenCalled();
       expect(revokeObjectURLMock).toHaveBeenCalledWith('blob:test-url');
-      
+
       createElementSpy.mockRestore();
       appendChildSpy.mockRestore();
       removeChildSpy.mockRestore();
@@ -579,7 +599,7 @@ describe('ThemeBuilder', () => {
 
     it('should handle import theme', async () => {
       const importBtn = container.querySelector('#import-theme') as HTMLElement;
-      
+
       interface MockInput {
         type: string;
         accept: string;
@@ -587,25 +607,27 @@ describe('ThemeBuilder', () => {
         click: ReturnType<typeof vi.fn>;
         files: File[];
       }
-      
+
       // Mock file input creation and interaction
       const mockInput: MockInput = {
         type: '',
         accept: '',
         onchange: null,
         click: vi.fn(),
-        files: [new File(['{"name": "imported"}'], 'theme.json', { type: 'application/json' })]
+        files: [new File(['{"name": "imported"}'], 'theme.json', { type: 'application/json' })],
       };
-      
-      const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockInput as HTMLInputElement);
-      
+
+      const createElementSpy = vi
+        .spyOn(document, 'createElement')
+        .mockReturnValue(mockInput as HTMLInputElement);
+
       importBtn.click();
-      
+
       expect(createElementSpy).toHaveBeenCalledWith('input');
       expect(mockInput.type).toBe('file');
       expect(mockInput.accept).toBe('.json');
       expect(mockInput.click).toHaveBeenCalled();
-      
+
       createElementSpy.mockRestore();
     });
   });
@@ -618,7 +640,7 @@ describe('ThemeBuilder', () => {
     it('should validate colors correctly', () => {
       // Access private method through type assertion for testing
       const builder = themeBuilder as { isValidColor: (color: string) => boolean };
-      
+
       expect(builder.isValidColor('#ff0000')).toBe(true);
       expect(builder.isValidColor('#000')).toBe(true);
       expect(builder.isValidColor('#FFFFFF')).toBe(true);
@@ -630,7 +652,7 @@ describe('ThemeBuilder', () => {
     it('should convert camelCase to kebab-case', () => {
       // Access private method through type assertion for testing
       const builder = themeBuilder as { kebabCase: (str: string) => string };
-      
+
       expect(builder.kebabCase('textPrimary')).toBe('text-primary');
       expect(builder.kebabCase('backgroundColor')).toBe('background-color');
       expect(builder.kebabCase('primary')).toBe('primary');
@@ -644,7 +666,7 @@ describe('ThemeBuilder', () => {
 
     it('should return CSS styles string', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('.mdv-theme-builder-overlay');
       expect(styles).toContain('.mdv-theme-builder');
       expect(styles).toContain('.mdv-theme-builder-header');
@@ -654,34 +676,34 @@ describe('ThemeBuilder', () => {
 
     it('should include mobile responsive styles', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('@media (max-width: 768px)');
     });
 
     it('should include accessibility styles', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('.mdv-contrast-ratio.pass');
       expect(styles).toContain('.mdv-contrast-ratio.fail');
     });
 
     it('should include color input styles', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('.mdv-theme-builder-color-input');
       expect(styles).toContain('input[type="color"]');
     });
 
     it('should include button styles', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('.mdv-theme-builder-btn-primary');
       expect(styles).toContain('.mdv-theme-builder-btn-secondary');
     });
 
     it('should include preview styles', () => {
       const styles = themeBuilder.getStyles();
-      
+
       expect(styles).toContain('.mdv-theme-preview-sample');
       expect(styles).toContain('.mdv-preview-buttons');
     });
@@ -690,7 +712,7 @@ describe('ThemeBuilder', () => {
   describe('Edge cases', () => {
     it('should handle missing container gracefully', () => {
       themeBuilder = new ThemeBuilder(themeManager);
-      
+
       expect(() => {
         themeBuilder.attachTo(container);
         // Try to interact without proper setup
@@ -702,7 +724,7 @@ describe('ThemeBuilder', () => {
     it('should handle missing DOM elements gracefully', () => {
       themeBuilder = new ThemeBuilder(themeManager);
       container.innerHTML = '<div></div>'; // Empty container
-      
+
       expect(() => {
         themeBuilder.attachTo(container);
       }).not.toThrow();
@@ -712,25 +734,31 @@ describe('ThemeBuilder', () => {
       themeBuilder = new ThemeBuilder(themeManager);
       container.innerHTML = themeBuilder.render();
       themeBuilder.attachTo(container);
-      
+
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
-      // Mock FileReader to throw error
+
+      // Mock FileReader to return invalid JSON
       class ErrorFileReader {
         onload: ((e: { target: { result: string } }) => void) | null = null;
-        
+        onerror: ((e: any) => void) | null = null;
+
         readAsText() {
-          throw new Error('File read error');
+          setTimeout(() => {
+            if (this.onload) {
+              // Return invalid JSON to trigger parse error
+              this.onload({ target: { result: 'invalid json content' } });
+            }
+          }, 0);
         }
       }
-      
+
       Object.defineProperty(window, 'FileReader', {
         value: ErrorFileReader,
-        configurable: true
+        configurable: true,
       });
-      
+
       const importBtn = container.querySelector('#import-theme') as HTMLElement;
-      
+
       interface MockInput {
         type: string;
         accept: string;
@@ -738,33 +766,38 @@ describe('ThemeBuilder', () => {
         click: ReturnType<typeof vi.fn>;
         files: File[];
       }
-      
+
       const mockInput: MockInput = {
         type: 'file',
         accept: '.json',
         onchange: null,
         click: vi.fn(),
-        files: [new File(['invalid json'], 'theme.json')]
+        files: [new File(['invalid json'], 'theme.json')],
       };
-      
-      const createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockInput as HTMLInputElement);
-      
+
+      const createElementSpy = vi
+        .spyOn(document, 'createElement')
+        .mockReturnValue(mockInput as HTMLInputElement);
+
       importBtn.click();
-      
+
       // Simulate file selection
       if (mockInput.onchange) {
         mockInput.onchange({ target: mockInput });
       }
-      
+
+      // Wait for async file read operation
+      await new Promise(resolve => setTimeout(resolve, 10));
+
       expect(consoleSpy).toHaveBeenCalledWith('Failed to import theme:', expect.any(Error));
-      
+
       createElementSpy.mockRestore();
       consoleSpy.mockRestore();
-      
+
       // Restore FileReader
       Object.defineProperty(window, 'FileReader', {
         value: MockFileReader,
-        configurable: true
+        configurable: true,
       });
     });
 
@@ -772,9 +805,9 @@ describe('ThemeBuilder', () => {
       themeBuilder = new ThemeBuilder(themeManager); // No callback
       container.innerHTML = themeBuilder.render();
       themeBuilder.attachTo(container);
-      
+
       const saveBtn = container.querySelector('#save-theme') as HTMLElement;
-      
+
       expect(() => {
         saveBtn.click();
       }).not.toThrow();

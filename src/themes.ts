@@ -18,19 +18,20 @@ export const defaultTheme: Theme = {
     linkHover: '#2563eb',
     error: '#ef4444',
     warning: '#f59e0b',
-    success: '#10b981'
+    success: '#10b981',
   },
   fonts: {
     body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    code: '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace'
+    heading:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    code: '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace',
   },
   spacing: {
     unit: 8,
     containerMaxWidth: '1200px',
-    sidebarWidth: '320px'
+    sidebarWidth: '320px',
   },
-  borderRadius: '0.5rem'
+  borderRadius: '0.5rem',
 };
 
 export const darkTheme: Theme = {
@@ -51,11 +52,11 @@ export const darkTheme: Theme = {
     linkHover: '#60a5fa',
     error: '#ef4444',
     warning: '#f59e0b',
-    success: '#10b981'
+    success: '#10b981',
   },
   fonts: defaultTheme.fonts,
   spacing: defaultTheme.spacing,
-  borderRadius: defaultTheme.borderRadius
+  borderRadius: defaultTheme.borderRadius,
 };
 
 export function createCustomTheme(overrides: Partial<Theme>): Theme {
@@ -65,15 +66,15 @@ export function createCustomTheme(overrides: Partial<Theme>): Theme {
     ...overrides,
     colors: {
       ...baseTheme.colors,
-      ...(overrides.colors || {})
+      ...(overrides.colors || {}),
     },
     fonts: {
       ...baseTheme.fonts,
-      ...(overrides.fonts || {})
+      ...(overrides.fonts || {}),
     },
     spacing: {
       ...baseTheme.spacing,
-      ...(overrides.spacing || {})
-    }
+      ...(overrides.spacing || {}),
+    },
   };
 }

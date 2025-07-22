@@ -11,120 +11,143 @@ new MarkdownDocsViewer(container: HTMLElement, config: DocumentationConfig)
 ```
 
 **Parameters:**
+
 - `container` - HTML element where the viewer will be mounted
 - `config` - Configuration object (see [Configuration Guide](./CONFIGURATION.md))
 
 **Example:**
+
 ```typescript
-const viewer = new MarkdownDocsViewer(
-  document.getElementById('docs-container'),
-  {
-    title: 'My Documentation',
-    sources: [
-      { type: 'local', path: './docs/' }
-    ]
-  }
-);
+const viewer = new MarkdownDocsViewer(document.getElementById('docs-container'), {
+  title: 'My Documentation',
+  sources: [{ type: 'local', path: './docs/' }],
+});
 ```
 
 ### Methods
 
 #### initialize()
+
 ```typescript
 async initialize(): Promise<void>
 ```
+
 Initializes the viewer and loads the initial document set.
 
 **Returns:** Promise that resolves when initialization is complete
 
 **Example:**
+
 ```typescript
 await viewer.initialize();
 ```
 
 #### loadDocument()
+
 ```typescript
 async loadDocument(path: string): Promise<void>
 ```
+
 Loads and displays a specific document.
 
 **Parameters:**
+
 - `path` - Document path or identifier
 
 **Example:**
+
 ```typescript
 await viewer.loadDocument('getting-started.md');
 ```
 
 #### setTheme()
+
 ```typescript
 setTheme(theme: string): void
 ```
+
 Changes the current theme.
 
 **Parameters:**
+
 - `theme` - Theme name ('light', 'dark', or custom theme name)
 
 **Example:**
+
 ```typescript
 viewer.setTheme('dark');
 ```
 
 #### updateConfig()
+
 ```typescript
 updateConfig(newConfig: Partial<DocumentationConfig>): Promise<void>
 ```
+
 Updates configuration dynamically.
 
 **Parameters:**
+
 - `newConfig` - Partial configuration to merge with existing config
 
 **Example:**
+
 ```typescript
 await viewer.updateConfig({
-  search: { enabled: false }
+  search: { enabled: false },
 });
 ```
 
 #### search()
+
 ```typescript
 search(query: string): SearchResult[]
 ```
+
 Performs a search across all loaded documents.
 
 **Parameters:**
+
 - `query` - Search query string
 
 **Returns:** Array of search results
 
 **Example:**
+
 ```typescript
 const results = viewer.search('installation');
 ```
 
 #### getCurrentDocument()
+
 ```typescript
 getCurrentDocument(): DocumentMetadata | null
 ```
+
 Gets metadata for the currently displayed document.
 
 **Returns:** Current document metadata or null
 
 #### getAllDocuments()
+
 ```typescript
 getAllDocuments(): DocumentMetadata[]
 ```
+
 Gets metadata for all loaded documents.
 
 **Returns:** Array of document metadata
 
 #### destroy()
+
 ```typescript
 destroy(): void
 ```
+
 Cleans up the viewer instance and removes all event listeners.
 
 **Example:**
+
 ```typescript
 viewer.destroy();
 ```
@@ -132,6 +155,7 @@ viewer.destroy();
 ## Configuration Types
 
 ### DocumentationConfig
+
 ```typescript
 interface DocumentationConfig {
   title: string;
@@ -145,6 +169,7 @@ interface DocumentationConfig {
 ```
 
 ### DocumentSource
+
 ```typescript
 interface DocumentSource {
   type: 'local' | 'url' | 'github' | 'content';
@@ -159,6 +184,7 @@ interface DocumentSource {
 ```
 
 ### ThemeConfig
+
 ```typescript
 interface ThemeConfig {
   default: 'light' | 'dark';
@@ -170,6 +196,7 @@ interface ThemeConfig {
 ```
 
 ### NavigationConfig
+
 ```typescript
 interface NavigationConfig {
   enabled: boolean;
@@ -181,6 +208,7 @@ interface NavigationConfig {
 ```
 
 ### SearchConfig
+
 ```typescript
 interface SearchConfig {
   enabled: boolean;
@@ -193,6 +221,7 @@ interface SearchConfig {
 ```
 
 ### FeatureConfig
+
 ```typescript
 interface FeatureConfig {
   codeHighlighting?: boolean;
@@ -207,6 +236,7 @@ interface FeatureConfig {
 ## Event System
 
 ### Callbacks
+
 ```typescript
 interface CallbackConfig {
   onDocumentLoad?: (document: DocumentMetadata) => void;
@@ -218,24 +248,26 @@ interface CallbackConfig {
 ```
 
 ### Example Usage
+
 ```typescript
 const viewer = new MarkdownDocsViewer(container, {
   title: 'API Docs',
   sources: [{ type: 'local', path: './docs/' }],
   callbacks: {
-    onDocumentLoad: (doc) => {
+    onDocumentLoad: doc => {
       console.log(`Loaded: ${doc.title}`);
     },
     onError: (error, context) => {
       console.error(`Error in ${context}:`, error);
-    }
-  }
+    },
+  },
 });
 ```
 
 ## Data Types
 
 ### DocumentMetadata
+
 ```typescript
 interface DocumentMetadata {
   id: string;
@@ -250,6 +282,7 @@ interface DocumentMetadata {
 ```
 
 ### SearchResult
+
 ```typescript
 interface SearchResult {
   document: DocumentMetadata;
@@ -266,6 +299,7 @@ interface SearchMatch {
 ```
 
 ### ThemeDefinition
+
 ```typescript
 interface ThemeDefinition {
   colors: {
@@ -295,13 +329,14 @@ interface ThemeDefinition {
 ## Error Handling
 
 ### Error Types
+
 ```typescript
 enum ViewerErrorType {
   INITIALIZATION_FAILED = 'initialization_failed',
   DOCUMENT_LOAD_FAILED = 'document_load_failed',
   SEARCH_FAILED = 'search_failed',
   THEME_LOAD_FAILED = 'theme_load_failed',
-  INVALID_CONFIG = 'invalid_config'
+  INVALID_CONFIG = 'invalid_config',
 }
 
 class ViewerError extends Error {
@@ -312,6 +347,7 @@ class ViewerError extends Error {
 ```
 
 ### Error Handling Example
+
 ```typescript
 try {
   await viewer.initialize();
@@ -337,9 +373,5 @@ try {
 The library is written in TypeScript and includes comprehensive type definitions. All interfaces and types are exported for use in TypeScript projects.
 
 ```typescript
-import { 
-  MarkdownDocsViewer, 
-  DocumentationConfig, 
-  DocumentSource 
-} from 'markdown-docs-viewer';
+import { MarkdownDocsViewer, DocumentationConfig, DocumentSource } from 'markdown-docs-viewer';
 ```
