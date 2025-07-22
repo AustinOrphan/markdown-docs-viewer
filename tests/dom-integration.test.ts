@@ -249,8 +249,6 @@ describe('DOM Integration Tests', () => {
     });
 
     it('should handle copy button clicks', async () => {
-      vi.useFakeTimers();
-
       await viewer.loadDocument('doc1');
 
       const copyButton = container.querySelector('.mdv-copy-button') as HTMLButtonElement;
@@ -267,10 +265,8 @@ describe('DOM Integration Tests', () => {
       // The button text change might be handled by the actual implementation
       // For now, just verify the copy function was called
 
-      // Should reset after timeout
-      vi.advanceTimersByTime(2000);
-
-      vi.useRealTimers();
+      // Wait for any UI updates
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
   });
 

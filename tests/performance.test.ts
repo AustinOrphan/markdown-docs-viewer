@@ -273,36 +273,29 @@ describe('Performance Optimizations', () => {
   });
 
   describe('Debounce', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-      vi.unstubAllGlobals();
-      vi.useRealTimers();
-    });
-
     it('should delay function execution', async () => {
       const mockFn = vi.fn();
-      const debouncedFn = debounce(mockFn, 100);
+      const debouncedFn = debounce(mockFn, 10); // Use very short delay for tests
 
       debouncedFn('test');
       expect(mockFn).not.toHaveBeenCalled();
 
-      vi.advanceTimersByTime(150);
+      // Wait for debounce delay
+      await new Promise(resolve => setTimeout(resolve, 20));
+
       expect(mockFn).toHaveBeenCalledWith('test');
+      expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should cancel previous calls', async () => {
       const mockFn = vi.fn();
-      const debouncedFn = debounce(mockFn, 100);
+      const debouncedFn = debounce(mockFn, 10); // Use very short delay for tests
 
       debouncedFn('first');
       debouncedFn('second');
       debouncedFn('third');
 
-      vi.advanceTimersByTime(150);
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockFn).toHaveBeenCalledTimes(1);
       expect(mockFn).toHaveBeenCalledWith('third');
@@ -310,19 +303,9 @@ describe('Performance Optimizations', () => {
   });
 
   describe('Throttle', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-      vi.unstubAllGlobals();
-      vi.useRealTimers();
-    });
-
     it('should limit function calls', async () => {
       const mockFn = vi.fn();
-      const throttledFn = throttle(mockFn, 100);
+      const throttledFn = throttle(mockFn, 10); // Use very short delay for tests
 
       throttledFn('first');
       throttledFn('second');
@@ -331,7 +314,7 @@ describe('Performance Optimizations', () => {
       expect(mockFn).toHaveBeenCalledTimes(1);
       expect(mockFn).toHaveBeenCalledWith('first');
 
-      vi.advanceTimersByTime(150);
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       throttledFn('fourth');
       expect(mockFn).toHaveBeenCalledTimes(2);
