@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Demo - Markdown Docs Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .demo-info {
+            background: #f3f4f6;
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+        .demo-info p {
+            margin: 0 0 20px 0;
+            color: #6b7280;
+        }
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .demo-button {
+            padding: 8px 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+        .demo-button:hover {
+            background: #2563eb;
+        }
+        .demo-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        #theme-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            display: none;
+        }
+        #docs-container {
+            height: calc(100vh - 200px);
+        }
+        .import-dialog {
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .dialog-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .demo-button-secondary {
+            background: #6b7280;
+        }
+        .demo-button-secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-info">
+        <h1>🎨 Theme Demonstration</h1>
+        <p>Explore the built-in themes and create your own custom themes!</p>
+        
+        <div class="demo-controls">
+            <button class="demo-button" onclick="createCustomTheme()">Create Custom Theme</button>
+            <button class="demo-button" onclick="exportCurrentTheme()">Export Current Theme</button>
+            <button class="demo-button" onclick="importTheme()">Import Theme</button>
+            <button class="demo-button" onclick="checkContrast()">Check Contrast</button>
+        </div>
+        
+        <div id="theme-info"></div>
+    </div>
+    
+    <div id="docs-container"></div>
+
+    <!-- Theme import dialog (hidden by default) -->
+    <dialog id="import-dialog" class="import-dialog">
+        <h3>Import Theme</h3>
+        <textarea id="theme-json" rows="10" cols="50" placeholder="Paste theme JSON here..."></textarea>
+        <div class="dialog-actions">
+            <button onclick="confirmImport()" class="demo-button">Import</button>
+            <button onclick="document.getElementById('import-dialog').close()" class="demo-button demo-button-secondary">Cancel</button>
+        </div>
+    </dialog>
+
+    <!-- Load dependencies -->
+    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/typescript.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/css.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/markdown.min.js"></script>
+
+    <!-- Load the viewer -->
+    <script src="../dist/index.umd.cjs"></script>
+
+    <script>
+        // Create triple backticks constant to avoid template literal parsing issues
+        const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
+        
+        let viewer;
+        
+        try {
+            const { MarkdownDocsViewer } = window.MarkdownDocsViewer;
+            
+            viewer = new MarkdownDocsViewer({
+                container: '#docs-container',
+                title: 'Theme Documentation',
+                theme: {
+                    name: 'default',
+                    switcherPosition: 'header',
+                    showPreview: true,
+                    showDescription: true,
+                    allowCustomThemes: true
+                },
+                source: {
+                    type: 'local',
+                    documents: [
+                        {
+                            id: 'theming-overview',
+                            title: '🎨 Theming Overview',
+                            category: 'Theming',
+                            content: `# Theming Overview
+
+The Markdown Docs Viewer includes a powerful theming system that allows you to customize the appearance of your documentation.
+
+## Built-in Themes
+
+The viewer comes with several built-in themes:
+
+### Light Themes
+- **Default** - Clean and modern light theme
+- **GitHub** - GitHub-inspired theme
+- **Solarized Light** - Precision colors for machines and people
+- **Material** - Material Design inspired theme
+
+### Dark Themes
+- **Dark** - Easy on the eyes dark theme
+- **Dracula** - Popular dark theme with vibrant colors
+- **Solarized Dark** - Precision colors (dark variant)
+
+### Accessibility
+- **High Contrast** - High contrast theme for improved accessibility
+
+## Theme Features
+
+- 🎯 **Live Theme Switching** - Change themes instantly without page reload
+- 💾 **Persistence** - Theme preference is saved to local storage
+- 🎨 **Custom Themes** - Create your own themes with custom colors
+- ♿ **Accessibility** - Built-in contrast checking for WCAG compliance
+- 📱 **Responsive** - Themes work seamlessly on all devices
+
+## Code Example
+
+${TRIPLE_BACKTICK}javascript
+// Initialize with a specific theme
+const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    theme: {
+        name: 'dark',
+        switcherPosition: 'header',
+        allowCustomThemes: true
+    }
+});
+
+// Change theme programmatically
+viewer.setTheme('github');
+
+// Get available themes
+const themes = viewer.getAvailableThemes();
+console.log(themes);
+${TRIPLE_BACKTICK}
+
+## CSS Variables
+
+All theme colors are exposed as CSS custom properties:
+
+${TRIPLE_BACKTICK}css
+:root {
+    --mdv-color-primary: #3b82f6;
+    --mdv-color-background: #ffffff;
+    --mdv-color-text-primary: #111827;
+    /* ... and many more */
+}
+${TRIPLE_BACKTICK}
+                            `
+                        },
+                        {
+                            id: 'theme-api',
+                            title: '🔧 Theme API',
+                            category: 'Theming',
+                            content: `# Theme API
+
+## Theme Structure
+
+A theme consists of colors, fonts, spacing, and other visual properties:
+
+${TRIPLE_BACKTICK}typescript
+interface Theme {
+    name: string;
+    colors: {
+        primary: string;
+        secondary: string;
+        background: string;
+        surface: string;
+        text: string;
+        textPrimary: string;
+        textSecondary: string;
+        border: string;
+        code: string;
+        codeBackground: string;
+        link: string;
+        linkHover: string;
+        error: string;
+        warning: string;
+        success: string;
+    };
+    fonts: {
+        body: string;
+        heading: string;
+        code: string;
+    };
+    spacing: {
+        unit: number;
+        containerMaxWidth: string;
+        sidebarWidth: string;
+    };
+    borderRadius: string;
+    customCSS?: string;
+}
+${TRIPLE_BACKTICK}
+
+## Theme Manager
+
+The ThemeManager handles theme registration, switching, and persistence:
+
+${TRIPLE_BACKTICK}javascript
+// Access the theme manager
+const themeManager = viewer.themeManager;
+
+// Register a new theme
+themeManager.registerTheme({
+    name: 'my-theme',
+    colors: { /* ... */ },
+    fonts: { /* ... */ },
+    spacing: { /* ... */ },
+    borderRadius: '0.5rem'
+});
+
+// Set active theme
+themeManager.setTheme('my-theme');
+
+// Get current theme
+const current = themeManager.getCurrentTheme();
+
+// Check contrast ratio
+const ratio = themeManager.getContrastRatio('#000000', '#ffffff');
+console.log(ratio); // 21
+
+// Check WCAG compliance
+const isAccessible = themeManager.isAccessible(
+    '#3b82f6', // foreground
+    '#ffffff', // background
+    'AA'       // level
+);
+${TRIPLE_BACKTICK}
+
+## Creating Custom Themes
+
+### Method 1: Extend Existing Theme
+
+${TRIPLE_BACKTICK}javascript
+const customTheme = viewer.createCustomTheme('my-custom', {
+    colors: {
+        primary: '#e91e63',
+        secondary: '#9c27b0'
+    }
+});
+
+viewer.setTheme('my-custom');
+${TRIPLE_BACKTICK}
+
+### Method 2: Complete Theme Object
+
+${TRIPLE_BACKTICK}javascript
+viewer.registerTheme({
+    name: 'company-brand',
+    colors: {
+        primary: '#ff6b6b',
+        secondary: '#4ecdc4',
+        background: '#f7f7f7',
+        surface: '#ffffff',
+        text: '#2d3436',
+        textPrimary: '#2d3436',
+        textSecondary: '#636e72',
+        border: '#dfe6e9',
+        code: '#6c5ce7',
+        codeBackground: '#f5f3ff',
+        link: '#0984e3',
+        linkHover: '#0063c4',
+        error: '#d63031',
+        warning: '#fdcb6e',
+        success: '#00b894'
+    },
+    fonts: {
+        body: '"Inter", sans-serif',
+        heading: '"Inter", sans-serif',
+        code: '"Fira Code", monospace'
+    },
+    spacing: {
+        unit: 8,
+        containerMaxWidth: '1200px',
+        sidebarWidth: '280px'
+    },
+    borderRadius: '0.375rem'
+});
+${TRIPLE_BACKTICK}
+
+## Theme Import/Export
+
+${TRIPLE_BACKTICK}javascript
+// Export theme as JSON
+const themeJson = viewer.themeManager.exportTheme(
+    viewer.getCurrentTheme()
+);
+console.log(themeJson);
+
+// Import theme from JSON
+const imported = viewer.themeManager.importTheme(themeJson);
+if (imported) {
+    viewer.setTheme(imported.name);
+}
+${TRIPLE_BACKTICK}
+                            `
+                        },
+                        {
+                            id: 'theme-customization',
+                            title: '🎯 Customization Guide',
+                            category: 'Theming',
+                            content: `# Theme Customization Guide
+
+## Color Psychology
+
+When creating custom themes, consider the psychological impact of colors:
+
+### Primary Colors
+- **Blue** (#3b82f6) - Trust, stability, professionalism
+- **Green** (#10b981) - Growth, success, nature
+- **Purple** (#8b5cf6) - Creativity, luxury, innovation
+- **Red** (#ef4444) - Energy, urgency, importance
+
+### Background Colors
+- **Pure White** (#ffffff) - Clean, spacious, modern
+- **Off-White** (#fafafa) - Softer, less harsh on eyes
+- **Light Gray** (#f3f4f6) - Neutral, professional
+- **Dark** (#0f172a) - Reduces eye strain, modern
+
+## Accessibility Guidelines
+
+### Contrast Ratios
+- **Normal text**: 4.5:1 minimum (WCAG AA)
+- **Large text**: 3:1 minimum (WCAG AA)
+- **Enhanced**: 7:1 for AAA compliance
+
+### Testing Your Theme
+
+${TRIPLE_BACKTICK}javascript
+// Check all text contrasts
+function checkThemeAccessibility(theme) {
+    const tm = viewer.themeManager;
+    
+    const checks = [
+        ['textPrimary', 'background', 'Primary Text'],
+        ['textSecondary', 'background', 'Secondary Text'],
+        ['link', 'background', 'Links'],
+        ['primary', 'background', 'Primary Color']
+    ];
+    
+    checks.forEach(([fg, bg, name]) => {
+        const ratio = tm.getContrastRatio(
+            theme.colors[fg],
+            theme.colors[bg]
+        );
+        const aa = tm.isAccessible(
+            theme.colors[fg],
+            theme.colors[bg],
+            'AA'
+        );
+        console.log(\`\${name}: \${ratio.toFixed(2)} - \${aa ? '✅' : '❌'}\`);
+    });
+}
+${TRIPLE_BACKTICK}
+
+## Advanced Customization
+
+### Custom CSS
+
+Add custom CSS to your theme for advanced styling:
+
+${TRIPLE_BACKTICK}javascript
+const advancedTheme = {
+    name: 'advanced',
+    colors: { /* ... */ },
+    fonts: { /* ... */ },
+    spacing: { /* ... */ },
+    borderRadius: '0.5rem',
+    customCSS: \`
+        /* Add gradient backgrounds */
+        .mdv-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Custom animations */
+        .mdv-nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mdv-nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--mdv-color-primary);
+            transition: width 0.3s ease;
+        }
+        
+        .mdv-nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Custom shadows */
+        .mdv-sidebar {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+    \`
+};
+${TRIPLE_BACKTICK}
+
+### Dynamic Theme Switching
+
+Create a theme that responds to system preferences:
+
+${TRIPLE_BACKTICK}javascript
+// Listen for system theme changes
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+function applySystemTheme() {
+    const themeName = mediaQuery.matches ? 'dark' : 'default';
+    viewer.setTheme(themeName);
+}
+
+// Initial check
+applySystemTheme();
+
+// Listen for changes
+mediaQuery.addEventListener('change', applySystemTheme);
+${TRIPLE_BACKTICK}
+
+## Best Practices
+
+1. **Start with a base theme** - Extend existing themes rather than starting from scratch
+2. **Test on multiple devices** - Ensure your theme looks good on various screen sizes
+3. **Consider color blindness** - Use tools to test how your theme appears to color blind users
+4. **Maintain consistency** - Use a limited color palette for a cohesive look
+5. **Document your theme** - Include description and usage notes
+
+## Example: Corporate Theme
+
+${TRIPLE_BACKTICK}javascript
+// Example corporate theme with brand colors
+const corporateTheme = {
+    name: 'acme-corp',
+    description: 'ACME Corporation brand theme',
+    author: 'ACME Design Team',
+    version: '1.0.0',
+    colors: {
+        // Brand colors
+        primary: '#003d7a',      // ACME Blue
+        secondary: '#f39800',    // ACME Orange
+        
+        // Neutral colors
+        background: '#ffffff',
+        surface: '#f8f9fa',
+        text: '#212529',
+        textPrimary: '#212529',
+        textSecondary: '#6c757d',
+        border: '#dee2e6',
+        
+        // Code colors
+        code: '#e83e8c',
+        codeBackground: '#f8f9fa',
+        
+        // Interactive colors
+        link: '#003d7a',
+        linkHover: '#002d5a',
+        
+        // Status colors
+        error: '#dc3545',
+        warning: '#ffc107',
+        success: '#28a745'
+    },
+    fonts: {
+        body: '"Source Sans Pro", -apple-system, sans-serif',
+        heading: '"Source Sans Pro", -apple-system, sans-serif',
+        code: '"Source Code Pro", monospace'
+    },
+    spacing: {
+        unit: 8,
+        containerMaxWidth: '1140px',
+        sidebarWidth: '300px'
+    },
+    borderRadius: '0.25rem',
+    customCSS: \`
+        /* Add brand logo watermark */
+        .mdv-content::before {
+            content: '';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background-image: url('logo-watermark.svg');
+            background-size: contain;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+    \`
+};
+
+// Register and use
+viewer.registerTheme(corporateTheme);
+viewer.setTheme('acme-corp');
+${TRIPLE_BACKTICK}
+                            `
+                        }
+                    ]
+                },
+                navigation: {
+                    showCategories: true,
+                    collapsible: true
+                },
+                search: {
+                    enabled: true,
+                    placeholder: 'Search theme docs...'
+                },
+                render: {
+                    syntaxHighlighting: true,
+                    copyCodeButton: true
+                },
+                onThemeChange: (theme) => {
+                    showThemeInfo(`Theme changed to: ${theme.name}`);
+                }
+            });
+            
+            console.log('Theme demo initialized successfully');
+            
+        } catch (error) {
+            console.error('Failed to create viewer:', error);
+            document.getElementById('docs-container').innerHTML = `
+                <div style="padding: 20px; background: #fee; color: #c00;">
+                    <strong>Error:</strong> ${error.message}
+                </div>
+            `;
+        }
+        
+        function showThemeInfo(message) {
+            const info = document.getElementById('theme-info');
+            info.textContent = message;
+            info.style.display = 'block';
+            setTimeout(() => {
+                info.style.display = 'none';
+            }, 3000);
+        }
+        
+        function createCustomTheme() {
+            const name = prompt('Theme name:');
+            if (!name) return;
+            
+            const primary = prompt('Primary color (hex):', '#e91e63');
+            const secondary = prompt('Secondary color (hex):', '#9c27b0');
+            
+            if (primary && secondary) {
+                const customTheme = {
+                    name: name,
+                    colors: {
+                        primary: primary,
+                        secondary: secondary,
+                        background: '#ffffff',
+                        surface: '#f7f9fc',
+                        text: '#2d3748',
+                        textPrimary: '#1a202c',
+                        textSecondary: '#718096',
+                        textLight: '#a0aec0',
+                        border: '#e2e8f0',
+                        code: primary,
+                        codeBackground: '#f7fafc',
+                        link: primary,
+                        linkHover: secondary,
+                        error: '#e53e3e',
+                        warning: '#dd6b20',
+                        success: '#38a169'
+                    },
+                    fonts: {
+                        body: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        heading: '-apple-system, BlinkMacSystemFont, sans-serif',
+                        code: 'monospace'
+                    },
+                    spacing: {
+                        unit: 8,
+                        containerMaxWidth: '1200px',
+                        sidebarWidth: '280px'
+                    },
+                    borderRadius: '0.375rem'
+                };
+                viewer.registerTheme(customTheme);
+                viewer.setTheme(name);
+                showThemeInfo(`Created and applied theme: ${name}`);
+            }
+        }
+        
+        function exportCurrentTheme() {
+            const theme = viewer.getTheme();
+            const json = viewer.themeManager.exportTheme(theme);
+            
+            // Create download
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${theme.name}-theme.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showThemeInfo(`Exported theme: ${theme.name}`);
+        }
+        
+        function importTheme() {
+            document.getElementById('import-dialog').showModal();
+        }
+        
+        function confirmImport() {
+            const json = document.getElementById('theme-json').value;
+            try {
+                const theme = viewer.themeManager.importTheme(json);
+                if (theme) {
+                    viewer.setTheme(theme.name);
+                    showThemeInfo(`Imported theme: ${theme.name}`);
+                    document.getElementById('import-dialog').close();
+                    document.getElementById('theme-json').value = '';
+                }
+            } catch (error) {
+                alert(`Import failed: ${error.message}`);
+            }
+        }
+        
+        function checkContrast() {
+            const theme = viewer.getTheme();
+            const tm = viewer.themeManager;
+            
+            const checks = [
+                ['textPrimary', 'background', 'Primary Text'],
+                ['textSecondary', 'background', 'Secondary Text'],
+                ['link', 'background', 'Links'],
+                ['primary', 'surface', 'Primary on Surface']
+            ];
+            
+            let report = `Contrast Report for "${theme.name}" theme:\n\n`;
+            
+            checks.forEach(([fg, bg, name]) => {
+                const ratio = tm.getContrastRatio(
+                    theme.colors[fg],
+                    theme.colors[bg]
+                );
+                const aa = tm.isAccessible(theme.colors[fg], theme.colors[bg], 'AA');
+                const aaa = tm.isAccessible(theme.colors[fg], theme.colors[bg], 'AAA');
+                
+                report += `${name}: ${ratio.toFixed(2)}:1\n`;
+                report += `  WCAG AA: ${aa ? '✅ Pass' : '❌ Fail'}\n`;
+                report += `  WCAG AAA: ${aaa ? '✅ Pass' : '❌ Fail'}\n\n`;
+            });
+            
+            alert(report);
+        }
+    </script>
+</body>
+</html>

@@ -391,6 +391,31 @@ export function generateMobileLayout(): string {
         min-height: 60px;
       }
       
+      /* Mobile header actions */
+      .mdv-header-actions {
+        gap: var(--mdv-spacing-sm);
+        padding-right: var(--mdv-spacing-sm);
+      }
+      
+      .mdv-header-actions .mdv-dark-mode-toggle {
+        gap: var(--mdv-spacing-xs);
+      }
+      
+      .mdv-header-actions .mdv-dark-toggle-label {
+        font-size: 0.75rem;
+        display: none; /* Hide labels on small mobile screens */
+      }
+      
+      .mdv-header-actions .mdv-theme-switcher .mdv-theme-trigger {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        min-width: auto;
+      }
+      
+      .mdv-header-actions .mdv-theme-switcher .mdv-theme-name {
+        display: none; /* Hide theme name on mobile */
+      }
+      
       .mdv-mobile-toggle {
         display: flex;
         align-items: center;

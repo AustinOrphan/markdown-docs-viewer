@@ -32,6 +32,7 @@ import {
 } from './mobile-styles';
 import { ThemeManager } from './theme-manager';
 import { ThemeSwitcher } from './theme-switcher';
+import { DarkModeToggle } from './dark-mode-toggle';
 
 export class MarkdownDocsViewer {
   private config: DocumentationConfig;
@@ -44,6 +45,7 @@ export class MarkdownDocsViewer {
   private logger: ErrorLogger;
   private themeManager: ThemeManager;
   private themeSwitcher: ThemeSwitcher;
+  private darkModeToggle: DarkModeToggle;
 
   constructor(config: DocumentationConfig) {
     try {
@@ -101,6 +103,18 @@ export class MarkdownDocsViewer {
         showPreview: this.config.theme?.showPreview !== false,
         showDescription: this.config.theme?.showDescription !== false,
         allowCustomThemes: this.config.theme?.allowCustomThemes !== false
+      });
+
+      // Initialize dark mode toggle
+      this.darkModeToggle = new DarkModeToggle(this.themeManager, {
+        position: this.config.theme?.darkTogglePosition || 'header',
+        showLabel: this.config.theme?.showDarkModeLabel !== false,
+        compact: this.config.theme?.compactDarkToggle === true,
+        onToggle: (isDark, theme) => {
+          if (this.config.onThemeChange) {
+            this.config.onThemeChange(theme);
+          }
+        }
       });
 
       // Initialize the viewer
@@ -413,6 +427,9 @@ export class MarkdownDocsViewer {
         // Add theme switcher styles
         cssContent += this.themeSwitcher.getStyles();
         
+        // Add dark mode toggle styles
+        cssContent += this.darkModeToggle.getStyles();
+        
         this.styles.textContent = cssContent;
         document.head.appendChild(this.styles);
         
@@ -501,15 +518,23 @@ export class MarkdownDocsViewer {
   }
 
   private renderHeader(): string {
-    const showThemeSwitcher = this.config.theme?.switcherPosition === 'header' || 
-                            (!this.config.theme?.switcherPosition && this.config.theme !== undefined);
+    const showThemeSwitcher = (this.config.theme?.switcherPosition || 'header') === 'header';
+    const showDarkToggle = (this.config.theme?.darkTogglePosition || 'header') === 'header';
+    
+    const headerActions = [];
+    if (showDarkToggle) {
+      headerActions.push(this.darkModeToggle.render());
+    }
+    if (showThemeSwitcher) {
+      headerActions.push(this.themeSwitcher.render());
+    }
     
     return `
       <header class="mdv-header">
         <button class="mdv-mobile-toggle" aria-label="Toggle navigation"></button>
         ${this.config.logo ? `<img src="${this.config.logo}" alt="Logo" class="mdv-logo">` : ''}
         <h1 class="mdv-title">${this.config.title || 'Documentation'}</h1>
-        ${showThemeSwitcher ? `<div class="mdv-header-actions">${this.themeSwitcher.render()}</div>` : ''}
+        ${headerActions.length > 0 ? `<div class="mdv-header-actions">${headerActions.join('')}</div>` : ''}
       </header>
     `;
   }
@@ -667,6 +692,12 @@ export class MarkdownDocsViewer {
         const themeSwitcherContainer = this.container.querySelector('.mdv-theme-switcher');
         if (themeSwitcherContainer) {
           this.themeSwitcher.attachTo(themeSwitcherContainer as HTMLElement);
+        }
+
+        // Dark mode toggle
+        const darkModeToggleContainer = this.container.querySelector('.mdv-dark-mode-toggle');
+        if (darkModeToggleContainer) {
+          this.darkModeToggle.attachTo(darkModeToggleContainer as HTMLElement);
         }
 
         // Navigation links

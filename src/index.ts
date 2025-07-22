@@ -29,3 +29,4 @@ export { AdvancedSearchManager } from './advanced-search';
 export { generatePrintStyles, addPrintUtilities, generatePrintPreview } from './print-styles';
 export { ThemeManager, type ThemePreset } from './theme-manager';
 export { ThemeSwitcher, type ThemeSwitcherOptions } from './theme-switcher';
+export { DarkModeToggle, type DarkModeToggleOptions } from './dark-mode-toggle';

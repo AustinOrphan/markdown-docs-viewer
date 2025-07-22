@@ -36,7 +36,28 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       margin-left: auto;
       display: flex;
       align-items: center;
-      gap: ${unit * 2}px;
+      gap: ${unit * 1.5}px;
+      flex-wrap: nowrap;
+    }
+    
+    .mdv-header-actions .mdv-theme-switcher,
+    .mdv-header-actions .mdv-dark-mode-toggle {
+      flex-shrink: 0;
+    }
+    
+    .mdv-header-actions .mdv-theme-switcher .mdv-theme-trigger {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      min-width: auto;
+    }
+    
+    .mdv-header-actions .mdv-dark-mode-toggle {
+      gap: 8px;
+    }
+    
+    .mdv-header-actions .mdv-dark-toggle-label {
+      font-size: 0.8rem;
+      white-space: nowrap;
     }
 
     .mdv-mobile-toggle {

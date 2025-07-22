@@ -526,10 +526,13 @@ const metrics = monitor.getMetrics();
 ## Documentation
 
 - 📖 **[Browser Usage Guide](docs/BROWSER_USAGE.md)** - Complete guide for using in browsers
+- 🎨 **[Theming Guide](docs/THEMING.md)** - Comprehensive theming documentation
+- 🎯 **[Theming Visual Guide](docs/THEMING-VISUAL-GUIDE.md)** - Visual examples and customization
 - 🌐 **[CDN Example](examples/cdn-example.html)** - Working CDN example  
 - 💻 **[Browser Examples](examples/browser-usage.html)** - Multiple usage examples
+- 🎨 **[Theme Demo](examples/theming-demo.html)** - Interactive theme demonstration
 - ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - Detailed configuration options
-- 🎨 **[API Reference](docs/API.md)** - Complete API documentation
+- 📚 **[API Reference](docs/API.md)** - Complete API documentation
 
 ## Browser Support
 
