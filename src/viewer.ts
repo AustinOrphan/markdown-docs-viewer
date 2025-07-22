@@ -371,6 +371,7 @@ export class MarkdownDocsViewer {
       if (this.config.render?.syntaxHighlighting) {
         // Check if highlighting dependencies are available
         if (typeof hljs !== 'undefined' && typeof markedHighlight !== 'undefined') {
+          const logger = this.logger; // Capture logger reference for use in highlight function
           marked.use(
             markedHighlight({
               langPrefix: 'hljs language-',
@@ -385,7 +386,7 @@ export class MarkdownDocsViewer {
                   }
                   return code;
                 } catch {
-                  this.logger.warn('Syntax highlighting failed, falling back to plain text.');
+                  logger.warn('Syntax highlighting failed, falling back to plain text.');
                   // Fallback to plain text if highlighting fails
                   return code;
                 }
