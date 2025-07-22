@@ -59,7 +59,6 @@ describe('ThemeBuilder', () => {
     document.body.innerHTML = '<div id="test-container"></div>';
     container = document.getElementById('test-container')!;
 
-
     // Create theme manager
     themeManager = new ThemeManager();
 
@@ -533,21 +532,18 @@ describe('ThemeBuilder', () => {
     it('should reset theme when reset button is clicked', () => {
       const resetBtn = container.querySelector('#reset-theme') as HTMLElement;
       const colorInput = container.querySelector('#color-primary') as HTMLInputElement;
-      
-      // Store the original color
-      const originalColor = colorInput.value;
-      
+
       // Change the color
       const newColor = '#ff0000';
       colorInput.value = newColor;
       colorInput.dispatchEvent(new Event('input'));
-      
+
       // Verify it changed
       expect(colorInput.value).toBe(newColor);
 
       // Mock the resetTheme method to verify it's called
       const resetSpy = vi.spyOn(themeBuilder as any, 'resetTheme');
-      
+
       // Click reset
       resetBtn.click();
 
