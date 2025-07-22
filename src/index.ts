@@ -27,6 +27,7 @@ export { I18nManager, createI18nConfig, defaultMessages, createLocaleMessages } 
 export { TableOfContents, addHeadingIds } from './toc';
 export { AdvancedSearchManager } from './advanced-search';
 export { generatePrintStyles, addPrintUtilities, generatePrintPreview } from './print-styles';
+export { DarkModeToggle, type DarkModeToggleOptions } from './dark-mode-toggle';
+export { ThemeBuilder, type ThemeBuilderOptions } from './theme-builder';
 export { ThemeManager, type ThemePreset } from './theme-manager';
 export { ThemeSwitcher, type ThemeSwitcherOptions } from './theme-switcher';
-export { DarkModeToggle, type DarkModeToggleOptions } from './dark-mode-toggle';
