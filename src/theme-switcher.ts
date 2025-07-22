@@ -1,6 +1,7 @@
 import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
+import { escapeHtmlAttribute } from './utils';
 
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
@@ -71,11 +72,11 @@ export class ThemeSwitcher {
       >
         <div class="mdv-theme-option-content">
           <div class="mdv-theme-option-info">
-            <span class="mdv-theme-option-name">${theme.name}</span>
+            <span class="mdv-theme-option-name">${escapeHtmlAttribute(theme.name)}</span>
             ${
               this.options.showDescription && theme.description
                 ? `
-              <span class="mdv-theme-option-description">${theme.description}</span>
+              <span class="mdv-theme-option-description">${escapeHtmlAttribute(theme.description)}</span>
             `
                 : ''
             }
