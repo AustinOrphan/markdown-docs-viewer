@@ -41,7 +41,8 @@ export class TableOfContents {
     try {
       // Try the function approach first (newer marked versions)
       tokens = marked.lexer(content);
-    } catch (e) {
+    } catch {
+      console.warn('`marked.lexer` failed, falling back to manual heading parsing.');
       // Fallback to parsing markdown manually for headings
       const lines = content.split('\n');
       for (const line of lines) {
