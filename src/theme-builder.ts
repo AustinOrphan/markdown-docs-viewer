@@ -1,5 +1,11 @@
 import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
+import {
+  escapeHtmlAttribute,
+  sanitizeCssColor,
+  sanitizeFontFamily,
+  sanitizeCssValue,
+} from './utils';
 
 type ThemeColors = Theme['colors'];
 type ThemeFonts = Theme['fonts'];
@@ -121,7 +127,7 @@ export class ThemeBuilder {
                 <h3>Theme Information</h3>
                 <div class="mdv-theme-builder-field">
                   <label for="theme-name">Theme Name</label>
-                  <input type="text" id="theme-name" value="${this.currentTheme.name}" placeholder="Enter theme name">
+                  <input type="text" id="theme-name" value="${escapeHtmlAttribute(this.currentTheme.name)}" placeholder="Enter theme name">
                 </div>
               </div>
               
@@ -132,8 +138,8 @@ export class ThemeBuilder {
                     .getAvailableThemes()
                     .map(
                       theme => `
-                    <option value="${theme.name}" ${theme.name === this.originalTheme.name ? 'selected' : ''}>
-                      ${theme.name}
+                    <option value="${escapeHtmlAttribute(theme.name)}" ${theme.name === this.originalTheme.name ? 'selected' : ''}>
+                      ${escapeHtmlAttribute(theme.name)}
                     </option>
                   `
                     )
@@ -160,7 +166,7 @@ export class ThemeBuilder {
                 <h3>Border Radius</h3>
                 <div class="mdv-theme-builder-field">
                   <label for="border-radius">Border Radius</label>
-                  <input type="text" id="border-radius" value="${this.currentTheme.borderRadius}" placeholder="e.g., 0.5rem">
+                  <input type="text" id="border-radius" value="${escapeHtmlAttribute(sanitizeCssValue(this.currentTheme.borderRadius))}" placeholder="e.g., 0.5rem">
                 </div>
               </div>
               
@@ -230,13 +236,13 @@ export class ThemeBuilder {
                 <input 
                   type="color" 
                   id="color-${input.key}" 
-                  value="${this.currentTheme.colors[input.key]}"
+                  value="${escapeHtmlAttribute(sanitizeCssColor(this.currentTheme.colors[input.key]))}"
                   aria-label="${input.label} color"
                 >
                 <input 
                   type="text" 
                   id="color-text-${input.key}" 
-                  value="${this.currentTheme.colors[input.key]}"
+                  value="${escapeHtmlAttribute(sanitizeCssColor(this.currentTheme.colors[input.key]))}"
                   placeholder="#000000"
                   aria-label="${input.label} color value"
                 >
@@ -271,7 +277,7 @@ export class ThemeBuilder {
         <input 
           type="text" 
           id="font-${font.key}" 
-          value="${this.currentTheme.fonts[font.key]}"
+          value="${escapeHtmlAttribute(sanitizeFontFamily(this.currentTheme.fonts[font.key]))}"
           placeholder="Font family"
         >
         <small>${font.description}</small>
@@ -311,7 +317,7 @@ export class ThemeBuilder {
         <input 
           type="${input.type}" 
           id="spacing-${input.key}" 
-          value="${this.currentTheme.spacing[input.key]}"
+          value="${escapeHtmlAttribute(sanitizeCssValue(this.currentTheme.spacing[input.key]))}"
           placeholder="${input.type === 'number' ? '8' : 'e.g., 1200px'}"
         >
         <small>${input.description}</small>
@@ -357,16 +363,16 @@ export class ThemeBuilder {
       <div class="mdv-theme-preview-sample">
         <h1>Sample Heading</h1>
         <p>This is a sample paragraph to demonstrate how your theme will look. You can see the primary text color, background, and overall styling.</p>
-        <a href="#" style="color: ${this.currentTheme.colors.link}">Sample Link</a>
-        <blockquote style="background: ${this.currentTheme.colors.surface}; border-left: 4px solid ${this.currentTheme.colors.primary};">
+        <a href="#" style="color: ${sanitizeCssColor(this.currentTheme.colors.link)}">Sample Link</a>
+        <blockquote style="background: ${sanitizeCssColor(this.currentTheme.colors.surface)}; border-left: 4px solid ${sanitizeCssColor(this.currentTheme.colors.primary)};">
           This is a blockquote to show surface colors and borders.
         </blockquote>
-        <code style="background: ${this.currentTheme.colors.codeBackground}; color: ${this.currentTheme.colors.code};">
+        <code style="background: ${sanitizeCssColor(this.currentTheme.colors.codeBackground)}; color: ${sanitizeCssColor(this.currentTheme.colors.code)};">
           code example
         </code>
         <div class="mdv-preview-buttons">
-          <button style="background: ${this.currentTheme.colors.primary}; color: white;">Primary Button</button>
-          <button style="background: ${this.currentTheme.colors.secondary}; color: white;">Secondary Button</button>
+          <button style="background: ${sanitizeCssColor(this.currentTheme.colors.primary)}; color: white;">Primary Button</button>
+          <button style="background: ${sanitizeCssColor(this.currentTheme.colors.secondary)}; color: white;">Secondary Button</button>
         </div>
       </div>
     `;
