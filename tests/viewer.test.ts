@@ -436,7 +436,7 @@ describe('MarkdownDocsViewer', () => {
     it('should handle errors in state', async () => {
       try {
         await viewer.loadDocument('non-existent');
-      } catch (error) {
+      } catch {
         // Error should be in state
         expect(viewer.state.error).toBeDefined();
       }
@@ -484,7 +484,7 @@ describe('MarkdownDocsViewer', () => {
 
       try {
         await viewer.loadDocument('non-existent');
-      } catch (error) {
+      } catch {
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
       }
     });
