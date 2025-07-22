@@ -36,6 +36,6 @@ export default [
 
   // Ignore patterns
   {
-    ignores: ['dist/**', 'demo/**', 'node_modules/**', '*.js', '!eslint.config.js'],
+    ignores: ['dist/**', 'demo/**', 'html/**', 'node_modules/**', '*.js', '!eslint.config.js'],
   },
 ];
