@@ -384,7 +384,7 @@ export class MarkdownDocsViewer {
                     return hljs.highlight(code, { language }).value;
                   }
                   return code;
-                } catch (error) {
+                } catch {
                   // Fallback to plain text if highlighting fails
                   return code;
                 }
