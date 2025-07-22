@@ -1,0 +1,7 @@
+npm:9: command not found: _omz_nvm_setup_completion
+npm:10: command not found: _omz_nvm_setup_autoload
+
+> @austinorphan/markdown-docs-viewer@1.0.0 test:coverage
+> vitest run --coverage --reporter=text
+
+Error: Failed to load custom Reporter from text

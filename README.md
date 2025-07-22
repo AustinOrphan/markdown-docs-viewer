@@ -36,7 +36,7 @@ npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight
 
 ```html
 <script type="module">
-import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+  import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
 </script>
 ```
 
@@ -56,15 +56,15 @@ const viewer = new MarkdownDocsViewer({
       {
         id: 'intro',
         title: 'Introduction',
-        content: '# Welcome\n\nThis is the introduction.'
+        content: '# Welcome\n\nThis is the introduction.',
       },
       {
         id: 'guide',
         title: 'User Guide',
-        content: '# User Guide\n\nLearn how to use the system.'
-      }
-    ]
-  }
+        content: '# User Guide\n\nLearn how to use the system.',
+      },
+    ],
+  },
 });
 ```
 
@@ -74,22 +74,22 @@ const viewer = new MarkdownDocsViewer({
 <div id="docs"></div>
 
 <script>
-const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+  const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
 
-const viewer = new MarkdownDocsViewer({
-  container: '#docs',
-  theme: defaultTheme,
-  source: {
-    type: 'local',
-    documents: [
-      {
-        id: 'intro',
-        title: 'Introduction', 
-        content: '# Welcome\n\nThis is the introduction.'
-      }
-    ]
-  }
-});
+  const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    theme: defaultTheme,
+    source: {
+      type: 'local',
+      documents: [
+        {
+          id: 'intro',
+          title: 'Introduction',
+          content: '# Welcome\n\nThis is the introduction.',
+        },
+      ],
+    },
+  });
 </script>
 ```
 
@@ -98,6 +98,7 @@ const viewer = new MarkdownDocsViewer({
 ### Document Sources
 
 #### Local Files (served by your web server)
+
 ```javascript
 {
   source: {
@@ -112,6 +113,7 @@ const viewer = new MarkdownDocsViewer({
 ```
 
 #### Remote URLs
+
 ```javascript
 {
   source: {
@@ -128,15 +130,16 @@ const viewer = new MarkdownDocsViewer({
 ```
 
 #### GitHub Repository
+
 ```javascript
 {
   source: {
     type: 'github',
     documents: [
-      { 
-        id: 'readme', 
-        title: 'README', 
-        file: 'microsoft/vscode/main/README.md' 
+      {
+        id: 'readme',
+        title: 'README',
+        file: 'microsoft/vscode/main/README.md'
       }
     ]
   }
@@ -144,6 +147,7 @@ const viewer = new MarkdownDocsViewer({
 ```
 
 #### Inline Content
+
 ```javascript
 {
   source: {
@@ -162,6 +166,7 @@ const viewer = new MarkdownDocsViewer({
 ### Themes
 
 #### Using Built-in Themes
+
 ```javascript
 import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
 
@@ -173,6 +178,7 @@ const viewer = createViewer({
 ```
 
 #### Custom Theme
+
 ```javascript
 import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
 
@@ -182,7 +188,7 @@ const myTheme = createCustomTheme({
     primary: '#007acc',
     background: '#1e1e1e',
     // ... other colors
-  }
+  },
 });
 ```
 
@@ -233,14 +239,14 @@ const myTheme = createCustomTheme({
 
 ```typescript
 interface Document {
-  id: string;              // Unique identifier
-  title: string;           // Display title
-  file?: string;          // File path (for external sources)
-  content?: string;       // Inline content
-  description?: string;   // Short description
-  category?: string;      // Category for grouping
-  tags?: string[];       // Tags for filtering
-  order?: number;        // Sort order
+  id: string; // Unique identifier
+  title: string; // Display title
+  file?: string; // File path (for external sources)
+  content?: string; // Inline content
+  description?: string; // Short description
+  category?: string; // Category for grouping
+  tags?: string[]; // Tags for filtering
+  order?: number; // Sort order
 }
 ```
 
@@ -295,7 +301,7 @@ Or provide custom CSS in the theme:
     customCSS: `
       .mdv-app { font-size: 16px; }
       .mdv-nav-link { padding: 1rem; }
-    `
+    `;
   }
 }
 ```
@@ -303,6 +309,7 @@ Or provide custom CSS in the theme:
 ## Examples
 
 ### Basic Documentation Site
+
 ```javascript
 createViewer({
   container: '#app',
@@ -313,13 +320,14 @@ createViewer({
     documents: [
       { id: 'intro', title: 'Introduction', file: 'intro.md', order: 1 },
       { id: 'install', title: 'Installation', file: 'install.md', order: 2 },
-      { id: 'api', title: 'API Reference', file: 'api.md', order: 3 }
-    ]
-  }
+      { id: 'api', title: 'API Reference', file: 'api.md', order: 3 },
+    ],
+  },
 });
 ```
 
 ### Multi-Category Documentation
+
 ```javascript
 createViewer({
   container: '#app',
@@ -329,20 +337,20 @@ createViewer({
       // Getting Started
       { id: 'intro', title: 'Introduction', category: 'Getting Started', order: 1 },
       { id: 'install', title: 'Installation', category: 'Getting Started', order: 2 },
-      
+
       // API Reference
       { id: 'api-overview', title: 'Overview', category: 'API Reference', order: 1 },
       { id: 'api-methods', title: 'Methods', category: 'API Reference', order: 2 },
-      
+
       // Examples
       { id: 'example-basic', title: 'Basic Example', category: 'Examples', order: 1 },
-      { id: 'example-advanced', title: 'Advanced Example', category: 'Examples', order: 2 }
-    ]
+      { id: 'example-advanced', title: 'Advanced Example', category: 'Examples', order: 2 },
+    ],
   },
   navigation: {
     showCategories: true,
-    collapsible: true
-  }
+    collapsible: true,
+  },
 });
 ```
 
@@ -365,8 +373,8 @@ const pdfOptions = createExportOptions({
   includeTOC: true,
   pdfOptions: {
     format: 'a4',
-    orientation: 'portrait'
-  }
+    orientation: 'portrait',
+  },
 });
 
 const pdfBlob = await exportManager.export(pdfOptions);
@@ -375,7 +383,7 @@ const pdfBlob = await exportManager.export(pdfOptions);
 const htmlOptions = createExportOptions({
   format: 'html',
   includeTheme: true,
-  embedAssets: true
+  embedAssets: true,
 });
 
 const htmlString = await exportManager.export(htmlOptions);
@@ -396,10 +404,10 @@ const i18nConfig = createI18nConfig({
       app: {
         title: 'Documentación',
         loading: 'Cargando...',
-        welcome: 'Bienvenido a la Documentación'
-      }
-    }
-  }
+        welcome: 'Bienvenido a la Documentación',
+      },
+    },
+  },
 });
 
 const i18n = new I18nManager(i18nConfig);
@@ -421,7 +429,7 @@ const toc = new TableOfContents({
   maxDepth: 3,
   sticky: true,
   scrollSpy: true,
-  position: 'right'
+  position: 'right',
 });
 
 // Generate TOC from markdown
@@ -447,9 +455,9 @@ const searchManager = new AdvancedSearchManager(documents, {
     tags: ['javascript', 'typescript'],
     dateRange: {
       from: new Date('2024-01-01'),
-      to: new Date()
-    }
-  }
+      to: new Date(),
+    },
+  },
 });
 
 // Search with filters
@@ -502,7 +510,7 @@ import { LazyLoader } from '@austinorphan/markdown-docs-viewer';
 
 const lazyLoader = new LazyLoader({
   threshold: 0.1,
-  rootMargin: '50px'
+  rootMargin: '50px',
 });
 
 lazyLoader.observe(element, () => {
@@ -528,7 +536,7 @@ const metrics = monitor.getMetrics();
 - 📖 **[Browser Usage Guide](docs/BROWSER_USAGE.md)** - Complete guide for using in browsers
 - 🎨 **[Theming Guide](docs/THEMING.md)** - Comprehensive theming documentation
 - 🎯 **[Theming Visual Guide](docs/THEMING-VISUAL-GUIDE.md)** - Visual examples and customization
-- 🌐 **[CDN Example](examples/cdn-example.html)** - Working CDN example  
+- 🌐 **[CDN Example](examples/cdn-example.html)** - Working CDN example
 - 💻 **[Browser Examples](examples/browser-usage.html)** - Multiple usage examples
 - 🎨 **[Theme Demo](examples/theming-demo.html)** - Interactive theme demonstration
 - ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - Detailed configuration options
@@ -537,7 +545,7 @@ const metrics = monitor.getMetrics();
 ## Browser Support
 
 - ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest) 
+- ✅ Firefox (latest)
 - ✅ Safari (latest)
 - ✅ Mobile browsers
 - ✅ ES Modules and UMD support
@@ -547,16 +555,19 @@ const metrics = monitor.getMetrics();
 ### Common Issues
 
 **"require is not defined"** - Use UMD build or ES modules in browser:
+
 ```html
 <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
 ```
 
 **"Cannot read properties of undefined (reading 'highlightElement')"** - Load highlight.js:
+
 ```html
 <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
 ```
 
 **"Container element not found"** - Ensure container exists:
+
 ```javascript
 // Wait for DOM or ensure element exists
 const viewer = new MarkdownDocsViewer({ container: '#existing-element' });

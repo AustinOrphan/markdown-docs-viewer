@@ -10,7 +10,7 @@ describe('Index Exports', () => {
   it('should export themes', () => {
     expect(exports.defaultTheme).toBeDefined();
     expect(exports.defaultTheme.name).toBe('default');
-    
+
     expect(exports.darkTheme).toBeDefined();
     expect(exports.darkTheme.name).toBe('dark');
   });
@@ -28,7 +28,7 @@ describe('Index Exports', () => {
     expect(exports.withRetry).toBeDefined();
     expect(exports.ErrorBoundary).toBeDefined();
     expect(exports.ConsoleErrorLogger).toBeDefined();
-    
+
     expect(typeof exports.MarkdownDocsError).toBe('function');
     expect(typeof exports.withRetry).toBe('function');
     expect(typeof exports.ErrorBoundary).toBe('function');
@@ -44,7 +44,7 @@ describe('Index Exports', () => {
     expect(exports.LazyLoader).toBeDefined();
     expect(exports.MemoryManager).toBeDefined();
     expect(exports.PerformanceMonitor).toBeDefined();
-    
+
     expect(typeof exports.LRUCache).toBe('function');
     expect(typeof exports.PersistentCache).toBe('function');
     expect(typeof exports.SearchIndex).toBe('function');
@@ -63,7 +63,7 @@ describe('Index Exports', () => {
   it('should export export utilities', () => {
     expect(exports.ExportManager).toBeDefined();
     expect(exports.createExportOptions).toBeDefined();
-    
+
     expect(typeof exports.ExportManager).toBe('function');
     expect(typeof exports.createExportOptions).toBe('function');
   });
@@ -73,7 +73,7 @@ describe('Index Exports', () => {
     expect(exports.createI18nConfig).toBeDefined();
     expect(exports.defaultMessages).toBeDefined();
     expect(exports.createLocaleMessages).toBeDefined();
-    
+
     expect(typeof exports.I18nManager).toBe('function');
     expect(typeof exports.createI18nConfig).toBe('function');
     expect(typeof exports.defaultMessages).toBe('object');
@@ -83,7 +83,7 @@ describe('Index Exports', () => {
   it('should export table of contents utilities', () => {
     expect(exports.TableOfContents).toBeDefined();
     expect(exports.addHeadingIds).toBeDefined();
-    
+
     expect(typeof exports.TableOfContents).toBe('function');
     expect(typeof exports.addHeadingIds).toBe('function');
   });
@@ -97,7 +97,7 @@ describe('Index Exports', () => {
     expect(exports.generatePrintStyles).toBeDefined();
     expect(exports.addPrintUtilities).toBeDefined();
     expect(exports.generatePrintPreview).toBeDefined();
-    
+
     expect(typeof exports.generatePrintStyles).toBe('function');
     expect(typeof exports.addPrintUtilities).toBe('function');
     expect(typeof exports.generatePrintPreview).toBe('function');
@@ -106,7 +106,7 @@ describe('Index Exports', () => {
   it('should export type definitions', () => {
     // Check that types namespace exists (they won't be defined at runtime but we can check the exports object)
     const exportKeys = Object.keys(exports);
-    
+
     // Since types are erased at runtime, we can't directly check them
     // But we can ensure the module exports what we expect
     expect(exportKeys.length).toBeGreaterThan(20); // We have many exports

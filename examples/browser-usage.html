@@ -1,84 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Markdown Docs Viewer - Browser Usage Examples</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        .example {
-            margin: 40px 0;
-            padding: 20px;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
-        }
-        .example h2 {
-            margin-top: 0;
-            color: #0969da;
-        }
-        pre {
-            background: #f6f8fa;
-            padding: 16px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-        code {
-            background: #f6f8fa;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 85%;
-        }
-        pre code {
-            background: none;
-            padding: 0;
-        }
-        .viewer-container {
-            border: 1px solid #d1d9e0;
-            border-radius: 6px;
-            min-height: 300px;
-            margin: 16px 0;
-        }
-        .demo-controls {
-            margin: 16px 0;
-        }
-        .demo-controls button {
-            margin-right: 8px;
-            padding: 8px 16px;
-            border: 1px solid #d1d9e0;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-        }
-        .demo-controls button:hover {
-            background: #f6f8fa;
-        }
-        .status {
-            padding: 8px 12px;
-            border-radius: 4px;
-            margin: 8px 0;
-            font-size: 14px;
-        }
-        .status.success { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        .status.warning { background: #fff3cd; color: #856404; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .example {
+        margin: 40px 0;
+        padding: 20px;
+        border: 1px solid #e1e5e9;
+        border-radius: 8px;
+      }
+      .example h2 {
+        margin-top: 0;
+        color: #0969da;
+      }
+      pre {
+        background: #f6f8fa;
+        padding: 16px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
+      code {
+        background: #f6f8fa;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 85%;
+      }
+      pre code {
+        background: none;
+        padding: 0;
+      }
+      .viewer-container {
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        min-height: 300px;
+        margin: 16px 0;
+      }
+      .demo-controls {
+        margin: 16px 0;
+      }
+      .demo-controls button {
+        margin-right: 8px;
+        padding: 8px 16px;
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+      }
+      .demo-controls button:hover {
+        background: #f6f8fa;
+      }
+      .status {
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin: 8px 0;
+        font-size: 14px;
+      }
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status.warning {
+        background: #fff3cd;
+        color: #856404;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Markdown Docs Viewer - Browser Usage Examples</h1>
-    <p>This page demonstrates different ways to use the Markdown Documentation Viewer in a browser environment.</p>
+    <p>
+      This page demonstrates different ways to use the Markdown Documentation Viewer in a browser
+      environment.
+    </p>
 
     <!-- Example 1: ES Modules -->
     <div class="example">
-        <h2>1. ES Modules (Modern Browsers)</h2>
-        <p>Use ES modules for modern browsers that support <code>import</code> statements:</p>
-        
-        <pre><code>&lt;!-- Load dependencies via CDN --&gt;
+      <h2>1. ES Modules (Modern Browsers)</h2>
+      <p>Use ES modules for modern browsers that support <code>import</code> statements:</p>
+
+      <pre><code>&lt;!-- Load dependencies via CDN --&gt;
 &lt;script src="https://unpkg.com/marked@12.0.0/marked.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"&gt;&lt;/script&gt;
@@ -117,19 +129,19 @@ ${TRIPLE_BACKTICK}
 });
 &lt;/script&gt;</code></pre>
 
-        <div class="demo-controls">
-            <button onclick="loadESModuleExample()">Try ES Module Example</button>
-            <div id="esm-status" class="status" style="display: none;"></div>
-        </div>
-        <div id="esm-container" class="viewer-container"></div>
+      <div class="demo-controls">
+        <button onclick="loadESModuleExample()">Try ES Module Example</button>
+        <div id="esm-status" class="status" style="display: none"></div>
+      </div>
+      <div id="esm-container" class="viewer-container"></div>
     </div>
 
     <!-- Example 2: UMD/Global -->
     <div class="example">
-        <h2>2. UMD/Global (Legacy Browser Support)</h2>
-        <p>Use UMD build for broader browser compatibility:</p>
-        
-        <pre><code>&lt;!-- Load all dependencies globally --&gt;
+      <h2>2. UMD/Global (Legacy Browser Support)</h2>
+      <p>Use UMD build for broader browser compatibility:</p>
+
+      <pre><code>&lt;!-- Load all dependencies globally --&gt;
 &lt;script src="https://unpkg.com/marked@12.0.0/marked.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"&gt;&lt;/script&gt;
 &lt;script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"&gt;&lt;/script&gt;
@@ -153,19 +165,19 @@ const viewer = new MarkdownDocsViewer({
 });
 &lt;/script&gt;</code></pre>
 
-        <div class="demo-controls">
-            <button onclick="loadUMDExample()">Try UMD Example</button>
-            <div id="umd-status" class="status" style="display: none;"></div>
-        </div>
-        <div id="umd-container" class="viewer-container"></div>
+      <div class="demo-controls">
+        <button onclick="loadUMDExample()">Try UMD Example</button>
+        <div id="umd-status" class="status" style="display: none"></div>
+      </div>
+      <div id="umd-container" class="viewer-container"></div>
     </div>
 
     <!-- Example 3: NPM + Bundler -->
     <div class="example">
-        <h2>3. NPM + Bundler (Webpack/Vite/Rollup)</h2>
-        <p>For build tools like Webpack, Vite, or Rollup:</p>
-        
-        <pre><code># Install dependencies
+      <h2>3. NPM + Bundler (Webpack/Vite/Rollup)</h2>
+      <p>For build tools like Webpack, Vite, or Rollup:</p>
+
+      <pre><code># Install dependencies
 npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
 
 # In your JavaScript/TypeScript file:
@@ -194,10 +206,10 @@ const viewer = new MarkdownDocsViewer({
 
     <!-- Example 4: Error Handling -->
     <div class="example">
-        <h2>4. Error Handling & Troubleshooting</h2>
-        <p>Handle common issues gracefully:</p>
-        
-        <pre><code>&lt;script&gt;
+      <h2>4. Error Handling & Troubleshooting</h2>
+      <p>Handle common issues gracefully:</p>
+
+      <pre><code>&lt;script&gt;
 try {
     const viewer = new MarkdownDocsViewer({
         container: '#docs',
@@ -238,19 +250,19 @@ function showErrorMessage(message) {
 }
 &lt;/script&gt;</code></pre>
 
-        <div class="demo-controls">
-            <button onclick="simulateError()">Simulate Error</button>
-            <div id="error-status" class="status" style="display: none;"></div>
-        </div>
-        <div id="error-container" class="viewer-container"></div>
+      <div class="demo-controls">
+        <button onclick="simulateError()">Simulate Error</button>
+        <div id="error-status" class="status" style="display: none"></div>
+      </div>
+      <div id="error-container" class="viewer-container"></div>
     </div>
 
     <!-- Example 5: Common Configurations -->
     <div class="example">
-        <h2>5. Common Configurations</h2>
-        
-        <h3>Basic Configuration</h3>
-        <pre><code>const basicConfig = {
+      <h2>5. Common Configurations</h2>
+
+      <h3>Basic Configuration</h3>
+      <pre><code>const basicConfig = {
     container: '#docs',
     title: 'My Docs',
     source: {
@@ -259,8 +271,8 @@ function showErrorMessage(message) {
     }
 };</code></pre>
 
-        <h3>Advanced Configuration</h3>
-        <pre><code>const advancedConfig = {
+      <h3>Advanced Configuration</h3>
+      <pre><code>const advancedConfig = {
     container: '#docs',
     title: 'Advanced Documentation',
     logo: '/path/to/logo.png',
@@ -307,34 +319,34 @@ function showErrorMessage(message) {
     <script src="../dist/index.umd.cjs"></script>
 
     <script>
-        // Create triple backticks constant to avoid template literal parsing issues
-        const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
-        
-        function showStatus(elementId, type, message) {
-            const statusEl = document.getElementById(elementId);
-            statusEl.className = `status ${type}`;
-            statusEl.textContent = message;
-            statusEl.style.display = 'block';
-        }
+      // Create triple backticks constant to avoid template literal parsing issues
+      const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
 
-        function loadESModuleExample() {
-            try {
-                showStatus('esm-status', 'warning', 'Loading ES Module example...');
-                
-                // For demo purposes, we'll use the UMD build
-                const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
-                
-                new MarkdownDocsViewer({
-                    container: '#esm-container',
-                    title: 'ES Module Example',
-                    theme: defaultTheme,
-                    source: {
-                        type: 'local',
-                        documents: [
-                            {
-                                id: 'intro',
-                                title: 'Introduction',
-                                content: `# ES Module Example
+      function showStatus(elementId, type, message) {
+        const statusEl = document.getElementById(elementId);
+        statusEl.className = `status ${type}`;
+        statusEl.textContent = message;
+        statusEl.style.display = 'block';
+      }
+
+      function loadESModuleExample() {
+        try {
+          showStatus('esm-status', 'warning', 'Loading ES Module example...');
+
+          // For demo purposes, we'll use the UMD build
+          const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+
+          new MarkdownDocsViewer({
+            container: '#esm-container',
+            title: 'ES Module Example',
+            theme: defaultTheme,
+            source: {
+              type: 'local',
+              documents: [
+                {
+                  id: 'intro',
+                  title: 'Introduction',
+                  content: `# ES Module Example
 
 This viewer was loaded using ES modules approach.
 
@@ -346,35 +358,35 @@ This viewer was loaded using ES modules approach.
 ${TRIPLE_BACKTICK}javascript
 import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
 ${TRIPLE_BACKTICK}
-                                `
-                            }
-                        ]
-                    }
-                });
-                
-                showStatus('esm-status', 'success', 'ES Module example loaded successfully!');
-            } catch (error) {
-                showStatus('esm-status', 'error', `Error: ${error.message}`);
-            }
-        }
+                                `,
+                },
+              ],
+            },
+          });
 
-        function loadUMDExample() {
-            try {
-                showStatus('umd-status', 'warning', 'Loading UMD example...');
-                
-                const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
-                
-                new MarkdownDocsViewer({
-                    container: '#umd-container',
-                    title: 'UMD Example',
-                    theme: darkTheme,
-                    source: {
-                        type: 'local',
-                        documents: [
-                            {
-                                id: 'umd-info',
-                                title: 'UMD Build',
-                                content: `# UMD Build Example
+          showStatus('esm-status', 'success', 'ES Module example loaded successfully!');
+        } catch (error) {
+          showStatus('esm-status', 'error', `Error: ${error.message}`);
+        }
+      }
+
+      function loadUMDExample() {
+        try {
+          showStatus('umd-status', 'warning', 'Loading UMD example...');
+
+          const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+
+          new MarkdownDocsViewer({
+            container: '#umd-container',
+            title: 'UMD Example',
+            theme: darkTheme,
+            source: {
+              type: 'local',
+              documents: [
+                {
+                  id: 'umd-info',
+                  title: 'UMD Build',
+                  content: `# UMD Build Example
 
 This viewer was loaded using the UMD build.
 
@@ -389,56 +401,55 @@ ${TRIPLE_BACKTICK}html
   const viewer = new MarkdownDocsViewer(config);
 <\/script>
 ${TRIPLE_BACKTICK}
-                                `
-                            }
-                        ]
-                    }
-                });
-                
-                showStatus('umd-status', 'success', 'UMD example loaded successfully!');
-            } catch (error) {
-                showStatus('umd-status', 'error', `Error: ${error.message}`);
-            }
-        }
+                                `,
+                },
+              ],
+            },
+          });
 
-        function simulateError() {
-            try {
-                showStatus('error-status', 'warning', 'Simulating error scenario...');
-                
-                // Simulate missing container error
-                const { MarkdownDocsViewer } = window.MarkdownDocsViewer;
-                
-                new MarkdownDocsViewer({
-                    container: '#non-existent-container',
-                    source: {
-                        type: 'local',
-                        documents: []
-                    },
-                    onError: (error) => {
-                        showStatus('error-status', 'error', `Caught error: ${error.userMessage}`);
-                        
-                        // Show error in container
-                        const container = document.getElementById('error-container');
-                        container.innerHTML = `
+          showStatus('umd-status', 'success', 'UMD example loaded successfully!');
+        } catch (error) {
+          showStatus('umd-status', 'error', `Error: ${error.message}`);
+        }
+      }
+
+      function simulateError() {
+        try {
+          showStatus('error-status', 'warning', 'Simulating error scenario...');
+
+          // Simulate missing container error
+          const { MarkdownDocsViewer } = window.MarkdownDocsViewer;
+
+          new MarkdownDocsViewer({
+            container: '#non-existent-container',
+            source: {
+              type: 'local',
+              documents: [],
+            },
+            onError: error => {
+              showStatus('error-status', 'error', `Caught error: ${error.userMessage}`);
+
+              // Show error in container
+              const container = document.getElementById('error-container');
+              container.innerHTML = `
                             <div style="padding: 20px; background: #f8d7da; color: #721c24; border-radius: 4px;">
                                 <strong>Error:</strong> ${error.userMessage}
                                 <br><small>Error Code: ${error.code}</small>
                             </div>
                         `;
-                    }
-                });
-                
-            } catch (error) {
-                showStatus('error-status', 'error', `Error caught: ${error.message}`);
-                
-                const container = document.getElementById('error-container');
-                container.innerHTML = `
+            },
+          });
+        } catch (error) {
+          showStatus('error-status', 'error', `Error caught: ${error.message}`);
+
+          const container = document.getElementById('error-container');
+          container.innerHTML = `
                     <div style="padding: 20px; background: #f8d7da; color: #721c24; border-radius: 4px;">
                         <strong>Initialization Error:</strong> ${error.message}
                     </div>
                 `;
-            }
         }
+      }
     </script>
-</body>
+  </body>
 </html>

@@ -20,63 +20,89 @@ function escapeHtml(text: string): string {
  */
 function sanitizeHtml(html: string): string {
   if (typeof html !== 'string') return '';
-  
+
   // Create a temporary DOM element to parse HTML safely
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = html;
-  
+
   // Define allowed elements and their permitted attributes
   const allowedElements = new Set([
-    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'code', 'pre',
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'ul', 'ol', 'li', 'blockquote', 'table', 'thead', 'tbody', 'tr', 'td', 'th',
-    'a', 'img', 'hr', 'div', 'span'
+    'p',
+    'br',
+    'strong',
+    'b',
+    'em',
+    'i',
+    'u',
+    'code',
+    'pre',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'td',
+    'th',
+    'a',
+    'img',
+    'hr',
+    'div',
+    'span',
   ]);
-  
+
   const allowedAttributes = new Map([
     ['a', new Set(['href', 'title'])],
     ['img', new Set(['src', 'alt', 'title', 'width', 'height'])],
-    ['*', new Set(['id', 'class'])] // Global attributes
+    ['*', new Set(['id', 'class'])], // Global attributes
   ]);
-  
+
   // Recursively sanitize all elements
   function sanitizeElement(element: Element): Element | null {
     const tagName = element.tagName.toLowerCase();
-    
+
     // Remove disallowed elements completely
     if (!allowedElements.has(tagName)) {
       return null;
     }
-    
+
     // Create a new clean element
     const cleanElement = document.createElement(tagName);
-    
+
     // Copy only allowed attributes
     const elementAllowedAttrs = allowedAttributes.get(tagName) || new Set();
     const globalAttrs = allowedAttributes.get('*') || new Set();
-    
+
     for (const attr of element.attributes) {
       const attrName = attr.name.toLowerCase();
-      
+
       // Skip all event handlers (on*)
       if (attrName.startsWith('on')) {
         continue;
       }
-      
+
       // Check if attribute is allowed for this element or globally
       if (elementAllowedAttrs.has(attrName) || globalAttrs.has(attrName)) {
         let attrValue = attr.value;
-        
+
         // Special handling for URLs
         if (attrName === 'href' || attrName === 'src') {
           attrValue = sanitizeUrl(attrValue);
           if (!attrValue) continue; // Skip if URL is completely invalid
         }
-        
+
         cleanElement.setAttribute(attrName, attrValue);
       }
     }
-    
+
     // Recursively process child nodes
     for (const child of Array.from(element.childNodes)) {
       if (child.nodeType === Node.TEXT_NODE) {
@@ -89,46 +115,56 @@ function sanitizeHtml(html: string): string {
         }
       }
     }
-    
+
     return cleanElement;
   }
-  
+
   // Sanitize URL to prevent XSS
   function sanitizeUrl(url: string): string {
     if (!url || typeof url !== 'string') return '';
-    
+
     const trimmedUrl = url.trim().toLowerCase();
-    
+
     // Block dangerous protocols
     const dangerousProtocols = [
-      'javascript:', 'data:', 'vbscript:', 'livescript:', 'mocha:', 'about:',
-      'file:', 'ftp:', 'jar:', 'view-source:'
+      'javascript:',
+      'data:',
+      'vbscript:',
+      'livescript:',
+      'mocha:',
+      'about:',
+      'file:',
+      'ftp:',
+      'jar:',
+      'view-source:',
     ];
-    
+
     for (const protocol of dangerousProtocols) {
       if (trimmedUrl.startsWith(protocol)) {
         return '';
       }
     }
-    
+
     // Allow http, https, mailto, and relative URLs
-    if (trimmedUrl.startsWith('http://') || 
-        trimmedUrl.startsWith('https://') || 
-        trimmedUrl.startsWith('mailto:') ||
-        trimmedUrl.startsWith('#') ||
-        trimmedUrl.startsWith('/') ||
-        trimmedUrl.startsWith('./') ||
-        trimmedUrl.startsWith('../') ||
-        !trimmedUrl.includes(':')) {
+    if (
+      trimmedUrl.startsWith('http://') ||
+      trimmedUrl.startsWith('https://') ||
+      trimmedUrl.startsWith('mailto:') ||
+      trimmedUrl.startsWith('#') ||
+      trimmedUrl.startsWith('/') ||
+      trimmedUrl.startsWith('./') ||
+      trimmedUrl.startsWith('../') ||
+      !trimmedUrl.includes(':')
+    ) {
       return url.trim(); // Return original case for valid URLs
     }
-    
+
     return ''; // Block everything else
   }
-  
+
   // Create container for sanitized content
   const sanitizedContainer = document.createElement('div');
-  
+
   // Process all child nodes
   for (const child of Array.from(tempDiv.childNodes)) {
     if (child.nodeType === Node.TEXT_NODE) {
@@ -140,7 +176,7 @@ function sanitizeHtml(html: string): string {
       }
     }
   }
-  
+
   return sanitizedContainer.innerHTML;
 }
 
@@ -150,7 +186,7 @@ function sanitizeHtml(html: string): string {
 export class ExportManager {
   private viewer: MarkdownDocsViewer;
   private html2pdfAvailable: boolean = false;
-  
+
   constructor(viewer: MarkdownDocsViewer) {
     this.viewer = viewer;
     this.checkDependencies();
@@ -215,24 +251,21 @@ export class ExportManager {
         margin: options.pdfOptions?.margin || 10,
         filename: options.filename || 'documentation.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
+        html2canvas: {
           scale: 2,
           useCORS: true,
-          logging: false
+          logging: false,
         },
-        jsPDF: { 
-          unit: 'mm', 
-          format: options.pdfOptions?.format || 'a4', 
-          orientation: options.pdfOptions?.orientation || 'portrait' 
+        jsPDF: {
+          unit: 'mm',
+          format: options.pdfOptions?.format || 'a4',
+          orientation: options.pdfOptions?.orientation || 'portrait',
         },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
       };
 
       const html2pdf = (window as any).html2pdf;
-      const pdf = await html2pdf()
-        .set(pdfOptions)
-        .from(container)
-        .outputPdf('blob');
+      const pdf = await html2pdf().set(pdfOptions).from(container).outputPdf('blob');
 
       return pdf;
     } finally {
@@ -245,11 +278,11 @@ export class ExportManager {
    */
   private async exportHTML(options: ExportOptions): Promise<string> {
     const html = await this.generateExportHTML(options);
-    
+
     if (options.embedAssets) {
       return this.embedAssets(html);
     }
-    
+
     return html;
   }
 
@@ -259,7 +292,7 @@ export class ExportManager {
   private async generateExportHTML(options: ExportOptions): Promise<string> {
     const documents = await this.getDocumentsToExport(options);
     const theme = this.viewer.getTheme();
-    
+
     let html = `<!DOCTYPE html>
 <html lang="${escapeHtml(options.locale || 'en')}">
 <head>
@@ -307,7 +340,7 @@ export class ExportManager {
       const doc = documents[i];
       const content = await this.viewer.getDocumentContent(doc);
       const processedContent = await marked(content);
-      
+
       html += `
   <article class="exported-document ${i > 0 ? 'page-break' : ''}" id="doc-${escapeHtml(doc.id)}">
     <h1>${escapeHtml(doc.title)}</h1>
@@ -331,11 +364,11 @@ export class ExportManager {
    */
   private async getDocumentsToExport(options: ExportOptions): Promise<Document[]> {
     const allDocs = this.viewer.getDocuments();
-    
+
     if (!options.documentIds || options.documentIds.length === 0) {
       return allDocs;
     }
-    
+
     return allDocs.filter(doc => options.documentIds!.includes(doc.id));
   }
 
@@ -347,16 +380,16 @@ export class ExportManager {
   <nav class="export-toc page-break">
     <h1>Table of Contents</h1>
     <ol>`;
-    
+
     for (const doc of documents) {
       toc += `
       <li><a href="#doc-${escapeHtml(doc.id)}">${escapeHtml(doc.title)}</a></li>`;
     }
-    
+
     toc += `
     </ol>
   </nav>`;
-    
+
     return toc;
   }
 
@@ -525,7 +558,7 @@ export class ExportManager {
     return {
       pdf: this.html2pdfAvailable,
       html: true,
-      formats: ['html', ...(this.html2pdfAvailable ? ['pdf' as ExportFormat] : [])]
+      formats: ['html', ...(this.html2pdfAvailable ? ['pdf' as ExportFormat] : [])],
     };
   }
 }
@@ -539,6 +572,6 @@ export function createExportOptions(overrides: Partial<ExportOptions> = {}): Exp
     includeTheme: true,
     includeTOC: true,
     embedAssets: false,
-    ...overrides
+    ...overrides,
   };
 }

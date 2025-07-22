@@ -5,6 +5,7 @@ The Markdown Docs Viewer provides a comprehensive theming system with both a ful
 ## Overview
 
 The theming system includes:
+
 - **Theme Switcher**: Full theme selection with preview and multiple built-in themes
 - **Dark Mode Toggle**: Quick toggle between light and dark modes
 - **Theme Persistence**: User preferences are saved in localStorage
@@ -14,6 +15,7 @@ The theming system includes:
 ## Built-in Themes
 
 The library includes several built-in themes:
+
 - `default` - Clean modern light theme
 - `dark` - Dark theme with good contrast
 - `high-contrast` - High contrast theme for accessibility
@@ -34,7 +36,9 @@ const viewer = new MarkdownDocsViewer({
   container: '#docs',
   source: {
     type: 'local',
-    documents: [/* your documents */]
+    documents: [
+      /* your documents */
+    ],
   },
   theme: {
     // Theme switcher configuration
@@ -42,16 +46,16 @@ const viewer = new MarkdownDocsViewer({
     showPreview: true,
     showDescription: true,
     allowCustomThemes: true,
-    
+
     // Dark mode toggle configuration
     darkTogglePosition: 'header', // 'header' | 'footer' | 'floating'
     showDarkModeLabel: true,
     compactDarkToggle: false,
-    
+
     // Persistence
     enablePersistence: true,
-    storageKey: 'mdv-theme'
-  }
+    storageKey: 'mdv-theme',
+  },
 });
 ```
 
@@ -65,23 +69,23 @@ import { ThemeManager, ThemeSwitcher, DarkModeToggle } from '@austinorphan/markd
 // Initialize theme manager
 const themeManager = new ThemeManager({
   enablePersistence: true,
-  onThemeChange: (theme) => {
+  onThemeChange: theme => {
     console.log('Theme changed to:', theme.name);
-  }
+  },
 });
 
 // Create theme switcher
 const themeSwitcher = new ThemeSwitcher(themeManager, {
   position: 'header',
   showPreview: true,
-  showDescription: true
+  showDescription: true,
 });
 
 // Create dark mode toggle
 const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'header',
   showLabel: true,
-  compact: false
+  compact: false,
 });
 
 // Add to your HTML
@@ -102,9 +106,9 @@ themeSwitcher.attachTo(document.querySelector('.mdv-theme-switcher'));
 ```typescript
 interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
-  showPreview?: boolean;        // Show color preview dots
-  showDescription?: boolean;    // Show theme descriptions
-  allowCustomThemes?: boolean;  // Enable custom theme creation
+  showPreview?: boolean; // Show color preview dots
+  showDescription?: boolean; // Show theme descriptions
+  allowCustomThemes?: boolean; // Enable custom theme creation
   onThemeChange?: (theme: Theme) => void;
 }
 ```
@@ -112,21 +116,23 @@ interface ThemeSwitcherOptions {
 ### Usage Examples
 
 #### Header Theme Switcher
+
 ```javascript
 const themeSwitcher = new ThemeSwitcher(themeManager, {
   position: 'header',
   showPreview: true,
   showDescription: true,
-  allowCustomThemes: true
+  allowCustomThemes: true,
 });
 ```
 
 #### Floating Theme Switcher
+
 ```javascript
 const themeSwitcher = new ThemeSwitcher(themeManager, {
   position: 'floating',
   showPreview: false,
-  showDescription: false
+  showDescription: false,
 });
 ```
 
@@ -145,10 +151,10 @@ const themeSwitcher = new ThemeSwitcher(themeManager, {
 ```typescript
 interface DarkModeToggleOptions {
   position?: 'header' | 'footer' | 'floating';
-  showLabel?: boolean;   // Show "Light/Dark Mode" text
-  compact?: boolean;     // Smaller toggle for tight spaces
+  showLabel?: boolean; // Show "Light/Dark Mode" text
+  compact?: boolean; // Smaller toggle for tight spaces
   lightThemeName?: string; // Theme to use for light mode (default: 'default')
-  darkThemeName?: string;  // Theme to use for dark mode (default: 'dark')
+  darkThemeName?: string; // Theme to use for dark mode (default: 'dark')
   onToggle?: (isDark: boolean, theme: Theme) => void;
 }
 ```
@@ -156,40 +162,44 @@ interface DarkModeToggleOptions {
 ### Usage Examples
 
 #### Standard Toggle with Label
+
 ```javascript
 const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'header',
   showLabel: true,
-  compact: false
+  compact: false,
 });
 ```
 
 #### Compact Toggle
+
 ```javascript
 const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'header',
   showLabel: false,
-  compact: true
+  compact: true,
 });
 ```
 
 #### Floating Toggle
+
 ```javascript
 const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'floating',
   showLabel: false,
-  compact: true
+  compact: true,
 });
 ```
 
 #### Custom Theme Names
+
 ```javascript
 // Use different themes for light/dark modes
 const darkModeToggle = new DarkModeToggle(themeManager, {
   position: 'header',
-  lightThemeName: 'github',      // Use GitHub theme for light mode
-  darkThemeName: 'dracula',      // Use Dracula theme for dark mode
-  showLabel: true
+  lightThemeName: 'github', // Use GitHub theme for light mode
+  darkThemeName: 'dracula', // Use Dracula theme for dark mode
+  showLabel: true,
 });
 ```
 
@@ -218,8 +228,8 @@ const customTheme = themeManager.createCustomTheme('my-theme', {
   fonts: {
     heading: 'Inter, sans-serif',
     body: 'Inter, sans-serif',
-    code: 'JetBrains Mono, monospace'
-  }
+    code: 'JetBrains Mono, monospace',
+  },
 });
 
 // Apply the custom theme
@@ -230,12 +240,12 @@ themeManager.setTheme('my-theme');
 
 ```javascript
 // Listen for theme changes
-document.addEventListener('mdv-theme-changed', (e) => {
+document.addEventListener('mdv-theme-changed', e => {
   console.log('Theme changed:', e.detail.theme);
 });
 
 // Listen for dark mode toggles
-document.addEventListener('mdv-dark-mode-toggled', (e) => {
+document.addEventListener('mdv-dark-mode-toggled', e => {
   console.log('Dark mode:', e.detail.isDark);
   console.log('New theme:', e.detail.theme);
 });
@@ -308,12 +318,14 @@ Both components automatically adapt to mobile screens:
 ## Accessibility Features
 
 ### Theme Switcher
+
 - ARIA labels and descriptions
 - Keyboard navigation with arrow keys
 - Screen reader announcements
 - High contrast mode support
 
 ### Dark Mode Toggle
+
 - ARIA switch role
 - Keyboard activation (Enter/Space)
 - Visual focus indicators
@@ -333,15 +345,17 @@ Both components automatically adapt to mobile screens:
 ### Common Issues
 
 **Theme not persisting**:
+
 ```javascript
 // Ensure persistence is enabled
 const themeManager = new ThemeManager({
   enablePersistence: true,
-  storageKey: 'my-app-theme'
+  storageKey: 'my-app-theme',
 });
 ```
 
 **Components not appearing**:
+
 ```javascript
 // Ensure CSS styles are included
 const cssContent = themeSwitcher.getStyles() + darkModeToggle.getStyles();
@@ -351,6 +365,7 @@ document.head.appendChild(styleSheet);
 ```
 
 **Mobile dropdown issues**:
+
 ```javascript
 // Add viewport meta tag
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

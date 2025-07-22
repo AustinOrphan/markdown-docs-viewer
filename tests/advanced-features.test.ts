@@ -9,43 +9,43 @@ import { Document } from '../src/types';
 // Mock marked module
 vi.mock('marked', () => ({
   marked: vi.fn((content: string) => `<p>${content}</p>`),
-  markedHighlight: vi.fn(() => ({}))
+  markedHighlight: vi.fn(() => ({})),
 }));
 
 // Mock highlight.js
 vi.mock('highlight.js', () => ({
   default: {
     getLanguage: vi.fn(() => true),
-    highlight: vi.fn((code: string) => ({ value: code }))
-  }
+    highlight: vi.fn((code: string) => ({ value: code })),
+  },
 }));
 
 describe('Export Utility Functions', () => {
   // We need to test the private functions by importing the module and accessing them
   // Since they're not exported, we'll test them through ExportManager public methods
-  
+
   it('should escape HTML special characters in export content', async () => {
     const mockViewer = {
       getDocuments: vi.fn(() => [
-        { 
-          id: 'doc1', 
-          title: '<script>alert("xss")</script>Document', 
+        {
+          id: 'doc1',
+          title: '<script>alert("xss")</script>Document',
           content: 'Content with <script>evil()</script>',
-          description: '<img src=x onerror=alert(1)>Description'
-        }
+          description: '<img src=x onerror=alert(1)>Description',
+        },
       ]),
       getDocumentContent: vi.fn((doc: any) => Promise.resolve(doc.content)),
       getTheme: vi.fn(() => ({
         name: 'default',
         colors: { primary: '#000', background: '#fff' },
-        fonts: { body: 'Arial', code: 'monospace' }
+        fonts: { body: 'Arial', code: 'monospace' },
       })),
-      getThemeStyles: vi.fn(() => 'theme styles')
+      getThemeStyles: vi.fn(() => 'theme styles'),
     };
-    
+
     const exportManager = new ExportManager(mockViewer);
     const result = await exportManager.export({ format: 'html' });
-    
+
     // Should escape HTML in title
     expect(result).toContain('&lt;script&gt;');
     expect(result).not.toContain('<script>alert');
@@ -54,25 +54,25 @@ describe('Export Utility Functions', () => {
   it('should sanitize malicious HTML content', async () => {
     const mockViewer = {
       getDocuments: vi.fn(() => [
-        { 
-          id: 'doc1', 
+        {
+          id: 'doc1',
           title: 'Test Document',
           content: '<div onclick="evil()">Safe content</div><script>alert("xss")</script>',
-          tags: ['<script>tag</script>', 'safe-tag']
-        }
+          tags: ['<script>tag</script>', 'safe-tag'],
+        },
       ]),
       getDocumentContent: vi.fn((doc: any) => Promise.resolve(doc.content)),
       getTheme: vi.fn(() => ({
         name: 'default',
         colors: { primary: '#000', background: '#fff' },
-        fonts: { body: 'Arial', code: 'monospace' }
+        fonts: { body: 'Arial', code: 'monospace' },
       })),
-      getThemeStyles: vi.fn(() => 'theme styles')
+      getThemeStyles: vi.fn(() => 'theme styles'),
     };
-    
+
     const exportManager = new ExportManager(mockViewer);
     const result = await exportManager.export({ format: 'html' });
-    
+
     // Should remove script tags and event handlers
     expect(result).not.toContain('onclick');
     expect(result).not.toContain('<script>');
@@ -82,8 +82,8 @@ describe('Export Utility Functions', () => {
   it('should handle various URL protocols in content', async () => {
     const mockViewer = {
       getDocuments: vi.fn(() => [
-        { 
-          id: 'doc1', 
+        {
+          id: 'doc1',
           title: 'URL Test Document',
           content: `
             <a href="javascript:alert('xss')">Evil Link</a>
@@ -92,21 +92,21 @@ describe('Export Utility Functions', () => {
             <a href="#fragment">Fragment Link</a>
             <img src="data:text/html,<script>alert(1)</script>">
             <img src="https://safe.com/image.jpg">
-          `
-        }
+          `,
+        },
       ]),
       getDocumentContent: vi.fn((doc: any) => Promise.resolve(doc.content)),
       getTheme: vi.fn(() => ({
         name: 'default',
         colors: { primary: '#000', background: '#fff' },
-        fonts: { body: 'Arial', code: 'monospace' }
+        fonts: { body: 'Arial', code: 'monospace' },
       })),
-      getThemeStyles: vi.fn(() => 'theme styles')
+      getThemeStyles: vi.fn(() => 'theme styles'),
     };
-    
+
     const exportManager = new ExportManager(mockViewer);
     const result = await exportManager.export({ format: 'html' });
-    
+
     // Should remove dangerous protocols
     expect(result).not.toContain('javascript:');
     expect(result).not.toContain('data:text/html');
@@ -119,25 +119,25 @@ describe('Export Utility Functions', () => {
   it('should handle non-string inputs gracefully', async () => {
     const mockViewer = {
       getDocuments: vi.fn(() => [
-        { 
-          id: 'doc1', 
+        {
+          id: 'doc1',
           title: null, // Non-string title
           content: 'Content',
           description: undefined, // Non-string description
-          tags: [null, 'valid-tag', undefined] // Mixed tag types
-        }
+          tags: [null, 'valid-tag', undefined], // Mixed tag types
+        },
       ]),
       getDocumentContent: vi.fn((doc: any) => Promise.resolve(doc.content || '')),
       getTheme: vi.fn(() => ({
         name: 'default',
         colors: { primary: '#000', background: '#fff' },
-        fonts: { body: 'Arial', code: 'monospace' }
+        fonts: { body: 'Arial', code: 'monospace' },
       })),
-      getThemeStyles: vi.fn(() => 'theme styles')
+      getThemeStyles: vi.fn(() => 'theme styles'),
     };
-    
+
     const exportManager = new ExportManager(mockViewer);
-    
+
     // Should not throw error with non-string inputs
     await expect(exportManager.export({ format: 'html' })).resolves.toBeDefined();
   });
@@ -146,22 +146,22 @@ describe('Export Utility Functions', () => {
 describe('ExportManager', () => {
   let mockViewer: any;
   let exportManager: ExportManager;
-  
+
   beforeEach(() => {
     mockViewer = {
       getDocuments: vi.fn(() => [
         { id: 'doc1', title: 'Document 1', content: 'Content 1' },
-        { id: 'doc2', title: 'Document 2', content: 'Content 2' }
+        { id: 'doc2', title: 'Document 2', content: 'Content 2' },
       ]),
       getDocumentContent: vi.fn((doc: Document) => Promise.resolve(doc.content || '')),
       getTheme: vi.fn(() => ({
         name: 'default',
         colors: { primary: '#000', background: '#fff' },
-        fonts: { body: 'Arial', code: 'monospace' }
+        fonts: { body: 'Arial', code: 'monospace' },
       })),
-      getThemeStyles: vi.fn(() => 'theme styles')
+      getThemeStyles: vi.fn(() => 'theme styles'),
     };
-    
+
     exportManager = new ExportManager(mockViewer);
   });
 
@@ -174,9 +174,9 @@ describe('ExportManager', () => {
     const options = createExportOptions({
       format: 'html',
       includeTheme: true,
-      includeTOC: true
+      includeTOC: true,
     });
-    
+
     const result = await exportManager.export(options);
     expect(typeof result).toBe('string');
     expect(result).toContain('<!DOCTYPE html>');
@@ -186,9 +186,9 @@ describe('ExportManager', () => {
 
   it('should handle invalid export format', async () => {
     const options = createExportOptions({
-      format: 'invalid' as any
+      format: 'invalid' as any,
     });
-    
+
     await expect(exportManager.export(options)).rejects.toThrow();
   });
 
@@ -196,9 +196,9 @@ describe('ExportManager', () => {
     const options = createExportOptions({
       format: 'html',
       includeTheme: false,
-      includeTOC: false
+      includeTOC: false,
     });
-    
+
     const result = await exportManager.export(options);
     expect(typeof result).toBe('string');
     expect(result).toContain('<!DOCTYPE html>');
@@ -208,9 +208,9 @@ describe('ExportManager', () => {
   it('should export HTML with specific document IDs', async () => {
     const options = createExportOptions({
       format: 'html',
-      documentIds: ['doc1']
+      documentIds: ['doc1'],
     });
-    
+
     const result = await exportManager.export(options);
     expect(typeof result).toBe('string');
     expect(result).toContain('Document 1');
@@ -220,9 +220,9 @@ describe('ExportManager', () => {
   it('should export HTML with asset embedding', async () => {
     const options = createExportOptions({
       format: 'html',
-      embedAssets: true
+      embedAssets: true,
     });
-    
+
     const result = await exportManager.export(options);
     expect(typeof result).toBe('string');
     expect(result).toContain('<!DOCTYPE html>');
@@ -230,18 +230,18 @@ describe('ExportManager', () => {
 
   it('should handle documents with descriptions and tags', async () => {
     mockViewer.getDocuments.mockReturnValue([
-      { 
-        id: 'doc1', 
-        title: 'Document 1', 
+      {
+        id: 'doc1',
+        title: 'Document 1',
         content: 'Content 1',
         description: 'Test description',
-        tags: ['tag1', 'tag2']
-      }
+        tags: ['tag1', 'tag2'],
+      },
     ]);
-    
+
     const options = createExportOptions({ format: 'html' });
     const result = await exportManager.export(options);
-    
+
     expect(result).toContain('Test description');
     expect(result).toContain('tag1');
     expect(result).toContain('tag2');
@@ -249,12 +249,12 @@ describe('ExportManager', () => {
 
   it('should handle documents without descriptions or tags', async () => {
     mockViewer.getDocuments.mockReturnValue([
-      { id: 'doc1', title: 'Document 1', content: 'Content 1' }
+      { id: 'doc1', title: 'Document 1', content: 'Content 1' },
     ]);
-    
+
     const options = createExportOptions({ format: 'html' });
     const result = await exportManager.export(options);
-    
+
     expect(result).toContain('Document 1');
     // Check that description and tags HTML elements are not present in the content
     expect(result).not.toContain('<p class="doc-description">');
@@ -263,15 +263,15 @@ describe('ExportManager', () => {
 
   it('should handle PDF export without html2pdf dependency', async () => {
     const options = createExportOptions({
-      format: 'pdf'
+      format: 'pdf',
     });
-    
+
     await expect(exportManager.export(options)).rejects.toThrow('html2pdf.js is required');
   });
 
   it('should check PDF export availability', () => {
     expect(exportManager.isPDFExportAvailable()).toBe(false);
-    
+
     const capabilities = exportManager.getExportCapabilities();
     expect(capabilities.pdf).toBe(false);
     expect(capabilities.html).toBe(true);
@@ -280,10 +280,10 @@ describe('ExportManager', () => {
 
   it('should handle empty document list', async () => {
     mockViewer.getDocuments.mockReturnValue([]);
-    
+
     const options = createExportOptions({ format: 'html' });
     const result = await exportManager.export(options);
-    
+
     expect(result).toContain('<!DOCTYPE html>');
     expect(result).not.toContain('<article');
   });
@@ -294,9 +294,9 @@ describe('ExportManager', () => {
       title: 'Custom Title',
       locale: 'es',
       includeTOC: true,
-      includeTheme: true
+      includeTheme: true,
     });
-    
+
     const result = await exportManager.export(options);
     expect(result).toContain('Custom Title');
     expect(result).toContain('lang="es"');
@@ -315,12 +315,12 @@ describe('I18nManager', () => {
         es: {
           app: {
             title: 'Documentación',
-            loading: 'Cargando documentación...'
-          }
-        }
-      }
+            loading: 'Cargando documentación...',
+          },
+        },
+      },
     });
-    
+
     i18n = new I18nManager(config);
   });
 
@@ -335,10 +335,10 @@ describe('I18nManager', () => {
 
   it('should interpolate parameters', () => {
     i18n.addLocale('test', {
-      greeting: 'Hello {name}!'
+      greeting: 'Hello {name}!',
     });
     i18n.setLocale('test');
-    
+
     expect(i18n.t('greeting', { name: 'World' })).toBe('Hello World!');
   });
 
@@ -361,7 +361,7 @@ describe('TableOfContents', () => {
   beforeEach(() => {
     toc = new TableOfContents({
       enabled: true,
-      maxDepth: 3
+      maxDepth: 3,
     });
   });
 
@@ -375,7 +375,7 @@ describe('TableOfContents', () => {
 #### Deep section
 # Another Title
     `;
-    
+
     const items = toc.generate(content);
     expect(items).toHaveLength(2);
     expect(items[0].text).toBe('Main Title');
@@ -390,10 +390,10 @@ describe('TableOfContents', () => {
 ## Title
 ### Title
     `;
-    
+
     const items = toc.generate(content);
     const ids = new Set<string>();
-    
+
     const collectIds = (items: any[]) => {
       items.forEach(item => {
         ids.add(item.id);
@@ -402,7 +402,7 @@ describe('TableOfContents', () => {
         }
       });
     };
-    
+
     collectIds(items);
     expect(ids.size).toBe(3);
   });
@@ -410,7 +410,7 @@ describe('TableOfContents', () => {
   it('should render TOC HTML', () => {
     const content = '# Title\n## Section';
     toc.generate(content);
-    
+
     const html = toc.render();
     expect(html).toContain('mdv-toc');
     expect(html).toContain('Table of Contents');
@@ -426,29 +426,29 @@ describe('AdvancedSearchManager', () => {
       title: 'JavaScript Guide',
       content: 'Learn JavaScript programming',
       tags: ['javascript', 'programming'],
-      category: 'Guides'
+      category: 'Guides',
     },
     {
       id: 'doc2',
       title: 'TypeScript Tutorial',
       content: 'TypeScript is a typed superset of JavaScript',
       tags: ['typescript', 'programming'],
-      category: 'Tutorials'
+      category: 'Tutorials',
     },
     {
       id: 'doc3',
       title: 'CSS Basics',
       content: 'Cascading Style Sheets fundamentals',
       tags: ['css', 'design'],
-      category: 'Guides'
-    }
+      category: 'Guides',
+    },
   ];
 
   beforeEach(() => {
     searchManager = new AdvancedSearchManager(documents, {
       enabled: true,
       highlighting: true,
-      searchHistory: false // Disable for tests
+      searchHistory: false, // Disable for tests
     });
   });
 
@@ -461,10 +461,10 @@ describe('AdvancedSearchManager', () => {
   it('should apply category filters', () => {
     searchManager = new AdvancedSearchManager(documents, {
       filters: {
-        categories: ['Guides']
-      }
+        categories: ['Guides'],
+      },
     });
-    
+
     const results = searchManager.search('programming');
     expect(results).toHaveLength(1);
     expect(results[0].document.category).toBe('Guides');
@@ -473,10 +473,10 @@ describe('AdvancedSearchManager', () => {
   it('should apply tag filters', () => {
     searchManager = new AdvancedSearchManager(documents, {
       filters: {
-        tags: ['typescript']
-      }
+        tags: ['typescript'],
+      },
     });
-    
+
     const results = searchManager.search('programming');
     expect(results).toHaveLength(1);
     expect(results[0].document.tags).toContain('typescript');
@@ -499,7 +499,7 @@ describe('addHeadingIds', () => {
   it('should add IDs to headings', () => {
     const html = '<h1>Title</h1><h2>Subtitle</h2><h3>Section</h3>';
     const result = addHeadingIds(html);
-    
+
     expect(result).toContain('id="title"');
     expect(result).toContain('id="subtitle"');
     expect(result).toContain('id="section"');
@@ -508,7 +508,7 @@ describe('addHeadingIds', () => {
   it('should handle duplicate headings', () => {
     const html = '<h1>Title</h1><h2>Title</h2><h3>Title</h3>';
     const result = addHeadingIds(html);
-    
+
     expect(result).toContain('id="title"');
     expect(result).toContain('id="title-1"');
     expect(result).toContain('id="title-2"');
@@ -522,14 +522,14 @@ describe('generatePrintStyles', () => {
       colors: {
         primary: '#000',
         background: '#fff',
-        border: '#ccc'
+        border: '#ccc',
       },
       fonts: {
         body: 'Arial',
-        code: 'monospace'
-      }
+        code: 'monospace',
+      },
     };
-    
+
     const styles = generatePrintStyles(theme as any);
     expect(styles).toContain('@media print');
     expect(styles).toContain('page-break-after: avoid');

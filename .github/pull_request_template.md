@@ -23,9 +23,9 @@ Fixes #(issue number)
 
 <!-- List the specific changes made in this PR -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 
@@ -37,6 +37,7 @@ Fixes #(issue number)
 - [ ] Added new tests for new functionality
 
 ### Test Configuration
+
 - Node version:
 - npm version:
 - Operating System:

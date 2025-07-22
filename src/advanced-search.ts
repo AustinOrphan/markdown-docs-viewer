@@ -40,17 +40,14 @@ export class AdvancedSearchManager {
       highlighting: true,
       searchHistory: true,
       maxHistoryItems: 10,
-      ...options
+      ...options,
     };
 
     this.searchIndex = new SearchIndex();
     this.buildIndex();
 
     // Create debounced search function
-    this.debouncedSearch = debounce(
-      (query: string) => this.performSearch(query),
-      300
-    );
+    this.debouncedSearch = debounce((query: string) => this.performSearch(query), 300);
 
     this.loadSearchHistory();
   }
@@ -66,7 +63,7 @@ export class AdvancedSearchManager {
         contentCache.set(doc.id, doc.content);
       }
     });
-    
+
     // Update the search index with all documents
     this.searchIndex.updateIndex(this.documents, contentCache);
   }
@@ -90,13 +87,13 @@ export class AdvancedSearchManager {
 
     // Get base results from index
     const indexResults = this.searchIndex.search(query);
-    
+
     // Convert to SearchResult format
     let results: SearchResult[] = indexResults.map((doc, index) => {
       return {
         document: doc,
-        score: 1.0 - (index * 0.1), // Simple scoring based on position
-        highlights: this.options.highlighting ? this.generateHighlights(doc, query) : []
+        score: 1.0 - index * 0.1, // Simple scoring based on position
+        highlights: this.options.highlighting ? this.generateHighlights(doc, query) : [],
       };
     });
 
@@ -125,7 +122,7 @@ export class AdvancedSearchManager {
       const results = this.search(query);
       callback(results);
     }, 300);
-    
+
     this.debouncedSearch(query);
   }
 
@@ -181,20 +178,20 @@ export class AdvancedSearchManager {
     // Helper function to find highlights in text
     const findHighlights = (text: string, field: SearchHighlight['field']) => {
       const lowerText = text.toLowerCase();
-      
+
       searchTerms.forEach(term => {
         let position = lowerText.indexOf(term);
         while (position !== -1) {
           const contextStart = Math.max(0, position - 50);
           const contextEnd = Math.min(text.length, position + term.length + 50);
           const highlightText = text.substring(contextStart, contextEnd);
-          
+
           highlights.push({
             field,
             text: highlightText,
-            position
+            position,
           });
-          
+
           position = lowerText.indexOf(term, position + 1);
         }
       });
@@ -202,15 +199,15 @@ export class AdvancedSearchManager {
 
     // Search in different fields
     findHighlights(doc.title, 'title');
-    
+
     if (doc.description) {
       findHighlights(doc.description, 'description');
     }
-    
+
     if (doc.content && highlights.length < 5) {
       findHighlights(doc.content, 'content');
     }
-    
+
     if (doc.tags && this.options.searchInTags) {
       findHighlights(doc.tags.join(' '), 'tags');
     }
@@ -245,7 +242,7 @@ export class AdvancedSearchManager {
     this.searchHistory.unshift({
       query,
       timestamp: new Date(),
-      resultCount
+      resultCount,
     });
 
     // Limit history size
@@ -270,7 +267,7 @@ export class AdvancedSearchManager {
         const parsed = JSON.parse(saved);
         this.searchHistory = parsed.map((item: any) => ({
           ...item,
-          timestamp: new Date(item.timestamp)
+          timestamp: new Date(item.timestamp),
         }));
       }
     } catch (error) {
@@ -309,8 +306,7 @@ export class AdvancedSearchManager {
 
     // Add matching document titles
     this.documents.forEach(doc => {
-      if (doc.title.toLowerCase().includes(lowerQuery) && 
-          !suggestions.includes(doc.title)) {
+      if (doc.title.toLowerCase().includes(lowerQuery) && !suggestions.includes(doc.title)) {
         suggestions.push(doc.title);
       }
     });
@@ -344,34 +340,46 @@ export class AdvancedSearchManager {
           <div class="mdv-search-suggestions"></div>
         </div>
         
-        ${options.filters ? `
+        ${
+          options.filters
+            ? `
           <div class="mdv-search-filters">
             <button class="mdv-filter-toggle">Filters</button>
             <div class="mdv-filter-panel">
-              ${options.filters.categories ? `
+              ${
+                options.filters.categories
+                  ? `
                 <div class="mdv-filter-group">
                   <label>Categories</label>
                   <select multiple class="mdv-filter-categories">
-                    ${options.filters.categories.map(cat => 
-                      `<option value="${cat}">${cat}</option>`
-                    ).join('')}
+                    ${options.filters.categories
+                      .map(cat => `<option value="${cat}">${cat}</option>`)
+                      .join('')}
                   </select>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
-              ${options.filters.tags ? `
+              ${
+                options.filters.tags
+                  ? `
                 <div class="mdv-filter-group">
                   <label>Tags</label>
                   <select multiple class="mdv-filter-tags">
-                    ${options.filters.tags.map(tag => 
-                      `<option value="${tag}">${tag}</option>`
-                    ).join('')}
+                    ${options.filters.tags
+                      .map(tag => `<option value="${tag}">${tag}</option>`)
+                      .join('')}
                   </select>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
           </div>
-        ` : ''}
+        `
+            : ''
+        }
         
         <div class="mdv-search-results"></div>
       </div>
@@ -383,28 +391,44 @@ export class AdvancedSearchManager {
    */
   static renderSearchResult(result: SearchResult): string {
     const doc = result.document;
-    
+
     return `
       <div class="mdv-search-result" data-doc-id="${doc.id}">
         <h3 class="mdv-search-result-title">
-          ${result.highlights.find(h => h.field === 'title') 
-            ? highlightText(doc.title, result.highlights.find(h => h.field === 'title')!.text)
-            : doc.title}
+          ${
+            result.highlights.find(h => h.field === 'title')
+              ? highlightText(doc.title, result.highlights.find(h => h.field === 'title')!.text)
+              : doc.title
+          }
         </h3>
         
-        ${doc.description ? `
+        ${
+          doc.description
+            ? `
           <p class="mdv-search-result-description">
-            ${result.highlights.find(h => h.field === 'description')
-              ? highlightText(doc.description, result.highlights.find(h => h.field === 'description')!.text)
-              : doc.description}
+            ${
+              result.highlights.find(h => h.field === 'description')
+                ? highlightText(
+                    doc.description,
+                    result.highlights.find(h => h.field === 'description')!.text
+                  )
+                : doc.description
+            }
           </p>
-        ` : ''}
+        `
+            : ''
+        }
         
-        ${result.highlights.filter(h => h.field === 'content').map(highlight => `
+        ${result.highlights
+          .filter(h => h.field === 'content')
+          .map(
+            highlight => `
           <p class="mdv-search-result-excerpt">
             ...${highlightText(highlight.text, highlight.text)}...
           </p>
-        `).join('')}
+        `
+          )
+          .join('')}
         
         <div class="mdv-search-result-meta">
           ${doc.category ? `<span class="mdv-search-result-category">${doc.category}</span>` : ''}

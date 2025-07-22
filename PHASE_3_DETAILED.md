@@ -8,10 +8,12 @@
 Phase 3 transforms the well-documented library into a production-ready solution with automated workflows, advanced features, and enterprise-grade reliability. This phase focuses on deployment automation, monitoring, and advanced functionality.
 
 ## Task 3.1: CI/CD Pipeline Setup
+
 **Timeline:** 1-1.5 days  
 **Priority:** High
 
 ### Subtask 3.1.1: GitHub Actions Workflow
+
 **File:** `.github/workflows/ci.yml`  
 **Timeline:** 0.5 days
 
@@ -20,11 +22,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
   test:
@@ -32,28 +34,28 @@ jobs:
     strategy:
       matrix:
         node-version: [18, 20, 22]
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run linting
         run: npm run lint
-      
+
       - name: Run type checking
         run: npm run type-check
-      
+
       - name: Run tests
         run: npm run test:coverage
-      
+
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
@@ -64,25 +66,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build library
         run: npm run build
-      
+
       - name: Build demo
         run: npm run build:demo
-      
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -95,27 +97,27 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, build]
     if: github.event_name == 'release'
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build library
         run: npm run build
-      
+
       - name: Publish to NPM
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Create GitHub Release Assets
         run: |
           tar -czf markdown-docs-viewer-${{ github.event.release.tag_name }}.tar.gz dist/
@@ -127,15 +129,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-files
-      
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -144,6 +146,7 @@ jobs:
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Automated testing on Node.js 18, 20, 22
 - [ ] Code coverage reporting via Codecov
 - [ ] Automatic NPM publishing on releases
@@ -151,6 +154,7 @@ jobs:
 - [ ] Build artifact storage and versioning
 
 ### Subtask 3.1.2: Release Automation
+
 **File:** `.github/workflows/release.yml`  
 **Timeline:** 0.25 days
 
@@ -173,38 +177,38 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Build library
         run: npm run build
-      
+
       - name: Configure Git
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-      
+
       - name: Bump version
         run: npm version ${{ github.event.inputs.version }}
-      
+
       - name: Push changes
         run: git push --follow-tags
-      
+
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -217,6 +221,7 @@ jobs:
 ```
 
 ### Subtask 3.1.3: Quality Gates
+
 **File:** `.github/workflows/quality.yml`  
 **Timeline:** 0.25 days
 
@@ -225,44 +230,46 @@ name: Quality Gates
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   quality-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run security audit
         run: npm audit --audit-level=high
-      
+
       - name: Check bundle size
         run: |
           npm run build
           npx bundlesize
-      
+
       - name: Performance tests
         run: npm run test:performance
-      
+
       - name: Accessibility tests
         run: npm run test:a11y
 ```
 
 ## Task 3.2: Advanced Features Implementation
+
 **Timeline:** 1.5-2 days  
 **Priority:** High
 
 ### Subtask 3.2.1: Plugin System Architecture
+
 **Files:** `src/plugins/`, `src/types.ts`  
 **Timeline:** 0.75 days
 
@@ -322,7 +329,7 @@ export class PluginManager {
     ...args: Parameters<NonNullable<PluginHooks[T]>>
   ): Promise<any> {
     const results = [];
-    
+
     for (const plugin of this.plugins.values()) {
       const hook = plugin.hooks[hookName];
       if (hook) {
@@ -330,13 +337,14 @@ export class PluginManager {
         results.push(result);
       }
     }
-    
+
     return results;
   }
 }
 ```
 
 ### Subtask 3.2.2: Built-in Plugins
+
 **Files:** `src/plugins/builtin/`  
 **Timeline:** 0.75 days
 
@@ -350,14 +358,14 @@ export class AnalyticsPlugin implements Plugin {
   constructor(private config: AnalyticsConfig) {}
 
   hooks: PluginHooks = {
-    afterDocumentLoad: async (document) => {
+    afterDocumentLoad: async document => {
       this.trackPageView(document);
       return document.content;
     },
-    onSearchQuery: async (query) => {
+    onSearchQuery: async query => {
       this.trackSearch(query);
       return [];
-    }
+    },
   };
 
   install(viewer: MarkdownDocsViewer): void {
@@ -372,7 +380,7 @@ export class AnalyticsPlugin implements Plugin {
     if (typeof gtag !== 'undefined') {
       gtag('config', this.config.trackingId, {
         page_title: document.title,
-        page_location: window.location.href
+        page_location: window.location.href,
       });
     }
   }
@@ -380,7 +388,7 @@ export class AnalyticsPlugin implements Plugin {
   private trackSearch(query: string): void {
     if (typeof gtag !== 'undefined') {
       gtag('event', 'search', {
-        search_term: query
+        search_term: query,
       });
     }
   }
@@ -395,7 +403,7 @@ export class CommentsPlugin implements Plugin {
   hooks: PluginHooks = {
     afterRender: async (html, document) => {
       return this.injectCommentSystem(html, document);
-    }
+    },
   };
 
   private injectCommentSystem(html: string, document: DocumentMetadata): string {
@@ -411,7 +419,7 @@ export class CommentsPlugin implements Plugin {
         </script>
       </div>
     `;
-    
+
     return html + commentsHtml;
   }
 
@@ -421,10 +429,12 @@ export class CommentsPlugin implements Plugin {
 ```
 
 ## Task 3.3: Monitoring and Analytics
+
 **Timeline:** 0.5-1 day  
 **Priority:** Medium
 
 ### Subtask 3.3.1: Performance Monitoring
+
 **Files:** `src/monitoring/`, `src/viewer.ts`  
 **Timeline:** 0.5 days
 
@@ -435,7 +445,7 @@ export class PerformanceMonitor {
 
   startTimer(name: string): () => void {
     const startTime = performance.now();
-    
+
     return () => {
       const duration = performance.now() - startTime;
       this.recordMetric(name, duration);
@@ -446,25 +456,25 @@ export class PerformanceMonitor {
     if (!this.metrics.has(name)) {
       this.metrics.set(name, []);
     }
-    
+
     this.metrics.get(name)!.push(value);
-    
+
     // Report to analytics
     this.reportMetric(name, value);
   }
 
   getMetrics(): Record<string, { avg: number; min: number; max: number; count: number }> {
     const result: Record<string, any> = {};
-    
+
     for (const [name, values] of this.metrics) {
       result[name] = {
         avg: values.reduce((a, b) => a + b, 0) / values.length,
         min: Math.min(...values),
         max: Math.max(...values),
-        count: values.length
+        count: values.length,
       };
     }
-    
+
     return result;
   }
 
@@ -473,15 +483,15 @@ export class PerformanceMonitor {
     if (typeof gtag !== 'undefined') {
       gtag('event', 'timing_complete', {
         name: name,
-        value: Math.round(value)
+        value: Math.round(value),
       });
     }
-    
+
     // Report to custom analytics endpoint
     fetch('/api/metrics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ metric: name, value, timestamp: Date.now() })
+      body: JSON.stringify({ metric: name, value, timestamp: Date.now() }),
     }).catch(() => {
       // Silent fail for analytics
     });
@@ -490,6 +500,7 @@ export class PerformanceMonitor {
 ```
 
 ### Subtask 3.3.2: Error Tracking
+
 **Files:** `src/monitoring/ErrorTracker.ts`  
 **Timeline:** 0.25 days
 
@@ -505,7 +516,7 @@ export class ErrorTracker {
       metadata,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
-      url: window.location.href
+      url: window.location.href,
     };
 
     this.errors.push(report);
@@ -517,7 +528,7 @@ export class ErrorTracker {
     if (typeof Sentry !== 'undefined') {
       Sentry.captureException(new Error(report.message), {
         tags: { context: report.context },
-        extra: report.metadata
+        extra: report.metadata,
       });
     }
 
@@ -525,7 +536,7 @@ export class ErrorTracker {
     fetch('/api/errors', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(report)
+      body: JSON.stringify(report),
     }).catch(() => {
       // Silent fail for error reporting
     });
@@ -544,10 +555,12 @@ interface ErrorReport {
 ```
 
 ## Task 3.4: Enterprise Features
+
 **Timeline:** 1 day  
 **Priority:** Medium
 
 ### Subtask 3.4.1: SSO Integration
+
 **Files:** `src/auth/`, `src/types.ts`  
 **Timeline:** 0.5 days
 
@@ -563,17 +576,17 @@ export interface SSOProvider {
 
 export class OIDCProvider implements SSOProvider {
   name = 'oidc';
-  
+
   constructor(private config: OIDCConfig) {}
 
   async authenticate(): Promise<AuthResult> {
     // Implement OIDC authentication flow
     const authUrl = `${this.config.issuer}/auth?client_id=${this.config.clientId}&redirect_uri=${this.config.redirectUri}&response_type=code&scope=openid profile`;
-    
+
     window.location.href = authUrl;
-    
-    return new Promise((resolve) => {
-      window.addEventListener('message', (event) => {
+
+    return new Promise(resolve => {
+      window.addEventListener('message', event => {
         if (event.data.type === 'auth_success') {
           resolve({ success: true, token: event.data.token });
         }
@@ -593,7 +606,7 @@ export class OIDCProvider implements SSOProvider {
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.exp > Date.now() / 1000;
@@ -605,6 +618,7 @@ export class OIDCProvider implements SSOProvider {
 ```
 
 ### Subtask 3.4.2: Permission System
+
 **Files:** `src/permissions/`, `src/viewer.ts`  
 **Timeline:** 0.5 days
 
@@ -621,22 +635,21 @@ export class PermissionManager {
     }
 
     const userPermissions = await this.getUserPermissions();
-    
-    return userPermissions.some(permission => 
-      permission.resource === resource && 
-      permission.actions.includes(action)
+
+    return userPermissions.some(
+      permission => permission.resource === resource && permission.actions.includes(action)
     );
   }
 
   async filterDocuments(documents: DocumentMetadata[]): Promise<DocumentMetadata[]> {
     const filteredDocs = [];
-    
+
     for (const doc of documents) {
       if (await this.checkPermission(doc.path, 'read')) {
         filteredDocs.push(doc);
       }
     }
-    
+
     return filteredDocs;
   }
 
@@ -646,7 +659,7 @@ export class PermissionManager {
 
     try {
       const response = await fetch('/api/permissions', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       return await response.json();
     } catch {

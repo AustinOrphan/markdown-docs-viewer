@@ -1,7 +1,7 @@
 name: Bug Report
 description: Create a report to help us improve
-title: "[Bug]: "
-labels: ["bug", "triage"]
+title: '[Bug]: '
+labels: ['bug', 'triage']
 assignees: []
 
 body:
@@ -56,7 +56,7 @@ body:
       render: javascript
       placeholder: |
         import { createViewer } from '@austinorphan/markdown-docs-viewer';
-        
+
         const viewer = createViewer({
           // Your config here
         });

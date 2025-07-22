@@ -9,7 +9,7 @@ export {
   ErrorFactory,
   withRetry,
   ErrorBoundary,
-  ConsoleErrorLogger
+  ConsoleErrorLogger,
 } from './errors';
 export {
   LRUCache,
@@ -19,7 +19,7 @@ export {
   throttle,
   LazyLoader,
   MemoryManager,
-  PerformanceMonitor
+  PerformanceMonitor,
 } from './performance';
 export { SearchManager } from './search';
 export { ExportManager, createExportOptions } from './export';

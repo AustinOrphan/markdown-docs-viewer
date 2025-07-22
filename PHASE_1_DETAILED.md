@@ -7,18 +7,22 @@
 ---
 
 ## Task 1.1: Create Working Demo Page
+
 **Duration**: 1 day  
 **Deliverable**: Functional demo website showcasing all viewer capabilities
 
 ### Subtask 1.1.1: Setup Demo Infrastructure
+
 **Duration**: 2 hours
 
 #### Step 1.1.1.1: Create Demo Directory Structure
+
 **Deliverable**: Organized demo folder with all necessary files
+
 ```bash
 demo/
 ├── index.html          # Main demo page
-├── demo.css           # Demo-specific styling  
+├── demo.css           # Demo-specific styling
 ├── demo.js            # Demo JavaScript logic
 ├── package.json       # Demo dependencies
 ├── content/           # Sample markdown files
@@ -26,13 +30,16 @@ demo/
 ```
 
 **Implementation Steps**:
+
 1. Create `demo/` directory in project root
 2. Create `demo/content/` subdirectory
 3. Create `demo/assets/` subdirectory
 4. Initialize file structure with empty files
 
 #### Step 1.1.1.2: Create Demo Package Configuration
+
 **Deliverable**: `demo/package.json`
+
 ```json
 {
   "name": "markdown-docs-viewer-demo",
@@ -52,123 +59,144 @@ demo/
 ```
 
 **Implementation Steps**:
+
 1. Create package.json with above content
 2. Test `npm install` in demo directory
 3. Verify `npm start` serves files correctly
 4. Confirm CORS headers for local development
 
 ### Subtask 1.1.2: Build Demo HTML Structure
+
 **Duration**: 3 hours
 
 #### Step 1.1.2.1: Create Main Demo Page
+
 **Deliverable**: `demo/index.html`
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Markdown Documentation Viewer - Interactive Demo</title>
-    <link rel="stylesheet" href="demo.css">
-    <meta name="description" content="Interactive demo showcasing the Markdown Documentation Viewer with live examples, theme switching, and configuration options.">
-</head>
-<body>
+    <link rel="stylesheet" href="demo.css" />
+    <meta
+      name="description"
+      content="Interactive demo showcasing the Markdown Documentation Viewer with live examples, theme switching, and configuration options."
+    />
+  </head>
+  <body>
     <!-- Header Section -->
     <header class="demo-header">
-        <div class="demo-container">
-            <h1 class="demo-title">
-                <span class="demo-icon">📚</span>
-                Markdown Documentation Viewer
-            </h1>
-            <p class="demo-subtitle">Interactive Demo & Examples</p>
-            
-            <!-- Control Panel -->
-            <div class="demo-controls">
-                <div class="control-group">
-                    <label for="theme-selector">Theme:</label>
-                    <select id="theme-selector" class="demo-select">
-                        <option value="default">Light Theme</option>
-                        <option value="dark">Dark Theme</option>
-                        <option value="custom">Custom Theme</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <label for="example-selector">Example:</label>
-                    <select id="example-selector" class="demo-select">
-                        <option value="basic">Basic Documentation</option>
-                        <option value="github">GitHub Repository</option>
-                        <option value="url">Remote Content</option>
-                        <option value="advanced">Advanced Features</option>
-                        <option value="api-docs">API Documentation</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <button id="reload-btn" class="demo-button">🔄 Reload</button>
-                    <button id="fullscreen-btn" class="demo-button">⛶ Fullscreen</button>
-                </div>
-            </div>
+      <div class="demo-container">
+        <h1 class="demo-title">
+          <span class="demo-icon">📚</span>
+          Markdown Documentation Viewer
+        </h1>
+        <p class="demo-subtitle">Interactive Demo & Examples</p>
+
+        <!-- Control Panel -->
+        <div class="demo-controls">
+          <div class="control-group">
+            <label for="theme-selector">Theme:</label>
+            <select id="theme-selector" class="demo-select">
+              <option value="default">Light Theme</option>
+              <option value="dark">Dark Theme</option>
+              <option value="custom">Custom Theme</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="example-selector">Example:</label>
+            <select id="example-selector" class="demo-select">
+              <option value="basic">Basic Documentation</option>
+              <option value="github">GitHub Repository</option>
+              <option value="url">Remote Content</option>
+              <option value="advanced">Advanced Features</option>
+              <option value="api-docs">API Documentation</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <button id="reload-btn" class="demo-button">🔄 Reload</button>
+            <button id="fullscreen-btn" class="demo-button">⛶ Fullscreen</button>
+          </div>
         </div>
+      </div>
     </header>
-    
+
     <!-- Demo Status -->
     <div class="demo-status" id="demo-status">
-        <div class="demo-container">
-            <span class="status-indicator" id="status-indicator">●</span>
-            <span class="status-text" id="status-text">Loading demo...</span>
-            <div class="loading-bar" id="loading-bar">
-                <div class="loading-progress" id="loading-progress"></div>
-            </div>
+      <div class="demo-container">
+        <span class="status-indicator" id="status-indicator">●</span>
+        <span class="status-text" id="status-text">Loading demo...</span>
+        <div class="loading-bar" id="loading-bar">
+          <div class="loading-progress" id="loading-progress"></div>
         </div>
+      </div>
     </div>
-    
+
     <!-- Main Viewer Container -->
     <main class="demo-main">
-        <div id="viewer-container" class="viewer-container"></div>
+      <div id="viewer-container" class="viewer-container"></div>
     </main>
-    
+
     <!-- Footer -->
     <footer class="demo-footer">
-        <div class="demo-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>About This Demo</h3>
-                    <p>This interactive demo showcases all features of the Markdown Documentation Viewer. Try different themes and examples to see the flexibility.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#" onclick="loadExample('basic')">Basic Example</a></li>
-                        <li><a href="#" onclick="loadExample('advanced')">Advanced Features</a></li>
-                        <li><a href="https://github.com/[USERNAME]/markdown-docs-viewer" target="_blank">GitHub Repository</a></li>
-                        <li><a href="https://www.npmjs.com/package/@[USERNAME]/markdown-docs-viewer" target="_blank">NPM Package</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Features Shown</h3>
-                    <ul>
-                        <li>✅ Multiple Document Sources</li>
-                        <li>✅ Theme Switching</li>
-                        <li>✅ Responsive Design</li>
-                        <li>✅ Search Functionality</li>
-                        <li>✅ Syntax Highlighting</li>
-                        <li>✅ Navigation & Categories</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Markdown Documentation Viewer. MIT License.</p>
-            </div>
+      <div class="demo-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About This Demo</h3>
+            <p>
+              This interactive demo showcases all features of the Markdown Documentation Viewer. Try
+              different themes and examples to see the flexibility.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#" onclick="loadExample('basic')">Basic Example</a></li>
+              <li><a href="#" onclick="loadExample('advanced')">Advanced Features</a></li>
+              <li>
+                <a href="https://github.com/[USERNAME]/markdown-docs-viewer" target="_blank"
+                  >GitHub Repository</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.npmjs.com/package/@[USERNAME]/markdown-docs-viewer"
+                  target="_blank"
+                  >NPM Package</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Features Shown</h3>
+            <ul>
+              <li>✅ Multiple Document Sources</li>
+              <li>✅ Theme Switching</li>
+              <li>✅ Responsive Design</li>
+              <li>✅ Search Functionality</li>
+              <li>✅ Syntax Highlighting</li>
+              <li>✅ Navigation & Categories</li>
+            </ul>
+          </div>
         </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Markdown Documentation Viewer. MIT License.</p>
+        </div>
+      </div>
     </footer>
-    
+
     <script type="module" src="demo.js"></script>
-</body>
+  </body>
 </html>
 ```
 
 **Implementation Steps**:
+
 1. Create semantic HTML structure
 2. Add accessibility attributes (ARIA labels, roles)
 3. Include meta tags for SEO
@@ -176,307 +204,330 @@ demo/
 5. Add placeholder content for all sections
 
 #### Step 1.1.2.2: Create Demo Styling
+
 **Deliverable**: `demo/demo.css`
+
 ```css
 /* Demo Page Styles */
 :root {
-    --demo-primary: #3b82f6;
-    --demo-secondary: #10b981;
-    --demo-background: #ffffff;
-    --demo-surface: #f8fafc;
-    --demo-text: #1e293b;
-    --demo-text-light: #64748b;
-    --demo-border: #e2e8f0;
-    --demo-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --demo-radius: 0.5rem;
+  --demo-primary: #3b82f6;
+  --demo-secondary: #10b981;
+  --demo-background: #ffffff;
+  --demo-surface: #f8fafc;
+  --demo-text: #1e293b;
+  --demo-text-light: #64748b;
+  --demo-border: #e2e8f0;
+  --demo-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --demo-radius: 0.5rem;
 }
 
-[data-theme="dark"] {
-    --demo-background: #0f172a;
-    --demo-surface: #1e293b;
-    --demo-text: #f1f5f9;
-    --demo-text-light: #94a3b8;
-    --demo-border: #334155;
+[data-theme='dark'] {
+  --demo-background: #0f172a;
+  --demo-surface: #1e293b;
+  --demo-text: #f1f5f9;
+  --demo-text-light: #94a3b8;
+  --demo-border: #334155;
 }
 
 /* Reset and Base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--demo-background);
-    color: var(--demo-text);
-    line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--demo-background);
+  color: var(--demo-text);
+  line-height: 1.6;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Demo Header */
 .demo-header {
-    background: linear-gradient(135deg, var(--demo-primary) 0%, var(--demo-secondary) 100%);
-    color: white;
-    padding: 2rem 0;
-    box-shadow: var(--demo-shadow);
+  background: linear-gradient(135deg, var(--demo-primary) 0%, var(--demo-secondary) 100%);
+  color: white;
+  padding: 2rem 0;
+  box-shadow: var(--demo-shadow);
 }
 
 .demo-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .demo-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .demo-icon {
-    font-size: 3rem;
+  font-size: 3rem;
 }
 
 .demo-subtitle {
-    font-size: 1.25rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
 }
 
 /* Control Panel */
 .demo-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    border-radius: var(--demo-radius);
-    backdrop-filter: blur(10px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: var(--demo-radius);
+  backdrop-filter: blur(10px);
 }
 
 .control-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .control-group label {
-    font-weight: 500;
-    white-space: nowrap;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .demo-select {
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--demo-radius);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--demo-text);
-    font-size: 0.875rem;
-    min-width: 150px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--demo-radius);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--demo-text);
+  font-size: 0.875rem;
+  min-width: 150px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .demo-select:hover {
-    background: white;
-    transform: translateY(-1px);
+  background: white;
+  transform: translateY(-1px);
 }
 
 .demo-button {
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--demo-radius);
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--demo-radius);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .demo-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 /* Status Bar */
 .demo-status {
-    background: var(--demo-surface);
-    border-bottom: 1px solid var(--demo-border);
-    padding: 0.75rem 0;
+  background: var(--demo-surface);
+  border-bottom: 1px solid var(--demo-border);
+  padding: 0.75rem 0;
 }
 
 .status-indicator {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 0.5rem;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
 }
 
-.status-indicator.loading { color: #f59e0b; }
-.status-indicator.success { color: #10b981; }
-.status-indicator.error { color: #ef4444; }
+.status-indicator.loading {
+  color: #f59e0b;
+}
+.status-indicator.success {
+  color: #10b981;
+}
+.status-indicator.error {
+  color: #ef4444;
+}
 
 .status-text {
-    font-size: 0.875rem;
-    color: var(--demo-text-light);
+  font-size: 0.875rem;
+  color: var(--demo-text-light);
 }
 
 .loading-bar {
-    width: 200px;
-    height: 4px;
-    background: var(--demo-border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-left: 1rem;
-    display: inline-block;
-    vertical-align: middle;
+  width: 200px;
+  height: 4px;
+  background: var(--demo-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-left: 1rem;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .loading-progress {
-    height: 100%;
-    background: var(--demo-primary);
-    width: 0%;
-    transition: width 0.3s ease;
+  height: 100%;
+  background: var(--demo-primary);
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
 /* Main Viewer */
 .demo-main {
-    min-height: 600px;
-    background: var(--demo-background);
+  min-height: 600px;
+  background: var(--demo-background);
 }
 
 .viewer-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 /* Footer */
 .demo-footer {
-    background: var(--demo-surface);
-    border-top: 1px solid var(--demo-border);
-    padding: 3rem 0 1rem;
-    margin-top: 2rem;
+  background: var(--demo-surface);
+  border-top: 1px solid var(--demo-border);
+  padding: 3rem 0 1rem;
+  margin-top: 2rem;
 }
 
 .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .footer-section h3 {
-    color: var(--demo-primary);
-    margin-bottom: 1rem;
-    font-size: 1.125rem;
+  color: var(--demo-primary);
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
 }
 
 .footer-section ul {
-    list-style: none;
+  list-style: none;
 }
 
 .footer-section li {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .footer-section a {
-    color: var(--demo-text-light);
-    text-decoration: none;
-    transition: color 0.2s ease;
+  color: var(--demo-text-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .footer-section a:hover {
-    color: var(--demo-primary);
+  color: var(--demo-primary);
 }
 
 .footer-bottom {
-    padding-top: 1rem;
-    border-top: 1px solid var(--demo-border);
-    text-align: center;
-    color: var(--demo-text-light);
-    font-size: 0.875rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--demo-border);
+  text-align: center;
+  color: var(--demo-text-light);
+  font-size: 0.875rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .demo-title {
-        font-size: 2rem;
-    }
-    
-    .demo-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .control-group {
-        justify-content: space-between;
-    }
-    
-    .demo-select {
-        min-width: auto;
-        flex: 1;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-    }
+  .demo-title {
+    font-size: 2rem;
+  }
+
+  .demo-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .control-group {
+    justify-content: space-between;
+  }
+
+  .demo-select {
+    min-width: auto;
+    flex: 1;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Animation Classes */
 .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-in {
-    animation: slideIn 0.3s ease-out;
+  animation: slideIn 0.3s ease-out;
 }
 
 @keyframes slideIn {
-    from { transform: translateX(-20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Error States */
 .demo-error {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #dc2626;
-    padding: 1rem;
-    border-radius: var(--demo-radius);
-    margin: 1rem 0;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: var(--demo-radius);
+  margin: 1rem 0;
 }
 
 .demo-error h3 {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Success States */
 .demo-success {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    color: #16a34a;
-    padding: 1rem;
-    border-radius: var(--demo-radius);
-    margin: 1rem 0;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: var(--demo-radius);
+  margin: 1rem 0;
 }
 ```
 
 **Implementation Steps**:
+
 1. Define CSS custom properties for theming
 2. Create responsive layout styles
 3. Implement component-specific styling
@@ -484,502 +535,504 @@ body {
 5. Test across different screen sizes
 
 ### Subtask 1.1.3: Implement Demo JavaScript Logic
+
 **Duration**: 4 hours
 
 #### Step 1.1.3.1: Create Demo Controller
+
 **Deliverable**: `demo/demo.js`
+
 ```javascript
 // Import the viewer library
 import { createViewer, defaultTheme, darkTheme, createCustomTheme } from '../dist/index.es.js';
 
 // Demo configuration and state
 class DemoController {
-    constructor() {
-        this.currentViewer = null;
-        this.currentExample = 'basic';
-        this.currentTheme = 'default';
-        this.isLoading = false;
-        
-        // Example configurations
-        this.examples = {
-            basic: {
-                title: 'Basic Documentation',
-                description: 'Simple documentation with multiple pages',
-                config: {
-                    container: '#viewer-container',
-                    title: 'Basic Documentation',
-                    source: {
-                        type: 'local',
-                        basePath: './content',
-                        documents: [
-                            { 
-                                id: 'getting-started', 
-                                title: 'Getting Started', 
-                                file: 'getting-started.md', 
-                                order: 1,
-                                category: 'Introduction',
-                                description: 'Learn the basics of using this viewer'
-                            },
-                            { 
-                                id: 'installation', 
-                                title: 'Installation', 
-                                file: 'installation.md', 
-                                order: 2,
-                                category: 'Introduction',
-                                description: 'How to install and setup'
-                            },
-                            { 
-                                id: 'configuration', 
-                                title: 'Configuration', 
-                                file: 'configuration.md', 
-                                order: 3,
-                                category: 'Guide',
-                                description: 'Configure the viewer for your needs'
-                            },
-                            { 
-                                id: 'api-reference', 
-                                title: 'API Reference', 
-                                file: 'api-reference.md', 
-                                order: 4,
-                                category: 'Reference',
-                                description: 'Complete API documentation'
-                            }
-                        ]
-                    },
-                    search: {
-                        enabled: true,
-                        placeholder: 'Search documentation...',
-                        caseSensitive: false,
-                        fuzzySearch: false
-                    },
-                    navigation: {
-                        showCategories: true,
-                        showTags: false,
-                        collapsible: true,
-                        showDescription: true,
-                        sortBy: 'order'
-                    },
-                    render: {
-                        syntaxHighlighting: true,
-                        copyCodeButton: true,
-                        linkTarget: '_blank'
-                    },
-                    onDocumentLoad: (doc) => {
-                        this.updateStatus('success', `Loaded: ${doc.title}`);
-                        console.log('Document loaded:', doc);
-                    },
-                    onError: (error) => {
-                        this.updateStatus('error', `Error: ${error.message}`);
-                        console.error('Viewer error:', error);
-                    }
-                }
-            },
-            
-            github: {
-                title: 'GitHub Repository',
-                description: 'Load documentation directly from GitHub',
-                config: {
-                    container: '#viewer-container',
-                    title: 'GitHub Documentation',
-                    source: {
-                        type: 'github',
-                        documents: [
-                            {
-                                id: 'readme',
-                                title: 'README',
-                                file: 'microsoft/vscode/main/README.md',
-                                order: 1,
-                                description: 'VS Code README from GitHub'
-                            },
-                            {
-                                id: 'contributing',
-                                title: 'Contributing',
-                                file: 'microsoft/vscode/main/CONTRIBUTING.md',
-                                order: 2,
-                                description: 'How to contribute to VS Code'
-                            }
-                        ]
-                    },
-                    search: { enabled: true },
-                    navigation: { showCategories: false }
-                }
-            },
-            
-            url: {
-                title: 'Remote Content',
-                description: 'Load documentation from remote URLs',
-                config: {
-                    container: '#viewer-container',
-                    title: 'Remote Documentation',
-                    source: {
-                        type: 'url',
-                        baseUrl: 'https://raw.githubusercontent.com/microsoft/vscode/main',
-                        documents: [
-                            {
-                                id: 'remote-readme',
-                                title: 'Remote README',
-                                file: 'README.md',
-                                order: 1
-                            }
-                        ]
-                    }
-                }
-            },
-            
-            advanced: {
+  constructor() {
+    this.currentViewer = null;
+    this.currentExample = 'basic';
+    this.currentTheme = 'default';
+    this.isLoading = false;
+
+    // Example configurations
+    this.examples = {
+      basic: {
+        title: 'Basic Documentation',
+        description: 'Simple documentation with multiple pages',
+        config: {
+          container: '#viewer-container',
+          title: 'Basic Documentation',
+          source: {
+            type: 'local',
+            basePath: './content',
+            documents: [
+              {
+                id: 'getting-started',
+                title: 'Getting Started',
+                file: 'getting-started.md',
+                order: 1,
+                category: 'Introduction',
+                description: 'Learn the basics of using this viewer',
+              },
+              {
+                id: 'installation',
+                title: 'Installation',
+                file: 'installation.md',
+                order: 2,
+                category: 'Introduction',
+                description: 'How to install and setup',
+              },
+              {
+                id: 'configuration',
+                title: 'Configuration',
+                file: 'configuration.md',
+                order: 3,
+                category: 'Guide',
+                description: 'Configure the viewer for your needs',
+              },
+              {
+                id: 'api-reference',
+                title: 'API Reference',
+                file: 'api-reference.md',
+                order: 4,
+                category: 'Reference',
+                description: 'Complete API documentation',
+              },
+            ],
+          },
+          search: {
+            enabled: true,
+            placeholder: 'Search documentation...',
+            caseSensitive: false,
+            fuzzySearch: false,
+          },
+          navigation: {
+            showCategories: true,
+            showTags: false,
+            collapsible: true,
+            showDescription: true,
+            sortBy: 'order',
+          },
+          render: {
+            syntaxHighlighting: true,
+            copyCodeButton: true,
+            linkTarget: '_blank',
+          },
+          onDocumentLoad: doc => {
+            this.updateStatus('success', `Loaded: ${doc.title}`);
+            console.log('Document loaded:', doc);
+          },
+          onError: error => {
+            this.updateStatus('error', `Error: ${error.message}`);
+            console.error('Viewer error:', error);
+          },
+        },
+      },
+
+      github: {
+        title: 'GitHub Repository',
+        description: 'Load documentation directly from GitHub',
+        config: {
+          container: '#viewer-container',
+          title: 'GitHub Documentation',
+          source: {
+            type: 'github',
+            documents: [
+              {
+                id: 'readme',
+                title: 'README',
+                file: 'microsoft/vscode/main/README.md',
+                order: 1,
+                description: 'VS Code README from GitHub',
+              },
+              {
+                id: 'contributing',
+                title: 'Contributing',
+                file: 'microsoft/vscode/main/CONTRIBUTING.md',
+                order: 2,
+                description: 'How to contribute to VS Code',
+              },
+            ],
+          },
+          search: { enabled: true },
+          navigation: { showCategories: false },
+        },
+      },
+
+      url: {
+        title: 'Remote Content',
+        description: 'Load documentation from remote URLs',
+        config: {
+          container: '#viewer-container',
+          title: 'Remote Documentation',
+          source: {
+            type: 'url',
+            baseUrl: 'https://raw.githubusercontent.com/microsoft/vscode/main',
+            documents: [
+              {
+                id: 'remote-readme',
+                title: 'Remote README',
+                file: 'README.md',
+                order: 1,
+              },
+            ],
+          },
+        },
+      },
+
+      advanced: {
+        title: 'Advanced Features',
+        description: 'Showcase advanced functionality',
+        config: {
+          container: '#viewer-container',
+          title: 'Advanced Documentation Demo',
+          logo: './assets/logo.svg',
+          footer: 'Powered by Markdown Documentation Viewer',
+          source: {
+            type: 'content',
+            documents: [
+              {
+                id: 'features',
                 title: 'Advanced Features',
-                description: 'Showcase advanced functionality',
-                config: {
-                    container: '#viewer-container',
-                    title: 'Advanced Documentation Demo',
-                    logo: './assets/logo.svg',
-                    footer: 'Powered by Markdown Documentation Viewer',
-                    source: {
-                        type: 'content',
-                        documents: [
-                            {
-                                id: 'features',
-                                title: 'Advanced Features',
-                                category: 'Features',
-                                tags: ['advanced', 'demo'],
-                                content: this.getAdvancedContent(),
-                                order: 1,
-                                description: 'Demonstration of advanced features'
-                            },
-                            {
-                                id: 'syntax-highlighting',
-                                title: 'Syntax Highlighting',
-                                category: 'Features',
-                                tags: ['code', 'highlighting'],
-                                content: this.getSyntaxHighlightingContent(),
-                                order: 2,
-                                description: 'Code syntax highlighting examples'
-                            },
-                            {
-                                id: 'tables-lists',
-                                title: 'Tables & Lists',
-                                category: 'Elements',
-                                tags: ['tables', 'lists'],
-                                content: this.getTablesListsContent(),
-                                order: 3,
-                                description: 'Table and list formatting'
-                            }
-                        ]
-                    },
-                    search: {
-                        enabled: true,
-                        searchInTags: true,
-                        maxResults: 15
-                    },
-                    navigation: {
-                        showCategories: true,
-                        showTags: true,
-                        showDescription: true,
-                        collapsible: true
-                    },
-                    render: {
-                        syntaxHighlighting: true,
-                        copyCodeButton: true,
-                        linkTarget: '_blank'
-                    },
-                    responsive: true,
-                    routing: 'hash'
-                }
-            },
-            
-            'api-docs': {
-                title: 'API Documentation',
-                description: 'Structured API documentation example',
-                config: {
-                    container: '#viewer-container',
-                    title: 'API Documentation',
-                    source: {
-                        type: 'content',
-                        documents: [
-                            {
-                                id: 'overview',
-                                title: 'API Overview',
-                                category: 'Getting Started',
-                                content: this.getAPIOverviewContent(),
-                                order: 1
-                            },
-                            {
-                                id: 'authentication',
-                                title: 'Authentication',
-                                category: 'Getting Started',
-                                content: this.getAuthenticationContent(),
-                                order: 2
-                            },
-                            {
-                                id: 'endpoints',
-                                title: 'Endpoints',
-                                category: 'Reference',
-                                content: this.getEndpointsContent(),
-                                order: 3
-                            },
-                            {
-                                id: 'errors',
-                                title: 'Error Codes',
-                                category: 'Reference',
-                                content: this.getErrorCodesContent(),
-                                order: 4
-                            }
-                        ]
-                    },
-                    navigation: {
-                        showCategories: true,
-                        collapsible: false
-                    }
-                }
-            }
-        };
-        
-        // Theme configurations
-        this.themes = {
-            default: defaultTheme,
-            dark: darkTheme,
-            custom: createCustomTheme({
-                name: 'custom-demo',
-                colors: {
-                    primary: '#8b5cf6',
-                    secondary: '#06b6d4',
-                    background: '#fefefe',
-                    surface: '#f8fafc',
-                    textPrimary: '#1e293b',
-                    textSecondary: '#64748b',
-                    border: '#e2e8f0',
-                    codeBackground: '#f1f5f9',
-                    link: '#8b5cf6',
-                    linkHover: '#7c3aed'
-                },
-                fonts: {
-                    body: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
-                    heading: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
-                    code: '"Fira Code", "JetBrains Mono", monospace'
-                },
-                borderRadius: '0.75rem'
-            })
-        };
+                category: 'Features',
+                tags: ['advanced', 'demo'],
+                content: this.getAdvancedContent(),
+                order: 1,
+                description: 'Demonstration of advanced features',
+              },
+              {
+                id: 'syntax-highlighting',
+                title: 'Syntax Highlighting',
+                category: 'Features',
+                tags: ['code', 'highlighting'],
+                content: this.getSyntaxHighlightingContent(),
+                order: 2,
+                description: 'Code syntax highlighting examples',
+              },
+              {
+                id: 'tables-lists',
+                title: 'Tables & Lists',
+                category: 'Elements',
+                tags: ['tables', 'lists'],
+                content: this.getTablesListsContent(),
+                order: 3,
+                description: 'Table and list formatting',
+              },
+            ],
+          },
+          search: {
+            enabled: true,
+            searchInTags: true,
+            maxResults: 15,
+          },
+          navigation: {
+            showCategories: true,
+            showTags: true,
+            showDescription: true,
+            collapsible: true,
+          },
+          render: {
+            syntaxHighlighting: true,
+            copyCodeButton: true,
+            linkTarget: '_blank',
+          },
+          responsive: true,
+          routing: 'hash',
+        },
+      },
+
+      'api-docs': {
+        title: 'API Documentation',
+        description: 'Structured API documentation example',
+        config: {
+          container: '#viewer-container',
+          title: 'API Documentation',
+          source: {
+            type: 'content',
+            documents: [
+              {
+                id: 'overview',
+                title: 'API Overview',
+                category: 'Getting Started',
+                content: this.getAPIOverviewContent(),
+                order: 1,
+              },
+              {
+                id: 'authentication',
+                title: 'Authentication',
+                category: 'Getting Started',
+                content: this.getAuthenticationContent(),
+                order: 2,
+              },
+              {
+                id: 'endpoints',
+                title: 'Endpoints',
+                category: 'Reference',
+                content: this.getEndpointsContent(),
+                order: 3,
+              },
+              {
+                id: 'errors',
+                title: 'Error Codes',
+                category: 'Reference',
+                content: this.getErrorCodesContent(),
+                order: 4,
+              },
+            ],
+          },
+          navigation: {
+            showCategories: true,
+            collapsible: false,
+          },
+        },
+      },
+    };
+
+    // Theme configurations
+    this.themes = {
+      default: defaultTheme,
+      dark: darkTheme,
+      custom: createCustomTheme({
+        name: 'custom-demo',
+        colors: {
+          primary: '#8b5cf6',
+          secondary: '#06b6d4',
+          background: '#fefefe',
+          surface: '#f8fafc',
+          textPrimary: '#1e293b',
+          textSecondary: '#64748b',
+          border: '#e2e8f0',
+          codeBackground: '#f1f5f9',
+          link: '#8b5cf6',
+          linkHover: '#7c3aed',
+        },
+        fonts: {
+          body: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+          heading: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+          code: '"Fira Code", "JetBrains Mono", monospace',
+        },
+        borderRadius: '0.75rem',
+      }),
+    };
+  }
+
+  // Initialize the demo
+  async init() {
+    try {
+      this.updateStatus('loading', 'Initializing demo...');
+
+      // Setup event listeners
+      this.setupEventListeners();
+
+      // Load initial example
+      await this.loadExample(this.currentExample);
+
+      this.updateStatus('success', 'Demo ready');
+    } catch (error) {
+      this.updateStatus('error', `Initialization failed: ${error.message}`);
+      console.error('Demo initialization error:', error);
     }
-    
-    // Initialize the demo
-    async init() {
-        try {
-            this.updateStatus('loading', 'Initializing demo...');
-            
-            // Setup event listeners
-            this.setupEventListeners();
-            
-            // Load initial example
-            await this.loadExample(this.currentExample);
-            
-            this.updateStatus('success', 'Demo ready');
-        } catch (error) {
-            this.updateStatus('error', `Initialization failed: ${error.message}`);
-            console.error('Demo initialization error:', error);
-        }
+  }
+
+  // Setup event listeners
+  setupEventListeners() {
+    // Theme selector
+    const themeSelector = document.getElementById('theme-selector');
+    themeSelector?.addEventListener('change', e => {
+      this.changeTheme(e.target.value);
+    });
+
+    // Example selector
+    const exampleSelector = document.getElementById('example-selector');
+    exampleSelector?.addEventListener('change', e => {
+      this.loadExample(e.target.value);
+    });
+
+    // Reload button
+    const reloadBtn = document.getElementById('reload-btn');
+    reloadBtn?.addEventListener('click', () => {
+      this.reloadCurrentExample();
+    });
+
+    // Fullscreen button
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn?.addEventListener('click', () => {
+      this.toggleFullscreen();
+    });
+
+    // Global error handler
+    window.addEventListener('error', e => {
+      this.updateStatus('error', `JavaScript error: ${e.message}`);
+    });
+
+    // Handle hash changes for routing demo
+    window.addEventListener('hashchange', () => {
+      if (this.currentExample === 'advanced') {
+        // Let the viewer handle routing
+      }
+    });
+  }
+
+  // Load a specific example
+  async loadExample(exampleId) {
+    if (!this.examples[exampleId]) {
+      this.updateStatus('error', `Example '${exampleId}' not found`);
+      return;
     }
-    
-    // Setup event listeners
-    setupEventListeners() {
-        // Theme selector
-        const themeSelector = document.getElementById('theme-selector');
-        themeSelector?.addEventListener('change', (e) => {
-            this.changeTheme(e.target.value);
-        });
-        
-        // Example selector
-        const exampleSelector = document.getElementById('example-selector');
-        exampleSelector?.addEventListener('change', (e) => {
-            this.loadExample(e.target.value);
-        });
-        
-        // Reload button
-        const reloadBtn = document.getElementById('reload-btn');
-        reloadBtn?.addEventListener('click', () => {
-            this.reloadCurrentExample();
-        });
-        
-        // Fullscreen button
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        fullscreenBtn?.addEventListener('click', () => {
-            this.toggleFullscreen();
-        });
-        
-        // Global error handler
-        window.addEventListener('error', (e) => {
-            this.updateStatus('error', `JavaScript error: ${e.message}`);
-        });
-        
-        // Handle hash changes for routing demo
-        window.addEventListener('hashchange', () => {
-            if (this.currentExample === 'advanced') {
-                // Let the viewer handle routing
-            }
-        });
+
+    try {
+      this.updateStatus('loading', `Loading ${this.examples[exampleId].title}...`);
+      this.setLoading(true);
+
+      // Destroy existing viewer
+      if (this.currentViewer) {
+        this.currentViewer.destroy();
+        this.currentViewer = null;
+      }
+
+      // Clear container
+      const container = document.getElementById('viewer-container');
+      if (container) {
+        container.innerHTML = '';
+      }
+
+      // Create new viewer with current theme
+      const config = { ...this.examples[exampleId].config };
+      config.theme = this.themes[this.currentTheme];
+
+      // Add demo-specific callbacks
+      const originalOnLoad = config.onDocumentLoad;
+      config.onDocumentLoad = doc => {
+        if (originalOnLoad) originalOnLoad(doc);
+        this.updateProgress(100);
+      };
+
+      const originalOnError = config.onError;
+      config.onError = error => {
+        if (originalOnError) originalOnError(error);
+        this.setLoading(false);
+      };
+
+      // Simulate loading progress
+      this.simulateProgress();
+
+      // Create viewer
+      this.currentViewer = createViewer(config);
+      this.currentExample = exampleId;
+
+      // Update UI
+      this.updateExampleSelector(exampleId);
+      this.updateStatus('success', `Loaded ${this.examples[exampleId].title}`);
+
+      setTimeout(() => this.setLoading(false), 1000);
+    } catch (error) {
+      this.updateStatus('error', `Failed to load example: ${error.message}`);
+      this.setLoading(false);
+      console.error('Example loading error:', error);
     }
-    
-    // Load a specific example
-    async loadExample(exampleId) {
-        if (!this.examples[exampleId]) {
-            this.updateStatus('error', `Example '${exampleId}' not found`);
-            return;
-        }
-        
-        try {
-            this.updateStatus('loading', `Loading ${this.examples[exampleId].title}...`);
-            this.setLoading(true);
-            
-            // Destroy existing viewer
-            if (this.currentViewer) {
-                this.currentViewer.destroy();
-                this.currentViewer = null;
-            }
-            
-            // Clear container
-            const container = document.getElementById('viewer-container');
-            if (container) {
-                container.innerHTML = '';
-            }
-            
-            // Create new viewer with current theme
-            const config = { ...this.examples[exampleId].config };
-            config.theme = this.themes[this.currentTheme];
-            
-            // Add demo-specific callbacks
-            const originalOnLoad = config.onDocumentLoad;
-            config.onDocumentLoad = (doc) => {
-                if (originalOnLoad) originalOnLoad(doc);
-                this.updateProgress(100);
-            };
-            
-            const originalOnError = config.onError;
-            config.onError = (error) => {
-                if (originalOnError) originalOnError(error);
-                this.setLoading(false);
-            };
-            
-            // Simulate loading progress
-            this.simulateProgress();
-            
-            // Create viewer
-            this.currentViewer = createViewer(config);
-            this.currentExample = exampleId;
-            
-            // Update UI
-            this.updateExampleSelector(exampleId);
-            this.updateStatus('success', `Loaded ${this.examples[exampleId].title}`);
-            
-            setTimeout(() => this.setLoading(false), 1000);
-            
-        } catch (error) {
-            this.updateStatus('error', `Failed to load example: ${error.message}`);
-            this.setLoading(false);
-            console.error('Example loading error:', error);
-        }
+  }
+
+  // Change theme
+  changeTheme(themeId) {
+    if (!this.themes[themeId]) {
+      this.updateStatus('error', `Theme '${themeId}' not found`);
+      return;
     }
-    
-    // Change theme
-    changeTheme(themeId) {
-        if (!this.themes[themeId]) {
-            this.updateStatus('error', `Theme '${themeId}' not found`);
-            return;
-        }
-        
-        this.currentTheme = themeId;
-        
-        if (this.currentViewer) {
-            this.currentViewer.setTheme(this.themes[themeId]);
-            this.updateStatus('success', `Applied ${themeId} theme`);
-        }
-        
-        // Update demo page theme
-        if (themeId === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-        }
+
+    this.currentTheme = themeId;
+
+    if (this.currentViewer) {
+      this.currentViewer.setTheme(this.themes[themeId]);
+      this.updateStatus('success', `Applied ${themeId} theme`);
     }
-    
-    // Reload current example
-    async reloadCurrentExample() {
-        await this.loadExample(this.currentExample);
+
+    // Update demo page theme
+    if (themeId === 'dark') {
+      document.body.setAttribute('data-theme', 'dark');
+    } else {
+      document.body.removeAttribute('data-theme');
     }
-    
-    // Toggle fullscreen mode
-    toggleFullscreen() {
-        const container = document.getElementById('viewer-container');
-        if (!container) return;
-        
-        if (!document.fullscreenElement) {
-            container.requestFullscreen().catch(err => {
-                this.updateStatus('error', `Fullscreen failed: ${err.message}`);
-            });
-        } else {
-            document.exitFullscreen();
-        }
+  }
+
+  // Reload current example
+  async reloadCurrentExample() {
+    await this.loadExample(this.currentExample);
+  }
+
+  // Toggle fullscreen mode
+  toggleFullscreen() {
+    const container = document.getElementById('viewer-container');
+    if (!container) return;
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().catch(err => {
+        this.updateStatus('error', `Fullscreen failed: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
     }
-    
-    // Update status display
-    updateStatus(type, message) {
-        const indicator = document.getElementById('status-indicator');
-        const text = document.getElementById('status-text');
-        
-        if (indicator) {
-            indicator.className = `status-indicator ${type}`;
-        }
-        
-        if (text) {
-            text.textContent = message;
-        }
+  }
+
+  // Update status display
+  updateStatus(type, message) {
+    const indicator = document.getElementById('status-indicator');
+    const text = document.getElementById('status-text');
+
+    if (indicator) {
+      indicator.className = `status-indicator ${type}`;
     }
-    
-    // Set loading state
-    setLoading(loading) {
-        this.isLoading = loading;
-        const loadingBar = document.getElementById('loading-bar');
-        
-        if (loadingBar) {
-            loadingBar.style.display = loading ? 'inline-block' : 'none';
-        }
-        
-        if (!loading) {
-            this.updateProgress(0);
-        }
+
+    if (text) {
+      text.textContent = message;
     }
-    
-    // Update progress bar
-    updateProgress(percent) {
-        const progress = document.getElementById('loading-progress');
-        if (progress) {
-            progress.style.width = `${percent}%`;
-        }
+  }
+
+  // Set loading state
+  setLoading(loading) {
+    this.isLoading = loading;
+    const loadingBar = document.getElementById('loading-bar');
+
+    if (loadingBar) {
+      loadingBar.style.display = loading ? 'inline-block' : 'none';
     }
-    
-    // Simulate loading progress
-    simulateProgress() {
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 15;
-            if (progress >= 90) {
-                progress = 90;
-                clearInterval(interval);
-            }
-            this.updateProgress(progress);
-        }, 200);
+
+    if (!loading) {
+      this.updateProgress(0);
     }
-    
-    // Update example selector
-    updateExampleSelector(exampleId) {
-        const selector = document.getElementById('example-selector');
-        if (selector) {
-            selector.value = exampleId;
-        }
+  }
+
+  // Update progress bar
+  updateProgress(percent) {
+    const progress = document.getElementById('loading-progress');
+    if (progress) {
+      progress.style.width = `${percent}%`;
     }
-    
-    // Content generators for examples
-    getAdvancedContent() {
-        return `# Advanced Features Demo
+  }
+
+  // Simulate loading progress
+  simulateProgress() {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 90) {
+        progress = 90;
+        clearInterval(interval);
+      }
+      this.updateProgress(progress);
+    }, 200);
+  }
+
+  // Update example selector
+  updateExampleSelector(exampleId) {
+    const selector = document.getElementById('example-selector');
+    if (selector) {
+      selector.value = exampleId;
+    }
+  }
+
+  // Content generators for examples
+  getAdvancedContent() {
+    return `# Advanced Features Demo
 
 This demo showcases the advanced capabilities of the Markdown Documentation Viewer.
 
@@ -1048,10 +1101,10 @@ Try the following:
 
 > **Tip**: This viewer supports all GitHub Flavored Markdown features including tables, task lists, and syntax highlighting.
 `;
-    }
-    
-    getSyntaxHighlightingContent() {
-        return `# Syntax Highlighting Examples
+  }
+
+  getSyntaxHighlightingContent() {
+    return `# Syntax Highlighting Examples
 
 The viewer supports syntax highlighting for over 180 programming languages.
 
@@ -1225,10 +1278,10 @@ The viewer supports many more languages including:
 - SQL, YAML, TOML, XML
 - And many more...
 `;
-    }
-    
-    getTablesListsContent() {
-        return `# Tables & Lists Examples
+  }
+
+  getTablesListsContent() {
+    return `# Tables & Lists Examples
 
 ## Tables
 
@@ -1372,10 +1425,10 @@ Term 2
 **Theme**
 : A configuration object that defines the visual appearance including colors, fonts, spacing, and custom CSS.
 `;
-    }
-    
-    getAPIOverviewContent() {
-        return `# API Documentation Overview
+  }
+
+  getAPIOverviewContent() {
+    return `# API Documentation Overview
 
 Welcome to the Markdown Documentation Viewer API reference.
 
@@ -1420,10 +1473,10 @@ All responses are in JSON format:
 }
 \`\`\`
 `;
-    }
-    
-    getAuthenticationContent() {
-        return `# Authentication
+  }
+
+  getAuthenticationContent() {
+    return `# Authentication
 
 ## Overview
 
@@ -1447,10 +1500,10 @@ fetch('https://api.example.com/v1/documents', {
 });
 \`\`\`
 `;
-    }
-    
-    getEndpointsContent() {
-        return `# API Endpoints
+  }
+
+  getEndpointsContent() {
+    return `# API Endpoints
 
 ## Documents
 
@@ -1490,10 +1543,10 @@ Retrieve a specific document.
 }
 \`\`\`
 `;
-    }
-    
-    getErrorCodesContent() {
-        return `# Error Codes
+  }
+
+  getErrorCodesContent() {
+    return `# Error Codes
 
 ## HTTP Status Codes
 
@@ -1525,20 +1578,20 @@ Retrieve a specific document.
 - \`DOCUMENT_NOT_FOUND\`: Requested document does not exist
 - \`RATE_LIMIT_EXCEEDED\`: Too many requests
 `;
-    }
+  }
 }
 
 // Global functions for demo
-window.loadExample = function(exampleId) {
-    if (window.demoController) {
-        window.demoController.loadExample(exampleId);
-    }
+window.loadExample = function (exampleId) {
+  if (window.demoController) {
+    window.demoController.loadExample(exampleId);
+  }
 };
 
 // Initialize demo when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
-    window.demoController = new DemoController();
-    await window.demoController.init();
+  window.demoController = new DemoController();
+  await window.demoController.init();
 });
 
 // Export for module usage
@@ -1546,6 +1599,7 @@ export { DemoController };
 ```
 
 **Implementation Steps**:
+
 1. Create DemoController class with state management
 2. Implement example configurations for different use cases
 3. Add theme switching functionality
@@ -1554,11 +1608,14 @@ export { DemoController };
 6. Add responsive behavior and accessibility
 
 ### Subtask 1.1.4: Create Sample Content
+
 **Duration**: 2 hours
 
 #### Step 1.1.4.1: Create Getting Started Content
+
 **Deliverable**: `demo/content/getting-started.md`
-```markdown
+
+````markdown
 ---
 title: Getting Started
 description: Learn how to use the Markdown Documentation Viewer
@@ -1600,12 +1657,13 @@ const viewer = createViewer({
       {
         id: 'welcome',
         title: 'Welcome',
-        content: '# Welcome\n\nThis is your first document!'
-      }
-    ]
-  }
+        content: '# Welcome\n\nThis is your first document!',
+      },
+    ],
+  },
 });
 ```
+````
 
 ## Installation
 
@@ -1649,9 +1707,9 @@ const viewer = createViewer({
     basePath: '/docs',
     documents: [
       { id: 'intro', title: 'Introduction', file: 'intro.md' },
-      { id: 'guide', title: 'User Guide', file: 'guide.md' }
-    ]
-  }
+      { id: 'guide', title: 'User Guide', file: 'guide.md' },
+    ],
+  },
 });
 ```
 
@@ -1748,7 +1806,8 @@ Now that you have the basics, explore these topics:
 ---
 
 > **Pro Tip**: Try switching between the light and dark themes using the controls above to see how the viewer adapts to different color schemes!
-```
+
+````
 
 **Implementation Steps**:
 1. Create comprehensive getting started guide
@@ -1762,7 +1821,7 @@ Now that you have the basics, explore these topics:
 
 Create the following additional files:
 - `demo/content/installation.md` - Detailed installation guide
-- `demo/content/configuration.md` - Configuration options reference  
+- `demo/content/configuration.md` - Configuration options reference
 - `demo/content/api-reference.md` - Complete API documentation
 - `demo/content/theming-guide.md` - Theme customization guide
 - `demo/content/advanced-usage.md` - Advanced features and examples
@@ -1777,7 +1836,7 @@ Create the following additional files:
 ---
 
 ## Task 1.2: Add Basic Test Suite
-**Duration**: 1 day  
+**Duration**: 1 day
 **Deliverable**: Comprehensive test suite with >80% coverage
 
 ### Subtask 1.2.1: Setup Test Infrastructure
@@ -1848,9 +1907,10 @@ export default defineConfig({
     }
   }
 });
-```
+````
 
 **Implementation Steps**:
+
 1. Configure Vitest with proper TypeScript support
 2. Set up happy-dom environment for DOM testing
 3. Configure coverage thresholds and reporting
@@ -1858,7 +1918,9 @@ export default defineConfig({
 5. Configure test timeouts for async operations
 
 #### Step 1.2.1.2: Create Test Setup File
+
 **Deliverable**: `tests/setup.ts`
+
 ```typescript
 import { beforeEach, afterEach, vi } from 'vitest';
 
@@ -1884,31 +1946,31 @@ global.fetch = vi.fn();
 vi.mock('highlight.js', () => ({
   default: {
     highlight: vi.fn((code: string, { language }: { language: string }) => ({
-      value: `<span class="hljs-${language}">${code}</span>`
+      value: `<span class="hljs-${language}">${code}</span>`,
     })),
-    getLanguage: vi.fn((lang: string) => lang !== 'invalid')
-  }
+    getLanguage: vi.fn((lang: string) => lang !== 'invalid'),
+  },
 }));
 
 // Mock marked-highlight
 vi.mock('marked-highlight', () => ({
-  markedHighlight: vi.fn((options) => (marked: any) => marked)
+  markedHighlight: vi.fn(options => (marked: any) => marked),
 }));
 
 // Setup and cleanup for each test
 beforeEach(() => {
   // Clear all mocks
   vi.clearAllMocks();
-  
+
   // Reset fetch mock
   (fetch as any).mockReset();
-  
+
   // Clear document body
   if (typeof document !== 'undefined') {
     document.body.innerHTML = '';
     document.head.innerHTML = '';
   }
-  
+
   // Reset localStorage
   if (typeof localStorage !== 'undefined') {
     localStorage.clear();
@@ -1918,7 +1980,7 @@ beforeEach(() => {
 afterEach(() => {
   // Cleanup after each test
   vi.restoreAllMocks();
-  
+
   // Remove any added styles
   if (typeof document !== 'undefined') {
     const styles = document.querySelectorAll('style[data-test]');
@@ -1938,13 +2000,10 @@ export const waitFor = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const waitForElement = (
-  selector: string, 
-  timeout = 1000
-): Promise<Element> => {
+export const waitForElement = (selector: string, timeout = 1000): Promise<Element> => {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const check = () => {
       const element = document.querySelector(selector);
       if (element) {
@@ -1955,7 +2014,7 @@ export const waitForElement = (
         setTimeout(check, 50);
       }
     };
-    
+
     check();
   });
 };
@@ -1966,7 +2025,7 @@ export const mockSuccessfulFetch = (content: string) => {
     text: () => Promise.resolve(content),
     json: () => Promise.resolve({ content }),
     status: 200,
-    statusText: 'OK'
+    statusText: 'OK',
   });
 };
 
@@ -1975,7 +2034,7 @@ export const mockFailedFetch = (status = 404, statusText = 'Not Found') => {
     ok: false,
     status,
     statusText,
-    text: () => Promise.reject(new Error(statusText))
+    text: () => Promise.reject(new Error(statusText)),
   });
 };
 
@@ -1986,15 +2045,15 @@ export const testDocuments = [
     title: 'Document 1',
     content: '# Document 1\n\nThis is the first document.',
     category: 'Getting Started',
-    order: 1
+    order: 1,
   },
   {
     id: 'doc2',
     title: 'Document 2',
     content: '# Document 2\n\nThis is the second document.',
     category: 'Advanced',
-    order: 2
-  }
+    order: 2,
+  },
 ];
 
 export const testTheme = {
@@ -2012,23 +2071,24 @@ export const testTheme = {
     linkHover: '#2563eb',
     error: '#ef4444',
     warning: '#f59e0b',
-    success: '#10b981'
+    success: '#10b981',
   },
   fonts: {
     body: 'system-ui, sans-serif',
     heading: 'system-ui, sans-serif',
-    code: 'Monaco, monospace'
+    code: 'Monaco, monospace',
   },
   spacing: {
     unit: 8,
     containerMaxWidth: '1200px',
-    sidebarWidth: '300px'
+    sidebarWidth: '300px',
   },
-  borderRadius: '0.5rem'
+  borderRadius: '0.5rem',
 };
 ```
 
 **Implementation Steps**:
+
 1. Set up DOM mocking with happy-dom
 2. Create fetch mocking utilities
 3. Mock external dependencies (highlight.js, marked-highlight)
@@ -2036,21 +2096,18 @@ export const testTheme = {
 5. Set up cleanup between tests
 
 ### Subtask 1.2.2: Create Core Tests
+
 **Duration**: 4 hours
 
 #### Step 1.2.2.1: Create Viewer Tests
+
 **Deliverable**: `tests/viewer.test.ts`
+
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MarkdownDocsViewer } from '@/viewer';
 import { DocumentationConfig } from '@/types';
-import { 
-  createTestContainer, 
-  waitFor, 
-  waitForElement, 
-  testDocuments, 
-  testTheme 
-} from './setup';
+import { createTestContainer, waitFor, waitForElement, testDocuments, testTheme } from './setup';
 
 describe('MarkdownDocsViewer', () => {
   let container: HTMLElement;
@@ -2062,8 +2119,8 @@ describe('MarkdownDocsViewer', () => {
       container,
       source: {
         type: 'content',
-        documents: testDocuments
-      }
+        documents: testDocuments,
+      },
     };
   });
 
@@ -2076,20 +2133,18 @@ describe('MarkdownDocsViewer', () => {
     it('should throw error with invalid container', () => {
       const invalidConfig = {
         ...basicConfig,
-        container: '#non-existent'
+        container: '#non-existent',
       };
-      
-      expect(() => new MarkdownDocsViewer(invalidConfig)).toThrow(
-        'Container element not found'
-      );
+
+      expect(() => new MarkdownDocsViewer(invalidConfig)).toThrow('Container element not found');
     });
 
     it('should apply default configuration', () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       // Access private config through reflection for testing
       const config = (viewer as any).config;
-      
+
       expect(config.theme).toBeDefined();
       expect(config.search?.enabled).toBe(true);
       expect(config.navigation?.showCategories).toBe(true);
@@ -2100,12 +2155,12 @@ describe('MarkdownDocsViewer', () => {
       const customConfig = {
         ...basicConfig,
         search: { enabled: false },
-        navigation: { showCategories: false }
+        navigation: { showCategories: false },
       };
-      
+
       const viewer = new MarkdownDocsViewer(customConfig);
       const config = (viewer as any).config;
-      
+
       expect(config.search.enabled).toBe(false);
       expect(config.navigation.showCategories).toBe(false);
       expect(config.render?.syntaxHighlighting).toBe(true); // Should keep default
@@ -2115,9 +2170,9 @@ describe('MarkdownDocsViewer', () => {
   describe('Initialization', () => {
     it('should render initial UI structure', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitFor(100); // Wait for async init
-      
+
       expect(container.querySelector('.mdv-app')).toBeTruthy();
       expect(container.querySelector('.mdv-header')).toBeTruthy();
       expect(container.querySelector('.mdv-sidebar')).toBeTruthy();
@@ -2126,9 +2181,9 @@ describe('MarkdownDocsViewer', () => {
 
     it('should load and display documents', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-nav-link');
-      
+
       const navLinks = container.querySelectorAll('.mdv-nav-link');
       expect(navLinks).toHaveLength(2);
       expect(navLinks[0].textContent).toContain('Document 1');
@@ -2137,7 +2192,7 @@ describe('MarkdownDocsViewer', () => {
 
     it('should display loading state initially', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       // Should show loading immediately
       const loading = container.querySelector('.mdv-loading');
       expect(loading).toBeTruthy();
@@ -2150,14 +2205,14 @@ describe('MarkdownDocsViewer', () => {
         source: {
           type: 'local' as const,
           basePath: '/invalid',
-          documents: [{ id: 'test', title: 'Test', file: 'invalid.md' }]
-        }
+          documents: [{ id: 'test', title: 'Test', file: 'invalid.md' }],
+        },
       };
 
       const onError = vi.fn();
       const viewer = new MarkdownDocsViewer({
         ...errorConfig,
-        onError
+        onError,
       });
 
       await waitFor(200);
@@ -2171,59 +2226,59 @@ describe('MarkdownDocsViewer', () => {
   describe('Document Loading', () => {
     it('should load initial document automatically', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-document-content');
-      
+
       const content = container.querySelector('.mdv-document-content');
       expect(content?.textContent).toContain('This is the first document');
     });
 
     it('should switch documents when navigation is clicked', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-nav-link');
-      
+
       // Click second document
       const secondLink = container.querySelectorAll('.mdv-nav-link')[1];
       (secondLink as HTMLElement).click();
-      
+
       await waitFor(100);
-      
+
       const content = container.querySelector('.mdv-document-content');
       expect(content?.textContent).toContain('This is the second document');
     });
 
     it('should update active navigation state', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-nav-link');
-      
+
       const links = container.querySelectorAll('.mdv-nav-link');
       expect(links[0]).toHaveClass('active');
       expect(links[1]).not.toHaveClass('active');
-      
+
       // Click second document
       (links[1] as HTMLElement).click();
       await waitFor(100);
-      
+
       expect(links[0]).not.toHaveClass('active');
       expect(links[1]).toHaveClass('active');
     });
 
     it('should call onDocumentLoad callback', async () => {
       const onDocumentLoad = vi.fn();
-      
+
       new MarkdownDocsViewer({
         ...basicConfig,
-        onDocumentLoad
+        onDocumentLoad,
       });
-      
+
       await waitFor(200);
-      
+
       expect(onDocumentLoad).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 'doc1',
-          title: 'Document 1'
+          title: 'Document 1',
         })
       );
     });
@@ -2232,33 +2287,33 @@ describe('MarkdownDocsViewer', () => {
   describe('Theme Management', () => {
     it('should apply default theme', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitFor(100);
-      
+
       const style = document.querySelector('style');
       expect(style?.textContent).toContain('--mdv-primary');
     });
 
     it('should change theme dynamically', async () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       await waitFor(100);
-      
+
       viewer.setTheme(testTheme);
-      
+
       const style = document.querySelector('style');
       expect(style?.textContent).toContain('#3b82f6'); // Test theme primary color
     });
 
     it('should remove old theme styles when changing theme', async () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       await waitFor(100);
-      
+
       const initialStyles = document.querySelectorAll('style').length;
-      
+
       viewer.setTheme(testTheme);
-      
+
       const finalStyles = document.querySelectorAll('style').length;
       expect(finalStyles).toBe(initialStyles); // Should replace, not add
     });
@@ -2267,9 +2322,9 @@ describe('MarkdownDocsViewer', () => {
   describe('Search Functionality', () => {
     it('should render search input when enabled', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-search-input');
-      
+
       const searchInput = container.querySelector('.mdv-search-input');
       expect(searchInput).toBeTruthy();
     });
@@ -2277,30 +2332,30 @@ describe('MarkdownDocsViewer', () => {
     it('should not render search when disabled', async () => {
       const configWithoutSearch = {
         ...basicConfig,
-        search: { enabled: false }
+        search: { enabled: false },
       };
-      
+
       new MarkdownDocsViewer(configWithoutSearch);
-      
+
       await waitFor(100);
-      
+
       const searchInput = container.querySelector('.mdv-search-input');
       expect(searchInput).toBeFalsy();
     });
 
     it('should filter documents on search input', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-search-input');
-      
+
       const searchInput = container.querySelector('.mdv-search-input') as HTMLInputElement;
-      
+
       // Simulate search
       searchInput.value = 'first';
       searchInput.dispatchEvent(new Event('input'));
-      
+
       await waitFor(100);
-      
+
       // Should show filtered results
       const navLinks = container.querySelectorAll('.mdv-nav-link');
       expect(navLinks).toHaveLength(1);
@@ -2311,25 +2366,25 @@ describe('MarkdownDocsViewer', () => {
   describe('Responsive Behavior', () => {
     it('should add mobile toggle button', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-mobile-toggle');
-      
+
       const toggle = container.querySelector('.mdv-mobile-toggle');
       expect(toggle).toBeTruthy();
     });
 
     it('should toggle sidebar on mobile', async () => {
       new MarkdownDocsViewer(basicConfig);
-      
+
       await waitForElement('.mdv-mobile-toggle');
-      
+
       const toggle = container.querySelector('.mdv-mobile-toggle') as HTMLElement;
       const sidebar = container.querySelector('.mdv-sidebar') as HTMLElement;
-      
+
       expect(sidebar).not.toHaveClass('open');
-      
+
       toggle.click();
-      
+
       expect(sidebar).toHaveClass('open');
     });
   });
@@ -2341,14 +2396,14 @@ describe('MarkdownDocsViewer', () => {
         source: {
           type: 'local' as const,
           basePath: '/nonexistent',
-          documents: [{ id: 'error', title: 'Error Doc', file: 'missing.md' }]
-        }
+          documents: [{ id: 'error', title: 'Error Doc', file: 'missing.md' }],
+        },
       };
 
       new MarkdownDocsViewer(errorConfig);
-      
+
       await waitFor(200);
-      
+
       const errorElement = container.querySelector('.mdv-error');
       expect(errorElement).toBeTruthy();
     });
@@ -2360,15 +2415,15 @@ describe('MarkdownDocsViewer', () => {
         source: {
           type: 'local' as const,
           basePath: '/nonexistent',
-          documents: [{ id: 'error', title: 'Error Doc', file: 'missing.md' }]
+          documents: [{ id: 'error', title: 'Error Doc', file: 'missing.md' }],
         },
-        onError
+        onError,
       };
 
       new MarkdownDocsViewer(errorConfig);
-      
+
       await waitFor(200);
-      
+
       expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
   });
@@ -2376,13 +2431,13 @@ describe('MarkdownDocsViewer', () => {
   describe('Cleanup', () => {
     it('should cleanup resources on destroy', async () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       await waitFor(100);
-      
+
       const initialStyles = document.querySelectorAll('style').length;
-      
+
       viewer.destroy();
-      
+
       const finalStyles = document.querySelectorAll('style').length;
       expect(finalStyles).toBeLessThan(initialStyles);
       expect(container.innerHTML).toBe('');
@@ -2391,41 +2446,38 @@ describe('MarkdownDocsViewer', () => {
     it('should remove event listeners on destroy', async () => {
       const viewer = new MarkdownDocsViewer({
         ...basicConfig,
-        routing: 'hash'
+        routing: 'hash',
       });
-      
+
       await waitFor(100);
-      
+
       const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
-      
+
       viewer.destroy();
-      
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'hashchange',
-        expect.any(Function)
-      );
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('hashchange', expect.any(Function));
     });
   });
 
   describe('Public API', () => {
     it('should expose refresh method', async () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       expect(typeof viewer.refresh).toBe('function');
-      
+
       await expect(viewer.refresh()).resolves.not.toThrow();
     });
 
     it('should expose setTheme method', () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       expect(typeof viewer.setTheme).toBe('function');
       expect(() => viewer.setTheme(testTheme)).not.toThrow();
     });
 
     it('should expose destroy method', () => {
       const viewer = new MarkdownDocsViewer(basicConfig);
-      
+
       expect(typeof viewer.destroy).toBe('function');
       expect(() => viewer.destroy()).not.toThrow();
     });
@@ -2434,15 +2486,18 @@ describe('MarkdownDocsViewer', () => {
 ```
 
 **Implementation Steps**:
+
 1. Test constructor and initialization
 2. Test document loading and navigation
 3. Test theme management
-4. Test search functionality  
+4. Test search functionality
 5. Test responsive behavior
 6. Test error handling and cleanup
 
 #### Step 1.2.2.2: Create Loader Tests
+
 **Deliverable**: `tests/loader.test.ts`
+
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DocumentLoader } from '@/loader';
@@ -2457,7 +2512,7 @@ describe('DocumentLoader', () => {
     beforeEach(() => {
       source = {
         type: 'content',
-        documents: testDocuments
+        documents: testDocuments,
       };
       loader = new DocumentLoader(source);
     });
@@ -2474,10 +2529,10 @@ describe('DocumentLoader', () => {
 
     it('should cache loaded content', async () => {
       const doc = testDocuments[0];
-      
+
       const content1 = await loader.loadDocument(doc);
       const content2 = await loader.loadDocument(doc);
-      
+
       expect(content1).toBe(content2);
       // Should not make additional calls for same document
     });
@@ -2485,9 +2540,9 @@ describe('DocumentLoader', () => {
     it('should clear cache when requested', async () => {
       const doc = testDocuments[0];
       await loader.loadDocument(doc);
-      
+
       loader.clearCache();
-      
+
       // Should be able to load again after cache clear
       const content = await loader.loadDocument(doc);
       expect(content).toBe(doc.content);
@@ -2502,9 +2557,7 @@ describe('DocumentLoader', () => {
       source = {
         type: 'local',
         basePath: '/docs',
-        documents: [
-          { id: 'test', title: 'Test', file: 'test.md' }
-        ]
+        documents: [{ id: 'test', title: 'Test', file: 'test.md' }],
       };
       loader = new DocumentLoader(source);
     });
@@ -2514,7 +2567,7 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch(expectedContent);
 
       const content = await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith('/docs/test.md');
       expect(content).toBe(expectedContent);
     });
@@ -2523,36 +2576,38 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith('/docs/test.md');
     });
 
     it('should handle missing basePath', async () => {
       const sourceWithoutBasePath = {
         ...source,
-        basePath: undefined
+        basePath: undefined,
       };
       loader = new DocumentLoader(sourceWithoutBasePath);
-      
+
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith('test.md');
     });
 
     it('should handle fetch errors', async () => {
       mockFailedFetch(404, 'Not Found');
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('Failed to load local file');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow(
+        'Failed to load local file'
+      );
     });
 
     it('should handle network errors', async () => {
       (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('Failed to load local file');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow(
+        'Failed to load local file'
+      );
     });
   });
 
@@ -2564,10 +2619,8 @@ describe('DocumentLoader', () => {
       source = {
         type: 'url',
         baseUrl: 'https://api.example.com',
-        headers: { 'Authorization': 'Bearer token' },
-        documents: [
-          { id: 'remote', title: 'Remote', file: 'remote.md' }
-        ]
+        headers: { Authorization: 'Bearer token' },
+        documents: [{ id: 'remote', title: 'Remote', file: 'remote.md' }],
       };
       loader = new DocumentLoader(source);
     });
@@ -2577,13 +2630,10 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch(expectedContent);
 
       const content = await loader.loadDocument(source.documents[0]);
-      
-      expect(fetch).toHaveBeenCalledWith(
-        'https://api.example.com/remote.md',
-        {
-          headers: { 'Authorization': 'Bearer token' }
-        }
-      );
+
+      expect(fetch).toHaveBeenCalledWith('https://api.example.com/remote.md', {
+        headers: { Authorization: 'Bearer token' },
+      });
       expect(content).toBe(expectedContent);
     });
 
@@ -2591,24 +2641,21 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
-      expect(fetch).toHaveBeenCalledWith(
-        'https://api.example.com/remote.md',
-        expect.any(Object)
-      );
+
+      expect(fetch).toHaveBeenCalledWith('https://api.example.com/remote.md', expect.any(Object));
     });
 
     it('should handle missing baseUrl', async () => {
       const sourceWithoutBaseUrl = {
         ...source,
-        baseUrl: undefined
+        baseUrl: undefined,
       };
       loader = new DocumentLoader(sourceWithoutBaseUrl);
-      
+
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith('remote.md', expect.any(Object));
     });
 
@@ -2616,11 +2663,11 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          headers: { 'Authorization': 'Bearer token' }
+          headers: { Authorization: 'Bearer token' },
         })
       );
     });
@@ -2628,25 +2675,23 @@ describe('DocumentLoader', () => {
     it('should handle missing headers', async () => {
       const sourceWithoutHeaders = {
         ...source,
-        headers: undefined
+        headers: undefined,
       };
       loader = new DocumentLoader(sourceWithoutHeaders);
-      
+
       mockSuccessfulFetch('content');
 
       await loader.loadDocument(source.documents[0]);
-      
-      expect(fetch).toHaveBeenCalledWith(
-        expect.any(String),
-        { headers: {} }
-      );
+
+      expect(fetch).toHaveBeenCalledWith(expect.any(String), { headers: {} });
     });
 
     it('should handle HTTP errors', async () => {
       mockFailedFetch(500, 'Internal Server Error');
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('Failed to load from URL');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow(
+        'Failed to load from URL'
+      );
     });
   });
 
@@ -2657,10 +2702,8 @@ describe('DocumentLoader', () => {
     beforeEach(() => {
       source = {
         type: 'github',
-        headers: { 'Authorization': 'token github_pat_123' },
-        documents: [
-          { id: 'readme', title: 'README', file: 'owner/repo/main/README.md' }
-        ]
+        headers: { Authorization: 'token github_pat_123' },
+        documents: [{ id: 'readme', title: 'README', file: 'owner/repo/main/README.md' }],
       };
       loader = new DocumentLoader(source);
     });
@@ -2670,14 +2713,14 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch(JSON.stringify({ content: base64Content }));
 
       const content = await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/owner/repo/contents/main/README.md',
         {
           headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'Authorization': 'token github_pat_123'
-          }
+            Accept: 'application/vnd.github.v3+json',
+            Authorization: 'token github_pat_123',
+          },
         }
       );
       expect(content).toBe('# GitHub README\n\nContent from GitHub');
@@ -2688,7 +2731,7 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch(JSON.stringify({ content: base64Content }));
 
       await loader.loadDocument(source.documents[0]);
-      
+
       expect(fetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/owner/repo/contents/main/README.md',
         expect.any(Object)
@@ -2699,14 +2742,14 @@ describe('DocumentLoader', () => {
       const docWithNestedPath = {
         id: 'nested',
         title: 'Nested',
-        file: 'owner/repo/branch/docs/guide/advanced.md'
+        file: 'owner/repo/branch/docs/guide/advanced.md',
       };
-      
+
       const base64Content = btoa('nested content');
       mockSuccessfulFetch(JSON.stringify({ content: base64Content }));
 
       await loader.loadDocument(docWithNestedPath);
-      
+
       expect(fetch).toHaveBeenCalledWith(
         'https://api.github.com/repos/owner/repo/contents/branch/docs/guide/advanced.md',
         expect.any(Object)
@@ -2717,25 +2760,26 @@ describe('DocumentLoader', () => {
       const invalidDoc = {
         id: 'invalid',
         title: 'Invalid',
-        file: 'invalid-path'
+        file: 'invalid-path',
       };
 
-      await expect(loader.loadDocument(invalidDoc))
-        .rejects.toThrow('Invalid GitHub path format');
+      await expect(loader.loadDocument(invalidDoc)).rejects.toThrow('Invalid GitHub path format');
     });
 
     it('should handle GitHub API errors', async () => {
       mockFailedFetch(404, 'Not Found');
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('Failed to load from GitHub');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow(
+        'Failed to load from GitHub'
+      );
     });
 
     it('should handle missing content in GitHub response', async () => {
       mockSuccessfulFetch(JSON.stringify({ message: 'No content' }));
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('No content found in GitHub response');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow(
+        'No content found in GitHub response'
+      );
     });
 
     it('should decode base64 content correctly', async () => {
@@ -2744,7 +2788,7 @@ describe('DocumentLoader', () => {
       mockSuccessfulFetch(JSON.stringify({ content: base64Content }));
 
       const content = await loader.loadDocument(source.documents[0]);
-      
+
       expect(content).toBe(originalContent);
     });
   });
@@ -2754,36 +2798,35 @@ describe('DocumentLoader', () => {
       const source: DocumentSource = {
         type: 'content',
         documents: [
-          { id: 'empty', title: 'Empty' } // No content or file
-        ]
+          { id: 'empty', title: 'Empty' }, // No content or file
+        ],
       };
       const loader = new DocumentLoader(source);
 
       const content = await loader.loadDocument(source.documents[0]);
-      
+
       expect(content).toBe('');
     });
 
     it('should handle unknown source types', async () => {
       const source = {
         type: 'unknown' as any,
-        documents: [{ id: 'test', title: 'Test', file: 'test.md' }]
+        documents: [{ id: 'test', title: 'Test', file: 'test.md' }],
       };
       const loader = new DocumentLoader(source);
 
-      await expect(loader.loadDocument(source.documents[0]))
-        .rejects.toThrow('Unknown source type');
+      await expect(loader.loadDocument(source.documents[0])).rejects.toThrow('Unknown source type');
     });
 
     it('should maintain separate caches for different loaders', async () => {
       const source1: DocumentSource = {
         type: 'content',
-        documents: [{ id: 'test', title: 'Test', content: 'Content 1' }]
+        documents: [{ id: 'test', title: 'Test', content: 'Content 1' }],
       };
-      
+
       const source2: DocumentSource = {
         type: 'content',
-        documents: [{ id: 'test', title: 'Test', content: 'Content 2' }]
+        documents: [{ id: 'test', title: 'Test', content: 'Content 2' }],
       };
 
       const loader1 = new DocumentLoader(source1);
@@ -2800,6 +2843,7 @@ describe('DocumentLoader', () => {
 ```
 
 **Implementation Steps**:
+
 1. Test all document source types (content, local, URL, GitHub)
 2. Test caching functionality
 3. Test error handling for network failures
@@ -2809,6 +2853,7 @@ describe('DocumentLoader', () => {
 ---
 
 **Acceptance Criteria for Task 1.1**:
+
 - [ ] Demo page loads without errors in all major browsers
 - [ ] All 5 example configurations work correctly
 - [ ] Theme switching functions properly
@@ -2820,6 +2865,7 @@ describe('DocumentLoader', () => {
 - [ ] Demo package.json and scripts work correctly
 
 **Acceptance Criteria for Task 1.2**:
+
 - [ ] Test suite achieves >80% code coverage
 - [ ] All core functionality tested (viewer, loader, themes)
 - [ ] Tests run successfully with `npm test`

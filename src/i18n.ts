@@ -15,7 +15,7 @@ export class I18nManager {
     this.currentLocale = config.locale;
     this.messages = config.messages;
     this.fallbackLocale = config.fallbackLocale || 'en';
-    
+
     this.validateConfig();
   }
 
@@ -24,7 +24,9 @@ export class I18nManager {
    */
   private validateConfig(): void {
     if (!this.messages[this.currentLocale]) {
-      console.warn(`No messages found for locale "${this.currentLocale}", falling back to "${this.fallbackLocale}"`);
+      console.warn(
+        `No messages found for locale "${this.currentLocale}", falling back to "${this.fallbackLocale}"`
+      );
       if (!this.messages[this.fallbackLocale]) {
         throw new MarkdownDocsError(
           ErrorCode.INVALID_CONFIG,
@@ -32,7 +34,10 @@ export class I18nManager {
           'No translation messages found for the specified locale or fallback locale.',
           ErrorSeverity.HIGH,
           false,
-          { operation: 'validateI18nConfig', additionalData: { locale: this.currentLocale, fallbackLocale: this.fallbackLocale } }
+          {
+            operation: 'validateI18nConfig',
+            additionalData: { locale: this.currentLocale, fallbackLocale: this.fallbackLocale },
+          }
         );
       }
     }
@@ -43,7 +48,7 @@ export class I18nManager {
    */
   t(key: string, params?: Record<string, any>): string {
     const message = this.getMessage(key);
-    
+
     if (!message) {
       console.warn(`Missing translation for key: ${key}`);
       return key;
@@ -158,17 +163,21 @@ export class I18nManager {
    */
   private deepMerge(target: any, source: any): any {
     const output = { ...target };
-    
+
     for (const key in source) {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
-        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+        if (
+          typeof source[key] === 'object' &&
+          source[key] !== null &&
+          !Array.isArray(source[key])
+        ) {
           output[key] = this.deepMerge(target[key] || {}, source[key]);
         } else {
           output[key] = source[key];
         }
       }
     }
-    
+
     return output;
   }
 }
@@ -183,7 +192,7 @@ export const defaultMessages: I18nMessages = {
     error: 'An error occurred',
     retry: 'Try Again',
     welcome: 'Welcome to the Documentation',
-    selectDocument: 'Select a document from the sidebar to begin reading.'
+    selectDocument: 'Select a document from the sidebar to begin reading.',
   },
   navigation: {
     toggleMenu: 'Toggle navigation',
@@ -191,14 +200,14 @@ export const defaultMessages: I18nMessages = {
     searchPlaceholder: 'Search documentation...',
     categories: 'Categories',
     tags: 'Tags',
-    noResults: 'No results found'
+    noResults: 'No results found',
   },
   document: {
     copyCode: 'Copy',
     codeCopied: 'Copied!',
     copyFailed: 'Copy failed',
     tableOfContents: 'Table of Contents',
-    backToTop: 'Back to top'
+    backToTop: 'Back to top',
   },
   export: {
     title: 'Export Documentation',
@@ -215,15 +224,15 @@ export const defaultMessages: I18nMessages = {
     options: {
       includeTheme: 'Include theme styles',
       includeTOC: 'Include table of contents',
-      embedAssets: 'Embed assets (images, etc.)'
-    }
+      embedAssets: 'Embed assets (images, etc.)',
+    },
   },
   errors: {
     documentNotFound: 'Document not found',
     loadError: 'Failed to load document',
     networkError: 'Network error occurred',
-    unknown: 'An unexpected error occurred'
-  }
+    unknown: 'An unexpected error occurred',
+  },
 };
 
 /**
@@ -231,7 +240,7 @@ export const defaultMessages: I18nMessages = {
  */
 export function createI18nConfig(overrides: Partial<I18nConfig> = {}): I18nConfig {
   const messages = overrides.messages || {};
-  
+
   // Ensure English messages exist
   if (!messages.en) {
     messages.en = defaultMessages;
@@ -244,7 +253,7 @@ export function createI18nConfig(overrides: Partial<I18nConfig> = {}): I18nConfi
     locale: 'en',
     fallbackLocale: 'en',
     ...overrides,
-    messages
+    messages,
   };
 }
 
@@ -253,29 +262,36 @@ export function createI18nConfig(overrides: Partial<I18nConfig> = {}): I18nConfi
  */
 function mergeMessages(defaults: I18nMessages, custom: I18nMessages): I18nMessages {
   const result: I18nMessages = { ...defaults };
-  
+
   for (const key in custom) {
     if (Object.prototype.hasOwnProperty.call(custom, key)) {
       const defaultValue = defaults[key];
       const customValue = custom[key];
-      
-      if (typeof customValue === 'object' && typeof defaultValue === 'object' && 
-          !Array.isArray(customValue) && !Array.isArray(defaultValue)) {
+
+      if (
+        typeof customValue === 'object' &&
+        typeof defaultValue === 'object' &&
+        !Array.isArray(customValue) &&
+        !Array.isArray(defaultValue)
+      ) {
         result[key] = mergeMessages(defaultValue as I18nMessages, customValue as I18nMessages);
       } else {
         result[key] = customValue;
       }
     }
   }
-  
+
   return result;
 }
 
 /**
  * Helper function to create locale-specific messages
  */
-export function createLocaleMessages(locale: string, messages: I18nMessages): Record<string, I18nMessages> {
+export function createLocaleMessages(
+  locale: string,
+  messages: I18nMessages
+): Record<string, I18nMessages> {
   return {
-    [locale]: messages
+    [locale]: messages,
   };
 }

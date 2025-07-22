@@ -8,10 +8,12 @@
 Phase 4 represents the evolutionary path of the library, focusing on advanced features that differentiate it from basic markdown viewers. This phase is designed to be modular, allowing selective implementation based on user feedback and market needs.
 
 ## Task 4.1: Advanced Plugin Ecosystem
+
 **Timeline:** 2-3 weeks  
 **Priority:** High
 
 ### Subtask 4.1.1: Plugin Marketplace
+
 **Files:** `src/marketplace/`, `plugins/registry/`  
 **Timeline:** 1 week
 
@@ -63,7 +65,7 @@ export class PluginMarketplace {
           pluginId: plugin.id,
           currentVersion: plugin.version,
           latestVersion: latest.version,
-          changelog: latest.changelog
+          changelog: latest.changelog,
         });
       }
     }
@@ -79,7 +81,7 @@ export class PluginRegistry {
   async search(query: string, filters?: PluginFilters): Promise<PluginInfo[]> {
     const params = new URLSearchParams({
       q: query,
-      ...filters
+      ...filters,
     });
 
     const response = await fetch(`${this.apiUrl}/search?${params}`);
@@ -87,10 +89,8 @@ export class PluginRegistry {
   }
 
   async getPlugin(id: string, version?: string): Promise<PluginInfo> {
-    const url = version 
-      ? `${this.apiUrl}/${id}/${version}`
-      : `${this.apiUrl}/${id}`;
-    
+    const url = version ? `${this.apiUrl}/${id}/${version}` : `${this.apiUrl}/${id}`;
+
     const response = await fetch(url);
     return response.json();
   }
@@ -109,7 +109,7 @@ export class PluginRegistry {
     await fetch(`${this.apiUrl}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pluginData)
+      body: JSON.stringify(pluginData),
     });
   }
 }
@@ -136,6 +136,7 @@ interface PluginInfo {
 ```
 
 ### Subtask 4.1.2: Advanced Plugin Types
+
 **Files:** `src/plugins/types/`  
 **Timeline:** 1 week
 
@@ -149,7 +150,7 @@ export abstract class ThemePlugin implements Plugin {
   hooks: PluginHooks = {
     afterRender: async (html, document) => {
       return this.applyThemeSpecificTransforms(html, document);
-    }
+    },
   };
 
   abstract applyThemeSpecificTransforms(html: string, document: DocumentMetadata): string;
@@ -180,7 +181,7 @@ export abstract class RendererPlugin implements Plugin {
         return this.render(content, document);
       }
       return content;
-    }
+    },
   };
 
   abstract render(content: string, document: DocumentMetadata): Promise<string>;
@@ -226,6 +227,7 @@ interface ToolbarButton {
 ```
 
 ### Subtask 4.1.3: Plugin Development Kit
+
 **Files:** `src/sdk/`, `docs/PLUGIN_DEVELOPMENT.md`  
 **Timeline:** 1 week
 
@@ -275,7 +277,7 @@ export class PluginSDK {
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -366,10 +368,12 @@ export class PluginAPI {
 ```
 
 ## Task 4.2: AI-Powered Features
+
 **Timeline:** 3-4 weeks  
 **Priority:** Medium
 
 ### Subtask 4.2.1: Smart Content Generation
+
 **Files:** `src/ai/`, `src/plugins/builtin/ai.ts`  
 **Timeline:** 1.5 weeks
 
@@ -470,14 +474,12 @@ export class SmartSearch {
     }
 
     scores.sort((a, b) => b.score - a.score);
-    
-    return scores
-      .slice(0, limit)
-      .map(({ id, score }) => ({
-        document: this.getDocumentById(id),
-        score,
-        matches: []
-      }));
+
+    return scores.slice(0, limit).map(({ id, score }) => ({
+      document: this.getDocumentById(id),
+      score,
+      matches: [],
+    }));
   }
 
   async answerQuestion(question: string, context: DocumentMetadata[]): Promise<string> {
@@ -511,6 +513,7 @@ export class SmartSearch {
 ```
 
 ### Subtask 4.2.2: Content Analysis and Insights
+
 **Files:** `src/ai/analyzer/`  
 **Timeline:** 1 week
 
@@ -525,7 +528,7 @@ export class ContentAnalyzer {
 
   async analyzeReadability(content: string): Promise<ReadabilityReport> {
     const metrics = this.calculateBasicMetrics(content);
-    
+
     const prompt = `
       Analyze the readability of this documentation and provide suggestions for improvement:
       
@@ -540,14 +543,14 @@ export class ContentAnalyzer {
     return {
       ...metrics,
       ...analysis,
-      overallScore: this.calculateOverallScore(metrics, analysis)
+      overallScore: this.calculateOverallScore(metrics, analysis),
     };
   }
 
   async findGaps(documents: DocumentMetadata[]): Promise<ContentGap[]> {
     const contentOverview = documents.map(doc => ({
       title: doc.title,
-      summary: doc.content.substring(0, 500)
+      summary: doc.content.substring(0, 500),
     }));
 
     const prompt = `
@@ -578,8 +581,10 @@ export class ContentAnalyzer {
   }
 
   async detectOutdatedContent(content: string, lastModified: Date): Promise<OutdatedAnalysis> {
-    const daysSinceUpdate = Math.floor((Date.now() - lastModified.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const daysSinceUpdate = Math.floor(
+      (Date.now() - lastModified.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
     const prompt = `
       Analyze if this documentation might be outdated (last updated ${daysSinceUpdate} days ago):
       
@@ -604,17 +609,19 @@ export class ContentAnalyzer {
       sentenceCount: sentences,
       avgWordsPerSentence,
       readingTimeMinutes: readingTime,
-      fleschScore: this.calculateFleschScore(avgWordsPerSentence, content)
+      fleschScore: this.calculateFleschScore(avgWordsPerSentence, content),
     };
   }
 }
 ```
 
 ## Task 4.3: Collaboration Features
+
 **Timeline:** 2-3 weeks  
 **Priority:** Medium
 
 ### Subtask 4.3.1: Real-time Collaborative Editing
+
 **Files:** `src/collaboration/`, `src/realtime/`  
 **Timeline:** 1.5 weeks
 
@@ -625,7 +632,10 @@ export class CollaborativeEditor {
   private operationalTransform: OperationalTransform;
   private documentState: DocumentState;
 
-  constructor(private documentId: string, private userId: string) {
+  constructor(
+    private documentId: string,
+    private userId: string
+  ) {
     this.operationalTransform = new OperationalTransform();
     this.initializeWebSocket();
   }
@@ -633,11 +643,13 @@ export class CollaborativeEditor {
   async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.websocket.onopen = () => {
-        this.websocket.send(JSON.stringify({
-          type: 'join',
-          documentId: this.documentId,
-          userId: this.userId
-        }));
+        this.websocket.send(
+          JSON.stringify({
+            type: 'join',
+            documentId: this.documentId,
+            userId: this.userId,
+          })
+        );
         resolve();
       };
 
@@ -648,23 +660,25 @@ export class CollaborativeEditor {
   applyOperation(operation: Operation): void {
     // Apply operation locally
     this.documentState = this.operationalTransform.apply(this.documentState, operation);
-    
+
     // Send to other collaborators
-    this.websocket.send(JSON.stringify({
-      type: 'operation',
-      operation,
-      documentId: this.documentId,
-      userId: this.userId,
-      timestamp: Date.now()
-    }));
+    this.websocket.send(
+      JSON.stringify({
+        type: 'operation',
+        operation,
+        documentId: this.documentId,
+        userId: this.userId,
+        timestamp: Date.now(),
+      })
+    );
   }
 
   private initializeWebSocket(): void {
     this.websocket = new WebSocket(`ws://localhost:8080/collaborate`);
-    
-    this.websocket.onmessage = (event) => {
+
+    this.websocket.onmessage = event => {
       const message = JSON.parse(event.data);
-      
+
       switch (message.type) {
         case 'operation':
           this.handleRemoteOperation(message.operation);
@@ -701,18 +715,18 @@ export class ReviewSystem {
       status: 'pending',
       createdAt: new Date(),
       comments: [],
-      approvals: []
+      approvals: [],
     };
 
     if (!this.reviews.has(documentId)) {
       this.reviews.set(documentId, []);
     }
-    
+
     this.reviews.get(documentId)!.push(newReview);
-    
+
     // Notify stakeholders
     await this.notifyReviewers(newReview);
-    
+
     return newReview;
   }
 
@@ -721,7 +735,7 @@ export class ReviewSystem {
     if (review) {
       review.approvals.push({
         approverId,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
 
       if (review.approvals.length >= 2) {
@@ -739,7 +753,7 @@ export class ReviewSystem {
         authorId: comment.authorId,
         content: comment.content,
         createdAt: new Date(),
-        line: comment.line
+        line: comment.line,
       };
 
       review.comments.push(newComment);
@@ -752,6 +766,7 @@ export class ReviewSystem {
 ```
 
 ### Subtask 4.3.2: Discussion and Annotation System
+
 **Files:** `src/annotations/`, `src/discussions/`  
 **Timeline:** 1 week
 
@@ -769,7 +784,7 @@ export class AnnotationManager {
       position: annotation.position,
       type: annotation.type,
       createdAt: new Date(),
-      replies: []
+      replies: [],
     };
 
     if (!this.annotations.has(documentId)) {
@@ -778,7 +793,7 @@ export class AnnotationManager {
 
     this.annotations.get(documentId)!.push(newAnnotation);
     this.renderAnnotation(newAnnotation);
-    
+
     return newAnnotation;
   }
 
@@ -789,12 +804,12 @@ export class AnnotationManager {
         id: generateId(),
         authorId: reply.authorId,
         content: reply.content,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       annotation.replies.push(newReply);
       this.updateAnnotationDisplay(annotation);
-      
+
       return newReply;
     }
 
@@ -805,7 +820,7 @@ export class AnnotationManager {
     const element = document.createElement('div');
     element.className = 'annotation-marker';
     element.setAttribute('data-annotation-id', annotation.id);
-    
+
     // Position the annotation marker
     const targetElement = this.findElementAtPosition(annotation.position);
     if (targetElement) {
@@ -828,7 +843,7 @@ export class DiscussionForum {
       tags: data.tags || [],
       status: 'open',
       createdAt: new Date(),
-      posts: []
+      posts: [],
     };
 
     if (!this.discussions.has(documentId)) {
@@ -836,7 +851,7 @@ export class DiscussionForum {
     }
 
     this.discussions.get(documentId)!.push(discussion);
-    
+
     return discussion;
   }
 
@@ -848,7 +863,7 @@ export class DiscussionForum {
         authorId: post.authorId,
         content: post.content,
         createdAt: new Date(),
-        votes: 0
+        votes: 0,
       };
 
       discussion.posts.push(newPost);
@@ -865,10 +880,12 @@ export class DiscussionForum {
 ```
 
 ## Task 4.4: Advanced Integrations
+
 **Timeline:** 2-3 weeks  
 **Priority:** Low
 
 ### Subtask 4.4.1: Version Control Integration
+
 **Files:** `src/integrations/git/`, `src/integrations/github/`  
 **Timeline:** 1 week
 
@@ -897,12 +914,17 @@ export class GitIntegration {
     return this.gitProvider.commit(message, files);
   }
 
-  async createPullRequest(title: string, description: string, sourceBranch: string, targetBranch: string = 'main'): Promise<PullRequest> {
+  async createPullRequest(
+    title: string,
+    description: string,
+    sourceBranch: string,
+    targetBranch: string = 'main'
+  ): Promise<PullRequest> {
     return this.gitProvider.createPullRequest({
       title,
       description,
       sourceBranch,
-      targetBranch
+      targetBranch,
     });
   }
 }
@@ -913,7 +935,7 @@ export class GitHubProvider implements GitProvider {
 
   constructor(private config: GitHubConfig) {
     this.octokit = new Octokit({
-      auth: config.token
+      auth: config.token,
     });
   }
 
@@ -921,7 +943,7 @@ export class GitHubProvider implements GitProvider {
     const { data } = await this.octokit.rest.repos.listCommits({
       owner: this.config.owner,
       repo: this.config.repo,
-      path: filePath
+      path: filePath,
     });
 
     return data.map(commit => ({
@@ -929,7 +951,7 @@ export class GitHubProvider implements GitProvider {
       message: commit.commit.message,
       author: commit.commit.author?.name || 'Unknown',
       date: new Date(commit.commit.author?.date || ''),
-      url: commit.html_url
+      url: commit.html_url,
     }));
   }
 
@@ -940,7 +962,7 @@ export class GitHubProvider implements GitProvider {
       title: data.title,
       body: data.description,
       head: data.sourceBranch,
-      base: data.targetBranch
+      base: data.targetBranch,
     });
 
     return {
@@ -948,13 +970,14 @@ export class GitHubProvider implements GitProvider {
       number: pr.number,
       title: pr.title,
       url: pr.html_url,
-      status: 'open'
+      status: 'open',
     };
   }
 }
 ```
 
 ### Subtask 4.4.2: CMS and External Service Integrations
+
 **Files:** `src/integrations/cms/`, `src/integrations/services/`  
 **Timeline:** 1 week
 
@@ -966,13 +989,13 @@ export class ContentfulProvider implements CMSProvider {
   constructor(config: ContentfulConfig) {
     this.client = createClient({
       space: config.spaceId,
-      accessToken: config.accessToken
+      accessToken: config.accessToken,
     });
   }
 
   async getDocuments(): Promise<DocumentMetadata[]> {
     const entries = await this.client.getEntries({
-      content_type: 'documentation'
+      content_type: 'documentation',
     });
 
     return entries.items.map(entry => ({
@@ -981,20 +1004,20 @@ export class ContentfulProvider implements CMSProvider {
       content: entry.fields.content,
       path: entry.fields.slug,
       lastModified: new Date(entry.sys.updatedAt),
-      tags: entry.fields.tags || []
+      tags: entry.fields.tags || [],
     }));
   }
 
   async getDocument(id: string): Promise<DocumentMetadata> {
     const entry = await this.client.getEntry(id);
-    
+
     return {
       id: entry.sys.id,
       title: entry.fields.title,
       content: entry.fields.content,
       path: entry.fields.slug,
       lastModified: new Date(entry.sys.updatedAt),
-      tags: entry.fields.tags || []
+      tags: entry.fields.tags || [],
     };
   }
 
@@ -1020,25 +1043,25 @@ export class SlackIntegration {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*${document.title}* has been updated`
+            text: `*${document.title}* has been updated`,
           },
           accessory: {
             type: 'button',
             text: {
               type: 'plain_text',
-              text: 'View Document'
+              text: 'View Document',
             },
-            url: document.url
-          }
-        }
-      ]
+            url: document.url,
+          },
+        },
+      ],
     });
   }
 
   async createDocumentationChannel(name: string): Promise<string> {
     const result = await this.client.conversations.create({
       name: `docs-${name}`,
-      is_private: false
+      is_private: false,
     });
 
     return result.channel?.id || '';

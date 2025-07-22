@@ -9,12 +9,12 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>My Documentation</title>
     <!-- Optional: Add syntax highlighting styles -->
-    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css">
-</head>
-<body>
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css" />
+  </head>
+  <body>
     <div id="docs"></div>
 
     <!-- Load dependencies -->
@@ -22,30 +22,30 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
     <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
-    
+
     <!-- Load the viewer -->
     <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 
     <script>
-        const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
-        
-        const viewer = new MarkdownDocsViewer({
-            container: '#docs',
-            title: 'My Documentation',
-            theme: defaultTheme,
-            source: {
-                type: 'local',
-                documents: [
-                    {
-                        id: 'intro',
-                        title: 'Introduction',
-                        content: '# Welcome\n\nThis is your documentation!'
-                    }
-                ]
-            }
-        });
+      const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+
+      const viewer = new MarkdownDocsViewer({
+        container: '#docs',
+        title: 'My Documentation',
+        theme: defaultTheme,
+        source: {
+          type: 'local',
+          documents: [
+            {
+              id: 'intro',
+              title: 'Introduction',
+              content: '# Welcome\n\nThis is your documentation!',
+            },
+          ],
+        },
+      });
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -53,15 +53,20 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
 
 ```html
 <script type="module">
-import { MarkdownDocsViewer, defaultTheme } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+  import {
+    MarkdownDocsViewer,
+    defaultTheme,
+  } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
 
-const viewer = new MarkdownDocsViewer({
+  const viewer = new MarkdownDocsViewer({
     container: '#docs',
     source: {
-        type: 'local',
-        documents: [/* your documents */]
-    }
-});
+      type: 'local',
+      documents: [
+        /* your documents */
+      ],
+    },
+  });
 </script>
 ```
 
@@ -76,12 +81,14 @@ import { MarkdownDocsViewer, defaultTheme } from '@austinorphan/markdown-docs-vi
 import 'highlight.js/styles/github.css'; // Optional styles
 
 const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    theme: defaultTheme,
-    source: {
-        type: 'local',
-        documents: [/* your documents */]
-    }
+  container: '#docs',
+  theme: defaultTheme,
+  source: {
+    type: 'local',
+    documents: [
+      /* your documents */
+    ],
+  },
 });
 ```
 
@@ -90,10 +97,12 @@ const viewer = new MarkdownDocsViewer({
 The viewer requires these dependencies:
 
 ### Required
+
 - **marked** - Markdown parser
 - **DOM environment** - Browser with document/window objects
 
 ### Optional (but recommended)
+
 - **marked-highlight** - Enhanced syntax highlighting
 - **highlight.js** - Syntax highlighting engine
 
@@ -129,17 +138,19 @@ The viewer handles missing dependencies gracefully:
 
 ```javascript
 try {
-    const viewer = new MarkdownDocsViewer({
-        container: '#docs',
-        source: { /* config */ },
-        onError: (error) => {
-            console.error('Viewer error:', error);
-            showUserFriendlyError(error);
-        }
-    });
+  const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    source: {
+      /* config */
+    },
+    onError: error => {
+      console.error('Viewer error:', error);
+      showUserFriendlyError(error);
+    },
+  });
 } catch (error) {
-    console.error('Failed to initialize:', error);
-    handleInitializationError(error);
+  console.error('Failed to initialize:', error);
+  handleInitializationError(error);
 }
 ```
 
@@ -155,12 +166,12 @@ try {
 <!-- Instead of require(), use UMD -->
 <script src="path/to/index.umd.cjs"></script>
 <script>
-    const viewer = new MarkdownDocsViewer(config);
+  const viewer = new MarkdownDocsViewer(config);
 </script>
 
 <!-- Or use ES modules -->
 <script type="module">
-import { MarkdownDocsViewer } from 'path/to/index.es.js';
+  import { MarkdownDocsViewer } from 'path/to/index.es.js';
 </script>
 ```
 
@@ -184,16 +195,16 @@ import { MarkdownDocsViewer } from 'path/to/index.es.js';
 ```html
 <div id="docs"></div>
 <script>
-// Make sure container exists before creating viewer
-const container = document.getElementById('docs');
-if (container) {
+  // Make sure container exists before creating viewer
+  const container = document.getElementById('docs');
+  if (container) {
     const viewer = new MarkdownDocsViewer({
-        container: '#docs',
-        // ...
+      container: '#docs',
+      // ...
     });
-} else {
+  } else {
     console.error('Container not found');
-}
+  }
 </script>
 ```
 
@@ -204,16 +215,16 @@ Here's a complete, working example:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentation Viewer</title>
-    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css">
-</head>
-<body>
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css" />
+  </head>
+  <body>
     <div id="app">
-        <div id="error-container" style="display: none;"></div>
-        <div id="docs-container"></div>
+      <div id="error-container" style="display: none;"></div>
+      <div id="docs-container"></div>
     </div>
 
     <!-- Dependencies -->
@@ -229,43 +240,43 @@ Here's a complete, working example:
     <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 
     <script>
-        function showError(message) {
-            const errorContainer = document.getElementById('error-container');
-            errorContainer.innerHTML = `
+      function showError(message) {
+        const errorContainer = document.getElementById('error-container');
+        errorContainer.innerHTML = `
                 <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 6px; margin: 20px 0;">
                     <strong>Error:</strong> ${message}
                 </div>
             `;
-            errorContainer.style.display = 'block';
-        }
+        errorContainer.style.display = 'block';
+      }
 
-        function hideError() {
-            document.getElementById('error-container').style.display = 'none';
-        }
+      function hideError() {
+        document.getElementById('error-container').style.display = 'none';
+      }
 
-        // Check dependencies
-        if (typeof marked === 'undefined') {
-            showError('marked library is not loaded');
-        } else if (!document.getElementById('docs-container')) {
-            showError('Container element not found');
-        } else {
-            hideError();
-            
-            try {
-                const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
-                
-                const viewer = new MarkdownDocsViewer({
-                    container: '#docs-container',
-                    title: 'My Documentation',
-                    theme: defaultTheme,
-                    source: {
-                        type: 'local',
-                        documents: [
-                            {
-                                id: 'intro',
-                                title: 'Introduction',
-                                category: 'Getting Started',
-                                content: `# Welcome to Your Documentation
+      // Check dependencies
+      if (typeof marked === 'undefined') {
+        showError('marked library is not loaded');
+      } else if (!document.getElementById('docs-container')) {
+        showError('Container element not found');
+      } else {
+        hideError();
+
+        try {
+          const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
+
+          const viewer = new MarkdownDocsViewer({
+            container: '#docs-container',
+            title: 'My Documentation',
+            theme: defaultTheme,
+            source: {
+              type: 'local',
+              documents: [
+                {
+                  id: 'intro',
+                  title: 'Introduction',
+                  category: 'Getting Started',
+                  content: `# Welcome to Your Documentation
 
 This is a complete example of the Markdown Documentation Viewer running in a browser.
 
@@ -292,13 +303,13 @@ const viewer = new MarkdownDocsViewer({
 \`\`\`
 
 Try searching for content or switching themes!
-`
-                            },
-                            {
-                                id: 'api',
-                                title: 'API Reference',
-                                category: 'Reference',
-                                content: `# API Reference
+`,
+                },
+                {
+                  id: 'api',
+                  title: 'API Reference',
+                  category: 'Reference',
+                  content: `# API Reference
 
 ## MarkdownDocsViewer
 
@@ -327,54 +338,54 @@ Destroys the viewer and cleans up resources.
 \`\`\`javascript
 viewer.destroy();
 \`\`\`
-`
-                            }
-                        ]
-                    },
-                    navigation: {
-                        showCategories: true,
-                        collapsible: true
-                    },
-                    search: {
-                        enabled: true,
-                        placeholder: 'Search documentation...'
-                    },
-                    render: {
-                        syntaxHighlighting: true,
-                        copyCodeButton: true
-                    },
-                    onDocumentLoad: (doc) => {
-                        console.log('Loaded:', doc.title);
-                    },
-                    onError: (error) => {
-                        console.error('Viewer error:', error);
-                        showError(error.userMessage || error.message);
-                    }
-                });
+`,
+                },
+              ],
+            },
+            navigation: {
+              showCategories: true,
+              collapsible: true,
+            },
+            search: {
+              enabled: true,
+              placeholder: 'Search documentation...',
+            },
+            render: {
+              syntaxHighlighting: true,
+              copyCodeButton: true,
+            },
+            onDocumentLoad: doc => {
+              console.log('Loaded:', doc.title);
+            },
+            onError: error => {
+              console.error('Viewer error:', error);
+              showError(error.userMessage || error.message);
+            },
+          });
 
-                // Add theme switcher
-                const themeSwitcher = document.createElement('button');
-                themeSwitcher.textContent = 'Switch to Dark Theme';
-                themeSwitcher.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 8px 16px; border: none; border-radius: 4px; background: #0969da; color: white; cursor: pointer; z-index: 1000;';
-                
-                let isDark = false;
-                themeSwitcher.addEventListener('click', () => {
-                    isDark = !isDark;
-                    viewer.setTheme(isDark ? darkTheme : defaultTheme);
-                    themeSwitcher.textContent = isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme';
-                });
-                
-                document.body.appendChild(themeSwitcher);
-                
-                console.log('Documentation viewer loaded successfully!');
-                
-            } catch (error) {
-                console.error('Failed to initialize viewer:', error);
-                showError(error.message);
-            }
+          // Add theme switcher
+          const themeSwitcher = document.createElement('button');
+          themeSwitcher.textContent = 'Switch to Dark Theme';
+          themeSwitcher.style.cssText =
+            'position: fixed; top: 20px; right: 20px; padding: 8px 16px; border: none; border-radius: 4px; background: #0969da; color: white; cursor: pointer; z-index: 1000;';
+
+          let isDark = false;
+          themeSwitcher.addEventListener('click', () => {
+            isDark = !isDark;
+            viewer.setTheme(isDark ? darkTheme : defaultTheme);
+            themeSwitcher.textContent = isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme';
+          });
+
+          document.body.appendChild(themeSwitcher);
+
+          console.log('Documentation viewer loaded successfully!');
+        } catch (error) {
+          console.error('Failed to initialize viewer:', error);
+          showError(error.message);
         }
+      }
     </script>
-</body>
+  </body>
 </html>
 ```
 

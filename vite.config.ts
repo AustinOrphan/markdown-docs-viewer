@@ -7,7 +7,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'MarkdownDocsViewer',
       formats: ['es', 'umd'],
-      fileName: (format) => format === 'umd' ? 'index.umd.cjs' : `index.${format}.js`
+      fileName: format => (format === 'umd' ? 'index.umd.cjs' : `index.${format}.js`),
     },
     rollupOptions: {
       external: ['marked', 'marked-highlight', 'highlight.js'],
@@ -15,14 +15,14 @@ export default defineConfig({
         globals: {
           marked: 'marked',
           'marked-highlight': 'markedHighlight',
-          'highlight.js': 'hljs'
-        }
-      }
+          'highlight.js': 'hljs',
+        },
+      },
     },
     sourcemap: true,
-    minify: true
+    minify: true,
   },
   server: {
-    port: 5000
-  }
+    port: 5000,
+  },
 });

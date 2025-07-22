@@ -16,7 +16,7 @@ export const BREAKPOINTS = {
   // Desktop
   xl: 1200,
   // Large desktop
-  xxl: 1400
+  xxl: 1400,
 } as const;
 
 /**
@@ -27,7 +27,7 @@ export const CONTAINER_MAX_WIDTHS = {
   md: 720,
   lg: 960,
   xl: 1140,
-  xxl: 1320
+  xxl: 1320,
 } as const;
 
 /**
@@ -36,7 +36,7 @@ export const CONTAINER_MAX_WIDTHS = {
 export const TOUCH_TARGETS = {
   minimum: 44, // WCAG AAA guideline
   comfortable: 48, // Recommended comfortable size
-  large: 56 // Large touch targets for important actions
+  large: 56, // Large touch targets for important actions
 } as const;
 
 /**
@@ -49,12 +49,12 @@ export const MOBILE_TYPOGRAPHY = {
     md: 16,
     lg: 16,
     xl: 16,
-    xxl: 16
+    xxl: 16,
   },
   lineHeight: {
     tight: 1.25,
     normal: 1.5,
-    relaxed: 1.75
+    relaxed: 1.75,
   },
   headings: {
     h1: { xs: 1.75, sm: 2, md: 2.5, lg: 3, xl: 3.5, xxl: 4 },
@@ -62,8 +62,8 @@ export const MOBILE_TYPOGRAPHY = {
     h3: { xs: 1.25, sm: 1.5, md: 1.75, lg: 1.875, xl: 2, xxl: 2.125 },
     h4: { xs: 1.125, sm: 1.25, md: 1.375, lg: 1.5, xl: 1.625, xxl: 1.75 },
     h5: { xs: 1, sm: 1.125, md: 1.25, lg: 1.375, xl: 1.5, xxl: 1.625 },
-    h6: { xs: 0.875, sm: 1, md: 1.125, lg: 1.25, xl: 1.375, xxl: 1.5 }
-  }
+    h6: { xs: 0.875, sm: 1, md: 1.125, lg: 1.25, xl: 1.375, xxl: 1.5 },
+  },
 } as const;
 
 /**
@@ -214,7 +214,7 @@ export function generateResponsiveTypography(): string {
       line-height: ${MOBILE_TYPOGRAPHY.lineHeight.tight};
       margin-bottom: var(--mdv-spacing-md);
     }`;
-      
+
       // Add responsive sizes
       Object.entries(sizes).forEach(([breakpoint, size]) => {
         if (breakpoint !== 'xs' && BREAKPOINTS[breakpoint as keyof typeof BREAKPOINTS]) {
@@ -226,11 +226,11 @@ export function generateResponsiveTypography(): string {
     }`;
         }
       });
-      
+
       return styles;
     })
     .join('\n');
-  
+
   return `
     /* Responsive Typography */
     body {
@@ -567,7 +567,7 @@ export function generateMobileCSS(_config?: DocumentationConfig): string {
   const typography = generateResponsiveTypography();
   const touchStyles = generateTouchStyles();
   const mobileLayout = generateMobileLayout();
-  
+
   return `
     ${cssVariables}
     ${mediaQueries}
@@ -590,9 +590,9 @@ export function isMobileViewport(): boolean {
  */
 export function getCurrentBreakpoint(): keyof typeof BREAKPOINTS {
   if (typeof window === 'undefined') return 'md';
-  
+
   const width = window.innerWidth;
-  
+
   if (width >= BREAKPOINTS.xxl) return 'xxl';
   if (width >= BREAKPOINTS.xl) return 'xl';
   if (width >= BREAKPOINTS.lg) return 'lg';
@@ -606,15 +606,16 @@ export function getCurrentBreakpoint(): keyof typeof BREAKPOINTS {
  */
 export function addViewportMeta(): void {
   if (typeof document === 'undefined') return;
-  
+
   let viewport = document.querySelector('meta[name="viewport"]') as HTMLMetaElement;
-  
+
   if (!viewport) {
     viewport = document.createElement('meta');
     viewport.name = 'viewport';
     document.head.appendChild(viewport);
   }
-  
+
   // Optimal viewport configuration for responsive design
-  viewport.content = 'width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover, user-scalable=yes, maximum-scale=5';
+  viewport.content =
+    'width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover, user-scalable=yes, maximum-scale=5';
 }

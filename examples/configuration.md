@@ -8,19 +8,19 @@ The main configuration object accepts the following properties:
 
 ```typescript
 interface DocumentationConfig {
-    container: string | HTMLElement;
-    source: DocumentSource;
-    theme?: Theme;
-    title?: string;
-    logo?: string;
-    footer?: string;
-    navigation?: NavigationConfig;
-    search?: SearchConfig;
-    render?: RenderConfig;
-    responsive?: boolean;
-    routing?: 'hash' | 'history' | 'none';
-    onDocumentLoad?: (doc: Document) => void;
-    onError?: (error: Error) => void;
+  container: string | HTMLElement;
+  source: DocumentSource;
+  theme?: Theme;
+  title?: string;
+  logo?: string;
+  footer?: string;
+  navigation?: NavigationConfig;
+  search?: SearchConfig;
+  render?: RenderConfig;
+  responsive?: boolean;
+  routing?: 'hash' | 'history' | 'none';
+  onDocumentLoad?: (doc: Document) => void;
+  onError?: (error: Error) => void;
 }
 ```
 
@@ -132,6 +132,7 @@ search: {
 ### Search Indexing
 
 The search system automatically indexes:
+
 - Document titles
 - Document content (markdown)
 - Document descriptions
@@ -161,8 +162,8 @@ Syntax highlighting is powered by Highlight.js:
 ```markdown
 \`\`\`javascript
 const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    // ... configuration
+container: '#docs',
+// ... configuration
 });
 \`\`\`
 ```
@@ -174,17 +175,19 @@ Supported languages include JavaScript, TypeScript, Python, Java, C++, and 180+ 
 Control URL routing behavior:
 
 ```javascript
-routing: 'hash'      // Use hash-based routing (#/document-id)
-routing: 'history'   // Use HTML5 history API (/document-id)
-routing: 'none'      // Disable routing
+routing: 'hash'; // Use hash-based routing (#/document-id)
+routing: 'history'; // Use HTML5 history API (/document-id)
+routing: 'none'; // Disable routing
 ```
 
 ### Hash Routing
+
 - URLs like `#/getting-started`
 - Works without server configuration
 - Compatible with static hosting
 
 ### History Routing
+
 - Clean URLs like `/getting-started`
 - Requires server configuration for SPA
 - Better SEO and user experience
@@ -199,12 +202,12 @@ React to viewer events:
         console.log('Loaded:', document.title);
         // Track analytics, update UI, etc.
     },
-    
+
     onError: (error) => {
         console.error('Viewer error:', error);
         // Handle errors gracefully
     },
-    
+
     onSearchQuery: (query, results) => {
         console.log(`Search for "${query}" returned ${results.length} results`);
     }
@@ -264,6 +267,7 @@ Ensure accessibility compliance:
 ## Environment-Specific Configuration
 
 ### Development
+
 ```javascript
 {
     debug: true,                 // Enable debug logging
@@ -273,6 +277,7 @@ Ensure accessibility compliance:
 ```
 
 ### Production
+
 ```javascript
 {
     minified: true,             // Use minified assets
@@ -287,6 +292,7 @@ Ensure accessibility compliance:
 ## Migration from Other Systems
 
 ### From GitBook
+
 ```javascript
 // GitBook-style configuration
 {
@@ -300,6 +306,7 @@ Ensure accessibility compliance:
 ```
 
 ### From Docsify
+
 ```javascript
 // Docsify-style configuration
 {
@@ -319,11 +326,11 @@ The viewer includes built-in configuration validation:
 ```javascript
 // Invalid configuration will throw helpful errors
 try {
-    const viewer = new MarkdownDocsViewer({
-        // invalid config
-    });
+  const viewer = new MarkdownDocsViewer({
+    // invalid config
+  });
 } catch (error) {
-    console.error('Configuration error:', error.message);
+  console.error('Configuration error:', error.message);
 }
 ```
 

@@ -5,6 +5,7 @@
 ### Task 1.1: Create Working Demo Page
 
 #### Files to Create:
+
 - `demo/index.html`
 - `demo/demo.css`
 - `demo/demo.js`
@@ -17,95 +18,97 @@
 #### Specific Implementation:
 
 **demo/index.html**:
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Markdown Docs Viewer - Demo</title>
-    <link rel="stylesheet" href="demo.css">
-</head>
-<body>
+    <link rel="stylesheet" href="demo.css" />
+  </head>
+  <body>
     <div class="demo-header">
-        <h1>Markdown Documentation Viewer Demo</h1>
-        <div class="demo-controls">
-            <select id="theme-selector">
-                <option value="default">Light Theme</option>
-                <option value="dark">Dark Theme</option>
-            </select>
-            <select id="example-selector">
-                <option value="basic">Basic Example</option>
-                <option value="github">GitHub Source</option>
-                <option value="url">URL Source</option>
-                <option value="advanced">Advanced Config</option>
-            </select>
-        </div>
+      <h1>Markdown Documentation Viewer Demo</h1>
+      <div class="demo-controls">
+        <select id="theme-selector">
+          <option value="default">Light Theme</option>
+          <option value="dark">Dark Theme</option>
+        </select>
+        <select id="example-selector">
+          <option value="basic">Basic Example</option>
+          <option value="github">GitHub Source</option>
+          <option value="url">URL Source</option>
+          <option value="advanced">Advanced Config</option>
+        </select>
+      </div>
     </div>
-    
+
     <div id="viewer-container"></div>
-    
+
     <script type="module" src="demo.js"></script>
-</body>
+  </body>
 </html>
 ```
 
 **demo/demo.js**:
+
 ```javascript
 import { createViewer, defaultTheme, darkTheme } from '../dist/index.es.js';
 
 // Demo configurations
 const examples = {
-    basic: {
-        container: '#viewer-container',
-        title: 'Basic Documentation',
-        source: {
-            type: 'local',
-            basePath: './content',
-            documents: [
-                { id: 'start', title: 'Getting Started', file: 'getting-started.md', order: 1 },
-                { id: 'api', title: 'API Reference', file: 'api-reference.md', order: 2 },
-                { id: 'examples', title: 'Examples', file: 'examples.md', order: 3 }
-            ]
-        }
+  basic: {
+    container: '#viewer-container',
+    title: 'Basic Documentation',
+    source: {
+      type: 'local',
+      basePath: './content',
+      documents: [
+        { id: 'start', title: 'Getting Started', file: 'getting-started.md', order: 1 },
+        { id: 'api', title: 'API Reference', file: 'api-reference.md', order: 2 },
+        { id: 'examples', title: 'Examples', file: 'examples.md', order: 3 },
+      ],
     },
-    // Additional examples...
+  },
+  // Additional examples...
 };
 
 // Initialize demo
 let currentViewer = null;
 
 function initializeDemo() {
-    const themeSelector = document.getElementById('theme-selector');
-    const exampleSelector = document.getElementById('example-selector');
-    
-    // Load initial example
-    loadExample('basic');
-    
-    // Setup event listeners
-    themeSelector.addEventListener('change', handleThemeChange);
-    exampleSelector.addEventListener('change', handleExampleChange);
+  const themeSelector = document.getElementById('theme-selector');
+  const exampleSelector = document.getElementById('example-selector');
+
+  // Load initial example
+  loadExample('basic');
+
+  // Setup event listeners
+  themeSelector.addEventListener('change', handleThemeChange);
+  exampleSelector.addEventListener('change', handleExampleChange);
 }
 
 function loadExample(exampleId) {
-    if (currentViewer) {
-        currentViewer.destroy();
-    }
-    
-    const config = examples[exampleId];
-    currentViewer = createViewer(config);
+  if (currentViewer) {
+    currentViewer.destroy();
+  }
+
+  const config = examples[exampleId];
+  currentViewer = createViewer(config);
 }
 
 // Event handlers
 function handleThemeChange(event) {
-    const theme = event.target.value === 'dark' ? darkTheme : defaultTheme;
-    if (currentViewer) {
-        currentViewer.setTheme(theme);
-    }
+  const theme = event.target.value === 'dark' ? darkTheme : defaultTheme;
+  if (currentViewer) {
+    currentViewer.setTheme(theme);
+  }
 }
 
 function handleExampleChange(event) {
-    loadExample(event.target.value);
+  loadExample(event.target.value);
 }
 
 // Initialize when DOM is ready
@@ -113,6 +116,7 @@ document.addEventListener('DOMContentLoaded', initializeDemo);
 ```
 
 #### Acceptance Criteria:
+
 - [ ] Demo page loads without errors
 - [ ] All 4 example configurations work
 - [ ] Theme switching works correctly
@@ -124,6 +128,7 @@ document.addEventListener('DOMContentLoaded', initializeDemo);
 ### Task 1.2: Add Basic Test Suite
 
 #### Files to Create:
+
 - `tests/setup.ts`
 - `tests/viewer.test.ts`
 - `tests/loader.test.ts`
@@ -135,6 +140,7 @@ document.addEventListener('DOMContentLoaded', initializeDemo);
 #### Specific Implementation:
 
 **vitest.config.ts**:
+
 ```typescript
 import { defineConfig } from 'vitest/config';
 
@@ -146,18 +152,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'tests/',
-        'demo/',
-        'dist/'
-      ]
-    }
-  }
+      exclude: ['node_modules/', 'tests/', 'demo/', 'dist/'],
+    },
+  },
 });
 ```
 
 **tests/viewer.test.ts**:
+
 ```typescript
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MarkdownDocsViewer } from '../src/viewer';
@@ -170,7 +172,7 @@ describe('MarkdownDocsViewer', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
-    
+
     config = {
       container,
       source: {
@@ -179,10 +181,10 @@ describe('MarkdownDocsViewer', () => {
           {
             id: 'test',
             title: 'Test Document',
-            content: '# Test\n\nThis is a test document.'
-          }
-        ]
-      }
+            content: '# Test\n\nThis is a test document.',
+          },
+        ],
+      },
     };
   });
 
@@ -194,7 +196,7 @@ describe('MarkdownDocsViewer', () => {
   it('should render markdown content', async () => {
     const viewer = new MarkdownDocsViewer(config);
     await new Promise(resolve => setTimeout(resolve, 100)); // Wait for async init
-    
+
     const content = container.querySelector('.mdv-document-content');
     expect(content?.textContent).toContain('This is a test document');
   });
@@ -203,11 +205,11 @@ describe('MarkdownDocsViewer', () => {
     const viewer = new MarkdownDocsViewer(config);
     const darkTheme = {
       name: 'test-dark',
-      colors: { background: '#000000' }
+      colors: { background: '#000000' },
     };
-    
+
     viewer.setTheme(darkTheme);
-    
+
     const styles = document.querySelector('style');
     expect(styles?.textContent).toContain('#000000');
   });
@@ -215,6 +217,7 @@ describe('MarkdownDocsViewer', () => {
 ```
 
 #### Test Coverage Requirements:
+
 - [ ] Core viewer functionality: >90%
 - [ ] Document loader: >85%
 - [ ] Theme system: >80%
@@ -226,6 +229,7 @@ describe('MarkdownDocsViewer', () => {
 ### Task 1.3: Fix Package.json Metadata
 
 #### Files to Update:
+
 - `package.json`
 - `LICENSE`
 - `.npmignore`
@@ -233,6 +237,7 @@ describe('MarkdownDocsViewer', () => {
 #### Specific Changes:
 
 **package.json** updates:
+
 ```json
 {
   "name": "@yourusername/markdown-docs-viewer",
@@ -264,15 +269,12 @@ describe('MarkdownDocsViewer', () => {
   "engines": {
     "node": ">=16.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not dead"]
 }
 ```
 
 **LICENSE** (MIT):
+
 ```
 MIT License
 
@@ -298,6 +300,7 @@ SOFTWARE.
 ```
 
 #### Acceptance Criteria:
+
 - [ ] All placeholder values replaced
 - [ ] Valid repository URLs
 - [ ] Appropriate license added
@@ -309,6 +312,7 @@ SOFTWARE.
 ### Task 1.4: Create Example Content
 
 #### Files to Create:
+
 - `examples/basic/index.html`
 - `examples/basic/example.js`
 - `examples/advanced/index.html`
@@ -321,7 +325,8 @@ SOFTWARE.
 #### Content Structure:
 
 **examples/content/getting-started.md**:
-```markdown
+
+````markdown
 # Getting Started
 
 Welcome to the Markdown Documentation Viewer! This guide will help you get up and running quickly.
@@ -351,19 +356,21 @@ const viewer = createViewer({
       {
         id: 'intro',
         title: 'Introduction',
-        content: '# Welcome\n\nThis is the introduction.'
-      }
-    ]
-  }
+        content: '# Welcome\n\nThis is the introduction.',
+      },
+    ],
+  },
 });
 ```
+````
 
 ## Next Steps
 
 - Check out the [Installation Guide](installation.md)
 - Read the [Configuration Options](configuration.md)
 - Explore the [API Reference](api-reference.md)
-```
+
+````
 
 #### Acceptance Criteria:
 - [ ] All example files created
@@ -395,25 +402,29 @@ const viewer = createViewer({
 #### Constructor
 ```typescript
 new MarkdownDocsViewer(config: DocumentationConfig)
-```
+````
 
 #### Methods
+
 - `setTheme(theme: Theme): void`
 - `refresh(): Promise<void>`
 - `destroy(): void`
 
 #### Events
+
 - `onDocumentLoad: (doc: Document) => void`
 - `onError: (error: Error) => void`
 
 ### Factory Functions
 
 #### createViewer
+
 ```typescript
 createViewer(config: DocumentationConfig): MarkdownDocsViewer
 ```
 
 #### quickStart
+
 ```typescript
 quickStart(container: string | HTMLElement, documents: Document[]): MarkdownDocsViewer
 ```
@@ -421,14 +432,18 @@ quickStart(container: string | HTMLElement, documents: Document[]): MarkdownDocs
 ## Type Definitions
 
 ### DocumentationConfig
+
 [Detailed interface documentation...]
 
 ### Theme
+
 [Detailed interface documentation...]
 
 ### Document
+
 [Detailed interface documentation...]
-```
+
+````
 
 ### Task 2.2: Error Handling Improvements
 
@@ -455,25 +470,27 @@ private handleError(error: Error, context: string): void {
     details: error,
     recoverable: this.isRecoverable(error)
   };
-  
+
   this.state.error = viewerError;
-  
+
   if (this.config.onError) {
     this.config.onError(viewerError);
   }
-  
+
   this.render();
 }
-```
+````
 
 ### Task 2.3: Performance Optimizations
 
 #### Files to Update:
+
 - `src/navigation.ts` - Virtual scrolling
 - `src/loader.ts` - Improved caching
 - `src/styles.ts` - CSS optimization
 
 #### Implementation Targets:
+
 - [ ] Navigation with >1000 items renders smoothly
 - [ ] Document switching takes <100ms
 - [ ] Initial load time <2 seconds
@@ -486,6 +503,7 @@ private handleError(error: Error, context: string): void {
 ### Task 3.1: CI/CD Pipeline
 
 #### Files to Create:
+
 - `.github/workflows/ci.yml`
 - `.github/workflows/release.yml`
 - `.github/ISSUE_TEMPLATE/bug_report.md`
@@ -493,6 +511,7 @@ private handleError(error: Error, context: string): void {
 - `.github/PULL_REQUEST_TEMPLATE.md`
 
 #### CI/CD Requirements:
+
 - [ ] Automated testing on push/PR
 - [ ] Code coverage reporting
 - [ ] Automated npm publishing on release
@@ -502,11 +521,13 @@ private handleError(error: Error, context: string): void {
 ### Task 3.2: Advanced Features
 
 #### Files to Create/Update:
+
 - `src/toc.ts` - Table of contents generation
 - `src/print.css` - Print stylesheet
 - `src/accessibility.ts` - A11y enhancements
 
 #### Feature Requirements:
+
 - [ ] Auto-generated table of contents
 - [ ] Print-friendly styling
 - [ ] WCAG 2.1 AA compliance
@@ -520,12 +541,14 @@ private handleError(error: Error, context: string): void {
 ### Task 4.1: Plugin System
 
 #### Files to Create:
+
 - `src/plugins/` directory
 - `src/plugins/plugin-manager.ts`
 - `src/plugins/base-plugin.ts`
 - `examples/plugins/` directory
 
 #### Plugin Architecture:
+
 ```typescript
 interface Plugin {
   name: string;
@@ -536,7 +559,7 @@ interface Plugin {
 
 class PluginManager {
   private plugins: Map<string, Plugin> = new Map();
-  
+
   register(plugin: Plugin): void;
   unregister(name: string): void;
   getPlugin(name: string): Plugin | undefined;
@@ -548,6 +571,7 @@ class PluginManager {
 ## 📋 Validation Checklist
 
 ### Phase 1 Completion Criteria:
+
 - [ ] Demo page functional and comprehensive
 - [ ] Test suite with >80% coverage
 - [ ] Package.json metadata complete
@@ -556,18 +580,21 @@ class PluginManager {
 - [ ] Documentation updated
 
 ### Phase 2 Completion Criteria:
+
 - [ ] Complete API documentation
 - [ ] Error handling comprehensive
 - [ ] Performance targets met
 - [ ] Integration guides complete
 
 ### Phase 3 Completion Criteria:
+
 - [ ] CI/CD pipeline operational
 - [ ] Advanced features implemented
 - [ ] Production deployment ready
 - [ ] Security audit passed
 
 ### Phase 4 Completion Criteria:
+
 - [ ] Plugin system functional
 - [ ] Example plugins created
 - [ ] Community contribution ready
@@ -578,16 +605,19 @@ class PluginManager {
 ## 🚨 Blockers and Dependencies
 
 ### External Dependencies:
+
 - [ ] GitHub repository setup (for GitHub source testing)
 - [ ] NPM account setup (for publishing)
 - [ ] Domain/hosting (for demo deployment)
 
 ### Internal Dependencies:
+
 - [ ] Complete Phase 1 before starting Phase 2
 - [ ] Tests must pass before CI/CD setup
 - [ ] Documentation complete before v1.0 release
 
 ### Risk Mitigation:
+
 - Keep phases independent where possible
 - Maintain backwards compatibility
 - Document all breaking changes

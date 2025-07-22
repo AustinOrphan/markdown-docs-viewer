@@ -40,10 +40,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: ['18', '20']
-    
+
     env:
       NODE_OPTIONS: --max-old-space-size=4096
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: [lint, test]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
     name: Demo Build
     runs-on: ubuntu-latest
     needs: [build]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -145,7 +145,7 @@ jobs:
     name: Package Test
     runs-on: ubuntu-latest
     needs: [build]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -155,6 +155,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -171,7 +174,7 @@ jobs:
           cd test-install
           npm init -y
           npm install ../*.tgz
-          
+
           # Test that the package is importable
           node -e "const viewer = require('@austinorphan/markdown-docs-viewer'); console.log('Package imported successfully');"
 
@@ -186,7 +189,7 @@ jobs:
     name: Check Bundle Size
     runs-on: ubuntu-latest
     needs: [build]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -212,7 +215,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| File | Size | Gzipped |" >> $GITHUB_STEP_SUMMARY
           echo "|------|------|---------|" >> $GITHUB_STEP_SUMMARY
-          
+
           for file in dist/*.js dist/*.css; do
             if [ -f "$file" ]; then
               size=$(du -h "$file" | cut -f1)
@@ -226,7 +229,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, test, build, demo, package-test, check-size]
     if: always()
-    
+
     steps:
       - name: Check status
         run: |
