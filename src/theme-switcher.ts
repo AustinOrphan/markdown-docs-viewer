@@ -1,5 +1,6 @@
 import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
+import { ThemeBuilder } from './theme-builder';
 
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
@@ -14,6 +15,7 @@ export class ThemeSwitcher {
   private options: ThemeSwitcherOptions;
   private container: HTMLElement | null = null;
   private isOpen: boolean = false;
+  private themeBuilder: ThemeBuilder | null = null;
   
   constructor(themeManager: ThemeManager, options: ThemeSwitcherOptions = {}) {
     this.themeManager = themeManager;
@@ -262,8 +264,25 @@ export class ThemeSwitcher {
   }
   
   private openCustomThemeBuilder(): void {
-    // This will be implemented in the custom theme builder component
-    console.log('Opening custom theme builder...');
+    if (!this.themeBuilder) {
+      this.themeBuilder = new ThemeBuilder(this.themeManager, {
+        onThemeCreate: (theme) => {
+          this.selectTheme(theme.name);
+        },
+        onClose: () => {
+          this.themeBuilder = null;
+        }
+      });
+      
+      // Create container for theme builder
+      const builderContainer = document.createElement('div');
+      builderContainer.innerHTML = this.themeBuilder.render();
+      document.body.appendChild(builderContainer);
+      
+      this.themeBuilder.attachTo(builderContainer);
+    }
+    
+    this.themeBuilder.open();
     this.closeDropdown();
   }
   

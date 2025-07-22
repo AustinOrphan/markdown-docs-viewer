@@ -1002,7 +1002,7 @@ export class MarkdownDocsViewer {
         this.container.querySelector('.mdv-content')?.scrollTo(0, 0);
         
         // Close mobile sidebar
-        if (window.innerWidth <= 768) {
+        if (isMobileViewport()) {
           this.state.sidebarOpen = false;
           this.updateSidebar();
         }
