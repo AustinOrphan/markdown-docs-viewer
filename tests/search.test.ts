@@ -9,10 +9,15 @@ vi.mock('../src/performance', () => ({
     updateIndex: vi.fn(),
     search: vi.fn().mockReturnValue([]),
   })),
-  debounce: vi.fn((fn, delay) => {
+  debounce: vi.fn((fn, _delay) => {
+    // For tests, use immediate execution to avoid timing issues
     const debounced = (...args: any[]) => {
-      clearTimeout(debounced.timeout);
-      debounced.timeout = setTimeout(() => fn(...args), delay);
+      // Clear any existing timeout
+      if (debounced.timeout) {
+        clearTimeout(debounced.timeout);
+      }
+      // Use minimal delay for tests
+      debounced.timeout = setTimeout(() => fn(...args), 10);
     };
     debounced.timeout = null as any;
     return debounced;
@@ -36,8 +41,7 @@ describe('createSearch', () => {
   });
 });
 
-// TODO: Fix search tests for Vitest 3.x compatibility - timing/debounce issues
-describe.skip('SearchManager', () => {
+describe('SearchManager', () => {
   let searchManager: SearchManager;
   let mockSearchIndex: any;
   let onDocumentSelect: any;
@@ -150,7 +154,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).toHaveBeenCalledWith('te', expect.any(Object));
     });
@@ -162,7 +166,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).not.toHaveBeenCalled();
     });
@@ -187,7 +191,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).toHaveBeenCalledWith('test', expect.any(Object));
     });
@@ -284,7 +288,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       const results = container.querySelectorAll('.mdv-search-result');
       expect(results).toHaveLength(2);
@@ -300,7 +304,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       const noResults = container.querySelector('.mdv-search-no-results');
       expect(noResults).toBeTruthy();
@@ -316,7 +320,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       const resultTitle = container.querySelector('.mdv-search-result-title');
       // Check for case-insensitive highlighting
@@ -341,7 +345,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       const result = container.querySelector('.mdv-search-result');
       expect(result?.querySelector('.mdv-search-result-description')).toBeTruthy();
@@ -362,37 +366,32 @@ describe.skip('SearchManager', () => {
       input.value = 'test';
       input.dispatchEvent(new Event('input'));
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       mockSearchIndex.search.mockClear();
 
       // Focus again
       input.dispatchEvent(new Event('focus'));
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).toHaveBeenCalled();
     });
 
     it('should hide results on blur with delay', async () => {
-      vi.useFakeTimers();
-      try {
-        const input = container.querySelector('.mdv-search-input') as HTMLInputElement;
-        const results = container.querySelector('.mdv-search-results') as HTMLElement;
-        results.style.display = 'block';
+      const input = container.querySelector('.mdv-search-input') as HTMLInputElement;
+      const results = container.querySelector('.mdv-search-results') as HTMLElement;
+      results.style.display = 'block';
 
-        input.dispatchEvent(new Event('blur'));
+      input.dispatchEvent(new Event('blur'));
 
-        // Results should still be visible immediately
-        expect(results.style.display).toBe('block');
+      // Results should still be visible immediately
+      expect(results.style.display).toBe('block');
 
-        // Wait for delay
-        await vi.advanceTimersByTime(150);
+      // Wait for delay using real timers
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-        expect(results.style.display).toBe('none');
-      } finally {
-        vi.useRealTimers();
-      }
+      expect(results.style.display).toBe('none');
     });
   });
 
@@ -431,7 +430,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Now click the result
       const result = container.querySelector('.mdv-search-result') as HTMLElement;
@@ -474,7 +473,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).toHaveBeenCalledWith('test', {
         searchInTags: true,
@@ -493,7 +492,7 @@ describe.skip('SearchManager', () => {
       input.dispatchEvent(new Event('input'));
 
       // Use real timers for this test - debounce should happen quickly
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       expect(mockSearchIndex.search).toHaveBeenCalledWith(
         'test',
@@ -526,7 +525,7 @@ describe.skip('SearchManager', () => {
       input.value = 'test';
       input.dispatchEvent(new Event('input'));
       // Allow debounce to complete synchronously by using a small delay
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 20));
     });
 
     it('should activate result on mouse enter', () => {
