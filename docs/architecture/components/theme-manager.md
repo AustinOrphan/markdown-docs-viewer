@@ -1,208 +1,334 @@
-# Component: Theme Manager
+# Theme Manager Component
 
 ## Overview
 
-The Theme Manager is responsible for applying themes, managing theme persistence, and providing theme-related utilities like contrast checking and color manipulation.
+The Theme Manager is a comprehensive theming system that provides runtime theme switching, persistence, accessibility validation, and extensive customization capabilities for the Markdown Documentation Viewer.
 
 ## Architecture
 
 ```mermaid
-classDiagram
-    class ThemeManager {
-        -themes: Map<string, Theme>
-        -currentTheme: Theme
-        -options: ThemeManagerOptions
-        -storageKey: string
+graph TB
+    TM[ThemeManager] --> TP[Theme Persistence]
+    TM --> TR[Theme Registry]
+    TM --> TC[Theme Creation]
+    TM --> TA[Theme Application]
+    TM --> TAC[Accessibility Checker]
 
-        +constructor(options?: ThemeManagerOptions)
-        +registerTheme(theme: Theme): void
-        +setTheme(name: string): Theme | null
-        +getCurrentTheme(): Theme
-        +getTheme(name: string): Theme | undefined
-        +getAvailableThemes(): Theme[]
-        +applyCSSVariables(theme: Theme): void
-        +createCustomTheme(name: string, overrides: Partial<Theme>): Theme
-        +exportTheme(theme: Theme): string
-        +importTheme(json: string): Theme | null
-        +getContrastRatio(color1: string, color2: string): number
-        +isAccessible(fg: string, bg: string, level?: 'AA' | 'AAA'): boolean
-    }
+    TR --> BT[Built-in Themes]
+    TR --> CT[Custom Themes]
 
-    class Theme {
-        <<interface>>
-        +name: string
-        +colors: ThemeColors
-        +fonts: ThemeFonts
-        +spacing: ThemeSpacing
-        +borderRadius: string
-    }
+    BT --> L[Light]
+    BT --> D[Dark]
+    BT --> HC[High Contrast]
+    BT --> GH[GitHub]
+    BT --> DR[Dracula]
+    BT --> SL[Solarized Light]
+    BT --> SD[Solarized Dark]
+    BT --> MT[Material]
 
-    class ThemeColors {
-        <<interface>>
-        +primary: string
-        +secondary: string
-        +background: string
-        +surface: string
-        +text: string
-        +textPrimary: string
-        +textLight: string
-        +textSecondary: string
-        +border: string
-        +code: string
-        +codeBackground: string
-        +link: string
-        +linkHover: string
-        +error: string
-        +warning: string
-        +success: string
-    }
+    TA --> CSS[CSS Variables]
+    TA --> DOM[DOM Attributes]
 
-    ThemeManager --> Theme
-    Theme --> ThemeColors
+    TAC --> CR[Contrast Ratio]
+    TAC --> WCAG[WCAG Compliance]
 ```
 
-## Responsibilities
+## Class Structure
 
-1. **Theme Registration**: Managing available themes
-2. **Theme Application**: Applying CSS custom properties
-3. **Theme Persistence**: Saving/loading theme preferences
-4. **Theme Creation**: Building custom themes
-5. **Accessibility**: Contrast ratio calculations
-6. **Import/Export**: Theme sharing capabilities
+### ThemeManager Class
 
-## Key Methods
+**Purpose**: Core theme management with registration, application, and persistence
 
-### setTheme(name: string)
+**Key Methods**:
+
+- `registerTheme(theme: ThemePreset)` - Register new theme
+- `setTheme(themeName: string)` - Apply theme with persistence
+- `getCurrentTheme()` - Get active theme
+- `getAvailableThemes()` - List all registered themes
+- `createCustomTheme(name, overrides)` - Generate custom theme
+- `applyCSSVariables(theme)` - Apply theme to DOM
+- `exportTheme(theme)` - Export theme as JSON
+- `importTheme(json)` - Import theme from JSON
+
+**Configuration Options**:
 
 ```typescript
-setTheme(name: string): Theme | null {
-    const theme = this.themes.get(name);
-    if (!theme) return null;
-
-    this.currentTheme = theme;
-    this.applyCSSVariables(theme);
-
-    if (this.options.persist) {
-        localStorage.setItem(this.storageKey, name);
-    }
-
-    this.options.onThemeChange?.(theme);
-    return theme;
+interface ThemeManagerOptions {
+  enablePersistence?: boolean; // localStorage persistence
+  storageKey?: string; // Storage key name
+  onThemeChange?: (theme) => void; // Change callback
 }
 ```
 
-### applyCSSVariables(theme: Theme)
+## Core Features
+
+### 1. Built-in Theme Collection
+
+**Available Themes**:
+
+- **Light**: Clean modern light theme
+- **Dark**: Easy on the eyes dark theme
+- **High Contrast**: Accessibility-focused high contrast
+- **GitHub**: GitHub-inspired styling
+- **Dracula**: Popular dark theme with vibrant colors
+- **Solarized Light/Dark**: Precision color schemes
+- **Material**: Material Design inspired
+
+### 2. Theme Persistence
+
+**Storage Mechanism**:
+
+- Automatic localStorage persistence
+- Configurable storage key
+- Safe error handling for storage failures
+- Theme restoration on initialization
+
+### 3. CSS Variable System
+
+**Dynamic Application**:
 
 ```typescript
-applyCSSVariables(theme: Theme): void {
-    const root = document.documentElement;
+// Color variables with RGB variants
+--mdv-color-primary: #007acc
+--mdv-color-primary-rgb: 0, 122, 204
 
-    // Apply colors
-    Object.entries(theme.colors).forEach(([key, value]) => {
-        const cssVar = `--mdv-color-${this.camelToKebab(key)}`;
-        root.style.setProperty(cssVar, value);
+// Font variables
+--mdv-font-body: 'Inter', sans-serif
+--mdv-font-heading: 'Inter', sans-serif
+--mdv-font-code: 'Fira Code', monospace
 
-        // Also set RGB values for alpha transparency
-        const rgb = this.hexToRgb(value);
-        if (rgb) {
-            root.style.setProperty(`${cssVar}-rgb`, rgb);
-        }
-    });
-
-    // Apply fonts, spacing, etc.
-    // Set theme attribute for CSS selectors
-    root.setAttribute('data-mdv-theme', theme.name);
-}
+// Layout variables
+--mdv-spacing-unit: 8px
+--mdv-container-max-width: 1200px
+--mdv-sidebar-width: 280px
 ```
 
-## Data Flow
+### 4. Accessibility Validation
 
-```mermaid
-sequenceDiagram
-    participant App
-    participant ThemeManager
-    participant DOM
-    participant LocalStorage
+**WCAG Compliance**:
 
-    App->>ThemeManager: setTheme('dark')
-    ThemeManager->>ThemeManager: Get theme from registry
-    ThemeManager->>DOM: Apply CSS variables
-    ThemeManager->>LocalStorage: Save preference
-    ThemeManager->>App: Return theme
+- Contrast ratio calculation
+- AA/AAA level validation
+- Luminance computation
+- Color accessibility checking
 
-    Note over DOM: CSS custom properties<br/>update UI instantly
+**Usage Example**:
+
+```typescript
+const isAccessible = themeManager.isAccessible(
+  '#000000', // foreground
+  '#ffffff', // background
+  'AA' // WCAG level
+);
 ```
 
-## Built-in Themes
+### 5. Custom Theme Creation
 
-| Theme        | Description                      | Use Case                |
-| ------------ | -------------------------------- | ----------------------- |
-| default      | Light theme with blue accent     | General purpose         |
-| dark         | Dark backgrounds with light text | Low-light environments  |
-| github       | GitHub-inspired theme            | Developer documentation |
-| ocean        | Blue-green palette               | Marine/water themes     |
-| forest       | Green natural colors             | Environmental docs      |
-| sunset       | Warm orange/red tones            | Creative projects       |
-| monochrome   | Grayscale only                   | Accessibility           |
-| highContrast | Maximum contrast                 | Vision impairment       |
+**Dynamic Generation**:
 
-## CSS Variable Naming Convention
-
-```css
---mdv-color-[name]        /* Color values */
---mdv-color-[name]-rgb    /* RGB triplet for alpha */
---mdv-font-[name]         /* Font families */
---mdv-spacing-[name]      /* Spacing values */
---mdv-border-radius       /* Border radius */
-```
-
-## Integration Example
-
-```javascript
-// Initialize with options
-const themeManager = new ThemeManager({
-  defaultTheme: 'dark',
-  persist: true,
-  storageKey: 'my-app-theme',
-  onThemeChange: theme => {
-    console.log('Theme changed to:', theme.name);
-  },
-});
-
-// Register custom theme
-themeManager.registerTheme({
-  name: 'custom',
+```typescript
+const customTheme = themeManager.createCustomTheme('my-theme', {
   colors: {
     primary: '#ff6b6b',
-    background: '#fafafa',
-    // ... other colors
+    secondary: '#4ecdc4',
+    // Partial overrides merge with base theme
   },
-  // ... other properties
+  fonts: {
+    body: 'Roboto, sans-serif',
+  },
 });
+```
 
-// Apply theme
-themeManager.setTheme('custom');
+## Integration Patterns
+
+### Basic Setup
+
+```typescript
+import { ThemeManager } from './theme-manager';
+
+const themeManager = new ThemeManager({
+  enablePersistence: true,
+  storageKey: 'my-app-theme',
+  onThemeChange: theme => {
+    console.log(`Theme changed to: ${theme.name}`);
+  },
+});
+```
+
+### Theme Switching
+
+```typescript
+// Apply built-in theme
+themeManager.setTheme('dark');
+
+// Create and apply custom theme
+const customTheme = themeManager.createCustomTheme('brand', {
+  colors: { primary: '#007acc' },
+});
+themeManager.setTheme('brand');
+```
+
+### Theme Export/Import
+
+```typescript
+// Export theme
+const currentTheme = themeManager.getCurrentTheme();
+const themeJson = themeManager.exportTheme(currentTheme);
+
+// Import theme
+const importedTheme = themeManager.importTheme(themeJson);
+if (importedTheme) {
+  themeManager.setTheme(importedTheme.name);
+}
+```
+
+### Accessibility Checking
+
+```typescript
+const themes = themeManager.getAvailableThemes();
+const accessibleThemes = themes.filter(theme =>
+  themeManager.isAccessible(theme.colors.text, theme.colors.background, 'AA')
+);
+```
+
+## Theme Structure
+
+### Theme Preset Interface
+
+```typescript
+interface ThemePreset extends Theme {
+  description?: string; // Theme description
+  author?: string; // Theme author
+  version?: string; // Theme version
+}
+```
+
+### Color System
+
+**Required Colors**:
+
+- `primary`, `secondary` - Brand colors
+- `background`, `surface` - Layout backgrounds
+- `text`, `textPrimary`, `textSecondary`, `textLight` - Text variations
+- `border` - UI borders
+- `code`, `codeBackground` - Code styling
+- `link`, `linkHover` - Link states
+- `error`, `warning`, `success` - Semantic colors
+
+### Typography System
+
+```typescript
+fonts: {
+  body: string; // Body text font stack
+  heading: string; // Heading font stack
+  code: string; // Code font stack
+}
+```
+
+## Error Handling
+
+### Theme Validation
+
+**Validation Checks**:
+
+- Required theme name validation
+- Color object presence validation
+- Required color properties validation
+- Type safety for all theme properties
+
+**Error Recovery**:
+
+- Graceful fallback to default theme
+- Warning messages for missing themes
+- Safe storage operation handling
+
+### Storage Error Handling
+
+```typescript
+private saveThemeName(name: string): void {
+  try {
+    localStorage.setItem(this.options.storageKey, name);
+  } catch (error) {
+    console.warn('Failed to save theme preference:', error);
+    // Continue without persistence
+  }
+}
 ```
 
 ## Testing Considerations
 
-1. **Unit Tests**: Theme registration, CSS variable application
-2. **Visual Tests**: Theme appearance validation
-3. **Accessibility Tests**: Contrast ratio compliance
-4. **Browser Tests**: CSS custom property support
-5. **Persistence Tests**: LocalStorage save/load
+### Unit Tests
 
-## Performance Optimizations
+**Test Coverage Areas**:
 
-- CSS variables update entire document at once
-- No JavaScript style recalculation needed
-- Theme objects are cached after first load
-- Minimal DOM operations (only root element)
+- Theme registration and retrieval
+- Theme application and CSS variable generation
+- Persistence functionality
+- Accessibility calculations
+- Custom theme creation
+- Import/export functionality
+- Error handling scenarios
 
-## Future Enhancements
+**Mock Requirements**:
 
-1. **Theme Interpolation**: Animate between themes
-2. **System Theme**: Follow OS dark/light preference
-3. **Theme Variants**: Light/dark versions of each theme
-4. **Color Schemes**: Automatic color generation
-5. **Theme Marketplace**: Share themes online
+- localStorage API
+- DOM document.documentElement
+- CSS custom property application
+
+### Integration Tests
+
+**Test Scenarios**:
+
+- Theme switching with persistence
+- Custom theme creation and application
+- Accessibility validation workflow
+- Import/export round-trip testing
+- Error recovery behavior
+
+## Performance Considerations
+
+### Optimization Strategies
+
+**Efficient Operations**:
+
+- Theme caching in Map structure
+- Lazy CSS variable application
+- Minimal DOM manipulation
+- RGB color caching for opacity support
+
+**Memory Management**:
+
+- Efficient theme storage structure
+- Proper cleanup of CSS variables
+- Event handler management
+
+## Security Considerations
+
+### Safe Theme Handling
+
+**Input Validation**:
+
+- Theme JSON parsing with error handling
+- Required property validation
+- Type checking for theme properties
+- Safe CSS variable application
+
+**Storage Security**:
+
+- localStorage error handling
+- No sensitive data in themes
+- Safe JSON serialization/deserialization
+
+## Browser Compatibility
+
+### CSS Custom Properties
+
+- Modern browser requirement
+- Fallback strategies for older browsers
+- Progressive enhancement approach
+
+### Storage API
+
+- localStorage availability checking
+- Graceful degradation without persistence
+- Error handling for storage restrictions

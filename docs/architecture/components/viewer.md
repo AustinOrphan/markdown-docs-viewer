@@ -1,212 +1,802 @@
-# Component: MarkdownDocsViewer
+# Viewer Component
 
 ## Overview
 
-The `MarkdownDocsViewer` is the main orchestrator class that coordinates all functionality of the markdown documentation viewer. It serves as the primary entry point and manages the lifecycle of all other components.
+The Viewer component (MarkdownDocsViewer) is the core orchestrating class that manages all aspects of the Markdown Documentation Viewer. It coordinates themes, documents, navigation, search, mobile responsiveness, and error handling to provide a complete documentation viewing experience.
 
 ## Architecture
 
 ```mermaid
-classDiagram
-    class MarkdownDocsViewer {
-        -config: DocumentationConfig
-        -container: HTMLElement
-        -components: Map~string, Component~
-        -state: ViewerState
-        +constructor(config)
-        +init(): Promise~void~
-        +setTheme(theme): void
-        +refresh(): Promise~void~
-        +destroy(): void
-        +navigateToDocument(id): Promise~void~
-        -initializeComponents(): void
-        -setupEventListeners(): void
-        -handleError(error): void
-    }
+graph TB
+    MDV[MarkdownDocsViewer] --> CFG[Configuration Management]
+    MDV --> DL[Document Loading]
+    MDV --> TM[Theme Management]
+    MDV --> RT[Routing System]
+    MDV --> UI[UI Rendering]
+    MDV --> MO[Mobile Optimization]
+    MDV --> EH[Error Handling]
 
-    MarkdownDocsViewer --> DocumentLoader
-    MarkdownDocsViewer --> ThemeManager
-    MarkdownDocsViewer --> NavigationManager
-    MarkdownDocsViewer --> SearchManager
-    MarkdownDocsViewer --> Router
+    CFG --> VC[Validation & Config]
+    CFG --> DC[Dependency Checking]
+
+    DL --> LR[Document Loader]
+    DL --> ST[State Management]
+
+    TM --> TMS[Theme Manager]
+    TM --> TS[Theme Switcher]
+    TM --> DMT[Dark Mode Toggle]
+
+    RT --> RR[Router Integration]
+    RT --> NV[Navigation Handling]
+
+    UI --> HD[Header Rendering]
+    UI --> SB[Sidebar Rendering]
+    UI --> CT[Content Rendering]
+    UI --> EL[Event Listeners]
+
+    MO --> RD[Responsive Design]
+    MO --> GT[Gesture Handling]
+    MO --> TO[Touch Optimization]
+
+    EH --> EB[Error Boundary]
+    EH --> LG[Error Logging]
+    EH --> GD[Graceful Degradation]
 ```
 
-## Responsibilities
+## Class Structure
 
-- **Component Orchestration**: Initializes and coordinates all sub-components
-- **Configuration Management**: Processes and validates user configuration
-- **Lifecycle Management**: Handles initialization, updates, and cleanup
-- **Event Coordination**: Routes events between components
-- **Error Handling**: Centralized error management and recovery
-- **DOM Management**: Creates and manages the main container structure
-- **State Management**: Maintains global application state
+### MarkdownDocsViewer Class
 
-## Key Methods
+**Purpose**: Main orchestrating class for the entire documentation viewer
 
-### Constructor
+**Constructor**:
 
 ```typescript
 constructor(config: DocumentationConfig)
 ```
 
-Initializes the viewer with user configuration, validates settings, and prepares for initialization.
+**Key Properties**:
 
-### init()
+- `config: DocumentationConfig` - Merged configuration
+- `state: ViewerState` - Current application state
+- `container: HTMLElement` - Target DOM container
+- `loader: DocumentLoader` - Document loading manager
+- `router: Router` - URL routing system
+- `themeManager: ThemeManager` - Theme management
+- `themeSwitcher: ThemeSwitcher` - Theme switching UI
+- `darkModeToggle: DarkModeToggle` - Dark mode toggle
+- `searchManager: SearchManager` - Basic search functionality
+- `advancedSearchManager: AdvancedSearchManager` - Advanced search with filters
+- `errorBoundary: ErrorBoundary` - Error handling wrapper
+- `logger: ErrorLogger` - Error logging system
 
-```typescript
-async init(): Promise<void>
-```
+## Core Features
 
-Performs the main initialization sequence:
+### 1. Initialization & Configuration
 
-1. Creates DOM structure
-2. Initializes all components
-3. Loads initial document
-4. Sets up event listeners
-
-### setTheme()
-
-```typescript
-setTheme(theme: Theme): void
-```
-
-Dynamically changes the active theme, updating all visual components.
-
-### refresh()
+**Configuration Validation**:
 
 ```typescript
-async refresh(): Promise<void>
+private validateAndMergeConfig(config: DocumentationConfig): DocumentationConfig {
+  // Validate required fields
+  if (!config.container) {
+    throw new MarkdownDocsError('Container is required');
+  }
+
+  if (!config.source) {
+    throw new MarkdownDocsError('Document source is required');
+  }
+
+  // Merge with comprehensive defaults
+  return {
+    theme: defaultTheme,
+    search: { enabled: true },
+    navigation: { showCategories: true, collapsible: true },
+    render: { syntaxHighlighting: true, copyCodeButton: true },
+    errorHandling: { gracefulDegradation: true },
+    responsive: true,
+    mobile: { enabled: true, breakpoints: BREAKPOINTS },
+    routing: 'hash',
+    ...config,
+  };
+}
 ```
 
-Reloads all documents and refreshes the entire interface, useful for content updates.
-
-### destroy()
+**Dependency Validation**:
 
 ```typescript
-destroy(): void
+private validateDependencies(): void {
+  const missing: string[] = [];
+  const warnings: string[] = [];
+
+  // Check for marked
+  if (typeof marked === 'undefined') {
+    missing.push('marked - Markdown parser is required');
+  }
+
+  // Check for highlight.js (optional)
+  if (typeof hljs === 'undefined') {
+    warnings.push('highlight.js - Syntax highlighting will be disabled');
+  }
+
+  // Check browser environment
+  if (typeof document === 'undefined') {
+    missing.push('DOM environment - Browser environment required');
+  }
+}
 ```
 
-Performs cleanup:
+### 2. Theme System Integration
 
-1. Removes event listeners
-2. Destroys all components
-3. Clears DOM elements
-4. Releases memory references
-
-## Data Flow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Viewer as MarkdownDocsViewer
-    participant Config as Configuration
-    participant Components as Sub-Components
-    participant DOM
-
-    User->>Viewer: new MarkdownDocsViewer(config)
-    Viewer->>Config: Validate configuration
-    Config-->>Viewer: Validated config
-
-    User->>Viewer: init()
-    Viewer->>DOM: Create container structure
-    Viewer->>Components: Initialize all components
-    Components->>DOM: Render initial UI
-    Viewer-->>User: Initialization complete
-
-    User->>Viewer: navigateToDocument(id)
-    Viewer->>Components: Update navigation state
-    Components->>DOM: Update UI
-    Viewer-->>User: Navigation complete
-```
-
-## Integration Example
+**Theme Manager Setup**:
 
 ```typescript
-import { MarkdownDocsViewer, defaultTheme } from '@austinorphan/markdown-docs-viewer';
+this.themeManager = new ThemeManager({
+  enablePersistence: this.config.theme?.enablePersistence !== false,
+  storageKey: this.config.theme?.storageKey || 'mdv-theme',
+  onThemeChange: theme => {
+    this.applyTheme(theme);
+    if (this.config.onThemeChange) {
+      this.config.onThemeChange(theme);
+    }
+  },
+});
+```
 
-// Basic usage
+**Theme Application**:
+
+```typescript
+private applyTheme(theme: Theme): void {
+  // Apply CSS variables through theme manager
+  this.themeManager.applyCSSVariables(theme);
+
+  // Generate and apply styles
+  let cssContent = generateStyles(theme, this.config);
+
+  // Add mobile-responsive styles if enabled
+  if (this.config.responsive && this.config.mobile?.enabled !== false) {
+    cssContent += generateMobileCSS(this.config);
+  }
+
+  // Add component styles
+  cssContent += this.themeSwitcher.getStyles();
+  cssContent += this.darkModeToggle.getStyles();
+
+  this.styles.textContent = cssContent;
+  document.head.appendChild(this.styles);
+}
+```
+
+### 3. Document Management
+
+**Document Loading**:
+
+```typescript
+private async loadDocuments(): Promise<void> {
+  await this.errorBoundary.execute(
+    async () => {
+      const documents = await this.loader.loadAll();
+      this.state.documents = documents;
+
+      if (documents.length === 0) {
+        this.logger.warn('No documents loaded');
+      }
+    },
+    () => {
+      this.state.documents = [];
+      this.logger.error('Failed to load documents, using empty list');
+    },
+    { operation: 'loadDocuments' }
+  );
+}
+```
+
+**Individual Document Loading**:
+
+```typescript
+private async loadDocument(docId: string): Promise<void> {
+  const doc = this.state.documents.find(d => d.id === docId);
+  if (!doc) {
+    throw ErrorFactory.documentNotFound(docId);
+  }
+
+  // Load content if not already loaded
+  if (!doc.content && doc.file) {
+    doc.content = await this.loader.loadDocument(doc);
+  }
+
+  this.state.currentDocument = doc;
+
+  if (this.router) {
+    this.router.setRoute(docId);
+  }
+
+  // Auto-close mobile sidebar
+  if (isMobileViewport()) {
+    this.state.sidebarOpen = false;
+    this.updateSidebar();
+  }
+}
+```
+
+### 4. UI Rendering System
+
+**Main Render Method**:
+
+```typescript
+private render(): void {
+  this.container.innerHTML = `
+    <div class="mdv-app">
+      ${this.renderHeader()}
+      <div class="mdv-layout">
+        ${this.renderSidebar()}
+        ${this.renderContent()}
+      </div>
+      ${this.config.footer ? this.renderFooter() : ''}
+    </div>
+  `;
+
+  this.attachEventListeners();
+}
+```
+
+**Header Rendering**:
+
+```typescript
+private renderHeader(): string {
+  const showThemeSwitcher = (this.config.theme?.switcherPosition || 'header') === 'header';
+  const showDarkToggle = (this.config.theme?.darkTogglePosition || 'header') === 'header';
+
+  const headerActions = [];
+  if (showDarkToggle) headerActions.push(this.darkModeToggle.render());
+  if (showThemeSwitcher) headerActions.push(this.themeSwitcher.render());
+
+  return `
+    <header class="mdv-header">
+      <button class="mdv-mobile-toggle" aria-label="Toggle navigation"></button>
+      ${this.config.logo ? `<img src="${this.config.logo}" alt="Logo" class="mdv-logo">` : ''}
+      <h1 class="mdv-title">${this.config.title || 'Documentation'}</h1>
+      ${headerActions.length > 0 ? `<div class="mdv-header-actions">${headerActions.join('')}</div>` : ''}
+    </header>
+  `;
+}
+```
+
+**Content Rendering**:
+
+```typescript
+private renderContent(): string {
+  if (this.state.loading) {
+    return `
+      <main class="mdv-content">
+        <div class="mdv-loading">
+          <div class="mdv-loading-spinner"></div>
+          <p>Loading documentation...</p>
+        </div>
+      </main>
+    `;
+  }
+
+  if (this.state.error) {
+    return this.renderError(this.state.error);
+  }
+
+  if (!this.state.currentDocument) {
+    return `
+      <main class="mdv-content">
+        <div class="mdv-welcome">
+          <h2>Welcome to the Documentation</h2>
+          <p>Select a document from the sidebar to begin reading.</p>
+        </div>
+      </main>
+    `;
+  }
+
+  return `
+    <main class="mdv-content">
+      <article class="mdv-document">
+        <h1 class="mdv-document-title">${this.state.currentDocument.title}</h1>
+        <div class="mdv-document-content">
+          ${this.renderMarkdown(this.state.currentDocument.content || '')}
+        </div>
+      </article>
+    </main>
+  `;
+}
+```
+
+### 5. Mobile Optimization
+
+**Mobile Interaction Setup**:
+
+```typescript
+private setupMobileInteractions(): void {
+  if (!this.config.mobile?.enabled) return;
+
+  // Add mobile backdrop for sidebar overlay
+  this.setupSidebarBackdrop();
+
+  // Setup swipe gestures if enabled
+  if (this.config.mobile?.gestures?.swipeToNavigate) {
+    this.setupSwipeGestures();
+  }
+
+  // Setup touch optimizations
+  if (this.config.mobile?.performance?.enableTouchOptimizations) {
+    this.setupTouchOptimizations();
+  }
+
+  // Handle window resize for responsive behavior
+  this.setupResponsiveHandlers();
+}
+```
+
+**Swipe Gesture Handling**:
+
+```typescript
+private setupSwipeGestures(): void {
+  let startX = 0;
+  let isSwipe = false;
+  const threshold = this.config.mobile?.gestures?.swipeThreshold || 50;
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (isSwipe && e.changedTouches.length === 1) {
+      const deltaX = e.changedTouches[0].clientX - startX;
+
+      if (isMobileViewport()) {
+        // Swipe right to open sidebar (from left edge)
+        if (deltaX > threshold && startX < 50 && !this.state.sidebarOpen) {
+          this.state.sidebarOpen = true;
+          this.updateSidebar();
+        }
+        // Swipe left to close sidebar
+        else if (deltaX < -threshold && this.state.sidebarOpen) {
+          this.state.sidebarOpen = false;
+          this.updateSidebar();
+        }
+      }
+    }
+  };
+}
+```
+
+**Responsive Handler Setup**:
+
+```typescript
+private setupResponsiveHandlers(): void {
+  const handleResize = () => {
+    const currentBreakpoint = getCurrentBreakpoint();
+
+    // Auto-close sidebar on larger screens
+    if (currentBreakpoint !== 'xs' && currentBreakpoint !== 'sm' && this.state.sidebarOpen) {
+      this.state.sidebarOpen = false;
+      this.updateSidebar();
+    }
+
+    this.updateResponsiveUI();
+  };
+
+  // Throttle resize events for performance
+  let resizeTimeout: number;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = window.setTimeout(handleResize, 150);
+  });
+}
+```
+
+### 6. Error Handling System
+
+**Error Boundary Integration**:
+
+```typescript
+private async init(): Promise<void> {
+  await this.errorBoundary.execute(
+    async () => {
+      this.state.loading = true;
+      this.configureMarked();
+      await this.loadDocuments();
+      this.initializeSearch();
+      this.setupRouting();
+      this.render();
+      await this.loadInitialDocument();
+      this.state.loading = false;
+    },
+    () => {
+      this.state.loading = false;
+      this.render();
+    },
+    { operation: 'init' }
+  );
+}
+```
+
+**Error Rendering**:
+
+```typescript
+private renderError(error: Error): string {
+  const isMarkdownError = error instanceof MarkdownDocsError;
+  const showDetails = this.config.errorHandling?.showErrorDetails;
+
+  let errorMessage = 'An unexpected error occurred.';
+  let retryButton = '';
+
+  if (isMarkdownError) {
+    errorMessage = error.userMessage;
+
+    if (error.isRetryable) {
+      retryButton = '<button class="mdv-retry-button">Try Again</button>';
+    }
+  }
+
+  return `
+    <main class="mdv-content">
+      <div class="mdv-error">
+        <div class="mdv-error-icon">⚠️</div>
+        <h2>Oops! Something went wrong</h2>
+        <p class="mdv-error-message">${errorMessage}</p>
+        ${retryButton}
+      </div>
+    </main>
+  `;
+}
+```
+
+**Comprehensive Error Handler**:
+
+```typescript
+private handleError(error: MarkdownDocsError): void {
+  if (this.state) {
+    this.state.error = error;
+    this.state.loading = false;
+  }
+
+  if (this.logger) {
+    this.logger.log(error);
+  }
+
+  // Call user-provided error handler
+  if (this.config?.onError) {
+    try {
+      this.config.onError(error);
+    } catch (handlerError) {
+      this.logger?.error('Error in user error handler', { handlerError });
+    }
+  }
+
+  if (this.state && this.container) {
+    this.render();
+  }
+}
+```
+
+### 7. Search System Integration
+
+**Search Manager Delegation**:
+
+```typescript
+private handleSearch(query: string): void {
+  this.state.searchQuery = query;
+
+  if (!query.trim()) {
+    this.state.searchResults = [];
+    this.render();
+    return;
+  }
+
+  try {
+    // Delegate to SearchManager or AdvancedSearchManager
+    const searchResults = this.config.search?.advanced
+      ? this.advancedSearchManager.search(query)
+      : this.searchManager.search(query);
+
+    // Extract documents from search results
+    this.state.searchResults = searchResults
+      .map(result => result.document || result)
+      .slice(0, this.config.search?.maxResults || 10);
+
+    this.render();
+  } catch (error) {
+    this.logger.error('Search operation failed', { query, error });
+    this.state.searchResults = [];
+    this.render();
+  }
+}
+```
+
+**Search Manager Initialization**:
+
+```typescript
+private initializeSearch(): void {
+  if (!this.config.search?.enabled) return;
+
+  if (this.config.search?.advanced) {
+    this.advancedSearchManager = new AdvancedSearchManager(
+      this.state.documents,
+      this.config.search
+    );
+  } else {
+    this.searchManager = new SearchManager(this.state.documents);
+  }
+}
+```
+
+## Public API Methods
+
+### Theme Management
+
+```typescript
+public setTheme(theme: Theme | string): void {
+  if (typeof theme === 'string') {
+    const themeObj = this.themeManager.setTheme(theme);
+    if (themeObj) {
+      this.config.theme = themeObj;
+    }
+  } else {
+    // Handle theme objects through ThemeManager
+    const tempThemeName = `temp-${Date.now()}`;
+    this.themeManager.registerTheme({ ...theme, name: tempThemeName });
+    this.themeManager.setTheme(tempThemeName);
+    this.config.theme = theme;
+  }
+}
+
+public getAvailableThemes(): Theme[] {
+  return this.themeManager.getAvailableThemes();
+}
+
+public registerTheme(theme: Theme): void {
+  this.themeManager.registerTheme(theme as any);
+}
+
+public createCustomTheme(name: string, overrides: Partial<Theme>): Theme {
+  return this.themeManager.createCustomTheme(name, overrides);
+}
+```
+
+### Document Access
+
+```typescript
+public getDocument(id: string): Document | null {
+  return this.state.documents.find(doc => doc.id === id) || null;
+}
+
+public getAllDocuments(): Document[] {
+  return [...this.state.documents];
+}
+
+public async search(query: string): Promise<Document[]> {
+  if (!this.config.search?.enabled || !query.trim()) {
+    return [];
+  }
+
+  try {
+    const searchResults = this.config.search?.advanced
+      ? this.advancedSearchManager.search(query)
+      : this.searchManager.search(query);
+
+    // Extract documents from search results
+    return searchResults
+      .map(result => result.document || result)
+      .slice(0, this.config.search?.maxResults || 10);
+  } catch (error) {
+    this.logger.error('Public search operation failed', { query, error });
+    return [];
+  }
+}
+```
+
+### Utility Methods
+
+```typescript
+public async refresh(): Promise<void> {
+  await this.errorBoundary.execute(
+    async () => {
+      this.loader.clearCache();
+      await this.loadDocuments();
+      this.render();
+    },
+    () => {
+      this.logger.error('Failed to refresh documents');
+    },
+    { operation: 'refresh' }
+  );
+}
+
+public destroy(): void {
+  try {
+    if (this.styles) {
+      this.styles.remove();
+    }
+    if (this.router) {
+      this.router.destroy();
+    }
+    this.container.innerHTML = '';
+    this.logger.debug('MarkdownDocsViewer destroyed');
+  } catch (error) {
+    this.logger.warn('Error during cleanup', { error });
+  }
+}
+
+public getState(): ViewerState {
+  return { ...this.state };
+}
+
+public getConfig(): DocumentationConfig {
+  return { ...this.config };
+}
+```
+
+## Integration Patterns
+
+### Basic Setup
+
+```typescript
+import { MarkdownDocsViewer } from './viewer';
+
 const viewer = new MarkdownDocsViewer({
   container: '#docs-container',
-  theme: defaultTheme,
+  title: 'My Documentation',
   source: {
     type: 'local',
-    documents: [
-      { id: 'intro', title: 'Introduction', file: 'intro.md' },
-      { id: 'guide', title: 'User Guide', file: 'guide.md' },
-    ],
+    basePath: '/docs',
+    files: ['intro.md', 'guide.md'],
   },
-  navigation: {
-    showCategories: true,
-    collapsible: true,
+  theme: 'default',
+  search: { enabled: true },
+  mobile: { enabled: true },
+});
+```
+
+### Advanced Configuration
+
+```typescript
+const viewer = new MarkdownDocsViewer({
+  container: document.getElementById('docs'),
+  title: 'Advanced Documentation',
+  logo: '/assets/logo.svg',
+  source: {
+    type: 'github',
+    owner: 'user',
+    repo: 'docs',
+    branch: 'main',
+    path: 'documentation',
+  },
+  theme: {
+    name: 'custom',
+    colors: { primary: '#007acc' },
   },
   search: {
     enabled: true,
-    fuzzySearch: true,
+    maxResults: 20,
+    placeholder: 'Search documentation...',
+  },
+  navigation: {
+    showCategories: true,
+    showTags: true,
+    collapsible: true,
+  },
+  mobile: {
+    enabled: true,
+    gestures: {
+      swipeToNavigate: true,
+      swipeThreshold: 30,
+    },
+  },
+  onDocumentLoad: doc => {
+    console.log(`Loaded: ${doc.title}`);
+  },
+  onThemeChange: theme => {
+    console.log(`Theme changed to: ${theme.name}`);
+  },
+  onError: error => {
+    console.error('Viewer error:', error);
   },
 });
-
-// Initialize and handle errors
-try {
-  await viewer.init();
-  console.log('Documentation viewer initialized successfully');
-} catch (error) {
-  console.error('Failed to initialize viewer:', error);
-}
-
-// Dynamic theme switching
-viewer.setTheme(darkTheme);
-
-// Refresh content
-await viewer.refresh();
-
-// Cleanup when done
-viewer.destroy();
 ```
+
+## State Management
+
+### ViewerState Interface
+
+```typescript
+interface ViewerState {
+  currentDocument: Document | null;
+  documents: Document[];
+  searchQuery: string;
+  searchResults: Document[];
+  loading: boolean;
+  error: Error | null;
+  sidebarOpen: boolean;
+}
+```
+
+### State Updates
+
+**Loading State**:
+
+```typescript
+this.state.loading = true;
+this.state.error = null;
+this.render(); // Show loading UI
+```
+
+**Error State**:
+
+```typescript
+this.state.error = error;
+this.state.loading = false;
+this.render(); // Show error UI
+```
+
+**Document State**:
+
+```typescript
+this.state.currentDocument = doc;
+this.state.loading = false;
+this.render(); // Show document content
+```
+
+## Performance Considerations
+
+### Efficient Rendering
+
+**Selective Updates**:
+
+- Sidebar-only updates for navigation changes
+- Content-only updates for document changes
+- Minimal DOM manipulation
+
+**Event Handling Optimization**:
+
+- Debounced search input
+- Throttled resize handlers
+- Passive event listeners where appropriate
+
+### Memory Management
+
+**Cleanup on Destroy**:
+
+- Remove event listeners
+- Clear DOM references
+- Dispose of component instances
+- Remove injected styles
 
 ## Testing Considerations
 
-- **Component Integration**: Test that all sub-components are properly initialized and coordinated
-- **Configuration Validation**: Verify that invalid configurations are rejected with helpful error messages
-- **Error Recovery**: Test error handling and recovery scenarios
-- **Memory Management**: Ensure proper cleanup to prevent memory leaks
-- **Event Handling**: Verify that events are properly routed between components
-- **Theme Switching**: Test dynamic theme changes don't break functionality
+### Unit Testing
 
-## Performance Optimizations
+**Component Testing**:
 
-- **Lazy Component Loading**: Components are only initialized when needed
-- **Event Delegation**: Uses event delegation to minimize event listener overhead
-- **Memory Pooling**: Reuses DOM elements where possible to reduce garbage collection
-- **Debounced Updates**: User interactions are debounced to prevent excessive updates
-- **Component Caching**: Component instances are cached and reused when possible
+- Configuration validation
+- State management
+- Error handling
+- Theme application
+- Document loading
 
-## Error Handling Strategy
+**Mock Requirements**:
 
-```typescript
-// Centralized error handling
-private handleError(error: Error, context: string): void {
-  // Log error with context
-  console.error(`[MarkdownDocsViewer] ${context}:`, error);
+- DocumentLoader mock
+- Router mock
+- Theme components mock
+- DOM environment setup
 
-  // Attempt recovery based on error type
-  if (error instanceof NetworkError) {
-    this.showRetryMessage();
-  } else if (error instanceof ConfigurationError) {
-    this.showConfigurationHelp();
-  } else {
-    this.showGenericError(error.message);
-  }
+### Integration Testing
 
-  // Emit error event for external handling
-  this.emit('error', { error, context });
-}
-```
+**Full Workflow Testing**:
 
-## Future Enhancements
+- Complete initialization process
+- Document loading and navigation
+- Theme switching functionality
+- Mobile responsive behavior
+- Error recovery scenarios
 
-- **Plugin System**: Support for external plugins to extend functionality
-- **Web Components**: Migrate to web components for better encapsulation
-- **Server-Side Rendering**: Support for SSR in meta-frameworks
-- **Progressive Enhancement**: Graceful degradation for users without JavaScript
-- **Accessibility Improvements**: Enhanced ARIA support and keyboard navigation
-- **Performance Monitoring**: Built-in performance metrics and reporting
+### End-to-End Testing
+
+**User Interaction Testing**:
+
+- Navigation workflows
+- Search functionality
+- Theme switching
+- Mobile gestures
+- Error scenarios

@@ -1,480 +1,680 @@
-# Component: Type System
+# Types Component
 
 ## Overview
 
-The types module defines the comprehensive TypeScript interfaces and type definitions that provide type safety and IDE support throughout the entire markdown documentation viewer system. It serves as the contract for all component interactions.
+The Types component defines the complete TypeScript interface system for the Markdown Documentation Viewer, providing type safety, configuration validation, and comprehensive API contracts for all viewer functionality.
 
 ## Architecture
 
 ```mermaid
-classDiagram
-    class DocumentationConfig {
-        +container: string | HTMLElement
-        +title?: string
-        +theme: Theme
-        +source: DocumentSource
-        +navigation?: NavigationOptions
-        +search?: SearchOptions
-        +render?: RenderOptions
-        +mobile?: MobileOptions
-    }
+graph TB
+    TS[Types System] --> CC[Core Components]
+    TS --> CF[Configuration]
+    TS --> ST[State Management]
+    TS --> EX[Export System]
+    TS --> I18[Internationalization]
+    TS --> ADV[Advanced Features]
 
-    class DocumentSource {
-        +type: 'local' | 'url' | 'github' | 'content'
-        +documents: Document[]
-        +basePath?: string
-        +baseUrl?: string
-        +headers?: Record~string, string~
-    }
+    CC --> DOC[Document Interface]
+    CC --> SRC[Document Source]
+    CC --> THM[Theme Interface]
 
-    class Document {
-        +id: string
-        +title: string
-        +file?: string
-        +content?: string
-        +description?: string
-        +category?: string
-        +tags?: string[]
-        +order?: number
-    }
+    CF --> DCF[Documentation Config]
+    CF --> SO[Search Options]
+    CF --> NO[Navigation Options]
+    CF --> RO[Render Options]
+    CF --> EHO[Error Handling Options]
+    CF --> PO[Performance Options]
+    CF --> MO[Mobile Options]
 
-    class Theme {
-        +name: string
-        +colors: ColorScheme
-        +typography: Typography
-        +spacing: SpacingScale
-        +customCSS?: string
-    }
+    ST --> VS[Viewer State]
 
-    DocumentationConfig --> DocumentSource
-    DocumentationConfig --> Theme
-    DocumentSource --> Document
+    EX --> EF[Export Format]
+    EX --> EO[Export Options]
+
+    I18 --> IC[I18n Config]
+    I18 --> IM[I18n Messages]
+
+    ADV --> ASO[Advanced Search Options]
+    ADV --> TOC[Table of Contents Options]
 ```
 
-## Core Types
+## Core Interfaces
+
+### 1. Document Interface
+
+**Purpose**: Defines the structure of documentation files
+
+```typescript
+export interface Document {
+  id: string; // Unique identifier
+  title: string; // Display title
+  file?: string; // Source file path
+  content?: string; // Loaded markdown content
+  description?: string; // Optional description
+  category?: string; // Grouping category
+  tags?: string[]; // Searchable tags
+  order?: number; // Display order
+}
+```
+
+**Key Features**:
+
+- **Unique Identification**: `id` field for routing and referencing
+- **Flexible Content**: Supports both file-based and inline content
+- **Metadata Rich**: Category, tags, and description for organization
+- **Ordering Support**: Optional order field for custom sorting
+
+### 2. Document Source Interface
+
+**Purpose**: Configures document loading strategy
+
+```typescript
+export interface DocumentSource {
+  type: 'local' | 'url' | 'github' | 'content';
+  basePath?: string; // Base path for local files
+  baseUrl?: string; // Base URL for remote files
+  documents: Document[]; // Document list
+  headers?: Record<string, string>; // Custom headers for requests
+}
+```
+
+**Source Types**:
+
+- **local**: Files served by web server with basePath
+- **url**: Remote files accessed via HTTP with optional headers
+- **github**: GitHub repository files with API access
+- **content**: Inline markdown content without file references
+
+### 3. Theme Interface
+
+**Purpose**: Comprehensive theming system configuration
+
+```typescript
+export interface Theme {
+  name: string;
+  colors: {
+    primary: string; // Brand primary color
+    secondary: string; // Brand secondary color
+    background: string; // Page background
+    surface: string; // Component surfaces
+    text: string; // Default text color
+    textPrimary: string; // Primary text (headings)
+    textLight: string; // Lighter text variant
+    textSecondary: string; // Secondary text
+    border: string; // Border color
+    code: string; // Code text color
+    codeBackground: string; // Code block background
+    link: string; // Link color
+    linkHover: string; // Link hover color
+    error: string; // Error state color
+    warning: string; // Warning state color
+    success: string; // Success state color
+  };
+  fonts: {
+    body: string; // Body text font stack
+    heading: string; // Heading font stack
+    code: string; // Code font stack
+  };
+  spacing: {
+    unit: number; // Base spacing unit (px)
+    containerMaxWidth: string; // Content max width
+    sidebarWidth: string; // Sidebar width
+  };
+  borderRadius: string; // Global border radius
+  customCSS?: string; // Additional custom CSS
+
+  // Theme management options
+  enablePersistence?: boolean; // Save theme preference
+  storageKey?: string; // LocalStorage key
+  switcherPosition?: 'header' | 'footer' | 'sidebar' | 'floating';
+  showPreview?: boolean; // Show theme preview
+  showDescription?: boolean; // Show theme description
+  allowCustomThemes?: boolean; // Allow user custom themes
+  darkTogglePosition?: 'header' | 'footer' | 'floating';
+  showDarkModeLabel?: boolean; // Show dark mode label
+  compactDarkToggle?: boolean; // Use compact toggle
+}
+```
+
+## Configuration Interfaces
+
+### 1. Search Options
+
+**Purpose**: Search functionality configuration
+
+```typescript
+export interface SearchOptions {
+  enabled: boolean; // Enable search feature
+  placeholder?: string; // Search input placeholder
+  caseSensitive?: boolean; // Case-sensitive search
+  fuzzySearch?: boolean; // Fuzzy matching
+  searchInTags?: boolean; // Include tags in search
+  maxResults?: number; // Maximum results to show
+}
+```
+
+### 2. Navigation Options
+
+**Purpose**: Navigation behavior configuration
+
+```typescript
+export interface NavigationOptions {
+  showCategories: boolean; // Show category grouping
+  showTags: boolean; // Display document tags
+  collapsible: boolean; // Collapsible categories
+  showDescription: boolean; // Show document descriptions
+  sortBy?: 'title' | 'order' | 'date'; // Sorting strategy
+}
+```
+
+### 3. Render Options
+
+**Purpose**: Content rendering configuration
+
+```typescript
+export interface RenderOptions {
+  syntaxHighlighting: boolean; // Enable code highlighting
+  highlightTheme?: string; // Highlight.js theme
+  copyCodeButton: boolean; // Add copy buttons to code
+  linkTarget?: '_blank' | '_self'; // Link target behavior
+  sanitizeHtml?: boolean; // HTML sanitization
+  customRenderers?: Record<string, (content: string) => string>;
+}
+```
+
+### 4. Error Handling Options
+
+**Purpose**: Error management configuration
+
+```typescript
+export interface ErrorHandlingOptions {
+  retryConfig?: {
+    maxAttempts?: number; // Maximum retry attempts
+    baseDelay?: number; // Base delay between retries
+    maxDelay?: number; // Maximum delay cap
+    exponentialBackoff?: boolean; // Use exponential backoff
+  };
+  gracefulDegradation?: boolean; // Graceful failure handling
+  showErrorDetails?: boolean; // Show detailed error info
+  enableErrorLogging?: boolean; // Enable error logging
+  customErrorMessages?: Record<string, string>; // Custom messages
+}
+```
+
+### 5. Performance Options
+
+**Purpose**: Performance optimization configuration
+
+```typescript
+export interface PerformanceOptions {
+  cacheSize?: number; // Cache size limit
+  enablePersistentCache?: boolean; // Persistent caching
+  enablePerformanceMonitoring?: boolean; // Performance metrics
+  enableMemoryManagement?: boolean; // Memory optimization
+  preloadStrategy?: 'none' | 'visible' | 'adjacent' | 'all';
+  lazyLoading?: {
+    enabled?: boolean; // Enable lazy loading
+    threshold?: number; // Loading threshold (px)
+    rootMargin?: string; // Intersection observer margin
+  };
+  searchOptions?: {
+    debounceDelay?: number; // Search input debounce
+    indexUpdateThrottle?: number; // Index update throttle
+    cacheSearchResults?: boolean; // Cache search results
+  };
+}
+```
+
+### 6. Mobile Options
+
+**Purpose**: Mobile optimization configuration
+
+```typescript
+export interface MobileOptions {
+  enabled?: boolean; // Enable mobile optimizations
+  breakpoints?: {
+    xs?: number; // Extra small devices
+    sm?: number; // Small devices
+    md?: number; // Medium devices
+    lg?: number; // Large devices
+    xl?: number; // Extra large devices
+    xxl?: number; // Extra extra large devices
+  };
+  touchTargets?: {
+    minimum?: number; // Minimum touch target size
+    comfortable?: number; // Comfortable touch target size
+    large?: number; // Large touch target size
+  };
+  typography?: {
+    baseFontSize?: {
+      xs?: number;
+      sm?: number;
+      md?: number;
+      lg?: number;
+      xl?: number;
+      xxl?: number;
+    };
+    lineHeight?: {
+      tight?: number; // Tight line height
+      normal?: number; // Normal line height
+      relaxed?: number; // Relaxed line height
+    };
+    scaleRatio?: number; // Typography scale ratio
+  };
+  navigation?: {
+    swipeGestures?: boolean; // Enable swipe gestures
+    collapseBehavior?: 'overlay' | 'push' | 'reveal';
+    showBackdrop?: boolean; // Show backdrop overlay
+    closeOnOutsideClick?: boolean; // Close on outside click
+  };
+  gestures?: {
+    swipeToNavigate?: boolean; // Swipe navigation
+    pinchToZoom?: boolean; // Pinch to zoom
+    doubleTapToZoom?: boolean; // Double tap zoom
+    swipeThreshold?: number; // Swipe sensitivity
+  };
+  layout?: {
+    containerPadding?: number; // Container padding
+    contentSpacing?: number; // Content spacing
+    borderRadius?: number; // Border radius
+  };
+  performance?: {
+    enableTouchOptimizations?: boolean; // Touch optimizations
+    preventDefaultTouch?: boolean; // Prevent default touch
+    optimizeScrolling?: boolean; // Scroll optimizations
+  };
+}
+```
+
+## Main Configuration Interface
 
 ### DocumentationConfig
 
-The main configuration interface that defines all options for the viewer.
+**Purpose**: Master configuration interface for the entire viewer
 
 ```typescript
-interface DocumentationConfig {
-  // Required: Container element
-  container: string | HTMLElement;
+export interface DocumentationConfig {
+  // Required configuration
+  container: string | HTMLElement; // Target container
+  source: DocumentSource; // Document source config
 
-  // Optional: Display title
-  title?: string;
+  // Optional configuration
+  theme?: Theme; // Theme configuration
+  search?: SearchOptions; // Search configuration
+  navigation?: NavigationOptions; // Navigation configuration
+  render?: RenderOptions; // Rendering configuration
+  errorHandling?: ErrorHandlingOptions; // Error handling
+  performance?: PerformanceOptions; // Performance optimization
+  mobile?: MobileOptions; // Mobile configuration
 
-  // Required: Visual theme
-  theme: Theme;
+  // Display configuration
+  title?: string; // Viewer title
+  logo?: string; // Logo URL
+  footer?: string; // Footer content
 
-  // Required: Document source configuration
-  source: DocumentSource;
+  // Callback configuration
+  onDocumentLoad?: (doc: Document) => void; // Document load callback
+  onError?: (error: Error) => void; // Error callback
+  onPerformanceMetrics?: (metrics: Record<string, any>) => void;
+  onThemeChange?: (theme: Theme) => void; // Theme change callback
 
-  // Optional: Navigation behavior
-  navigation?: NavigationOptions;
-
-  // Optional: Search functionality
-  search?: SearchOptions;
-
-  // Optional: Rendering options
-  render?: RenderOptions;
-
-  // Optional: Mobile responsiveness
-  mobile?: MobileOptions;
-
-  // Optional: Event callbacks
-  onDocumentLoad?: (document: Document) => void;
-  onError?: (error: Error) => void;
-  onThemeChange?: (theme: Theme) => void;
+  // Global options
+  responsive?: boolean; // Enable responsive design
+  routing?: 'hash' | 'memory' | 'none'; // Routing strategy
 }
 ```
 
-### DocumentSource
-
-Defines how documents are loaded and from where.
-
-```typescript
-type DocumentSource =
-  | LocalDocumentSource
-  | UrlDocumentSource
-  | GitHubDocumentSource
-  | ContentDocumentSource;
-
-interface LocalDocumentSource {
-  type: 'local';
-  documents: Document[];
-  basePath?: string;
-}
-
-interface UrlDocumentSource {
-  type: 'url';
-  documents: Document[];
-  baseUrl?: string;
-  headers?: Record<string, string>;
-}
-
-interface GitHubDocumentSource {
-  type: 'github';
-  documents: Document[];
-}
-
-interface ContentDocumentSource {
-  type: 'content';
-  documents: Document[];
-}
-```
-
-### Document
-
-Represents a single documentation page with metadata.
-
-```typescript
-interface Document {
-  // Required: Unique identifier
-  id: string;
-
-  // Required: Display title
-  title: string;
-
-  // Source file path (for external sources)
-  file?: string;
-
-  // Inline markdown content
-  content?: string;
-
-  // Optional: Short description
-  description?: string;
-
-  // Optional: Category for grouping
-  category?: string;
-
-  // Optional: Tags for filtering
-  tags?: string[];
-
-  // Optional: Sort order
-  order?: number;
-
-  // Optional: Metadata
-  metadata?: Record<string, unknown>;
-}
-```
-
-## Theme System Types
-
-### Theme
-
-Complete theme definition with all visual properties.
-
-```typescript
-interface Theme {
-  name: string;
-  colors: ColorScheme;
-  typography: Typography;
-  spacing: SpacingScale;
-  borderRadius?: BorderRadiusScale;
-  shadows?: ShadowScale;
-  customCSS?: string;
-}
-
-interface ColorScheme {
-  // Brand colors
-  primary: string;
-  secondary?: string;
-
-  // Background colors
-  background: string;
-  surface: string;
-
-  // Text colors
-  text: string;
-  textSecondary: string;
-  textMuted: string;
-
-  // Semantic colors
-  success: string;
-  warning: string;
-  error: string;
-  info: string;
-
-  // Interactive colors
-  link: string;
-  linkHover: string;
-
-  // Border colors
-  border: string;
-  borderLight: string;
-}
-
-interface Typography {
-  bodyFont: string;
-  headingFont: string;
-  codeFont: string;
-  fontSize: {
-    xs: string;
-    sm: string;
-    base: string;
-    lg: string;
-    xl: string;
-    '2xl': string;
-    '3xl': string;
-  };
-  lineHeight: {
-    tight: number;
-    normal: number;
-    relaxed: number;
-  };
-}
-```
-
-## Configuration Options Types
-
-### NavigationOptions
-
-Controls sidebar navigation behavior.
-
-```typescript
-interface NavigationOptions {
-  showCategories?: boolean;
-  showTags?: boolean;
-  collapsible?: boolean;
-  showDescription?: boolean;
-  sortBy?: 'title' | 'order' | 'date';
-  expandAll?: boolean;
-  enableSearch?: boolean;
-}
-```
-
-### SearchOptions
-
-Configures search functionality.
-
-```typescript
-interface SearchOptions {
-  enabled?: boolean;
-  placeholder?: string;
-  caseSensitive?: boolean;
-  fuzzySearch?: boolean;
-  searchInTags?: boolean;
-  searchInContent?: boolean;
-  maxResults?: number;
-  highlightResults?: boolean;
-  debounceMs?: number;
-}
-```
-
-### RenderOptions
-
-Controls markdown rendering behavior.
-
-```typescript
-interface RenderOptions {
-  syntaxHighlighting?: boolean;
-  highlightTheme?: string;
-  copyCodeButton?: boolean;
-  linkTarget?: '_blank' | '_self';
-  sanitizeHtml?: boolean;
-  renderMath?: boolean;
-  enableTables?: boolean;
-  enableFootnotes?: boolean;
-}
-```
-
-## State Management Types
+## State Management Interface
 
 ### ViewerState
 
-Represents the current state of the viewer.
+**Purpose**: Defines the internal state structure of the viewer
 
 ```typescript
-interface ViewerState {
-  currentDocument: string | null;
-  isLoading: boolean;
-  searchQuery: string;
-  expandedCategories: Set<string>;
-  theme: Theme;
-  isMobile: boolean;
-  sidebarCollapsed: boolean;
+export interface ViewerState {
+  currentDocument: Document | null; // Currently displayed document
+  documents: Document[]; // All loaded documents
+  searchQuery: string; // Current search query
+  searchResults: Document[]; // Search results
+  loading: boolean; // Loading state
+  error: Error | null; // Error state
+  sidebarOpen: boolean; // Sidebar visibility (mobile)
 }
 ```
 
-### NavigationState
+**State Properties**:
 
-Tracks navigation-related state.
+- **currentDocument**: The document being displayed
+- **documents**: Complete document collection
+- **searchQuery**: Active search string
+- **searchResults**: Filtered search results
+- **loading**: Loading indicator state
+- **error**: Error information for display
+- **sidebarOpen**: Mobile sidebar toggle state
+
+## Export System Interfaces
+
+### Export Options
+
+**Purpose**: Configuration for document export functionality
 
 ```typescript
-interface NavigationState {
-  currentPath: string;
-  history: string[];
-  historyIndex: number;
-  breadcrumbs: Breadcrumb[];
-}
+export type ExportFormat = 'pdf' | 'html';
 
-interface Breadcrumb {
-  id: string;
-  title: string;
-  path: string;
+export interface ExportOptions {
+  format: ExportFormat; // Export format
+  documentIds?: string[]; // Specific documents to export
+  filename?: string; // Output filename
+  title?: string; // Export title
+  includeTheme?: boolean; // Include theme styling
+  includeTOC?: boolean; // Include table of contents
+  embedAssets?: boolean; // Embed external assets
+  locale?: string; // Export locale
+  pdfOptions?: {
+    format?: 'a4' | 'a3' | 'letter' | 'legal';
+    orientation?: 'portrait' | 'landscape';
+    margin?:
+      | number
+      | {
+          top?: number;
+          right?: number;
+          bottom?: number;
+          left?: number;
+        };
+  };
 }
 ```
 
-## Event Types
+## Internationalization Interfaces
 
-### ViewerEvents
+### I18n Configuration
 
-Type-safe event definitions for the viewer.
+**Purpose**: Internationalization support configuration
 
 ```typescript
-interface ViewerEvents {
-  'document:load': { document: Document; content: string };
-  'document:error': { documentId: string; error: Error };
-  'navigation:change': { from: string | null; to: string };
-  'search:query': { query: string; results: SearchResult[] };
-  'theme:change': { from: Theme; to: Theme };
-  'mobile:toggle': { isMobile: boolean };
-  'sidebar:toggle': { collapsed: boolean };
+export interface I18nConfig {
+  locale: string; // Current locale
+  fallbackLocale?: string; // Fallback locale
+  messages: Record<string, I18nMessages>; // Locale messages
 }
 
-// Event emitter interface
-interface ViewerEventEmitter {
-  on<K extends keyof ViewerEvents>(event: K, listener: (data: ViewerEvents[K]) => void): void;
-
-  off<K extends keyof ViewerEvents>(event: K, listener: (data: ViewerEvents[K]) => void): void;
-
-  emit<K extends keyof ViewerEvents>(event: K, data: ViewerEvents[K]): void;
+export interface I18nMessages {
+  [key: string]: string | I18nMessages; // Nested message structure
 }
 ```
 
-## Utility Types
+## Advanced Feature Interfaces
 
-### Generic Helper Types
+### Advanced Search Options
 
-Common utility types used throughout the system.
-
-```typescript
-// Make specific properties optional
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-// Make specific properties required
-type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>;
-
-// Deep partial type
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
-// Extract configuration for specific source type
-type ConfigForSource<T extends DocumentSource['type']> = DocumentationConfig & {
-  source: Extract<DocumentSource, { type: T }>;
-};
-```
-
-### Search Types
-
-Types specific to search functionality.
+**Purpose**: Extended search functionality configuration
 
 ```typescript
-interface SearchResult {
-  document: Document;
-  matches: SearchMatch[];
-  score: number;
-}
-
-interface SearchMatch {
-  type: 'title' | 'content' | 'tag' | 'description';
-  text: string;
-  highlights: TextHighlight[];
-}
-
-interface TextHighlight {
-  start: number;
-  end: number;
-  snippet: string;
+export interface AdvancedSearchOptions extends SearchOptions {
+  filters?: {
+    categories?: string[]; // Category filters
+    tags?: string[]; // Tag filters
+    dateRange?: {
+      from?: Date; // Date range start
+      to?: Date; // Date range end
+    };
+  };
+  highlighting?: boolean; // Result highlighting
+  searchHistory?: boolean; // Search history
+  maxHistoryItems?: number; // History item limit
 }
 ```
 
-## Validation Types
+### Table of Contents Options
+
+**Purpose**: Table of contents functionality configuration
+
+```typescript
+export interface TableOfContentsOptions {
+  enabled?: boolean; // Enable TOC
+  maxDepth?: number; // Maximum heading depth
+  sticky?: boolean; // Sticky positioning
+  scrollSpy?: boolean; // Scroll spy functionality
+  collapsible?: boolean; // Collapsible sections
+  position?: 'left' | 'right' | 'inline'; // TOC position
+}
+```
+
+## Type Utility Patterns
+
+### Generic Type Helpers
+
+**Partial Configuration Updates**:
+
+```typescript
+type PartialConfig = Partial<DocumentationConfig>;
+type RequiredConfig = Required<Pick<DocumentationConfig, 'container' | 'source'>>;
+```
+
+**State Updates**:
+
+```typescript
+type StateUpdate = Partial<ViewerState>;
+type LoadingState = Pick<ViewerState, 'loading' | 'error'>;
+```
+
+**Theme Customization**:
+
+```typescript
+type ThemeOverrides = Partial<Theme>;
+type ColorOverrides = Partial<Theme['colors']>;
+type FontOverrides = Partial<Theme['fonts']>;
+```
+
+## Integration Patterns
 
 ### Configuration Validation
 
-Types for configuration validation results.
-
 ```typescript
-interface ValidationResult {
-  valid: boolean;
-  errors: ValidationError[];
-  warnings: ValidationWarning[];
-}
+function validateConfig(config: DocumentationConfig): Required<DocumentationConfig> {
+  // Validate required fields
+  if (!config.container) {
+    throw new Error('Container is required');
+  }
 
-interface ValidationError {
-  path: string;
-  message: string;
-  value?: unknown;
-}
+  if (!config.source) {
+    throw new Error('Document source is required');
+  }
 
-interface ValidationWarning {
-  path: string;
-  message: string;
-  suggestion?: string;
+  // Merge with defaults
+  return {
+    ...defaultConfig,
+    ...config,
+  };
 }
 ```
 
-## Integration Examples
-
-### Type-Safe Configuration
+### Type Guards
 
 ```typescript
-import type { DocumentationConfig, Theme } from '@austinorphan/markdown-docs-viewer';
+function isDocument(obj: any): obj is Document {
+  return obj && typeof obj.id === 'string' && typeof obj.title === 'string';
+}
 
-const config: DocumentationConfig = {
-  container: '#docs',
-  theme: customTheme,
-  source: {
-    type: 'local',
-    documents: [
-      {
-        id: 'intro',
-        title: 'Introduction',
-        file: 'intro.md',
-        category: 'Getting Started',
-        tags: ['beginner', 'overview'],
-        order: 1,
-      },
-    ],
-  },
-  navigation: {
-    showCategories: true,
-    collapsible: true,
-    sortBy: 'order',
-  },
-};
+function isLocalSource(source: DocumentSource): source is DocumentSource & { type: 'local' } {
+  return source.type === 'local';
+}
+
+function isGitHubSource(source: DocumentSource): source is DocumentSource & { type: 'github' } {
+  return source.type === 'github';
+}
 ```
 
-### Event Handling
+### State Management Helpers
 
 ```typescript
-import type { ViewerEventEmitter, ViewerEvents } from '@austinorphan/markdown-docs-viewer';
+function createInitialState(): ViewerState {
+  return {
+    currentDocument: null,
+    documents: [],
+    searchQuery: '',
+    searchResults: [],
+    loading: false,
+    error: null,
+    sidebarOpen: false,
+  };
+}
 
-const viewer = createViewer(config) as ViewerEventEmitter;
-
-viewer.on('document:load', (data: ViewerEvents['document:load']) => {
-  console.log(`Loaded document: ${data.document.title}`);
-});
-
-viewer.on('navigation:change', (data: ViewerEvents['navigation:change']) => {
-  console.log(`Navigated from ${data.from} to ${data.to}`);
-});
+function updateState(currentState: ViewerState, updates: StateUpdate): ViewerState {
+  return {
+    ...currentState,
+    ...updates,
+  };
+}
 ```
 
-## Testing Considerations
+## Theme Type Utilities
 
-- **Type Coverage**: Ensure all public APIs have proper type definitions
-- **Interface Contracts**: Verify that implementations match interface definitions
-- **Generic Constraints**: Test that generic types work with various inputs
-- **Union Type Discrimination**: Test that discriminated unions work correctly
+### Theme Builder Helpers
 
-## Future Enhancements
+```typescript
+function createTheme(base: Theme, overrides: ThemeOverrides): Theme {
+  return {
+    ...base,
+    ...overrides,
+    colors: {
+      ...base.colors,
+      ...overrides.colors,
+    },
+    fonts: {
+      ...base.fonts,
+      ...overrides.fonts,
+    },
+    spacing: {
+      ...base.spacing,
+      ...overrides.spacing,
+    },
+  };
+}
 
-- **Runtime Type Validation**: Add runtime validation using libraries like Zod
-- **Schema Generation**: Generate JSON schemas from TypeScript interfaces
-- **API Documentation**: Auto-generate API docs from type definitions
-- **Migration Types**: Types for handling configuration migrations between versions
+function validateTheme(theme: Theme): boolean {
+  const requiredColors = [
+    'primary',
+    'secondary',
+    'background',
+    'surface',
+    'text',
+    'textPrimary',
+    'textSecondary',
+    'textLight',
+    'border',
+    'code',
+    'codeBackground',
+    'link',
+    'linkHover',
+    'error',
+    'warning',
+    'success',
+  ];
+
+  return requiredColors.every(color => theme.colors[color as keyof Theme['colors']]);
+}
+```
+
+## Error Type Integration
+
+### Error Type Extensions
+
+```typescript
+interface ViewerError extends Error {
+  code: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  retryable: boolean;
+  context?: Record<string, any>;
+}
+
+interface DocumentLoadError extends ViewerError {
+  documentId: string;
+  sourceType: DocumentSource['type'];
+}
+
+interface ThemeError extends ViewerError {
+  themeName: string;
+  themeProperty?: string;
+}
+```
+
+## Testing Type Utilities
+
+### Mock Type Generators
+
+```typescript
+function createMockDocument(overrides: Partial<Document> = {}): Document {
+  return {
+    id: 'mock-doc-1',
+    title: 'Mock Document',
+    content: '# Mock Content',
+    ...overrides,
+  };
+}
+
+function createMockConfig(overrides: Partial<DocumentationConfig> = {}): DocumentationConfig {
+  return {
+    container: '#mock-container',
+    source: {
+      type: 'content',
+      documents: [createMockDocument()],
+    },
+    ...overrides,
+  };
+}
+
+function createMockState(overrides: Partial<ViewerState> = {}): ViewerState {
+  return {
+    ...createInitialState(),
+    ...overrides,
+  };
+}
+```
+
+## Performance Considerations
+
+### Type Optimization
+
+**Efficient Type Checking**:
+
+- Use type guards instead of runtime checks where possible
+- Leverage TypeScript's built-in utility types
+- Minimize deep nested type checking
+
+**Memory Management**:
+
+- Use readonly modifiers for immutable data
+- Implement proper state update patterns
+- Avoid circular type references
+
+### Runtime Type Safety
+
+**Configuration Validation**:
+
+```typescript
+function validateRuntimeConfig(config: unknown): config is DocumentationConfig {
+  // Runtime validation logic
+  return (
+    typeof config === 'object' && config !== null && 'container' in config && 'source' in config
+  );
+}
+```
+
+## Browser Compatibility
+
+### Type Feature Support
+
+**Modern TypeScript Features**:
+
+- Template literal types (TypeScript 4.1+)
+- Utility types (TypeScript 2.1+)
+- Conditional types (TypeScript 2.8+)
+- Mapped types (TypeScript 2.1+)
+
+**Fallback Patterns**:
+
+- Provide type alternatives for older TypeScript versions
+- Use generic constraints for complex type relationships
+- Implement progressive type enhancement

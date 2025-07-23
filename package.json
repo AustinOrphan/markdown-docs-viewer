@@ -34,7 +34,14 @@
     "prepare": "husky",
     "demo:dev": "cd demo && vite",
     "demo:build": "cd demo && vite build",
-    "demo:preview": "cd demo && vite preview"
+    "demo:preview": "cd demo && vite preview",
+    "docs:generate": "node scripts/generate-docs.js",
+    "docs:status": "node scripts/docs-status.js",
+    "docs:status:json": "node scripts/docs-status.js --json",
+    "docs:validate": "node scripts/generate-docs.js && node scripts/docs-status.js",
+    "docs:watch": "nodemon --watch src --watch docs --ext ts,md --exec 'npm run docs:generate'",
+    "docs:mermaid": "node scripts/convert-mermaid.js",
+    "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run"
   },
   "keywords": [
     "markdown",
@@ -64,7 +71,10 @@
     "lint-staged": "^16.1.2",
     "marked": "^15.0.12",
     "marked-highlight": "^2.2.2",
+    "nodemon": "^3.0.1",
     "prettier": "^3.6.2",
+    "typedoc": "^0.28.7",
+    "typedoc-plugin-markdown": "^4.7.1",
     "typescript": "^5.8.3",
     "vite": "^4.5.5",
     "vitest": "^1.6.0"

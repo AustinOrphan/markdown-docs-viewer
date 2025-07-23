@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20.17.0'
 
 jobs:
   lint:
@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: ['18', '20']
+        node-version: ['20.17.0', '22']
 
     env:
       NODE_OPTIONS: --max-old-space-size=4096
@@ -61,7 +61,7 @@ jobs:
         run: npm run test:ci
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '18'
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.17.0'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
