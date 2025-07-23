@@ -17,6 +17,8 @@ export default defineConfig({
           'marked-highlight': 'markedHighlight',
           'highlight.js': 'hljs',
         },
+        // Ensure proper handling of ESM dependencies in UMD builds
+        interop: 'auto',
       },
     },
     sourcemap: true,
