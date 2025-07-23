@@ -65,6 +65,8 @@ constructor(config: DocumentationConfig)
 - `themeManager: ThemeManager` - Theme management
 - `themeSwitcher: ThemeSwitcher` - Theme switching UI
 - `darkModeToggle: DarkModeToggle` - Dark mode toggle
+- `searchManager: SearchManager` - Basic search functionality
+- `advancedSearchManager: AdvancedSearchManager` - Advanced search with filters
 - `errorBoundary: ErrorBoundary` - Error handling wrapper
 - `logger: ErrorLogger` - Error logging system
 
@@ -394,6 +396,7 @@ private async init(): Promise<void> {
       this.state.loading = true;
       this.configureMarked();
       await this.loadDocuments();
+      this.initializeSearch();
       this.setupRouting();
       this.render();
       await this.loadInitialDocument();
@@ -467,9 +470,9 @@ private handleError(error: MarkdownDocsError): void {
 }
 ```
 
-### 7. Search System
+### 7. Search System Integration
 
-**Search Implementation**:
+**Search Manager Delegation**:
 
 ```typescript
 private handleSearch(query: string): void {
@@ -482,27 +485,38 @@ private handleSearch(query: string): void {
   }
 
   try {
-    const results = this.state.documents.filter(doc => {
-      try {
-        const searchIn = [
-          doc.title,
-          doc.description || '',
-          doc.content || '',
-          ...(doc.tags || []),
-        ].join(' ').toLowerCase();
+    // Delegate to SearchManager or AdvancedSearchManager
+    const searchResults = this.config.search?.advanced
+      ? this.advancedSearchManager.search(query)
+      : this.searchManager.search(query);
 
-        return searchIn.includes(query.toLowerCase());
-      } catch (error) {
-        this.logger.warn('Error during document search', { docId: doc.id, error });
-        return false;
-      }
-    });
+    // Extract documents from search results
+    this.state.searchResults = searchResults
+      .map(result => result.document || result)
+      .slice(0, this.config.search?.maxResults || 10);
 
-    this.state.searchResults = results.slice(0, this.config.search?.maxResults || 10);
     this.render();
   } catch (error) {
     this.logger.error('Search operation failed', { query, error });
     this.state.searchResults = [];
+    this.render();
+  }
+}
+```
+
+**Search Manager Initialization**:
+
+```typescript
+private initializeSearch(): void {
+  if (!this.config.search?.enabled) return;
+
+  if (this.config.search?.advanced) {
+    this.advancedSearchManager = new AdvancedSearchManager(
+      this.state.documents,
+      this.config.search
+    );
+  } else {
+    this.searchManager = new SearchManager(this.state.documents);
   }
 }
 ```
@@ -552,10 +566,23 @@ public getAllDocuments(): Document[] {
 }
 
 public async search(query: string): Promise<Document[]> {
-  return new Promise(resolve => {
-    this.handleSearch(query);
-    resolve([...this.state.searchResults]);
-  });
+  if (!this.config.search?.enabled || !query.trim()) {
+    return [];
+  }
+
+  try {
+    const searchResults = this.config.search?.advanced
+      ? this.advancedSearchManager.search(query)
+      : this.searchManager.search(query);
+
+    // Extract documents from search results
+    return searchResults
+      .map(result => result.document || result)
+      .slice(0, this.config.search?.maxResults || 10);
+  } catch (error) {
+    this.logger.error('Public search operation failed', { query, error });
+    return [];
+  }
 }
 ```
 
