@@ -1,11 +1,12 @@
 // Demo Controller for Markdown Documentation Viewer
-import { MarkdownDocsViewer, defaultTheme, darkTheme } from '../dist/index.es.js';
+import { MarkdownDocsViewer, getAllThemeVariants, getThemeBaseName, getThemeMode } from '../dist/index.es.js';
 
 class DemoController {
   constructor() {
     this.viewer = null;
     this.currentExample = 'basic';
-    this.currentTheme = 'default';
+    this.currentTheme = 'default-light';
+    this.currentMode = 'light';
     this.examples = this.getExampleConfigs();
     this.themes = this.getThemes();
 
@@ -15,6 +16,10 @@ class DemoController {
   init() {
     // Initialize controls
     this.setupControls();
+
+    // Initialize UI state
+    this.updateModeToggle();
+    this.updateBodyTheme();
 
     // Load initial example
     this.loadExample('basic');
@@ -26,9 +31,18 @@ class DemoController {
   setupControls() {
     // Theme selector
     const themeSelector = document.getElementById('theme-selector');
+    this.populateThemeSelector();
     themeSelector.addEventListener('change', e => {
       this.switchTheme(e.target.value);
     });
+
+    // Mode toggle button
+    const modeToggle = document.getElementById('mode-toggle');
+    if (modeToggle) {
+      modeToggle.addEventListener('click', () => {
+        this.toggleMode();
+      });
+    }
 
     // Example selector
     const exampleSelector = document.getElementById('example-selector');
@@ -171,28 +185,69 @@ class DemoController {
   }
 
   getThemes() {
-    return {
-      default: defaultTheme,
-      dark: darkTheme,
-      custom: {
-        ...defaultTheme,
-        colors: {
-          primary: '#ff6b6b',
-          background: '#fef3e2',
-          surface: '#fff9f0',
-          text: '#2d3436',
-          textLight: '#636e72',
-          border: '#fab1a0',
-          code: '#6c5ce7',
-          codeBackground: '#f8f9fa',
-        },
-        fonts: {
-          body: 'Georgia, serif',
-          heading: 'Helvetica, Arial, sans-serif',
-          code: 'Monaco, monospace',
-        },
-      },
-    };
+    // Get all theme variants from the library
+    const allThemes = getAllThemeVariants();
+    const themeMap = {};
+    
+    allThemes.forEach(theme => {
+      themeMap[theme.name] = theme;
+    });
+    
+    return themeMap;
+  }
+
+  populateThemeSelector() {
+    const themeSelector = document.getElementById('theme-selector');
+    const themes = this.getThemes();
+    
+    // Get unique base theme names
+    const baseThemes = [...new Set(Object.keys(themes).map(name => getThemeBaseName(name)))];
+    
+    // Clear existing options
+    themeSelector.innerHTML = '';
+    
+    // Add options for each base theme
+    baseThemes.forEach(baseName => {
+      const option = document.createElement('option');
+      option.value = baseName;
+      option.textContent = baseName.charAt(0).toUpperCase() + baseName.slice(1) + ' Theme';
+      themeSelector.appendChild(option);
+    });
+    
+    // Set current selection
+    const currentBaseName = getThemeBaseName(this.currentTheme);
+    themeSelector.value = currentBaseName;
+  }
+
+  toggleMode() {
+    this.currentMode = this.currentMode === 'light' ? 'dark' : 'light';
+    const currentBaseName = getThemeBaseName(this.currentTheme);
+    this.currentTheme = `${currentBaseName}-${this.currentMode}`;
+    
+    // Update UI
+    this.updateModeToggle();
+    this.updateBodyTheme();
+    
+    // Apply to viewer if it exists
+    if (this.viewer) {
+      const newTheme = this.themes[this.currentTheme];
+      if (newTheme) {
+        this.viewer.setTheme(newTheme);
+        this.updateStatus('success', `Switched to ${this.currentMode} mode`);
+      }
+    }
+  }
+
+  updateModeToggle() {
+    const modeToggle = document.getElementById('mode-toggle');
+    if (modeToggle) {
+      modeToggle.textContent = this.currentMode === 'light' ? '🌙 Dark' : '☀️ Light';
+      modeToggle.setAttribute('aria-label', `Switch to ${this.currentMode === 'light' ? 'dark' : 'light'} mode`);
+    }
+  }
+
+  updateBodyTheme() {
+    document.body.setAttribute('data-theme', this.currentMode);
   }
 
   loadExample(exampleName) {
@@ -214,11 +269,19 @@ class DemoController {
     this.setProgress(60);
 
     try {
+      // Get current theme object
+      const currentTheme = this.themes[this.currentTheme];
+      if (!currentTheme) {
+        console.error(`Theme not found: ${this.currentTheme}`);
+        this.updateStatus('error', `Theme not found: ${this.currentTheme}`);
+        return;
+      }
+
       // Create new viewer
       this.viewer = new MarkdownDocsViewer({
         ...config,
         container: '#viewer-container',
-        theme: this.themes[this.currentTheme],
+        theme: currentTheme,
         onError: error => {
           this.updateStatus('error', error.message);
         },
@@ -237,16 +300,22 @@ class DemoController {
     }
   }
 
-  switchTheme(themeName) {
-    const theme = this.themes[themeName];
-    if (!theme) return;
+  switchTheme(baseThemeName) {
+    // Construct full theme name with current mode
+    const fullThemeName = `${baseThemeName}-${this.currentMode}`;
+    const theme = this.themes[fullThemeName];
+    
+    if (!theme) {
+      console.error(`Theme not found: ${fullThemeName}`);
+      return;
+    }
 
-    this.currentTheme = themeName;
-    document.body.setAttribute('data-theme', themeName === 'dark' ? 'dark' : 'light');
+    this.currentTheme = fullThemeName;
+    this.updateBodyTheme();
 
     if (this.viewer) {
       this.viewer.setTheme(theme);
-      this.updateStatus('success', `Theme switched to ${themeName}`);
+      this.updateStatus('success', `Theme switched to ${baseThemeName} (${this.currentMode})`);
     }
   }
 

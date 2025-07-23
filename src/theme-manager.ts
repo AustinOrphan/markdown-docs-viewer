@@ -1,5 +1,5 @@
 import { Theme } from './types';
-import { defaultTheme, darkTheme, getAllThemeVariants, getAvailableThemeNames, getThemeBaseName, getThemeMode } from './themes';
+import { defaultTheme, getAllThemeVariants, getAvailableThemeNames, getThemeBaseName, getThemeMode } from './themes';
 
 export interface ThemeColor {
   name: string;

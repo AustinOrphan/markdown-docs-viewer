@@ -128,6 +128,15 @@ body {
   transform: translateY(-1px);
 }
 
+.mode-toggle {
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 /* Status Bar */
 .demo-status {
   background: var(--demo-surface);
