@@ -3,7 +3,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
-import { join, dirname, relative, resolve } from 'path';
+import { join, dirname, relative } from 'path';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
