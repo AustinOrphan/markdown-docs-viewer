@@ -294,16 +294,20 @@ interface SearchHistory {
 ### 1. Debounced Search
 
 ```typescript
-// Create debounced search function
-this.debouncedSearch = debounce((query: string) => this.performSearch(query), 300);
+// Create debounced search function in constructor
+constructor(documents: Document[], options: Partial<AdvancedSearchOptions> = {}) {
+  // ... other initialization ...
 
-searchDebounced(query: string, callback: (results: SearchResult[]) => void): void {
-  this.debouncedSearch = debounce(() => {
+  // Create the debounced search function once
+  this.debouncedSearchFn = debounce((query: string, callback: (results: SearchResult[]) => void) => {
     const results = this.search(query);
     callback(results);
   }, 300);
+}
 
-  this.debouncedSearch(query);
+// Use the pre-created debounced function
+searchDebounced(query: string, callback: (results: SearchResult[]) => void): void {
+  this.debouncedSearchFn(query, callback);
 }
 ```
 

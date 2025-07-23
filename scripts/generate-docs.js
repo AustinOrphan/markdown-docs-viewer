@@ -2,7 +2,7 @@
 
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir, stat, rm } from 'fs/promises';
 import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -56,7 +56,7 @@ async function ensureDir(dir) {
 
 async function cleanDir(dir) {
   try {
-    await execAsync(`rm -rf "${dir}"`);
+    await rm(dir, { recursive: true, force: true });
   } catch (error) {
     // Directory might not exist
   }
@@ -80,10 +80,25 @@ async function generateApiDocs() {
       await execAsync('npm install --save-dev typedoc typedoc-plugin-markdown');
     }
 
-    // Generate TypeDoc documentation
-    const typeDocCmd = `npx typedoc --out "${config.apiDocsOutput}" --entryPoints "${config.srcDir}/index.ts" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none`;
+    // Generate TypeDoc documentation with safe paths
+    const typeDocCmd = [
+      'npx',
+      'typedoc',
+      '--out',
+      config.apiDocsOutput,
+      '--entryPoints',
+      join(config.srcDir, 'index.ts'),
+      '--excludePrivate',
+      '--excludeInternal',
+      '--plugin',
+      'typedoc-plugin-markdown',
+      '--readme',
+      'none',
+    ];
 
-    const { stdout, stderr } = await execAsync(typeDocCmd);
+    const { stdout, stderr } = await execAsync(
+      typeDocCmd.map(arg => JSON.stringify(arg)).join(' ')
+    );
     if (stdout) logInfo(stdout);
     if (stderr && !stderr.includes('warning')) logError(stderr);
 

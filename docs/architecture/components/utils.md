@@ -132,10 +132,15 @@ export function sanitizeFontFamily(fontFamily: string | undefined | null): strin
 
   const fontStr = String(fontFamily).trim();
 
-  // Allow alphanumeric, spaces, hyphens, commas, and quotes
-  const fontPattern = /^[\w\s\-,'"]+$/;
+  // Validate each font in the comma-separated list individually
+  const fontPattern = /^(?:"[^"]+"|'[^']+'|[\w\s-]+)$/;
 
-  if (fontPattern.test(fontStr) && fontStr.length < 200) {
+  // Split by comma and validate each font
+  const fonts = fontStr.split(',').map(font => font.trim());
+  const validFonts = fonts.filter(font => fontPattern.test(font));
+
+  // Only return if all fonts are valid and total length is reasonable
+  if (validFonts.length === fonts.length && fontStr.length < 200) {
     return fontStr;
   }
 
