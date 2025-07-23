@@ -54,7 +54,7 @@ npm run docs:status:json
 **Health Score Factors:**
 
 - Broken links (−5 points each, max −20)
-- Documentation coverage < 80% (up to −30 points)
+- Documentation coverage < 80% (up to −50 points, 0% = −50, 50% = −25, 75% = −12.5)
 - Uncommitted documentation (−2 points each, max −10)
 - Stale documentation > 7 days (−10 points)
 - Never generated documentation (−20 points)

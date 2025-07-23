@@ -275,9 +275,11 @@ class DocsDashboard {
     // Deduct for broken links (5 points per link, max 20)
     score -= Math.min(stats.brokenLinks * 5, 20);
 
-    // Deduct for low coverage (up to 30 points)
+    // Deduct for low coverage (more aggressive penalty)
+    // 0% = -50 points, 25% = -37.5 points, 50% = -25 points, 75% = -12.5 points, 80%+ = 0 points
     if (stats.coverage.percentage < 80) {
-      score -= Math.round((80 - stats.coverage.percentage) * 0.375);
+      const coveragePenalty = Math.round((100 - stats.coverage.percentage) * 0.5);
+      score -= Math.min(coveragePenalty, 50);
     }
 
     // Deduct for uncommitted docs (2 points per file, max 10)
