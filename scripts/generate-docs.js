@@ -47,7 +47,10 @@ async function ensureDir(dir) {
   try {
     await mkdir(dir, { recursive: true });
   } catch (error) {
-    if (error.code !== 'EEXIST') throw error;
+    if (error.code !== 'EEXIST') {
+      console.error(`Failed to create directory ${dir}:`, error.message);
+      throw error;
+    }
   }
 }
 
@@ -62,8 +65,10 @@ async function cleanDir(dir) {
 
 // Generate API documentation using TypeDoc
 async function generateApiDocs() {
+  console.log('Starting generateApiDocs...');
   logInfo('Generating API documentation...');
 
+  console.log('Cleaning directory:', config.apiDocsOutput);
   await cleanDir(config.apiDocsOutput);
 
   try {
@@ -331,20 +336,32 @@ See \`docs-report.json\` for full details.
 
 // Main execution
 async function main() {
+  console.log('Starting documentation generation...');
   logInfo('Starting documentation generation...');
 
   const taskResults = [];
 
   try {
     // Ensure directories exist
+    console.log('Ensuring directories exist...');
+    console.log('Creating:', config.docsDir);
     await ensureDir(config.docsDir);
+    console.log('Creating:', config.apiDocsOutput);
     await ensureDir(config.apiDocsOutput);
 
     // Run tasks sequentially to capture individual results
+    console.log('Running tasks...');
     taskResults.push({ task: 'generateApiDocs', ...(await generateApiDocs()) });
+    console.log('API docs complete');
+
     taskResults.push({ task: 'validateDocsStructure', ...(await validateDocsStructure()) });
+    console.log('Validation complete');
+
     taskResults.push({ task: 'checkBrokenLinks', ...(await checkBrokenLinks()) });
+    console.log('Link check complete');
+
     taskResults.push({ task: 'generateDocsIndex', ...(await generateDocsIndex()) });
+    console.log('Index generation complete');
 
     // Generate report
     const report = await generateReport(taskResults);
@@ -370,9 +387,12 @@ async function main() {
   }
 }
 
-// Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
-}
+// Always run main if this is the entry point
+console.log('Script started, running main...');
+main().catch(error => {
+  console.error('Error running generate-docs:', error.message);
+  console.error('Stack:', error.stack);
+  process.exit(1);
+});
 
 export { generateApiDocs, validateDocsStructure, checkBrokenLinks, generateDocsIndex };
