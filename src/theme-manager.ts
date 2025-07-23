@@ -1,5 +1,11 @@
 import { Theme } from './types';
-import { defaultTheme, darkTheme } from './themes';
+import {
+  defaultTheme,
+  getAllThemeVariants,
+  getAvailableThemeNames,
+  getThemeBaseName,
+  getThemeMode,
+} from './themes';
 
 export interface ThemeColor {
   name: string;
@@ -20,7 +26,7 @@ export interface ThemeManagerOptions {
 }
 
 export class ThemeManager {
-  private currentTheme: Theme;
+  private currentTheme!: Theme;
   private themes: Map<string, ThemePreset>;
   private options: ThemeManagerOptions;
   private container: HTMLElement | null = null;
@@ -37,210 +43,108 @@ export class ThemeManager {
 
     // Load saved theme or use default
     const savedThemeName = this.getSavedThemeName();
-    this.currentTheme = savedThemeName
-      ? this.themes.get(savedThemeName) || defaultTheme
-      : defaultTheme;
+    const initialTheme = this.resolveInitialTheme(savedThemeName);
+
+    // Properly set the theme through the normal flow to ensure consistency
+    if (initialTheme) {
+      this.currentTheme = initialTheme;
+      // Apply CSS variables immediately
+      this.applyCSSVariables(initialTheme);
+    }
   }
 
   private initializeBuiltInThemes(): void {
-    // Light theme (default)
-    this.registerTheme({
-      ...defaultTheme,
-      description: 'Clean and modern light theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-    });
+    // Register all theme variants (light and dark) from the new theme system
+    const allThemes = getAllThemeVariants();
 
-    // Dark theme
-    this.registerTheme({
-      ...darkTheme,
-      description: 'Easy on the eyes dark theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-    });
+    allThemes.forEach(theme => {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
 
-    // High contrast theme
-    this.registerTheme({
-      name: 'high-contrast',
-      description: 'High contrast theme for improved accessibility',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#0066cc',
-        secondary: '#008055',
-        background: '#ffffff',
-        surface: '#f0f0f0',
-        text: '#000000',
-        textPrimary: '#000000',
-        textLight: '#333333',
-        textSecondary: '#333333',
-        border: '#000000',
-        code: '#6600cc',
-        codeBackground: '#ffffcc',
-        link: '#0066cc',
-        linkHover: '#0044aa',
-        error: '#cc0000',
-        warning: '#cc6600',
-        success: '#008055',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.25rem',
-    });
+      const description = this.getThemeDescription(baseName, mode);
 
-    // GitHub theme
-    this.registerTheme({
-      name: 'github',
-      description: 'GitHub-inspired theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#0969da',
-        secondary: '#1a7f37',
-        background: '#ffffff',
-        surface: '#f6f8fa',
-        text: '#1f2328',
-        textPrimary: '#1f2328',
-        textLight: '#656d76',
-        textSecondary: '#656d76',
-        border: '#d0d7de',
-        code: '#0550ae',
-        codeBackground: '#f6f8fa',
-        link: '#0969da',
-        linkHover: '#0860ca',
-        error: '#d1242f',
-        warning: '#9a6700',
-        success: '#1a7f37',
-      },
-      fonts: {
-        body: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-        heading:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-        code: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-      },
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
+      this.registerTheme({
+        ...theme,
+        description,
+        author: 'MarkdownDocsViewer',
+        version: '1.0.0',
+      });
     });
+  }
 
-    // Dracula theme
-    this.registerTheme({
-      name: 'dracula',
-      description: 'Popular dark theme with vibrant colors',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#bd93f9',
-        secondary: '#50fa7b',
-        background: '#282a36',
-        surface: '#44475a',
-        text: '#f8f8f2',
-        textPrimary: '#f8f8f2',
-        textLight: '#6272a4',
-        textSecondary: '#6272a4',
-        border: '#44475a',
-        code: '#ff79c6',
-        codeBackground: '#44475a',
-        link: '#8be9fd',
-        linkHover: '#9aedfe',
-        error: '#ff5555',
-        warning: '#ffb86c',
-        success: '#50fa7b',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.5rem',
-    });
+  private resolveInitialTheme(savedThemeName: string | null): Theme {
+    if (!savedThemeName) {
+      return defaultTheme;
+    }
 
-    // Solarized Light theme
-    this.registerTheme({
-      name: 'solarized-light',
-      description: 'Precision colors for machines and people',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#268bd2',
-        secondary: '#859900',
-        background: '#fdf6e3',
-        surface: '#eee8d5',
-        text: '#657b83',
-        textPrimary: '#586e75',
-        textLight: '#93a1a1',
-        textSecondary: '#93a1a1',
-        border: '#eee8d5',
-        code: '#b58900',
-        codeBackground: '#eee8d5',
-        link: '#268bd2',
-        linkHover: '#1e6fa8',
-        error: '#dc322f',
-        warning: '#cb4b16',
-        success: '#859900',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
-    });
+    // Check if the saved theme exists exactly as-is (new format)
+    const exactMatch = this.themes.get(savedThemeName);
+    if (exactMatch) {
+      return exactMatch;
+    }
 
-    // Solarized Dark theme
-    this.registerTheme({
-      name: 'solarized-dark',
-      description: 'Precision colors for machines and people (dark)',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#268bd2',
-        secondary: '#859900',
-        background: '#002b36',
-        surface: '#073642',
-        text: '#839496',
-        textPrimary: '#93a1a1',
-        textLight: '#586e75',
-        textSecondary: '#586e75',
-        border: '#073642',
-        code: '#b58900',
-        codeBackground: '#073642',
-        link: '#268bd2',
-        linkHover: '#1e6fa8',
-        error: '#dc322f',
-        warning: '#cb4b16',
-        success: '#859900',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
-    });
+    // Handle old theme names that might be stored in localStorage
+    const legacyThemeMap: Record<string, string> = {
+      default: 'default-light',
+      dark: 'default-dark',
+      light: 'default-light',
+      github: 'github-light',
+      material: 'material-light',
+      dracula: 'default-dark', // Old dracula maps to default-dark
+      'solarized-light': 'default-light', // Old solarized maps to default
+      'solarized-dark': 'default-dark',
+      'high-contrast': 'default-light',
+    };
 
-    // Material theme
-    this.registerTheme({
-      name: 'material',
-      description: 'Material Design inspired theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#1976d2',
-        secondary: '#00897b',
-        background: '#ffffff',
-        surface: '#f5f5f5',
-        text: '#212121',
-        textPrimary: '#212121',
-        textLight: '#757575',
-        textSecondary: '#757575',
-        border: '#e0e0e0',
-        code: '#673ab7',
-        codeBackground: '#f5f5f5',
-        link: '#1976d2',
-        linkHover: '#1565c0',
-        error: '#d32f2f',
-        warning: '#f57c00',
-        success: '#388e3c',
+    const mappedTheme = legacyThemeMap[savedThemeName];
+    if (mappedTheme) {
+      const resolvedTheme = this.themes.get(mappedTheme);
+      if (resolvedTheme) {
+        // Update localStorage to use the new theme name
+        this.saveThemeName(mappedTheme);
+        return resolvedTheme;
+      }
+    }
+
+    // If saved theme has no mode suffix, try to infer it
+    if (!savedThemeName.includes('-light') && !savedThemeName.includes('-dark')) {
+      // Try light version first
+      const lightVersion = this.themes.get(`${savedThemeName}-light`);
+      if (lightVersion) {
+        this.saveThemeName(`${savedThemeName}-light`);
+        return lightVersion;
+      }
+
+      // Try dark version
+      const darkVersion = this.themes.get(`${savedThemeName}-dark`);
+      if (darkVersion) {
+        this.saveThemeName(`${savedThemeName}-dark`);
+        return darkVersion;
+      }
+    }
+
+    // Fallback to default theme
+    console.warn(`Could not resolve saved theme "${savedThemeName}", falling back to default`);
+    return defaultTheme;
+  }
+
+  private getThemeDescription(baseName: string, mode: 'light' | 'dark'): string {
+    const descriptions: Record<string, { light: string; dark: string }> = {
+      default: {
+        light: 'Clean and modern light theme',
+        dark: 'Clean and modern dark theme',
       },
-      fonts: {
-        body: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-        heading: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-        code: '"Roboto Mono", Consolas, Monaco, monospace',
+      github: {
+        light: 'GitHub-inspired light theme',
+        dark: 'GitHub-inspired dark theme',
       },
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.25rem',
-    });
+      material: {
+        light: 'Material Design inspired light theme',
+        dark: 'Material Design inspired dark theme',
+      },
+    };
+
+    return descriptions[baseName]?.[mode] || `${baseName} ${mode} theme`;
   }
 
   public registerTheme(theme: ThemePreset): void {
@@ -250,7 +154,10 @@ export class ThemeManager {
   public setTheme(themeName: string): Theme | null {
     const theme = this.themes.get(themeName);
     if (!theme) {
-      console.warn(`Theme "${themeName}" not found`);
+      console.warn(
+        `Theme "${themeName}" not found. Available themes:`,
+        Array.from(this.themes.keys())
+      );
       return null;
     }
 
@@ -294,13 +201,29 @@ export class ThemeManager {
       fonts: this.mergeObjects(baseTheme.fonts, overrides.fonts || {}),
       spacing: this.mergeObjects(baseTheme.spacing, overrides.spacing || {}),
       borderRadius: overrides.borderRadius || baseTheme.borderRadius,
-      description: 'Custom theme',
+      description: overrides.name?.includes('dark')
+        ? `Custom dark theme based on ${getThemeBaseName(baseTheme.name)}`
+        : `Custom light theme based on ${getThemeBaseName(baseTheme.name)}`,
       author: 'User',
       version: '1.0.0',
     };
 
     this.registerTheme(customTheme);
     return customTheme;
+  }
+
+  // Helper method to get available base theme names (without mode suffixes)
+  public getAvailableBaseThemes(): string[] {
+    return getAvailableThemeNames();
+  }
+
+  // Helper method to get current theme's base name and mode
+  public getCurrentThemeInfo(): { baseName: string; mode: 'light' | 'dark' } {
+    const currentTheme = this.getCurrentTheme();
+    return {
+      baseName: getThemeBaseName(currentTheme.name),
+      mode: getThemeMode(currentTheme.name),
+    };
   }
 
   private mergeObjects<T extends object>(base: T, override: Partial<T>): T {
@@ -330,6 +253,12 @@ export class ThemeManager {
 
   public applyCSSVariables(theme: Theme): void {
     const root = document.documentElement;
+
+    // Defensive check for style property
+    if (!root || !root.style || typeof root.style.setProperty !== 'function') {
+      console.warn('Cannot apply CSS variables: document.documentElement.style not available');
+      return;
+    }
 
     // Apply color variables
     Object.entries(theme.colors).forEach(([key, value]) => {

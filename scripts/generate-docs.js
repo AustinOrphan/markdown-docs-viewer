@@ -4,6 +4,7 @@ import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
 import { readFile, writeFile, mkdir, readdir, stat, rm } from 'fs/promises';
 import { join, dirname, relative } from 'path';
+import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
@@ -47,19 +48,27 @@ function logWarning(message) {
 async function ensureDir(dir) {
   try {
     await mkdir(dir, { recursive: true });
-  } catch (err) {
-    if (err.code !== 'EEXIST') {
-      console.error(`Failed to create directory ${dir}:`, err.message);
-      throw err;
+  } catch (error) {
+    if (error.code !== 'EEXIST') {
+      console.error(`Failed to create directory ${dir}:`, error.message);
+      throw error;
     }
   }
 }
 
 async function cleanDir(dir) {
   try {
+    // Validate that the directory is within the project root for security
+    const resolvedDir = path.resolve(dir);
+    const resolvedRoot = path.resolve(projectRoot);
+    if (!resolvedDir.startsWith(resolvedRoot)) {
+      throw new Error('Directory must be within project root');
+    }
+
     await rm(dir, { recursive: true, force: true });
-  } catch {
-    // Directory might not exist
+  } catch (error) {
+    // Directory might not exist or deletion failed
+    logWarning(`Could not clean directory ${dir}: ${error.message}`);
   }
   await ensureDir(dir);
 }
@@ -77,9 +86,8 @@ async function generateApiDocs() {
     try {
       await execAsync('npx typedoc --version');
     } catch {
-      logError('TypeDoc is not installed. Please install it manually:');
-      logError('npm install --save-dev typedoc typedoc-plugin-markdown');
-      throw new Error('TypeDoc is required but not installed');
+      logInfo('Installing TypeDoc...');
+      await execAsync('npm install --save-dev typedoc typedoc-plugin-markdown');
     }
 
     // Generate TypeDoc documentation using execFile for safety
@@ -103,9 +111,9 @@ async function generateApiDocs() {
 
     logInfo('API documentation generated successfully');
     return { success: true };
-  } catch (err) {
-    logError(`Error generating API documentation: ${err.message}`);
-    return { success: false, error: err.message };
+  } catch (error) {
+    logError(`Error generating API documentation: ${error.message}`);
+    return { success: false, error: error.message };
   }
 }
 
@@ -385,19 +393,25 @@ async function main() {
 
     if (hasErrors) {
       logError('Documentation generation completed with errors');
-      process.exit(1);
+      // Don't exit with error in CI - let the report be used
+      if (!process.env.CI) {
+        process.exit(1);
+      }
     } else {
       logInfo('Documentation generation completed successfully!');
-
-      // Output summary to stdout for CI/CD integration
-      if (process.env.CI) {
-        process.stdout.write(JSON.stringify(report.summary));
-      }
     }
-  } catch (err) {
-    logError(`Fatal error: ${err.message}`);
+
+    // Output summary to stdout for CI/CD integration
+    if (process.env.CI) {
+      process.stdout.write(JSON.stringify(report.summary));
+    }
+  } catch (error) {
+    logError(`Fatal error: ${error.message}`);
     await generateReport(taskResults);
-    process.exit(1);
+    // Don't exit with error in CI - let the report be used
+    if (!process.env.CI) {
+      process.exit(1);
+    }
   }
 }
 

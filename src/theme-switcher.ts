@@ -2,13 +2,17 @@ import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
+import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
 
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
   showPreview?: boolean;
   showDescription?: boolean;
   allowCustomThemes?: boolean;
+  showDarkModeToggle?: boolean;
+  darkModeTogglePosition?: 'inline' | 'separate';
   onThemeChange?: (theme: Theme) => void;
+  onModeChange?: (mode: 'light' | 'dark') => void;
 }
 
 export class ThemeSwitcher {
@@ -25,6 +29,8 @@ export class ThemeSwitcher {
       showPreview: true,
       showDescription: true,
       allowCustomThemes: true,
+      showDarkModeToggle: true,
+      darkModeTogglePosition: 'inline',
       ...options,
     };
   }
@@ -32,47 +38,97 @@ export class ThemeSwitcher {
   public render(): string {
     const currentTheme = this.themeManager.getCurrentTheme();
     const themes = this.themeManager.getAvailableThemes();
+    const currentBaseName = getThemeBaseName(currentTheme.name);
+    const currentMode = getThemeMode(currentTheme.name);
+
+    // Group themes by base name for cleaner display
+    const themeGroups = this.groupThemesByBaseName(themes);
 
     return `
       <div class="mdv-theme-switcher ${this.options.position === 'floating' ? 'mdv-theme-switcher-floating' : ''}">
+        ${this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'separate' ? this.renderDarkModeToggle(currentMode) : ''}
         <button class="mdv-theme-trigger" aria-label="Change theme" title="Change theme">
-          ${this.getThemeIcon(currentTheme.name)}
-          <span class="mdv-theme-name">${currentTheme.name}</span>
+          ${this.getThemeIcon(currentBaseName, currentMode)}
+          <span class="mdv-theme-name">${currentBaseName}</span>
         </button>
         <div class="mdv-theme-dropdown ${this.isOpen ? 'open' : ''}" aria-hidden="${!this.isOpen}">
           <div class="mdv-theme-dropdown-header">
             <h3>Choose Theme</h3>
-            ${
-              this.options.allowCustomThemes
-                ? `
-              <button class="mdv-theme-custom-btn" aria-label="Create custom theme">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
-                </svg>
-              </button>
-            `
-                : ''
-            }
+            <div class="mdv-theme-header-actions">
+              ${this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'inline' ? this.renderDarkModeToggle(currentMode) : ''}
+              ${
+                this.options.allowCustomThemes
+                  ? `
+                <button class="mdv-theme-custom-btn" aria-label="Create custom theme">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
+                  </svg>
+                </button>
+              `
+                  : ''
+              }
+            </div>
           </div>
           <div class="mdv-theme-list">
-            ${themes.map(theme => this.renderThemeOption(theme, theme.name === currentTheme.name)).join('')}
+            ${Object.entries(themeGroups).map(([baseName, themeVariants]) => 
+              this.renderThemeGroup(baseName, themeVariants, currentBaseName === baseName)
+            ).join('')}
           </div>
         </div>
       </div>
     `;
   }
 
+  private renderDarkModeToggle(currentMode: 'light' | 'dark'): string {
+    return `
+      <button 
+        class="mdv-dark-mode-toggle ${currentMode}" 
+        aria-label="Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode"
+        title="Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode"
+      >
+        <div class="mdv-dark-mode-toggle-track">
+          <div class="mdv-dark-mode-toggle-thumb">
+            <span class="mdv-dark-mode-icon light-icon">☀️</span>
+            <span class="mdv-dark-mode-icon dark-icon">🌙</span>
+          </div>
+        </div>
+      </button>
+    `;
+  }
+
+  private groupThemesByBaseName(themes: ThemePreset[]): Record<string, ThemePreset[]> {
+    const groups: Record<string, ThemePreset[]> = {};
+    
+    themes.forEach(theme => {
+      const baseName = getThemeBaseName(theme.name);
+      if (!groups[baseName]) {
+        groups[baseName] = [];
+      }
+      groups[baseName].push(theme);
+    });
+
+    return groups;
+  }
+
+  private renderThemeGroup(baseName: string, variants: ThemePreset[], isActive: boolean): string {
+    // Only show the light variant in the list, but mark as active if either variant is active
+    const lightVariant = variants.find(v => getThemeMode(v.name) === 'light') || variants[0];
+    
+    return this.renderThemeOption(lightVariant, isActive);
+  }
+
   private renderThemeOption(theme: ThemePreset, isActive: boolean): string {
+    const baseName = getThemeBaseName(theme.name);
     return `
       <button 
         class="mdv-theme-option ${isActive ? 'active' : ''}" 
-        data-theme="${theme.name}"
-        aria-label="Switch to ${theme.name} theme"
+        data-theme="${baseName}"
+        aria-label="Switch to ${baseName} theme"
         aria-current="${isActive ? 'true' : 'false'}"
       >
         <div class="mdv-theme-option-content">
           <div class="mdv-theme-option-info">
-            <span class="mdv-theme-option-name">${escapeHtmlAttribute(theme.name)}</span>
+            <span class="mdv-theme-option-name">${escapeHtmlAttribute(baseName)}</span>
             ${
               this.options.showDescription && theme.description
                 ? `
@@ -125,20 +181,23 @@ export class ThemeSwitcher {
     `;
   }
 
-  private getThemeIcon(themeName: string): string {
-    const icons: Record<string, string> = {
-      default: '☀️',
-      light: '☀️',
-      dark: '🌙',
-      'high-contrast': '🔲',
+  private getThemeIcon(baseName: string, mode?: 'light' | 'dark'): string {
+    const baseIcons: Record<string, string> = {
+      default: '🎨',
       github: '🐙',
-      dracula: '🦇',
-      'solarized-light': '🌅',
-      'solarized-dark': '🌃',
       material: '🎨',
     };
 
-    return icons[themeName] || '🎨';
+    const modeIcons: Record<string, string> = {
+      light: '☀️',
+      dark: '🌙',
+    };
+
+    if (mode && this.options.showDarkModeToggle) {
+      return modeIcons[mode];
+    }
+
+    return baseIcons[baseName] || '🎨';
   }
 
   public attachTo(container: HTMLElement): void {
@@ -163,12 +222,22 @@ export class ThemeSwitcher {
 
       if (themeOption && themeOption.dataset.theme) {
         this.selectTheme(themeOption.dataset.theme);
+        return;
+      }
+
+      // Dark mode toggle
+      const darkModeToggle = target.closest('.mdv-dark-mode-toggle') as HTMLElement;
+      if (darkModeToggle) {
+        e.stopPropagation();
+        this.toggleDarkMode();
+        return;
       }
     });
 
     // Custom theme button
     const customBtn = this.container.querySelector('.mdv-theme-custom-btn');
-    customBtn?.addEventListener('click', () => {
+    customBtn?.addEventListener('click', e => {
+      e.stopPropagation();
       this.openCustomThemeBuilder();
     });
 
@@ -183,6 +252,25 @@ export class ThemeSwitcher {
     this.container.addEventListener('keydown', e => {
       this.handleKeyboardNavigation(e as KeyboardEvent);
     });
+  }
+
+  private toggleDarkMode(): void {
+    const currentTheme = this.themeManager.getCurrentTheme();
+    const newThemeName = toggleThemeMode(currentTheme.name);
+    const newTheme = this.themeManager.setTheme(newThemeName);
+    
+    if (newTheme) {
+      const newMode = getThemeMode(newTheme.name);
+      this.updateUI();
+      
+      if (this.options.onModeChange) {
+        this.options.onModeChange(newMode);
+      }
+      
+      if (this.options.onThemeChange) {
+        this.options.onThemeChange(newTheme);
+      }
+    }
   }
 
   private toggleDropdown(): void {
@@ -203,8 +291,12 @@ export class ThemeSwitcher {
     }
   }
 
-  private selectTheme(themeName: string): void {
-    const theme = this.themeManager.setTheme(themeName);
+  private selectTheme(baseName: string): void {
+    const currentTheme = this.themeManager.getCurrentTheme();
+    const currentMode = getThemeMode(currentTheme.name);
+    const newThemeName = `${baseName}-${currentMode}`;
+    
+    const theme = this.themeManager.setTheme(newThemeName);
     if (theme) {
       this.updateUI();
       this.closeDropdown();
@@ -219,22 +311,48 @@ export class ThemeSwitcher {
     if (!this.container) return;
 
     const currentTheme = this.themeManager.getCurrentTheme();
+    const currentBaseName = getThemeBaseName(currentTheme.name);
+    const currentMode = getThemeMode(currentTheme.name);
 
     // Update trigger
     const trigger = this.container.querySelector('.mdv-theme-trigger');
     if (trigger) {
       trigger.innerHTML = `
-        ${this.getThemeIcon(currentTheme.name)}
-        <span class="mdv-theme-name">${currentTheme.name}</span>
+        ${this.getThemeIcon(currentBaseName, currentMode)}
+        <span class="mdv-theme-name">${currentBaseName}</span>
       `;
+    }
+
+    // Update dark mode toggle
+    const darkModeToggle = this.container.querySelector('.mdv-dark-mode-toggle');
+    if (darkModeToggle) {
+      darkModeToggle.className = `mdv-dark-mode-toggle ${currentMode}`;
+      darkModeToggle.setAttribute('aria-label', `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+      darkModeToggle.setAttribute('title', `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`);
     }
 
     // Update active state
     this.container.querySelectorAll('.mdv-theme-option').forEach(option => {
-      const isActive = option.getAttribute('data-theme') === currentTheme.name;
+      const isActive = option.getAttribute('data-theme') === currentBaseName;
       option.classList.toggle('active', isActive);
       option.setAttribute('aria-current', isActive.toString());
     });
+
+    // Update dark mode toggle position if separate (more efficient approach)
+    if (this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'separate') {
+      this.updateSeparateDarkModeToggle(currentMode);
+    }
+  }
+
+  private updateSeparateDarkModeToggle(currentMode: 'light' | 'dark'): void {
+    // Find the separate dark mode toggle container
+    const separateToggle = this.container?.parentElement?.querySelector('.mdv-theme-switcher .mdv-dark-mode-toggle');
+    if (separateToggle) {
+      // Update the toggle state without re-rendering the entire component
+      separateToggle.className = `mdv-dark-mode-toggle ${currentMode}`;
+      separateToggle.setAttribute('aria-label', `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+      separateToggle.setAttribute('title', `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+    }
   }
 
   private handleKeyboardNavigation(e: KeyboardEvent): void {
@@ -320,6 +438,7 @@ export class ThemeSwitcher {
         background: var(--mdv-color-surface);
         border: 1px solid var(--mdv-color-border);
         border-radius: var(--mdv-border-radius);
+        color: var(--mdv-color-text);
         cursor: pointer;
         font-size: 0.875rem;
         transition: all 0.2s ease;
@@ -327,11 +446,12 @@ export class ThemeSwitcher {
       
       .mdv-theme-trigger:hover {
         background: var(--mdv-color-background);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(var(--mdv-color-text-rgb, 0, 0, 0), 0.1);
       }
       
       .mdv-theme-name {
         text-transform: capitalize;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-dropdown {
@@ -370,6 +490,7 @@ export class ThemeSwitcher {
         margin: 0;
         font-size: 0.875rem;
         font-weight: 600;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-custom-btn {
@@ -382,12 +503,14 @@ export class ThemeSwitcher {
         background: transparent;
         border: none;
         border-radius: 4px;
+        color: var(--mdv-color-text);
         cursor: pointer;
-        transition: background 0.2s ease;
+        transition: all 0.2s ease;
       }
       
       .mdv-theme-custom-btn:hover {
         background: var(--mdv-color-background);
+        color: var(--mdv-color-primary);
       }
       
       .mdv-theme-list {
@@ -406,6 +529,7 @@ export class ThemeSwitcher {
         background: transparent;
         border: 1px solid transparent;
         border-radius: calc(var(--mdv-border-radius) * 0.75);
+        color: var(--mdv-color-text);
         cursor: pointer;
         text-align: left;
         transition: all 0.2s ease;
@@ -419,6 +543,7 @@ export class ThemeSwitcher {
       .mdv-theme-option.active {
         background: var(--mdv-color-primary);
         color: white;
+        border-color: var(--mdv-color-primary);
       }
       
       .mdv-theme-option-content {
@@ -463,6 +588,88 @@ export class ThemeSwitcher {
       
       .mdv-theme-option-check {
         flex-shrink: 0;
+      }
+      
+      /* Dark mode toggle styles */
+      .mdv-theme-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .mdv-dark-mode-toggle {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+      
+      .mdv-dark-mode-toggle-track {
+        width: 100%;
+        height: 100%;
+        background: var(--mdv-color-border);
+        border-radius: 12px;
+        position: relative;
+        transition: background-color 0.3s ease;
+      }
+      
+      .mdv-dark-mode-toggle.dark .mdv-dark-mode-toggle-track {
+        background: var(--mdv-color-primary);
+      }
+      
+      .mdv-dark-mode-toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: var(--mdv-color-surface);
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+      }
+      
+      .mdv-dark-mode-toggle.dark .mdv-dark-mode-toggle-thumb {
+        transform: translateX(20px);
+      }
+      
+      .mdv-dark-mode-icon {
+        position: absolute;
+        transition: opacity 0.3s ease;
+      }
+      
+      .mdv-dark-mode-toggle.light .light-icon {
+        opacity: 1;
+      }
+      
+      .mdv-dark-mode-toggle.light .dark-icon {
+        opacity: 0;
+      }
+      
+      .mdv-dark-mode-toggle.dark .light-icon {
+        opacity: 0;
+      }
+      
+      .mdv-dark-mode-toggle.dark .dark-icon {
+        opacity: 1;
+      }
+      
+      .mdv-dark-mode-toggle:hover .mdv-dark-mode-toggle-track {
+        background: var(--mdv-color-text-light);
+      }
+      
+      .mdv-dark-mode-toggle.dark:hover .mdv-dark-mode-toggle-track {
+        background: var(--mdv-color-primary);
+        filter: brightness(1.1);
       }
       
       /* Mobile styles */

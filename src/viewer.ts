@@ -788,7 +788,7 @@ export class MarkdownDocsViewer {
     }
 
     // Prevent body scroll when sidebar is open on mobile
-    if (isMobileViewport()) {
+    if (isMobileViewport() && document.body && document.body.style) {
       document.body.style.overflow = this.state.sidebarOpen ? 'hidden' : '';
     }
   }
@@ -915,15 +915,21 @@ export class MarkdownDocsViewer {
     );
 
     elements.forEach(element => {
-      (element as HTMLElement).style.touchAction = 'manipulation';
+      const htmlElement = element as HTMLElement;
+      if (htmlElement && htmlElement.style) {
+        htmlElement.style.touchAction = 'manipulation';
+      }
     });
 
     // Optimize scrolling on mobile
     if (this.config.mobile?.performance?.optimizeScrolling) {
       const scrollElements = this.container.querySelectorAll('.mdv-navigation, .mdv-content');
       scrollElements.forEach(element => {
-        (element as HTMLElement).style.setProperty('-webkit-overflow-scrolling', 'touch');
-        (element as HTMLElement).style.overscrollBehavior = 'contain';
+        const htmlElement = element as HTMLElement;
+        if (htmlElement && htmlElement.style) {
+          htmlElement.style.setProperty('-webkit-overflow-scrolling', 'touch');
+          htmlElement.style.overscrollBehavior = 'contain';
+        }
       });
     }
   }
@@ -974,7 +980,7 @@ export class MarkdownDocsViewer {
 
     // Update mobile toggle visibility
     const toggle = container.querySelector('.mdv-mobile-toggle') as HTMLElement;
-    if (toggle) {
+    if (toggle && toggle.style) {
       toggle.style.display = isMobileViewport() ? 'flex' : 'none';
     }
   }

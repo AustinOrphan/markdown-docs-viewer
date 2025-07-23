@@ -211,9 +211,9 @@ describe('Themes', () => {
       expect(customTheme.fonts).toEqual(defaultTheme.fonts);
     });
 
-    it('should create custom theme based on dark theme when name is dark', () => {
+    it('should create custom theme based on dark theme when name contains dark', () => {
       const customDarkTheme = createCustomTheme({
-        name: 'dark',
+        name: 'custom-dark',
         colors: {
           primary: '#00ff00',
         },
@@ -260,6 +260,33 @@ describe('Themes', () => {
       expect(customTheme.colors).toEqual(defaultTheme.colors);
       expect(customTheme.fonts).toEqual(defaultTheme.fonts);
       expect(customTheme.spacing).toEqual(defaultTheme.spacing);
+    });
+
+    it('should handle new signature with base name and mode', () => {
+      const customTheme = createCustomTheme('github', 'dark', {
+        colors: {
+          primary: '#654321',
+        },
+      });
+
+      expect(customTheme.name).toBe('github-dark');
+      expect(customTheme.colors.primary).toBe('#654321');
+      // Should use github dark theme as base
+      expect(customTheme.colors.background).toBe('#0d1117');
+    });
+
+    it('should support backward compatibility for dark theme name', () => {
+      const customTheme = createCustomTheme({
+        name: 'dark',
+        colors: {
+          primary: '#abcdef',
+        },
+      });
+
+      expect(customTheme.name).toBe('dark');
+      expect(customTheme.colors.primary).toBe('#abcdef');
+      // Should use default dark theme as base
+      expect(customTheme.colors.background).toBe(darkTheme.colors.background);
     });
   });
 });

@@ -1,18 +1,21 @@
 // Demo Controller for Markdown Documentation Viewer
-import { MarkdownDocsViewer, defaultTheme, darkTheme } from '../dist/index.es.js';
+import { MarkdownDocsViewer, ThemeSwitcher, ThemeManager } from '../dist/index.es.js';
 
 class DemoController {
   constructor() {
     this.viewer = null;
+    this.themeManager = null;
+    this.themeSwitcher = null;
     this.currentExample = 'basic';
-    this.currentTheme = 'default';
     this.examples = this.getExampleConfigs();
-    this.themes = this.getThemes();
 
     this.init();
   }
 
   init() {
+    // Initialize theme manager
+    this.initializeThemeManager();
+    
     // Initialize controls
     this.setupControls();
 
@@ -23,12 +26,39 @@ class DemoController {
     this.updateStatus('ready', 'Demo loaded successfully');
   }
 
-  setupControls() {
-    // Theme selector
-    const themeSelector = document.getElementById('theme-selector');
-    themeSelector.addEventListener('change', e => {
-      this.switchTheme(e.target.value);
+  initializeThemeManager() {
+    // Create theme manager with demo-specific options
+    this.themeManager = new ThemeManager({
+      enablePersistence: true,
+      storageKey: 'mdv-demo-theme',
+      onThemeChange: (theme) => {
+        // Update body theme attribute for demo styling
+        const mode = theme.name.includes('-dark') ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', mode);
+        
+        // Update viewer theme if viewer exists
+        if (this.viewer) {
+          this.viewer.setTheme(theme);
+        }
+        
+        // Update status
+        this.updateStatus('success', `Theme changed to ${theme.name}`);
+      }
     });
+
+    // Create theme switcher
+    this.themeSwitcher = new ThemeSwitcher(this.themeManager, {
+      position: 'header',
+      showDarkModeToggle: true,
+      allowCustomThemes: true,
+      showPreview: true,
+      showDescription: true
+    });
+  }
+
+  setupControls() {
+    // Initialize built-in theme switcher
+    this.setupThemeSwitcher();
 
     // Example selector
     const exampleSelector = document.getElementById('example-selector');
@@ -47,6 +77,37 @@ class DemoController {
     fullscreenBtn.addEventListener('click', () => {
       this.toggleFullscreen();
     });
+  }
+
+  setupThemeSwitcher() {
+    // Render the theme switcher in the theme controls container
+    const themeControlsContainer = document.getElementById('theme-controls');
+    if (themeControlsContainer) {
+      // Inject CSS styles for the theme switcher
+      this.injectThemeSwitcherStyles();
+      
+      // Render and attach the theme switcher
+      themeControlsContainer.innerHTML = this.themeSwitcher.render();
+      this.themeSwitcher.attachTo(themeControlsContainer);
+      
+      // Set initial body theme
+      const currentTheme = this.themeManager.getCurrentTheme();
+      const mode = currentTheme.name.includes('-dark') ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', mode);
+    }
+  }
+
+  injectThemeSwitcherStyles() {
+    // Check if styles are already injected
+    if (document.getElementById('theme-switcher-styles')) {
+      return;
+    }
+
+    // Create and inject theme switcher styles
+    const styleElement = document.createElement('style');
+    styleElement.id = 'theme-switcher-styles';
+    styleElement.textContent = this.themeSwitcher.getStyles();
+    document.head.appendChild(styleElement);
   }
 
   getExampleConfigs() {
@@ -170,30 +231,6 @@ class DemoController {
     };
   }
 
-  getThemes() {
-    return {
-      default: defaultTheme,
-      dark: darkTheme,
-      custom: {
-        ...defaultTheme,
-        colors: {
-          primary: '#ff6b6b',
-          background: '#fef3e2',
-          surface: '#fff9f0',
-          text: '#2d3436',
-          textLight: '#636e72',
-          border: '#fab1a0',
-          code: '#6c5ce7',
-          codeBackground: '#f8f9fa',
-        },
-        fonts: {
-          body: 'Georgia, serif',
-          heading: 'Helvetica, Arial, sans-serif',
-          code: 'Monaco, monospace',
-        },
-      },
-    };
-  }
 
   loadExample(exampleName) {
     this.updateStatus('loading', 'Loading example...');
@@ -214,11 +251,14 @@ class DemoController {
     this.setProgress(60);
 
     try {
+      // Get current theme from theme manager
+      const currentTheme = this.themeManager.getCurrentTheme();
+
       // Create new viewer
       this.viewer = new MarkdownDocsViewer({
         ...config,
         container: '#viewer-container',
-        theme: this.themes[this.currentTheme],
+        theme: currentTheme,
         onError: error => {
           this.updateStatus('error', error.message);
         },
@@ -237,18 +277,6 @@ class DemoController {
     }
   }
 
-  switchTheme(themeName) {
-    const theme = this.themes[themeName];
-    if (!theme) return;
-
-    this.currentTheme = themeName;
-    document.body.setAttribute('data-theme', themeName === 'dark' ? 'dark' : 'light');
-
-    if (this.viewer) {
-      this.viewer.setTheme(theme);
-      this.updateStatus('success', `Theme switched to ${themeName}`);
-    }
-  }
 
   reloadViewer() {
     this.loadExample(this.currentExample);
