@@ -18,7 +18,8 @@ docs/architecture/
 │   ├── 001-use-typescript.md
 │   ├── 002-multiple-document-sources.md
 │   ├── 003-css-custom-properties.md
-│   └── 004-client-side-only.md
+│   ├── 004-client-side-only.md
+│   └── 005-marked-version.md
 ├── components/               # Component documentation
 │   └── theme-manager.md     # Example component doc
 └── documentation-guide.md    # This file
