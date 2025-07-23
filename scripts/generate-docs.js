@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* global process, console */
 
 import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
