@@ -6,6 +6,7 @@ import {
   sanitizeFontFamily,
   sanitizeCssValue,
 } from './utils';
+import { getThemeBaseName, getThemeMode, createCustomTheme } from './themes';
 
 type ThemeColors = Theme['colors'];
 type ThemeFonts = Theme['fonts'];
@@ -19,6 +20,8 @@ export interface ThemeBuilderOptions {
   allowImport?: boolean;
   showPreview?: boolean;
   showAccessibilityCheck?: boolean;
+  defaultMode?: 'light' | 'dark';
+  allowModeSelection?: boolean;
 }
 
 export interface ColorInput {
@@ -35,6 +38,7 @@ export class ThemeBuilder {
   private currentTheme: Theme;
   private originalTheme: Theme;
   private isOpen: boolean = false;
+  private currentMode: 'light' | 'dark';
 
   private readonly colorInputs: ColorInput[] = [
     // Primary colors
@@ -101,10 +105,12 @@ export class ThemeBuilder {
       allowImport: true,
       showPreview: true,
       showAccessibilityCheck: true,
+      allowModeSelection: true,
       ...options,
     };
 
     this.originalTheme = themeManager.getCurrentTheme();
+    this.currentMode = options.defaultMode || getThemeMode(this.originalTheme.name);
     this.currentTheme = this.deepCloneTheme(this.originalTheme);
   }
 
@@ -127,19 +133,41 @@ export class ThemeBuilder {
                 <h3>Theme Information</h3>
                 <div class="mdv-theme-builder-field">
                   <label for="theme-name">Theme Name</label>
-                  <input type="text" id="theme-name" value="${escapeHtmlAttribute(this.currentTheme.name)}" placeholder="Enter theme name">
+                  <input type="text" id="theme-name" value="${escapeHtmlAttribute(getThemeBaseName(this.currentTheme.name))}" placeholder="Enter theme name">
                 </div>
               </div>
+              
+              ${this.options.allowModeSelection ? `
+              <div class="mdv-theme-builder-section">
+                <h3>Theme Mode</h3>
+                <div class="mdv-theme-builder-mode-selector">
+                  <label class="mdv-theme-builder-mode-option">
+                    <input type="radio" name="theme-mode" value="light" ${this.currentMode === 'light' ? 'checked' : ''}>
+                    <span class="mdv-theme-builder-mode-label">
+                      <span class="mdv-theme-builder-mode-icon">☀️</span>
+                      Light Mode
+                    </span>
+                  </label>
+                  <label class="mdv-theme-builder-mode-option">
+                    <input type="radio" name="theme-mode" value="dark" ${this.currentMode === 'dark' ? 'checked' : ''}>
+                    <span class="mdv-theme-builder-mode-label">
+                      <span class="mdv-theme-builder-mode-icon">🌙</span>
+                      Dark Mode
+                    </span>
+                  </label>
+                </div>
+              </div>
+              ` : ''}
               
               <div class="mdv-theme-builder-section">
                 <h3>Base Theme</h3>
                 <select id="base-theme" aria-label="Select base theme">
                   ${this.themeManager
-                    .getAvailableThemes()
+                    .getAvailableBaseThemes()
                     .map(
-                      theme => `
-                    <option value="${escapeHtmlAttribute(theme.name)}" ${theme.name === this.originalTheme.name ? 'selected' : ''}>
-                      ${escapeHtmlAttribute(theme.name)}
+                      baseName => `
+                    <option value="${escapeHtmlAttribute(baseName)}" ${baseName === getThemeBaseName(this.originalTheme.name) ? 'selected' : ''}>
+                      ${escapeHtmlAttribute(baseName)}
                     </option>
                   `
                     )
@@ -487,6 +515,17 @@ export class ThemeBuilder {
       });
     }
 
+    // Mode selection
+    if (this.options.allowModeSelection) {
+      const modeInputs = this.container.querySelectorAll<HTMLInputElement>('input[name="theme-mode"]');
+      modeInputs.forEach(input => {
+        input.addEventListener('change', e => {
+          const newMode = (e.target as HTMLInputElement).value as 'light' | 'dark';
+          this.switchMode(newMode);
+        });
+      });
+    }
+
     // Base theme selection
     const baseThemeSelect = this.container.querySelector<HTMLSelectElement>('#base-theme');
     if (baseThemeSelect) {
@@ -573,10 +612,28 @@ export class ThemeBuilder {
     }
   }
 
-  private loadBaseTheme(themeName: string): void {
+  private switchMode(newMode: 'light' | 'dark'): void {
+    this.currentMode = newMode;
+    const currentBaseName = getThemeBaseName(this.currentTheme.name);
+    this.loadBaseTheme(currentBaseName);
+  }
+
+  private loadBaseTheme(baseName: string): void {
+    // Create the theme name with current mode
+    const themeName = `${baseName}-${this.currentMode}`;
     const baseTheme = this.themeManager.getTheme(themeName);
+    
     if (baseTheme) {
+      // Preserve custom name if user has set one
+      const currentName = this.container?.querySelector<HTMLInputElement>('#theme-name')?.value;
+      const shouldPreserveName = currentName && currentName !== getThemeBaseName(this.currentTheme.name);
+      
       this.currentTheme = this.deepCloneTheme(baseTheme);
+      
+      if (shouldPreserveName) {
+        this.currentTheme.name = currentName;
+      }
+      
       this.refreshInputs();
       this.updatePreview();
       this.updateAccessibilityCheck();
@@ -621,10 +678,25 @@ export class ThemeBuilder {
   }
 
   private saveTheme(): void {
-    const customTheme = this.themeManager.createCustomTheme(
-      this.currentTheme.name,
-      this.currentTheme
+    // Get the custom theme name from the input, or use current theme name
+    const themeNameInput = this.container?.querySelector<HTMLInputElement>('#theme-name');
+    const customName = themeNameInput?.value || getThemeBaseName(this.currentTheme.name);
+    
+    // Create the theme with the current mode
+    const customThemeName = `${customName}-${this.currentMode}`;
+    
+    // Use the new createCustomTheme from themes.ts instead of ThemeManager's method
+    const customTheme = createCustomTheme(
+      getThemeBaseName(this.originalTheme.name), 
+      this.currentMode, 
+      {
+        ...this.currentTheme,
+        name: customThemeName
+      }
     );
+    
+    // Register it with the theme manager
+    this.themeManager.registerTheme(customTheme);
 
     if (this.options.onThemeCreate) {
       this.options.onThemeCreate(customTheme);
@@ -805,6 +877,55 @@ export class ThemeBuilder {
         color: var(--mdv-color-text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
+      }
+      
+      /* Mode selector styles */
+      .mdv-theme-builder-mode-selector {
+        display: flex;
+        gap: 8px;
+      }
+      
+      .mdv-theme-builder-mode-option {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      
+      .mdv-theme-builder-mode-option input[type="radio"] {
+        display: none;
+      }
+      
+      .mdv-theme-builder-mode-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--mdv-color-border);
+        border-radius: calc(var(--mdv-border-radius) * 0.75);
+        background: var(--mdv-color-background);
+        color: var(--mdv-color-text);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      
+      .mdv-theme-builder-mode-option:hover .mdv-theme-builder-mode-label {
+        border-color: var(--mdv-color-primary);
+        background: var(--mdv-color-surface);
+      }
+      
+      .mdv-theme-builder-mode-option input[type="radio"]:checked + .mdv-theme-builder-mode-label {
+        border-color: var(--mdv-color-primary);
+        background: var(--mdv-color-primary);
+        color: white;
+      }
+      
+      .mdv-theme-builder-mode-icon {
+        font-size: 1rem;
       }
       
       .mdv-theme-builder-field {
