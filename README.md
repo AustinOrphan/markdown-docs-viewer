@@ -575,6 +575,15 @@ const viewer = new MarkdownDocsViewer({ container: '#existing-element' });
 
 See the [Browser Usage Guide](docs/BROWSER_USAGE.md) for more troubleshooting.
 
+## Architecture
+
+For detailed architecture documentation, see:
+
+- [Architecture Overview](docs/architecture/README.md)
+- [C4 Model Diagrams](docs/architecture/diagrams/)
+- [Architecture Decision Records](docs/architecture/adr/)
+- [Component Documentation](docs/architecture/components/)
+
 ## License
 
 MIT
