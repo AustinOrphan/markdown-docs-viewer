@@ -168,6 +168,8 @@ private generateHighlights(doc: Document, query: string): SearchHighlight[] {
 
 ```typescript
 private applyFilters(results: SearchResult[]): SearchResult[] {
+  const { categories, tags, dateRange } = this.options.filters || {};
+
   return results.filter(result => {
     const doc = result.document;
 

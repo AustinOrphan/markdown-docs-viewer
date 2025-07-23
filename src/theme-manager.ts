@@ -286,22 +286,15 @@ export class ThemeManager {
 
   public createCustomTheme(name: string, overrides: Partial<Theme>): ThemePreset {
     const baseTheme = this.currentTheme;
+
+    // Create safe theme object
     const customTheme: ThemePreset = {
-      ...baseTheme,
-      ...overrides,
       name,
-      colors: {
-        ...baseTheme.colors,
-        ...(overrides.colors || {}),
-      },
-      fonts: {
-        ...baseTheme.fonts,
-        ...(overrides.fonts || {}),
-      },
-      spacing: {
-        ...baseTheme.spacing,
-        ...(overrides.spacing || {}),
-      },
+      colors: this.mergeObjects(baseTheme.colors, overrides.colors || {}),
+      fonts: this.mergeObjects(baseTheme.fonts, overrides.fonts || {}),
+      spacing: this.mergeObjects(baseTheme.spacing, overrides.spacing || {}),
+      borderRadius: overrides.borderRadius || baseTheme.borderRadius,
+      shadows: overrides.shadows || baseTheme.shadows,
       description: 'Custom theme',
       author: 'User',
       version: '1.0.0',
@@ -309,6 +302,31 @@ export class ThemeManager {
 
     this.registerTheme(customTheme);
     return customTheme;
+  }
+
+  private mergeObjects<T extends object>(base: T, override: Partial<T>): T {
+    const result = Object.create(null);
+
+    // Copy base properties
+    for (const key in base) {
+      if (Object.prototype.hasOwnProperty.call(base, key)) {
+        result[key] = base[key];
+      }
+    }
+
+    // Apply overrides safely
+    for (const key in override) {
+      if (
+        Object.prototype.hasOwnProperty.call(override, key) &&
+        key !== '__proto__' &&
+        key !== 'constructor' &&
+        key !== 'prototype'
+      ) {
+        result[key] = override[key];
+      }
+    }
+
+    return result;
   }
 
   public applyCSSVariables(theme: Theme): void {
@@ -416,7 +434,11 @@ export class ThemeManager {
 
   public importTheme(themeJson: string): ThemePreset | null {
     try {
-      const theme = JSON.parse(themeJson) as ThemePreset;
+      const parsed = JSON.parse(themeJson);
+
+      // Create a safe theme object to prevent prototype pollution
+      const theme = this.createSafeTheme(parsed);
+
       this.validateTheme(theme);
       this.registerTheme(theme);
       return theme;
@@ -424,6 +446,59 @@ export class ThemeManager {
       console.error('Failed to import theme:', error);
       return null;
     }
+  }
+
+  private createSafeTheme(source: any): ThemePreset {
+    // Create objects without prototype chain to prevent pollution
+    const safeTheme = Object.create(null);
+
+    // Only copy allowed properties
+    const allowedKeys = [
+      'name',
+      'colors',
+      'fonts',
+      'spacing',
+      'borderRadius',
+      'shadows',
+      'description',
+      'author',
+      'version',
+    ];
+
+    for (const key of allowedKeys) {
+      if (key in source && source[key] !== undefined) {
+        if (typeof source[key] === 'object' && source[key] !== null) {
+          // Deep copy objects safely
+          safeTheme[key] = this.deepCopyObject(source[key]);
+        } else {
+          safeTheme[key] = source[key];
+        }
+      }
+    }
+
+    return safeTheme as ThemePreset;
+  }
+
+  private deepCopyObject(obj: any): any {
+    if (obj === null || typeof obj !== 'object') return obj;
+
+    const result = Object.create(null);
+
+    for (const key in obj) {
+      // Skip prototype properties
+      if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+
+      // Skip dangerous keys
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        result[key] = this.deepCopyObject(obj[key]);
+      } else {
+        result[key] = obj[key];
+      }
+    }
+
+    return result;
   }
 
   private validateTheme(theme: any): void {

@@ -2,7 +2,11 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Check if documentation files have been modified
-DOCS_CHANGED=$(git diff --cached --name-only | grep -E '\.(md|ts)$|^docs/' | wc -l)
+if git diff --cached --name-only | grep -qE '\.(md|ts)$|^docs/'; then
+  DOCS_CHANGED=1
+else
+  DOCS_CHANGED=0
+fi
 
 if [ "$DOCS_CHANGED" -gt 0 ]; then
   echo "📚 Documentation files changed, validating..."

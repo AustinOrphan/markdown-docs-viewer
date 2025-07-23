@@ -248,7 +248,7 @@ private async loadFromGithub(path: string): Promise<string> {
         const rateLimitReset = response.headers.get('X-RateLimit-Reset');
         let message = 'GitHub API rate limit exceeded';
         if (rateLimitReset) {
-          const resetTime = new Date(parseInt(rateLimitReset) * 1000);
+          const resetTime = new Date(parseInt(rateLimitReset, 10) * 1000);
           message += `. Rate limit resets at ${resetTime.toISOString()}`;
         }
         throw ErrorFactory.githubApiError(path, 403, message);

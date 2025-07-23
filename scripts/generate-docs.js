@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
 import { readFile, writeFile, mkdir, readdir, stat, rm } from 'fs/promises';
 import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
@@ -76,13 +77,13 @@ async function generateApiDocs() {
     try {
       await execAsync('npx typedoc --version');
     } catch {
-      logInfo('Installing TypeDoc...');
-      await execAsync('npm install --save-dev typedoc typedoc-plugin-markdown');
+      logError('TypeDoc is not installed. Please install it manually:');
+      logError('npm install --save-dev typedoc typedoc-plugin-markdown');
+      throw new Error('TypeDoc is required but not installed');
     }
 
-    // Generate TypeDoc documentation with safe paths
-    const typeDocCmd = [
-      'npx',
+    // Generate TypeDoc documentation using execFile for safety
+    const typeDocArgs = [
       'typedoc',
       '--out',
       config.apiDocsOutput,
@@ -96,9 +97,7 @@ async function generateApiDocs() {
       'none',
     ];
 
-    const { stdout, stderr } = await execAsync(
-      typeDocCmd.map(arg => JSON.stringify(arg)).join(' ')
-    );
+    const { stdout, stderr } = await execFileAsync('npx', typeDocArgs);
     if (stdout) logInfo(stdout);
     if (stderr && !stderr.includes('warning')) logError(stderr);
 
