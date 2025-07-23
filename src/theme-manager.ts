@@ -20,7 +20,7 @@ export interface ThemeManagerOptions {
 }
 
 export class ThemeManager {
-  private currentTheme: Theme;
+  private currentTheme!: Theme;
   private themes: Map<string, ThemePreset>;
   private options: ThemeManagerOptions;
   private container: HTMLElement | null = null;
@@ -37,9 +37,14 @@ export class ThemeManager {
 
     // Load saved theme or use default
     const savedThemeName = this.getSavedThemeName();
-    this.currentTheme = savedThemeName
-      ? this.themes.get(savedThemeName) || defaultTheme
-      : defaultTheme;
+    const initialTheme = this.resolveInitialTheme(savedThemeName);
+    
+    // Properly set the theme through the normal flow to ensure consistency
+    if (initialTheme) {
+      this.currentTheme = initialTheme;
+      // Apply CSS variables immediately
+      this.applyCSSVariables(initialTheme);
+    }
   }
 
   private initializeBuiltInThemes(): void {
@@ -59,6 +64,62 @@ export class ThemeManager {
         version: '1.0.0',
       });
     });
+  }
+
+  private resolveInitialTheme(savedThemeName: string | null): Theme {
+    if (!savedThemeName) {
+      return defaultTheme;
+    }
+
+    // Check if the saved theme exists exactly as-is (new format)
+    const exactMatch = this.themes.get(savedThemeName);
+    if (exactMatch) {
+      return exactMatch;
+    }
+
+    // Handle old theme names that might be stored in localStorage
+    const legacyThemeMap: Record<string, string> = {
+      'default': 'default-light',
+      'dark': 'default-dark',
+      'light': 'default-light',
+      'github': 'github-light',
+      'material': 'material-light',
+      'dracula': 'default-dark', // Old dracula maps to default-dark
+      'solarized-light': 'default-light', // Old solarized maps to default
+      'solarized-dark': 'default-dark',
+      'high-contrast': 'default-light'
+    };
+
+    const mappedTheme = legacyThemeMap[savedThemeName];
+    if (mappedTheme) {
+      const resolvedTheme = this.themes.get(mappedTheme);
+      if (resolvedTheme) {
+        // Update localStorage to use the new theme name
+        this.saveThemeName(mappedTheme);
+        return resolvedTheme;
+      }
+    }
+
+    // If saved theme has no mode suffix, try to infer it
+    if (!savedThemeName.includes('-light') && !savedThemeName.includes('-dark')) {
+      // Try light version first
+      const lightVersion = this.themes.get(`${savedThemeName}-light`);
+      if (lightVersion) {
+        this.saveThemeName(`${savedThemeName}-light`);
+        return lightVersion;
+      }
+      
+      // Try dark version
+      const darkVersion = this.themes.get(`${savedThemeName}-dark`);
+      if (darkVersion) {
+        this.saveThemeName(`${savedThemeName}-dark`);
+        return darkVersion;
+      }
+    }
+
+    // Fallback to default theme
+    console.warn(`Could not resolve saved theme "${savedThemeName}", falling back to default`);
+    return defaultTheme;
   }
 
   private getThemeDescription(baseName: string, mode: 'light' | 'dark'): string {
@@ -87,7 +148,7 @@ export class ThemeManager {
   public setTheme(themeName: string): Theme | null {
     const theme = this.themes.get(themeName);
     if (!theme) {
-      console.warn(`Theme "${themeName}" not found`);
+      console.warn(`Theme "${themeName}" not found. Available themes:`, Array.from(this.themes.keys()));
       return null;
     }
 

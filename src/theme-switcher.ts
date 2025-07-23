@@ -256,8 +256,13 @@ export class ThemeSwitcher {
 
   private toggleDarkMode(): void {
     const currentTheme = this.themeManager.getCurrentTheme();
+    console.log('Toggle dark mode - Current theme:', currentTheme.name);
+    
     const newThemeName = toggleThemeMode(currentTheme.name);
+    console.log('Toggle dark mode - New theme name:', newThemeName);
+    
     const newTheme = this.themeManager.setTheme(newThemeName);
+    console.log('Toggle dark mode - Set theme result:', newTheme ? newTheme.name : 'null');
     
     if (newTheme) {
       const newMode = getThemeMode(newTheme.name);
@@ -270,6 +275,8 @@ export class ThemeSwitcher {
       if (this.options.onThemeChange) {
         this.options.onThemeChange(newTheme);
       }
+    } else {
+      console.error('Failed to set new theme:', newThemeName);
     }
   }
 
@@ -296,14 +303,22 @@ export class ThemeSwitcher {
     const currentMode = getThemeMode(currentTheme.name);
     const newThemeName = `${baseName}-${currentMode}`;
     
+    console.log('Select theme - Base name:', baseName);
+    console.log('Select theme - Current theme:', currentTheme.name);
+    console.log('Select theme - Current mode:', currentMode);
+    console.log('Select theme - New theme name:', newThemeName);
+    
     const theme = this.themeManager.setTheme(newThemeName);
     if (theme) {
+      console.log('Select theme - Successfully set:', theme.name);
       this.updateUI();
       this.closeDropdown();
 
       if (this.options.onThemeChange) {
         this.options.onThemeChange(theme);
       }
+    } else {
+      console.error('Select theme - Failed to set theme:', newThemeName);
     }
   }
 
