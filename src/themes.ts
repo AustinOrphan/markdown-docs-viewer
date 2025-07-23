@@ -193,23 +193,78 @@ export function getAvailableThemeNames(): string[] {
   return Object.keys(baseThemes);
 }
 
-export function createCustomTheme(baseName: string, mode: 'light' | 'dark', overrides: Partial<Theme>): Theme {
-  const baseTheme = createTheme(baseName, mode);
-  return {
-    ...baseTheme,
-    ...overrides,
-    name: overrides.name || `${baseName}-${mode}`,
-    colors: {
-      ...baseTheme.colors,
-      ...(overrides.colors || {}),
-    },
-    fonts: {
-      ...baseTheme.fonts,
-      ...(overrides.fonts || {}),
-    },
-    spacing: {
-      ...baseTheme.spacing,
-      ...(overrides.spacing || {}),
-    },
-  };
+// Overloaded function for backward compatibility
+export function createCustomTheme(overrides: Partial<Theme>): Theme;
+export function createCustomTheme(baseName: string, mode: 'light' | 'dark', overrides: Partial<Theme>): Theme;
+export function createCustomTheme(
+  baseNameOrOverrides: string | Partial<Theme>,
+  mode?: 'light' | 'dark',
+  overrides?: Partial<Theme>
+): Theme {
+  // Handle old signature: createCustomTheme(overrides)
+  if (typeof baseNameOrOverrides === 'object' && mode === undefined && overrides === undefined) {
+    const legacyOverrides = baseNameOrOverrides;
+    // For legacy usage, if name contains a known base theme, use it; otherwise use default
+    let baseName = 'default';
+    let themeMode: 'light' | 'dark' = 'light';
+    
+    if (legacyOverrides.name) {
+      // Try to extract base name and mode from the legacy name
+      const detectedBaseName = getThemeBaseName(legacyOverrides.name);
+      if (Object.keys(baseThemes).includes(detectedBaseName)) {
+        baseName = detectedBaseName;
+        themeMode = getThemeMode(legacyOverrides.name);
+      } else if (legacyOverrides.name === 'dark') {
+        // Special case for old 'dark' theme name
+        baseName = 'default';
+        themeMode = 'dark';
+      }
+    }
+    
+    const baseTheme = createTheme(baseName, themeMode);
+    
+    return {
+      ...baseTheme,
+      ...legacyOverrides,
+      name: legacyOverrides.name || `${baseName}-${themeMode}`,
+      colors: {
+        ...baseTheme.colors,
+        ...(legacyOverrides.colors || {}),
+      },
+      fonts: {
+        ...baseTheme.fonts,
+        ...(legacyOverrides.fonts || {}),
+      },
+      spacing: {
+        ...baseTheme.spacing,
+        ...(legacyOverrides.spacing || {}),
+      },
+    };
+  }
+  
+  // Handle new signature: createCustomTheme(baseName, mode, overrides)
+  if (typeof baseNameOrOverrides === 'string' && mode && overrides) {
+    const baseName = baseNameOrOverrides;
+    const baseTheme = createTheme(baseName, mode);
+    
+    return {
+      ...baseTheme,
+      ...overrides,
+      name: overrides.name || `${baseName}-${mode}`,
+      colors: {
+        ...baseTheme.colors,
+        ...(overrides.colors || {}),
+      },
+      fonts: {
+        ...baseTheme.fonts,
+        ...(overrides.fonts || {}),
+      },
+      spacing: {
+        ...baseTheme.spacing,
+        ...(overrides.spacing || {}),
+      },
+    };
+  }
+  
+  throw new Error('Invalid arguments to createCustomTheme. Use either createCustomTheme(overrides) or createCustomTheme(baseName, mode, overrides)');
 }

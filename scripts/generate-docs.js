@@ -3,7 +3,8 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
-import { join, dirname, relative } from 'path';
+import { join, dirname, relative, resolve } from 'path';
+import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
@@ -56,9 +57,19 @@ async function ensureDir(dir) {
 
 async function cleanDir(dir) {
   try {
-    await execAsync(`rm -rf "${dir}"`);
+    // Validate that the directory is within the project root for security
+    const resolvedDir = path.resolve(dir);
+    const resolvedRoot = path.resolve(projectRoot);
+    if (!resolvedDir.startsWith(resolvedRoot)) {
+      throw new Error('Directory must be within project root');
+    }
+    
+    // Use fs.rm for better security than shell command
+    const { rm } = await import('fs/promises');
+    await rm(dir, { recursive: true, force: true });
   } catch (error) {
-    // Directory might not exist
+    // Directory might not exist or deletion failed
+    logWarning(`Could not clean directory ${dir}: ${error.message}`);
   }
   await ensureDir(dir);
 }
@@ -80,10 +91,18 @@ async function generateApiDocs() {
       await execAsync('npm install --save-dev typedoc typedoc-plugin-markdown');
     }
 
-    // Generate TypeDoc documentation
-    const typeDocCmd = `npx typedoc --out "${config.apiDocsOutput}" --entryPoints "${config.srcDir}/index.ts" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none`;
+    // Generate TypeDoc documentation with safer path handling
+    const typeDocArgs = [
+      'typedoc',
+      '--out', config.apiDocsOutput,
+      '--entryPoints', join(config.srcDir, 'index.ts'),
+      '--excludePrivate',
+      '--excludeInternal',
+      '--plugin', 'typedoc-plugin-markdown',
+      '--readme', 'none'
+    ];
 
-    const { stdout, stderr } = await execAsync(typeDocCmd);
+    const { stdout, stderr } = await execAsync(`npx ${typeDocArgs.map(arg => `"${arg}"`).join(' ')}`);
     if (stdout) logInfo(stdout);
     if (stderr && !stderr.includes('warning')) logError(stderr);
 

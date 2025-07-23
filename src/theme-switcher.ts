@@ -338,10 +338,20 @@ export class ThemeSwitcher {
       option.setAttribute('aria-current', isActive.toString());
     });
 
-    // Re-render the container to update dark mode toggle position if separate
+    // Update dark mode toggle position if separate (more efficient approach)
     if (this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'separate') {
-      this.container.innerHTML = this.render();
-      this.setupEventListeners();
+      this.updateSeparateDarkModeToggle(currentMode);
+    }
+  }
+
+  private updateSeparateDarkModeToggle(currentMode: 'light' | 'dark'): void {
+    // Find the separate dark mode toggle container
+    const separateToggle = this.container?.parentElement?.querySelector('.mdv-theme-switcher .mdv-dark-mode-toggle');
+    if (separateToggle) {
+      // Update the toggle state without re-rendering the entire component
+      separateToggle.className = `mdv-dark-mode-toggle ${currentMode}`;
+      separateToggle.setAttribute('aria-label', `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+      separateToggle.setAttribute('title', `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`);
     }
   }
 
