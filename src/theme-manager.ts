@@ -1,5 +1,5 @@
 import { Theme } from './types';
-import { defaultTheme, darkTheme } from './themes';
+import { defaultTheme, darkTheme, getAllThemeVariants, getAvailableThemeNames, getThemeBaseName, getThemeMode } from './themes';
 
 export interface ThemeColor {
   name: string;
@@ -43,204 +43,41 @@ export class ThemeManager {
   }
 
   private initializeBuiltInThemes(): void {
-    // Light theme (default)
-    this.registerTheme({
-      ...defaultTheme,
-      description: 'Clean and modern light theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
+    // Register all theme variants (light and dark) from the new theme system
+    const allThemes = getAllThemeVariants();
+    
+    allThemes.forEach(theme => {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
+      
+      const description = this.getThemeDescription(baseName, mode);
+      
+      this.registerTheme({
+        ...theme,
+        description,
+        author: 'MarkdownDocsViewer',
+        version: '1.0.0',
+      });
     });
+  }
 
-    // Dark theme
-    this.registerTheme({
-      ...darkTheme,
-      description: 'Easy on the eyes dark theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-    });
+  private getThemeDescription(baseName: string, mode: 'light' | 'dark'): string {
+    const descriptions: Record<string, { light: string; dark: string }> = {
+      default: {
+        light: 'Clean and modern light theme',
+        dark: 'Clean and modern dark theme'
+      },
+      github: {
+        light: 'GitHub-inspired light theme',
+        dark: 'GitHub-inspired dark theme'
+      },
+      material: {
+        light: 'Material Design inspired light theme',
+        dark: 'Material Design inspired dark theme'
+      }
+    };
 
-    // High contrast theme
-    this.registerTheme({
-      name: 'high-contrast',
-      description: 'High contrast theme for improved accessibility',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#0066cc',
-        secondary: '#008055',
-        background: '#ffffff',
-        surface: '#f0f0f0',
-        text: '#000000',
-        textPrimary: '#000000',
-        textLight: '#333333',
-        textSecondary: '#333333',
-        border: '#000000',
-        code: '#6600cc',
-        codeBackground: '#ffffcc',
-        link: '#0066cc',
-        linkHover: '#0044aa',
-        error: '#cc0000',
-        warning: '#cc6600',
-        success: '#008055',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.25rem',
-    });
-
-    // GitHub theme
-    this.registerTheme({
-      name: 'github',
-      description: 'GitHub-inspired theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#0969da',
-        secondary: '#1a7f37',
-        background: '#ffffff',
-        surface: '#f6f8fa',
-        text: '#1f2328',
-        textPrimary: '#1f2328',
-        textLight: '#656d76',
-        textSecondary: '#656d76',
-        border: '#d0d7de',
-        code: '#0550ae',
-        codeBackground: '#f6f8fa',
-        link: '#0969da',
-        linkHover: '#0860ca',
-        error: '#d1242f',
-        warning: '#9a6700',
-        success: '#1a7f37',
-      },
-      fonts: {
-        body: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-        heading:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-        code: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-      },
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
-    });
-
-    // Dracula theme
-    this.registerTheme({
-      name: 'dracula',
-      description: 'Popular dark theme with vibrant colors',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#bd93f9',
-        secondary: '#50fa7b',
-        background: '#282a36',
-        surface: '#44475a',
-        text: '#f8f8f2',
-        textPrimary: '#f8f8f2',
-        textLight: '#6272a4',
-        textSecondary: '#6272a4',
-        border: '#44475a',
-        code: '#ff79c6',
-        codeBackground: '#44475a',
-        link: '#8be9fd',
-        linkHover: '#9aedfe',
-        error: '#ff5555',
-        warning: '#ffb86c',
-        success: '#50fa7b',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.5rem',
-    });
-
-    // Solarized Light theme
-    this.registerTheme({
-      name: 'solarized-light',
-      description: 'Precision colors for machines and people',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#268bd2',
-        secondary: '#859900',
-        background: '#fdf6e3',
-        surface: '#eee8d5',
-        text: '#657b83',
-        textPrimary: '#586e75',
-        textLight: '#93a1a1',
-        textSecondary: '#93a1a1',
-        border: '#eee8d5',
-        code: '#b58900',
-        codeBackground: '#eee8d5',
-        link: '#268bd2',
-        linkHover: '#1e6fa8',
-        error: '#dc322f',
-        warning: '#cb4b16',
-        success: '#859900',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
-    });
-
-    // Solarized Dark theme
-    this.registerTheme({
-      name: 'solarized-dark',
-      description: 'Precision colors for machines and people (dark)',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#268bd2',
-        secondary: '#859900',
-        background: '#002b36',
-        surface: '#073642',
-        text: '#839496',
-        textPrimary: '#93a1a1',
-        textLight: '#586e75',
-        textSecondary: '#586e75',
-        border: '#073642',
-        code: '#b58900',
-        codeBackground: '#073642',
-        link: '#268bd2',
-        linkHover: '#1e6fa8',
-        error: '#dc322f',
-        warning: '#cb4b16',
-        success: '#859900',
-      },
-      fonts: defaultTheme.fonts,
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.375rem',
-    });
-
-    // Material theme
-    this.registerTheme({
-      name: 'material',
-      description: 'Material Design inspired theme',
-      author: 'MarkdownDocsViewer',
-      version: '1.0.0',
-      colors: {
-        primary: '#1976d2',
-        secondary: '#00897b',
-        background: '#ffffff',
-        surface: '#f5f5f5',
-        text: '#212121',
-        textPrimary: '#212121',
-        textLight: '#757575',
-        textSecondary: '#757575',
-        border: '#e0e0e0',
-        code: '#673ab7',
-        codeBackground: '#f5f5f5',
-        link: '#1976d2',
-        linkHover: '#1565c0',
-        error: '#d32f2f',
-        warning: '#f57c00',
-        success: '#388e3c',
-      },
-      fonts: {
-        body: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-        heading: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-        code: '"Roboto Mono", Consolas, Monaco, monospace',
-      },
-      spacing: defaultTheme.spacing,
-      borderRadius: '0.25rem',
-    });
+    return descriptions[baseName]?.[mode] || `${baseName} ${mode} theme`;
   }
 
   public registerTheme(theme: ThemePreset): void {
@@ -302,13 +139,27 @@ export class ThemeManager {
         ...baseTheme.spacing,
         ...(overrides.spacing || {}),
       },
-      description: 'Custom theme',
+      description: overrides.name?.includes('dark') ? `Custom dark theme based on ${getThemeBaseName(baseTheme.name)}` : `Custom light theme based on ${getThemeBaseName(baseTheme.name)}`,
       author: 'User',
       version: '1.0.0',
     };
 
     this.registerTheme(customTheme);
     return customTheme;
+  }
+
+  // Helper method to get available base theme names (without mode suffixes)
+  public getAvailableBaseThemes(): string[] {
+    return getAvailableThemeNames();
+  }
+
+  // Helper method to get current theme's base name and mode
+  public getCurrentThemeInfo(): { baseName: string; mode: 'light' | 'dark' } {
+    const currentTheme = this.getCurrentTheme();
+    return {
+      baseName: getThemeBaseName(currentTheme.name),
+      mode: getThemeMode(currentTheme.name)
+    };
   }
 
   public applyCSSVariables(theme: Theme): void {
