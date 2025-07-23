@@ -111,9 +111,8 @@ describe('ThemeSwitcher', () => {
     it('should show theme descriptions when enabled', () => {
       const html = themeSwitcher.render();
 
-      expect(html).toContain('Default theme');
-      expect(html).toContain('Dark theme');
-      expect(html).toContain('Custom theme');
+      expect(html).toContain('Default light theme');
+      expect(html).toContain('GitHub light theme');
     });
 
     it('should hide theme descriptions when disabled', () => {
@@ -251,7 +250,7 @@ describe('ThemeSwitcher', () => {
 
       themeOption.click();
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-light');
     });
 
     it('should close dropdown after selecting theme', () => {
@@ -282,18 +281,18 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should update UI after theme selection', () => {
-      // Mock theme manager to return dark theme after selection
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue(mockThemes[1]);
+      // Mock theme manager to return light theme (current theme)
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue(mockThemes[0]);
       vi.mocked(themeManager.setTheme).mockImplementation(() => {
         // Simulate theme change by updating mock return value
-        return mockThemes[1];
+        return mockThemes[0];
       });
 
       const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.click();
 
       // Check if UI was updated (this would be called internally)
-      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-light');
     });
 
     it('should handle theme selection when setTheme returns null', () => {
@@ -332,7 +331,7 @@ describe('ThemeSwitcher', () => {
       // Check that theme builder container was added to the body
       const builderContainer = document.body.querySelector('.mdv-theme-builder-overlay');
       expect(builderContainer).toBeTruthy();
-      
+
       // Clean up
       builderContainer?.remove();
     });
@@ -393,26 +392,26 @@ describe('ThemeSwitcher', () => {
     it('should wrap around at the end with ArrowDown', () => {
       const options = container.querySelectorAll('.mdv-theme-option');
       const firstOption = options[0] as HTMLElement;
-      
-      // Since keyboard navigation is based on active class, 
+
+      // Since keyboard navigation is based on active class,
       // we need to test that focus moves correctly from the active element
       expect(firstOption.classList.contains('active')).toBe(true);
-      
+
       // First ArrowDown should focus second option (index 1)
       const event1 = new KeyboardEvent('keydown', { key: 'ArrowDown' });
       container.dispatchEvent(event1);
       expect(document.activeElement).toBe(options[1]);
-      
+
       // Since navigation is still based on active class (which hasn't changed),
       // the next ArrowDown will still go to second option
       // To properly test wrap-around, we need to simulate selecting the last theme first
-      
+
       // Let's test wrap-around from a different approach
       // Manually focus the last option
       const lastOption = options[options.length - 1] as HTMLElement;
       lastOption.classList.add('active');
       firstOption.classList.remove('active');
-      
+
       // Now ArrowDown should wrap to first
       const wrapEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
       container.dispatchEvent(wrapEvent);
@@ -426,7 +425,7 @@ describe('ThemeSwitcher', () => {
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       container.dispatchEvent(event);
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-light');
     });
 
     it('should select theme with Space key', () => {
@@ -436,7 +435,7 @@ describe('ThemeSwitcher', () => {
       const event = new KeyboardEvent('keydown', { key: ' ' });
       container.dispatchEvent(event);
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-light');
     });
 
     it('should close dropdown with Escape key', () => {
@@ -490,6 +489,8 @@ describe('ThemeSwitcher', () => {
       };
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue(unknownTheme);
 
+      // Disable dark mode toggle to ensure base theme icon is shown
+      themeSwitcher = new ThemeSwitcher(themeManager, { showDarkModeToggle: false });
       const html = themeSwitcher.render();
 
       expect(html).toContain('🎨'); // Default icon

@@ -1,5 +1,4 @@
 import { vi, beforeEach, afterEach } from 'vitest';
-import '@testing-library/jest-dom/vitest';
 
 // Mock global objects that may not be available in test environment
 Object.defineProperty(global, 'ResizeObserver', {

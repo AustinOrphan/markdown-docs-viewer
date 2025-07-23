@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* global process */
 
-import { readFile, writeFile, readdir, mkdir } from 'fs/promises';
+import { readFile, writeFile, readdir, mkdir, unlink } from 'fs/promises';
 import { join, dirname, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
@@ -87,7 +87,7 @@ async function convertDiagramToImage(diagram, sourceFile, index) {
     await execAsync(command);
 
     // Clean up temp file
-    await execAsync(`rm "${tempFile}"`);
+    await unlink(tempFile);
 
     return {
       success: true,
@@ -97,7 +97,7 @@ async function convertDiagramToImage(diagram, sourceFile, index) {
   } catch (error) {
     // Clean up temp file on error
     try {
-      await execAsync(`rm "${tempFile}"`);
+      await unlink(tempFile);
     } catch {
       // Ignore cleanup errors
     }

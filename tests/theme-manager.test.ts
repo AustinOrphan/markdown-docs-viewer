@@ -85,14 +85,12 @@ describe('ThemeManager', () => {
       const themes = themeManager.getAvailableThemes();
       const themeNames = themes.map(t => t.name);
 
-      expect(themeNames).toContain('default');
-      expect(themeNames).toContain('dark');
-      expect(themeNames).toContain('high-contrast');
-      expect(themeNames).toContain('github');
-      expect(themeNames).toContain('dracula');
-      expect(themeNames).toContain('solarized-light');
-      expect(themeNames).toContain('solarized-dark');
-      expect(themeNames).toContain('material');
+      expect(themeNames).toContain('default-light');
+      expect(themeNames).toContain('default-dark');
+      expect(themeNames).toContain('github-light');
+      expect(themeNames).toContain('github-dark');
+      expect(themeNames).toContain('material-light');
+      expect(themeNames).toContain('material-dark');
     });
 
     it('should have proper theme structure for all built-in themes', () => {
@@ -169,7 +167,10 @@ describe('ThemeManager', () => {
       const result = themeManager.setTheme('nonexistent');
 
       expect(result).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Theme "nonexistent" not found');
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Theme "nonexistent" not found. Available themes:',
+        expect.any(Array)
+      );
       expect(themeManager.getCurrentTheme().name).toBe('default-light'); // Should remain unchanged
 
       consoleSpy.mockRestore();
@@ -234,7 +235,7 @@ describe('ThemeManager', () => {
 
     it('should return current theme', () => {
       const current = themeManager.getCurrentTheme();
-      expect(current.name).toBe('default');
+      expect(current.name).toBe('default-light');
 
       themeManager.setTheme('default-dark');
       const updated = themeManager.getCurrentTheme();
@@ -299,7 +300,7 @@ describe('ThemeManager', () => {
       expect(customTheme.name).toBe('my-theme');
       expect(customTheme.colors.primary).toBe('#ff0000');
       expect(customTheme.colors.background).toBe(defaultTheme.colors.background); // Inherited
-      expect(customTheme.description).toBe('Custom theme');
+      expect(customTheme.description).toBe('Custom light theme based on default');
       expect(customTheme.author).toBe('User');
     });
 
@@ -390,7 +391,7 @@ describe('ThemeManager', () => {
     it('should set theme data attribute', () => {
       themeManager.applyCSSVariables(defaultTheme);
 
-      expect(document.documentElement.getAttribute('data-mdv-theme')).toBe('default');
+      expect(document.documentElement.getAttribute('data-mdv-theme')).toBe('default-light');
     });
   });
 

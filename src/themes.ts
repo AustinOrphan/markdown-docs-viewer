@@ -129,21 +129,24 @@ function createTheme(baseName: string, mode: 'light' | 'dark'): Theme {
     name: `${baseName}-${mode}`,
     colors: baseColors[mode],
     fonts: {
-      body: baseName === 'github' 
-        ? '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
-        : baseName === 'material'
-        ? 'Roboto, "Helvetica Neue", Arial, sans-serif'
-        : '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      heading: baseName === 'github'
-        ? '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
-        : baseName === 'material'
-        ? 'Roboto, "Helvetica Neue", Arial, sans-serif'
-        : '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      code: baseName === 'github'
-        ? 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
-        : baseName === 'material'
-        ? '"Roboto Mono", Consolas, Monaco, monospace'
-        : '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace',
+      body:
+        baseName === 'github'
+          ? '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
+          : baseName === 'material'
+            ? 'Roboto, "Helvetica Neue", Arial, sans-serif'
+            : '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      heading:
+        baseName === 'github'
+          ? '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
+          : baseName === 'material'
+            ? 'Roboto, "Helvetica Neue", Arial, sans-serif'
+            : '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      code:
+        baseName === 'github'
+          ? 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+          : baseName === 'material'
+            ? '"Roboto Mono", Consolas, Monaco, monospace'
+            : '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace',
     },
     spacing: {
       unit: 8,
@@ -179,12 +182,12 @@ export function toggleThemeMode(themeName: string): string {
 // Helper function to create both light and dark variants of all themes
 export function getAllThemeVariants(): Theme[] {
   const themes: Theme[] = [];
-  
+
   Object.keys(baseThemes).forEach(baseName => {
     themes.push(createTheme(baseName, 'light'));
     themes.push(createTheme(baseName, 'dark'));
   });
-  
+
   return themes;
 }
 
@@ -194,10 +197,14 @@ export function getAvailableThemeNames(): string[] {
 }
 
 // Overloaded function for backward compatibility
- 
+
 export function createCustomTheme(overrides: Partial<Theme>): Theme;
 // eslint-disable-next-line no-redeclare
-export function createCustomTheme(baseName: string, mode: 'light' | 'dark', overrides: Partial<Theme>): Theme;
+export function createCustomTheme(
+  baseName: string,
+  mode: 'light' | 'dark',
+  overrides: Partial<Theme>
+): Theme;
 // eslint-disable-next-line no-redeclare
 export function createCustomTheme(
   baseNameOrOverrides: string | Partial<Theme>,
@@ -210,22 +217,22 @@ export function createCustomTheme(
     // For legacy usage, if name contains a known base theme, use it; otherwise use default
     let baseName = 'default';
     let themeMode: 'light' | 'dark' = 'light';
-    
+
     if (legacyOverrides.name) {
       // Try to extract base name and mode from the legacy name
       const detectedBaseName = getThemeBaseName(legacyOverrides.name);
       if (Object.keys(baseThemes).includes(detectedBaseName)) {
         baseName = detectedBaseName;
         themeMode = getThemeMode(legacyOverrides.name);
-      } else if (legacyOverrides.name === 'dark') {
-        // Special case for old 'dark' theme name
+      } else if (legacyOverrides.name === 'dark' || legacyOverrides.name.includes('-dark')) {
+        // Special case for old 'dark' theme name or names containing '-dark'
         baseName = 'default';
         themeMode = 'dark';
       }
     }
-    
+
     const baseTheme = createTheme(baseName, themeMode);
-    
+
     return {
       ...baseTheme,
       ...legacyOverrides,
@@ -244,12 +251,12 @@ export function createCustomTheme(
       },
     };
   }
-  
+
   // Handle new signature: createCustomTheme(baseName, mode, overrides)
   if (typeof baseNameOrOverrides === 'string' && mode && overrides) {
     const baseName = baseNameOrOverrides;
     const baseTheme = createTheme(baseName, mode);
-    
+
     return {
       ...baseTheme,
       ...overrides,
@@ -268,6 +275,8 @@ export function createCustomTheme(
       },
     };
   }
-  
-  throw new Error('Invalid arguments to createCustomTheme. Use either createCustomTheme(overrides) or createCustomTheme(baseName, mode, overrides)');
+
+  throw new Error(
+    'Invalid arguments to createCustomTheme. Use either createCustomTheme(overrides) or createCustomTheme(baseName, mode, overrides)'
+  );
 }
