@@ -71,6 +71,7 @@
     "lint-staged": "^16.1.2",
     "marked": "^15.0.12",
     "marked-highlight": "^2.2.2",
+    "nodemon": "^3.0.1",
     "prettier": "^3.6.2",
     "typedoc": "^0.28.7",
     "typedoc-plugin-markdown": "^4.7.1",

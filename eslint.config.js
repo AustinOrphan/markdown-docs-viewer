@@ -34,8 +34,36 @@ export default [
     },
   },
 
+  // Configuration for Node.js scripts
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+
   // Ignore patterns
   {
-    ignores: ['dist/**', 'demo/**', 'html/**', 'node_modules/**', '*.js', '!eslint.config.js'],
+    ignores: [
+      'dist/**',
+      'demo/**',
+      'html/**',
+      'node_modules/**',
+      'theming-options/**',
+      '*.js',
+      '!eslint.config.js',
+      '!scripts/**/*.js',
+    ],
   },
 ];

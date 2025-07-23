@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /* global process, console */
 
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
-import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir, stat, rm } from 'fs/promises';
 import { join, dirname, relative } from 'path';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
@@ -65,8 +66,6 @@ async function cleanDir(dir) {
       throw new Error('Directory must be within project root');
     }
 
-    // Use fs.rm for better security than shell command
-    const { rm } = await import('fs/promises');
     await rm(dir, { recursive: true, force: true });
   } catch (error) {
     // Directory might not exist or deletion failed
@@ -92,7 +91,7 @@ async function generateApiDocs() {
       await execAsync('npm install --save-dev typedoc typedoc-plugin-markdown');
     }
 
-    // Generate TypeDoc documentation with safer path handling
+    // Generate TypeDoc documentation using execFile for safety
     const typeDocArgs = [
       'typedoc',
       '--out',
@@ -107,9 +106,7 @@ async function generateApiDocs() {
       'none',
     ];
 
-    const { stdout, stderr } = await execAsync(
-      `npx ${typeDocArgs.map(arg => `"${arg}"`).join(' ')}`
-    );
+    const { stdout, stderr } = await execFileAsync('npx', typeDocArgs);
     if (stdout) logInfo(stdout);
     if (stderr && !stderr.includes('warning')) logError(stderr);
 

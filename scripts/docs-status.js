@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* global process, console */
 
 import { readFile, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
@@ -120,8 +119,8 @@ class DocsDashboard {
             srcFiles.push(entry.name.replace('.ts', ''));
           }
         }
-      } catch (error) {
-        console.error('Error scanning src:', error.message);
+      } catch {
+        console.error('Error scanning src directory');
       }
     }
 
@@ -182,10 +181,12 @@ class DocsDashboard {
     const uncommittedDocs = await this.checkGitStatus();
 
     if (format === 'json') {
+      const healthScore = this.calculateHealthScore(stats, uncommittedDocs);
       return JSON.stringify(
         {
           ...stats,
           uncommittedDocs,
+          healthScore,
           timestamp: new Date().toISOString(),
         },
         null,
