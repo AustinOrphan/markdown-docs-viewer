@@ -1,25 +1,23 @@
 // Demo Controller for Markdown Documentation Viewer
-import { MarkdownDocsViewer, getAllThemeVariants, getThemeBaseName, getThemeMode } from '../dist/index.es.js';
+import { MarkdownDocsViewer, ThemeSwitcher, ThemeManager } from '../dist/index.es.js';
 
 class DemoController {
   constructor() {
     this.viewer = null;
+    this.themeManager = null;
+    this.themeSwitcher = null;
     this.currentExample = 'basic';
-    this.currentTheme = 'default-light';
-    this.currentMode = 'light';
     this.examples = this.getExampleConfigs();
-    this.themes = this.getThemes();
 
     this.init();
   }
 
   init() {
+    // Initialize theme manager
+    this.initializeThemeManager();
+    
     // Initialize controls
     this.setupControls();
-
-    // Initialize UI state
-    this.updateModeToggle();
-    this.updateBodyTheme();
 
     // Load initial example
     this.loadExample('basic');
@@ -28,21 +26,39 @@ class DemoController {
     this.updateStatus('ready', 'Demo loaded successfully');
   }
 
-  setupControls() {
-    // Theme selector
-    const themeSelector = document.getElementById('theme-selector');
-    this.populateThemeSelector();
-    themeSelector.addEventListener('change', e => {
-      this.switchTheme(e.target.value);
+  initializeThemeManager() {
+    // Create theme manager with demo-specific options
+    this.themeManager = new ThemeManager({
+      enablePersistence: true,
+      storageKey: 'mdv-demo-theme',
+      onThemeChange: (theme) => {
+        // Update body theme attribute for demo styling
+        const mode = theme.name.includes('-dark') ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', mode);
+        
+        // Update viewer theme if viewer exists
+        if (this.viewer) {
+          this.viewer.setTheme(theme);
+        }
+        
+        // Update status
+        this.updateStatus('success', `Theme changed to ${theme.name}`);
+      }
     });
 
-    // Mode toggle button
-    const modeToggle = document.getElementById('mode-toggle');
-    if (modeToggle) {
-      modeToggle.addEventListener('click', () => {
-        this.toggleMode();
-      });
-    }
+    // Create theme switcher
+    this.themeSwitcher = new ThemeSwitcher(this.themeManager, {
+      position: 'header',
+      showDarkModeToggle: true,
+      allowCustomThemes: true,
+      showPreview: true,
+      showDescription: true
+    });
+  }
+
+  setupControls() {
+    // Initialize built-in theme switcher
+    this.setupThemeSwitcher();
 
     // Example selector
     const exampleSelector = document.getElementById('example-selector');
@@ -61,6 +77,37 @@ class DemoController {
     fullscreenBtn.addEventListener('click', () => {
       this.toggleFullscreen();
     });
+  }
+
+  setupThemeSwitcher() {
+    // Render the theme switcher in the theme controls container
+    const themeControlsContainer = document.getElementById('theme-controls');
+    if (themeControlsContainer) {
+      // Inject CSS styles for the theme switcher
+      this.injectThemeSwitcherStyles();
+      
+      // Render and attach the theme switcher
+      themeControlsContainer.innerHTML = this.themeSwitcher.render();
+      this.themeSwitcher.attachTo(themeControlsContainer);
+      
+      // Set initial body theme
+      const currentTheme = this.themeManager.getCurrentTheme();
+      const mode = currentTheme.name.includes('-dark') ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', mode);
+    }
+  }
+
+  injectThemeSwitcherStyles() {
+    // Check if styles are already injected
+    if (document.getElementById('theme-switcher-styles')) {
+      return;
+    }
+
+    // Create and inject theme switcher styles
+    const styleElement = document.createElement('style');
+    styleElement.id = 'theme-switcher-styles';
+    styleElement.textContent = this.themeSwitcher.getStyles();
+    document.head.appendChild(styleElement);
   }
 
   getExampleConfigs() {
@@ -184,71 +231,6 @@ class DemoController {
     };
   }
 
-  getThemes() {
-    // Get all theme variants from the library
-    const allThemes = getAllThemeVariants();
-    const themeMap = {};
-    
-    allThemes.forEach(theme => {
-      themeMap[theme.name] = theme;
-    });
-    
-    return themeMap;
-  }
-
-  populateThemeSelector() {
-    const themeSelector = document.getElementById('theme-selector');
-    const themes = this.getThemes();
-    
-    // Get unique base theme names
-    const baseThemes = [...new Set(Object.keys(themes).map(name => getThemeBaseName(name)))];
-    
-    // Clear existing options
-    themeSelector.innerHTML = '';
-    
-    // Add options for each base theme
-    baseThemes.forEach(baseName => {
-      const option = document.createElement('option');
-      option.value = baseName;
-      option.textContent = baseName.charAt(0).toUpperCase() + baseName.slice(1) + ' Theme';
-      themeSelector.appendChild(option);
-    });
-    
-    // Set current selection
-    const currentBaseName = getThemeBaseName(this.currentTheme);
-    themeSelector.value = currentBaseName;
-  }
-
-  toggleMode() {
-    this.currentMode = this.currentMode === 'light' ? 'dark' : 'light';
-    const currentBaseName = getThemeBaseName(this.currentTheme);
-    this.currentTheme = `${currentBaseName}-${this.currentMode}`;
-    
-    // Update UI
-    this.updateModeToggle();
-    this.updateBodyTheme();
-    
-    // Apply to viewer if it exists
-    if (this.viewer) {
-      const newTheme = this.themes[this.currentTheme];
-      if (newTheme) {
-        this.viewer.setTheme(newTheme);
-        this.updateStatus('success', `Switched to ${this.currentMode} mode`);
-      }
-    }
-  }
-
-  updateModeToggle() {
-    const modeToggle = document.getElementById('mode-toggle');
-    if (modeToggle) {
-      modeToggle.textContent = this.currentMode === 'light' ? '🌙 Dark' : '☀️ Light';
-      modeToggle.setAttribute('aria-label', `Switch to ${this.currentMode === 'light' ? 'dark' : 'light'} mode`);
-    }
-  }
-
-  updateBodyTheme() {
-    document.body.setAttribute('data-theme', this.currentMode);
-  }
 
   loadExample(exampleName) {
     this.updateStatus('loading', 'Loading example...');
@@ -269,13 +251,8 @@ class DemoController {
     this.setProgress(60);
 
     try {
-      // Get current theme object
-      const currentTheme = this.themes[this.currentTheme];
-      if (!currentTheme) {
-        console.error(`Theme not found: ${this.currentTheme}`);
-        this.updateStatus('error', `Theme not found: ${this.currentTheme}`);
-        return;
-      }
+      // Get current theme from theme manager
+      const currentTheme = this.themeManager.getCurrentTheme();
 
       // Create new viewer
       this.viewer = new MarkdownDocsViewer({
@@ -300,24 +277,6 @@ class DemoController {
     }
   }
 
-  switchTheme(baseThemeName) {
-    // Construct full theme name with current mode
-    const fullThemeName = `${baseThemeName}-${this.currentMode}`;
-    const theme = this.themes[fullThemeName];
-    
-    if (!theme) {
-      console.error(`Theme not found: ${fullThemeName}`);
-      return;
-    }
-
-    this.currentTheme = fullThemeName;
-    this.updateBodyTheme();
-
-    if (this.viewer) {
-      this.viewer.setTheme(theme);
-      this.updateStatus('success', `Theme switched to ${baseThemeName} (${this.currentMode})`);
-    }
-  }
 
   reloadViewer() {
     this.loadExample(this.currentExample);
