@@ -181,10 +181,12 @@ class DocsDashboard {
     const uncommittedDocs = await this.checkGitStatus();
 
     if (format === 'json') {
+      const healthScore = this.calculateHealthScore(stats, uncommittedDocs);
       return JSON.stringify(
         {
           ...stats,
           uncommittedDocs,
+          healthScore,
           timestamp: new Date().toISOString(),
         },
         null,
