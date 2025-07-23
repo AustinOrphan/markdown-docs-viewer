@@ -254,6 +254,12 @@ export class ThemeManager {
   public applyCSSVariables(theme: Theme): void {
     const root = document.documentElement;
 
+    // Defensive check for style property
+    if (!root || !root.style || typeof root.style.setProperty !== 'function') {
+      console.warn('Cannot apply CSS variables: document.documentElement.style not available');
+      return;
+    }
+
     // Apply color variables
     Object.entries(theme.colors).forEach(([key, value]) => {
       const varName = `--mdv-color-${this.kebabCase(key)}`;
