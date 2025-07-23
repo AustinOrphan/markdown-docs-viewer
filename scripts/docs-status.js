@@ -47,7 +47,7 @@ class DocsDashboard {
       if (brokenLinksTask && brokenLinksTask.brokenLinks) {
         this.stats.brokenLinks = brokenLinksTask.brokenLinks.length;
       }
-    } catch (error) {
+    } catch {
       // If no report exists, try to get last modified time of architecture docs
       try {
         const archPath = join(projectRoot, 'docs', 'architecture', 'README.md');
@@ -92,7 +92,7 @@ class DocsDashboard {
           }
         }
       }
-    } catch (error) {
+    } catch {
       // Directory doesn't exist
     }
   }
@@ -119,8 +119,8 @@ class DocsDashboard {
             srcFiles.push(entry.name.replace('.ts', ''));
           }
         }
-      } catch (error) {
-        console.error('Error scanning src:', error.message);
+      } catch {
+        console.error('Error scanning src directory');
       }
     }
 

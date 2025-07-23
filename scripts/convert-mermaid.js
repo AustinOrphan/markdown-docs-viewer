@@ -97,7 +97,9 @@ async function convertDiagramToImage(diagram, sourceFile, index) {
     // Clean up temp file on error
     try {
       await execAsync(`rm "${tempFile}"`);
-    } catch {}
+    } catch {
+      // Ignore cleanup errors
+    }
 
     return {
       success: false,

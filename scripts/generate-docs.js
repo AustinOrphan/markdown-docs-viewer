@@ -46,10 +46,10 @@ function logWarning(message) {
 async function ensureDir(dir) {
   try {
     await mkdir(dir, { recursive: true });
-  } catch (error) {
-    if (error.code !== 'EEXIST') {
-      console.error(`Failed to create directory ${dir}:`, error.message);
-      throw error;
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      console.error(`Failed to create directory ${dir}:`, err.message);
+      throw err;
     }
   }
 }
@@ -57,7 +57,7 @@ async function ensureDir(dir) {
 async function cleanDir(dir) {
   try {
     await rm(dir, { recursive: true, force: true });
-  } catch (error) {
+  } catch {
     // Directory might not exist
   }
   await ensureDir(dir);
@@ -104,9 +104,9 @@ async function generateApiDocs() {
 
     logInfo('API documentation generated successfully');
     return { success: true };
-  } catch (error) {
-    logError(`Error generating API documentation: ${error.message}`);
-    return { success: false, error: error.message };
+  } catch (err) {
+    logError(`Error generating API documentation: ${err.message}`);
+    return { success: false, error: err.message };
   }
 }
 
@@ -395,8 +395,8 @@ async function main() {
         process.stdout.write(JSON.stringify(report.summary));
       }
     }
-  } catch (error) {
-    logError(`Fatal error: ${error.message}`);
+  } catch (err) {
+    logError(`Fatal error: ${err.message}`);
     await generateReport(taskResults);
     process.exit(1);
   }
