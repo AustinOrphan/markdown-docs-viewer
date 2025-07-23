@@ -694,23 +694,15 @@ describe('DocumentLoader', () => {
     });
 
     it('should respect custom retry config', async () => {
-      vi.useFakeTimers();
-
       const source = createSource('local', [{ id: 'doc1', title: 'Doc 1', file: 'doc1.md' }]);
       const loader = new DocumentLoader(source, { maxAttempts: 1 });
 
       mockFetch.mockRejectedValue(new TypeError('Network error'));
 
-      const promise = loader.loadDocument(source.documents[0]);
-
-      await vi.runAllTimersAsync();
-
-      const result = await promise;
+      const result = await loader.loadDocument(source.documents[0]);
 
       expect(result).toBe('');
       expect(mockFetch).toHaveBeenCalledTimes(1);
-
-      vi.useRealTimers();
     });
   });
 });

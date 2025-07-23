@@ -136,13 +136,6 @@ describe('Error Handling System', () => {
   });
 
   describe('withRetry', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
     it('should succeed on first attempt', async () => {
       const operation = vi.fn().mockResolvedValue('success');
 
@@ -166,12 +159,7 @@ describe('Error Handling System', () => {
         )
         .mockResolvedValue('success');
 
-      const retryPromise = withRetry(operation);
-
-      // Need to use async timer advancement for async operations
-      await vi.advanceTimersByTimeAsync(1000);
-
-      const result = await retryPromise;
+      const result = await withRetry(operation, { baseDelay: 1 });
 
       expect(result).toBe('success');
       expect(operation).toHaveBeenCalledTimes(2);
@@ -208,14 +196,9 @@ describe('Error Handling System', () => {
       });
 
       // Start the retry operation
-      const retryPromise = withRetry(operation, { maxAttempts: 2 });
-
-      // Advance timers to handle retries
-      await vi.advanceTimersByTimeAsync(2000);
-
       // Properly handle the rejection
       try {
-        await retryPromise;
+        await withRetry(operation, { maxAttempts: 2, baseDelay: 1 });
         expect.fail('Should have thrown an error');
       } catch (thrownError) {
         expect(thrownError).toBe(error);
@@ -253,19 +236,9 @@ describe('Error Handling System', () => {
         return Promise.reject(error);
       });
 
-      const retryPromise = withRetry(operation, {
-        maxAttempts: 3,
-        baseDelay: 100,
-        exponentialBackoff: true,
-      });
-
-      // Advance timers to handle all retries with exponential backoff
-      // First retry: 100ms, Second retry: 200ms, Third attempt happens
-      await vi.advanceTimersByTimeAsync(500);
-
       // Properly handle the rejection
       try {
-        await retryPromise;
+        await withRetry(operation, { maxAttempts: 3, baseDelay: 1, exponentialBackoff: true });
         expect.fail('Should have thrown an error');
       } catch (thrownError) {
         expect(thrownError).toBe(error);
