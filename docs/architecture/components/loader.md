@@ -270,7 +270,19 @@ private async loadFromGithub(path: string): Promise<string> {
     }
 
     // Decode base64 content
-    const content = atob(data.content.replace(/\s/g, ''));
+    let content;
+    try {
+      content = atob(data.content.replace(/\s/g, ''));
+    } catch (e) {
+      throw new MarkdownDocsError(
+        ErrorCode.DOCUMENT_PARSE_FAILED,
+        'Failed to decode base64 content from GitHub',
+        'The document content from GitHub seems to be corrupted.',
+        ErrorSeverity.MEDIUM,
+        false,
+        { originalError: e }
+      );
+    }
     return content;
   } catch (error) {
     // Error handling...

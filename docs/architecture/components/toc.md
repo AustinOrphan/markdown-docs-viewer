@@ -81,7 +81,7 @@ generate(content: string): TOCItem[] {
 
   try {
     // Use marked.js lexer for token extraction
-    tokens = new marked.Lexer().lex(content);
+    tokens = marked.lexer(content);
     this.extractHeadings(tokens);
   } catch {
     // Fallback to manual parsing
@@ -533,7 +533,7 @@ class MarkdownDocsViewer {
 ```typescript
 // Safe markdown parsing with fallback
 try {
-  tokens = new marked.Lexer().lex(content);
+  tokens = marked.lexer(content);
   this.extractHeadings(tokens);
 } catch (error) {
   console.warn('Marked lexer failed, using fallback parser:', error);

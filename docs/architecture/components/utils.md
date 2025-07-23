@@ -104,9 +104,9 @@ export function sanitizeCssColor(color: string | undefined | null): string {
 
   const colorStr = String(color).trim();
 
-  // Allow hex colors, rgb/rgba, hsl/hsla, and named colors
+  // Allow hex colors, rgb/rgba, hsl/hsla, and named colors with strict validation
   const colorPattern =
-    /^(#[0-9a-fA-F]{3,8}|rgb\([^)]*\)|rgba\([^)]*\)|hsl\([^)]*\)|hsla\([^)]*\)|[a-zA-Z]+)$/;
+    /^(#[0-9a-fA-F]{3,8}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)|rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*[01]?\.?\d*\s*\)|hsl\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*\)|hsla\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*,\s*[01]?\.?\d*\s*\)|[a-zA-Z]+)$/;
 
   if (colorPattern.test(colorStr)) {
     return colorStr;
