@@ -42,6 +42,18 @@ const mockContainer = {
   nodeType: 1,
   nodeName: 'DIV',
   tagName: 'DIV',
+  style: {
+    setProperty: vi.fn(),
+    getPropertyValue: vi.fn(),
+    removeProperty: vi.fn(),
+    overflow: '',
+    display: '',
+    position: '',
+    left: '',
+    width: '',
+    touchAction: '',
+    overscrollBehavior: '',
+  },
   classList: {
     add: vi.fn(),
     remove: vi.fn(),
@@ -60,19 +72,38 @@ Object.defineProperty(global, 'document', {
       textContent: '',
       remove: vi.fn(),
       innerHTML: '',
-      style: {},
+      style: {
+        setProperty: vi.fn(),
+        getPropertyValue: vi.fn(),
+        removeProperty: vi.fn(),
+      },
       setAttribute: vi.fn(),
       getAttribute: vi.fn(),
+      appendChild: vi.fn(),
+      removeChild: vi.fn(),
     })),
+    documentElement: {
+      style: {
+        setProperty: vi.fn(),
+        getPropertyValue: vi.fn(),
+        removeProperty: vi.fn(),
+      },
+      setAttribute: vi.fn(),
+      getAttribute: vi.fn(),
+    },
     head: {
       appendChild: vi.fn(),
       removeChild: vi.fn(),
       innerHTML: '',
+      style: {},
     },
     body: {
       appendChild: vi.fn(),
       removeChild: vi.fn(),
       innerHTML: '',
+      style: {
+        overflow: '',
+      },
     },
     querySelector: vi.fn(selector => {
       if (selector === '#test-container') return mockContainer;

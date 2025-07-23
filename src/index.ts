@@ -1,6 +1,15 @@
 export { MarkdownDocsViewer } from './viewer';
 export * from './types';
-export { defaultTheme, darkTheme, createCustomTheme } from './themes';
+export { 
+  defaultTheme, 
+  darkTheme, 
+  createCustomTheme,
+  getAllThemeVariants,
+  getAvailableThemeNames,
+  getThemeBaseName,
+  getThemeMode,
+  toggleThemeMode
+} from './themes';
 export { createViewer } from './factory';
 export {
   MarkdownDocsError,

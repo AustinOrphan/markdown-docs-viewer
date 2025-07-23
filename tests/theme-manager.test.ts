@@ -35,8 +35,8 @@ describe('ThemeManager', () => {
     it('should initialize with default options', () => {
       themeManager = new ThemeManager();
 
-      expect(themeManager.getCurrentTheme().name).toBe('default');
-      expect(themeManager.getAvailableThemes()).toHaveLength(8); // Built-in themes
+      expect(themeManager.getCurrentTheme().name).toBe('default-light');
+      expect(themeManager.getAvailableThemes()).toHaveLength(6); // 3 base themes × 2 modes
     });
 
     it('should initialize with custom options', () => {
@@ -47,15 +47,15 @@ describe('ThemeManager', () => {
         onThemeChange,
       });
 
-      expect(themeManager.getCurrentTheme().name).toBe('default');
+      expect(themeManager.getCurrentTheme().name).toBe('default-light');
     });
 
     it('should load saved theme from localStorage', () => {
-      localStorageMock.getItem.mockReturnValue('dark');
+      localStorageMock.getItem.mockReturnValue('default-dark');
 
       themeManager = new ThemeManager();
 
-      expect(themeManager.getCurrentTheme().name).toBe('dark');
+      expect(themeManager.getCurrentTheme().name).toBe('default-dark');
       expect(localStorageMock.getItem).toHaveBeenCalledWith('mdv-theme');
     });
 
@@ -64,7 +64,7 @@ describe('ThemeManager', () => {
 
       themeManager = new ThemeManager();
 
-      expect(themeManager.getCurrentTheme().name).toBe('default');
+      expect(themeManager.getCurrentTheme().name).toBe('default-light');
     });
 
     it('should use custom storage key', () => {
@@ -85,14 +85,12 @@ describe('ThemeManager', () => {
       const themes = themeManager.getAvailableThemes();
       const themeNames = themes.map(t => t.name);
 
-      expect(themeNames).toContain('default');
-      expect(themeNames).toContain('dark');
-      expect(themeNames).toContain('high-contrast');
-      expect(themeNames).toContain('github');
-      expect(themeNames).toContain('dracula');
-      expect(themeNames).toContain('solarized-light');
-      expect(themeNames).toContain('solarized-dark');
-      expect(themeNames).toContain('material');
+      expect(themeNames).toContain('default-light');
+      expect(themeNames).toContain('default-dark');
+      expect(themeNames).toContain('github-light');
+      expect(themeNames).toContain('github-dark');
+      expect(themeNames).toContain('material-light');
+      expect(themeNames).toContain('material-dark');
     });
 
     it('should have proper theme structure for all built-in themes', () => {
@@ -156,11 +154,11 @@ describe('ThemeManager', () => {
     });
 
     it('should set theme and return the theme object', () => {
-      const result = themeManager.setTheme('dark');
+      const result = themeManager.setTheme('default-dark');
 
       expect(result).toBeTruthy();
-      expect(result?.name).toBe('dark');
-      expect(themeManager.getCurrentTheme().name).toBe('dark');
+      expect(result?.name).toBe('default-dark');
+      expect(themeManager.getCurrentTheme().name).toBe('default-dark');
     });
 
     it('should return null for non-existent theme', () => {
@@ -169,22 +167,25 @@ describe('ThemeManager', () => {
       const result = themeManager.setTheme('nonexistent');
 
       expect(result).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Theme "nonexistent" not found');
-      expect(themeManager.getCurrentTheme().name).toBe('default'); // Should remain unchanged
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Theme "nonexistent" not found. Available themes:',
+        expect.any(Array)
+      );
+      expect(themeManager.getCurrentTheme().name).toBe('default-light'); // Should remain unchanged
 
       consoleSpy.mockRestore();
     });
 
     it('should save theme to localStorage when persistence enabled', () => {
-      themeManager.setTheme('dark');
+      themeManager.setTheme('default-dark');
 
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('mdv-theme', 'dark');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('mdv-theme', 'default-dark');
     });
 
     it('should not save theme when persistence disabled', () => {
       themeManager = new ThemeManager({ enablePersistence: false });
 
-      themeManager.setTheme('dark');
+      themeManager.setTheme('default-dark');
 
       expect(localStorageMock.setItem).not.toHaveBeenCalled();
     });
@@ -193,20 +194,20 @@ describe('ThemeManager', () => {
       const onThemeChange = vi.fn();
       themeManager = new ThemeManager({ onThemeChange });
 
-      const result = themeManager.setTheme('dark');
+      const result = themeManager.setTheme('default-dark');
 
       expect(onThemeChange).toHaveBeenCalledWith(result);
     });
 
     it('should apply CSS variables', () => {
-      themeManager.setTheme('dark');
+      themeManager.setTheme('default-dark');
 
       const root = document.documentElement;
       expect(root.style.getPropertyValue('--mdv-color-primary')).toBe(darkTheme.colors.primary);
       expect(root.style.getPropertyValue('--mdv-color-background')).toBe(
         darkTheme.colors.background
       );
-      expect(root.getAttribute('data-mdv-theme')).toBe('dark');
+      expect(root.getAttribute('data-mdv-theme')).toBe('default-dark');
     });
 
     it('should handle localStorage errors gracefully', () => {
@@ -215,7 +216,7 @@ describe('ThemeManager', () => {
       });
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const result = themeManager.setTheme('dark');
+      const result = themeManager.setTheme('default-dark');
 
       expect(result).toBeTruthy();
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -234,11 +235,11 @@ describe('ThemeManager', () => {
 
     it('should return current theme', () => {
       const current = themeManager.getCurrentTheme();
-      expect(current.name).toBe('default');
+      expect(current.name).toBe('default-light');
 
-      themeManager.setTheme('dark');
+      themeManager.setTheme('default-dark');
       const updated = themeManager.getCurrentTheme();
-      expect(updated.name).toBe('dark');
+      expect(updated.name).toBe('default-dark');
     });
   });
 
@@ -276,8 +277,8 @@ describe('ThemeManager', () => {
     });
 
     it('should return theme by name', () => {
-      const theme = themeManager.getTheme('dark');
-      expect(theme?.name).toBe('dark');
+      const theme = themeManager.getTheme('default-dark');
+      expect(theme?.name).toBe('default-dark');
     });
 
     it('should return undefined for non-existent theme', () => {
@@ -299,14 +300,14 @@ describe('ThemeManager', () => {
       expect(customTheme.name).toBe('my-theme');
       expect(customTheme.colors.primary).toBe('#ff0000');
       expect(customTheme.colors.background).toBe(defaultTheme.colors.background); // Inherited
-      expect(customTheme.description).toBe('Custom theme');
+      expect(customTheme.description).toBe('Custom light theme based on default');
       expect(customTheme.author).toBe('User');
     });
 
     it('should merge all properties correctly', () => {
-      themeManager.setTheme('dark'); // Change base theme
+      themeManager.setTheme('default-dark'); // Change base theme
 
-      const customTheme = themeManager.createCustomTheme('dark-custom', {
+      const customTheme = themeManager.createCustomTheme('custom-dark', {
         colors: { primary: '#purple' },
         fonts: { body: 'Comic Sans' },
         spacing: { unit: 16 },
@@ -390,7 +391,7 @@ describe('ThemeManager', () => {
     it('should set theme data attribute', () => {
       themeManager.applyCSSVariables(defaultTheme);
 
-      expect(document.documentElement.getAttribute('data-mdv-theme')).toBe('default');
+      expect(document.documentElement.getAttribute('data-mdv-theme')).toBe('default-light');
     });
   });
 
@@ -534,7 +535,7 @@ describe('ThemeManager', () => {
 
       expect(() => {
         themeManager = new ThemeManager();
-        themeManager.setTheme('dark');
+        themeManager.setTheme('default-dark');
       }).not.toThrow();
 
       // Restore localStorage
@@ -553,7 +554,7 @@ describe('ThemeManager', () => {
         themeManager = new ThemeManager();
       }).not.toThrow();
 
-      expect(themeManager.getCurrentTheme().name).toBe('default');
+      expect(themeManager.getCurrentTheme().name).toBe('default-light');
     });
   });
 
