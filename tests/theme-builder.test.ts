@@ -187,7 +187,8 @@ describe('ThemeBuilder', () => {
       const html = themeBuilder.render();
 
       expect(html).toContain('option value="default"');
-      expect(html).toContain('option value="dark"');
+      expect(html).toContain('option value="github"');
+      expect(html).toContain('option value="material"');
     });
   });
 
@@ -500,10 +501,10 @@ describe('ThemeBuilder', () => {
     it('should load different base theme when selected', () => {
       const baseSelect = container.querySelector('#base-theme') as HTMLSelectElement;
 
-      baseSelect.value = 'dark';
+      baseSelect.value = 'github';
       baseSelect.dispatchEvent(new Event('change'));
 
-      expect(baseSelect.value).toBe('dark');
+      expect(baseSelect.value).toBe('github');
     });
   });
 

@@ -9,10 +9,10 @@ describe('Index Exports', () => {
 
   it('should export themes', () => {
     expect(exports.defaultTheme).toBeDefined();
-    expect(exports.defaultTheme.name).toBe('default');
+    expect(exports.defaultTheme.name).toBe('default-light');
 
     expect(exports.darkTheme).toBeDefined();
-    expect(exports.darkTheme.name).toBe('dark');
+    expect(exports.darkTheme.name).toBe('default-dark');
   });
 
   it('should export factory functions', () => {

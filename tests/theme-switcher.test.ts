@@ -16,12 +16,12 @@ describe('ThemeSwitcher', () => {
 
     // Mock themes
     mockThemes = [
-      { ...defaultTheme, description: 'Default theme' },
-      { ...darkTheme, description: 'Dark theme' },
+      { ...defaultTheme, description: 'Default light theme' },
+      { ...darkTheme, description: 'Default dark theme' },
       {
-        name: 'custom',
-        description: 'Custom theme',
-        colors: { ...defaultTheme.colors, primary: '#ff0000' },
+        name: 'github-light',
+        description: 'GitHub light theme',
+        colors: { ...defaultTheme.colors, primary: '#0969da' },
         fonts: defaultTheme.fonts,
         spacing: defaultTheme.spacing,
         borderRadius: '0.5rem',
@@ -98,8 +98,7 @@ describe('ThemeSwitcher', () => {
       const html = themeSwitcher.render();
 
       expect(html).toContain('data-theme="default"');
-      expect(html).toContain('data-theme="dark"');
-      expect(html).toContain('data-theme="custom"');
+      expect(html).toContain('data-theme="github"');
     });
 
     it('should mark current theme as active', () => {
@@ -248,17 +247,17 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should select theme when option is clicked', () => {
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
 
       themeOption.click();
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
     });
 
     it('should close dropdown after selecting theme', () => {
       const trigger = container.querySelector('.mdv-theme-trigger') as HTMLElement;
       const dropdown = container.querySelector('.mdv-theme-dropdown') as HTMLElement;
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
 
       // Open dropdown
       trigger.click();
@@ -276,7 +275,7 @@ describe('ThemeSwitcher', () => {
       container.innerHTML = themeSwitcher.render();
       themeSwitcher.attachTo(container);
 
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.click();
 
       expect(onThemeChange).toHaveBeenCalledWith(mockThemes[1]);
@@ -290,11 +289,11 @@ describe('ThemeSwitcher', () => {
         return mockThemes[1];
       });
 
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.click();
 
       // Check if UI was updated (this would be called internally)
-      expect(themeManager.setTheme).toHaveBeenCalledWith('dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
     });
 
     it('should handle theme selection when setTheme returns null', () => {
@@ -304,7 +303,7 @@ describe('ThemeSwitcher', () => {
       container.innerHTML = themeSwitcher.render();
       themeSwitcher.attachTo(container);
 
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.click();
 
       expect(onThemeChange).not.toHaveBeenCalled();
@@ -421,23 +420,23 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should select theme with Enter key', () => {
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.focus();
 
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       container.dispatchEvent(event);
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
     });
 
     it('should select theme with Space key', () => {
-      const themeOption = container.querySelector('[data-theme="dark"]') as HTMLElement;
+      const themeOption = container.querySelector('[data-theme="default"]') as HTMLElement;
       themeOption.focus();
 
       const event = new KeyboardEvent('keydown', { key: ' ' });
       container.dispatchEvent(event);
 
-      expect(themeManager.setTheme).toHaveBeenCalledWith('dark');
+      expect(themeManager.setTheme).toHaveBeenCalledWith('default-dark');
     });
 
     it('should close dropdown with Escape key', () => {
