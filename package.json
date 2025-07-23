@@ -34,7 +34,14 @@
     "prepare": "husky",
     "demo:dev": "cd demo && vite",
     "demo:build": "cd demo && vite build",
-    "demo:preview": "cd demo && vite preview"
+    "demo:preview": "cd demo && vite preview",
+    "docs:generate": "node scripts/generate-docs.js",
+    "docs:status": "node scripts/docs-status.js",
+    "docs:status:json": "node scripts/docs-status.js --json",
+    "docs:validate": "node scripts/generate-docs.js && node scripts/docs-status.js",
+    "docs:watch": "nodemon --watch src --watch docs --ext ts,md --exec 'npm run docs:generate'",
+    "docs:mermaid": "node scripts/convert-mermaid.js",
+    "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run"
   },
   "keywords": [
     "markdown",

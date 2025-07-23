@@ -1,0 +1,23 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check if documentation files have been modified
+DOCS_CHANGED=$(git diff --cached --name-only | grep -E '\.(md|ts)$|^docs/' | wc -l)
+
+if [ "$DOCS_CHANGED" -gt 0 ]; then
+  echo "📚 Documentation files changed, validating..."
+  
+  # Run documentation validation
+  npm run docs:validate
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Documentation validation failed. Please fix the issues before committing."
+    exit 1
+  fi
+  
+  # Check if docs-report files need to be staged
+  if [ -f "docs-report.json" ] && [ -f "docs-report.md" ]; then
+    git add docs-report.json docs-report.md
+    echo "✅ Documentation reports added to commit"
+  fi
+fi

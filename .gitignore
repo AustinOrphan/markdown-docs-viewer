@@ -8,3 +8,14 @@ coverage/
 .env.local
 html/
 demo/dist/
+
+# Documentation artifacts
+docs/api/
+docs/index.json
+docs-report.json
+docs-report.md
+.temp-docs/
+*.backup
+
+# Mermaid conversion artifacts
+docs/diagrams/images/
