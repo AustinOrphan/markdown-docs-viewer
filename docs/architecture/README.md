@@ -169,11 +169,11 @@ graph TB
 
 See individual component documentation:
 
-- [DocumentLoader](./components/document-loader.md)
+- [DocumentLoader](./components/loader.md)
 - [ThemeManager](./components/theme-manager.md)
-- [SearchManager](./components/search-manager.md)
+- [SearchManager](./components/search.md)
 - [Router](./components/router.md)
-- [PerformanceManager](./components/performance-manager.md)
+- [PerformanceManager](./components/performance.md)
 
 ## Runtime View
 
