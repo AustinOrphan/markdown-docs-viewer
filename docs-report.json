@@ -1,0 +1,224 @@
+{
+  "timestamp": "2025-07-23T14:29:23.596Z",
+  "results": [
+    {
+      "task": "generateApiDocs",
+      "success": false,
+      "error": "Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
+    },
+    {
+      "task": "validateDocsStructure",
+      "success": false,
+      "missingDocs": ["README.md", "architecture/README.md"],
+      "validDocs": ["API.md", "CONFIGURATION.md", "THEMING.md"]
+    },
+    {
+      "task": "checkBrokenLinks",
+      "success": true,
+      "brokenLinks": [],
+      "validLinks": [
+        {
+          "file": "docs/API.md",
+          "link": "./CONFIGURATION.md",
+          "text": "Configuration Guide"
+        },
+        {
+          "file": "docs/BROWSER_USAGE.md",
+          "link": "../examples/",
+          "text": "examples"
+        }
+      ],
+      "totalChecked": 2
+    },
+    {
+      "task": "generateDocsIndex",
+      "success": true,
+      "index": {
+        "generated": "2025-07-23T14:29:23.595Z",
+        "structure": {
+          "files": [
+            {
+              "name": "API.md",
+              "path": "API.md",
+              "size": 6532
+            },
+            {
+              "name": "BROWSER_USAGE.md",
+              "path": "BROWSER_USAGE.md",
+              "size": 11500
+            },
+            {
+              "name": "CONFIGURATION.md",
+              "path": "CONFIGURATION.md",
+              "size": 9792
+            },
+            {
+              "name": "INTEGRATION.md",
+              "path": "INTEGRATION.md",
+              "size": 13960
+            },
+            {
+              "name": "THEMING-VISUAL-GUIDE.md",
+              "path": "THEMING-VISUAL-GUIDE.md",
+              "size": 11410
+            },
+            {
+              "name": "THEMING.md",
+              "path": "THEMING.md",
+              "size": 9121
+            },
+            {
+              "name": "index.json",
+              "path": "index.json",
+              "size": 1048
+            }
+          ],
+          "directories": {
+            "api": {
+              "files": [],
+              "directories": {}
+            }
+          }
+        },
+        "stats": {
+          "totalFiles": 7,
+          "totalDirectories": 1,
+          "filesByType": {
+            "md": 6,
+            "json": 1
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "totalTasks": 4,
+    "successful": 2,
+    "failed": 2
+  },
+  "logs": [
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:21.723Z",
+      "message": "Starting documentation generation..."
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:21.724Z",
+      "message": "Generating API documentation..."
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-23T14:29:23.592Z",
+      "message": "Error generating API documentation: Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Validating documentation structure..."
+    },
+    {
+      "level": "warn",
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Missing documentation files:"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "   - README.md"
+    },
+    {
+      "level": "warn",
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "   - architecture/README.md"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Checking for broken links..."
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.595Z",
+      "message": "No broken links found"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.595Z",
+      "message": "Generating documentation index..."
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "Documentation index generated"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "   Total files: 7"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "   Total directories: 1"
+    }
+  ],
+  "errors": [
+    {
+      "timestamp": "2025-07-23T14:29:23.592Z",
+      "message": "Error generating API documentation: Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
+    }
+  ],
+  "warnings": [
+    {
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Missing documentation files:"
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "   - README.md"
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "   - architecture/README.md"
+    }
+  ],
+  "info": [
+    {
+      "timestamp": "2025-07-23T14:29:21.722Z",
+      "message": "Starting documentation generation..."
+    },
+    {
+      "timestamp": "2025-07-23T14:29:21.724Z",
+      "message": "Generating API documentation..."
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Validating documentation structure..."
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.593Z",
+      "message": "Checking for broken links..."
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.595Z",
+      "message": "No broken links found"
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.595Z",
+      "message": "Generating documentation index..."
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "Documentation index generated"
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "   Total files: 7"
+    },
+    {
+      "timestamp": "2025-07-23T14:29:23.596Z",
+      "message": "   Total directories: 1"
+    }
+  ]
+}

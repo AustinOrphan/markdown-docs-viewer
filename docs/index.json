@@ -1,0 +1,56 @@
+{
+  "generated": "2025-07-23T14:29:23.595Z",
+  "structure": {
+    "files": [
+      {
+        "name": "API.md",
+        "path": "API.md",
+        "size": 6532
+      },
+      {
+        "name": "BROWSER_USAGE.md",
+        "path": "BROWSER_USAGE.md",
+        "size": 11500
+      },
+      {
+        "name": "CONFIGURATION.md",
+        "path": "CONFIGURATION.md",
+        "size": 9792
+      },
+      {
+        "name": "INTEGRATION.md",
+        "path": "INTEGRATION.md",
+        "size": 13960
+      },
+      {
+        "name": "THEMING-VISUAL-GUIDE.md",
+        "path": "THEMING-VISUAL-GUIDE.md",
+        "size": 11410
+      },
+      {
+        "name": "THEMING.md",
+        "path": "THEMING.md",
+        "size": 9121
+      },
+      {
+        "name": "index.json",
+        "path": "index.json",
+        "size": 1048
+      }
+    ],
+    "directories": {
+      "api": {
+        "files": [],
+        "directories": {}
+      }
+    }
+  },
+  "stats": {
+    "totalFiles": 7,
+    "totalDirectories": 1,
+    "filesByType": {
+      "md": 6,
+      "json": 1
+    }
+  }
+}
