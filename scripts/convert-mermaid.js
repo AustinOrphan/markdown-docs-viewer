@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global process */
 
 import { readFile, writeFile, readdir, mkdir } from 'fs/promises';
 import { join, dirname, basename, extname } from 'path';
@@ -97,7 +98,9 @@ async function convertDiagramToImage(diagram, sourceFile, index) {
     // Clean up temp file on error
     try {
       await execAsync(`rm "${tempFile}"`);
-    } catch {}
+    } catch {
+      // Ignore cleanup errors
+    }
 
     return {
       success: false,
@@ -270,7 +273,8 @@ Requirements:
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Check if this file is being run directly
+if (typeof process !== 'undefined' && import.meta.url === `file://${process.argv[1]}`) {
   main();
 }
 

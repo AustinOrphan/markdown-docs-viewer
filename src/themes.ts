@@ -194,7 +194,7 @@ export function getAvailableThemeNames(): string[] {
 }
 
 // Overloaded function for backward compatibility
-// eslint-disable-next-line no-redeclare
+ 
 export function createCustomTheme(overrides: Partial<Theme>): Theme;
 // eslint-disable-next-line no-redeclare
 export function createCustomTheme(baseName: string, mode: 'light' | 'dark', overrides: Partial<Theme>): Theme;

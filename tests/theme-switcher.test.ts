@@ -35,6 +35,7 @@ describe('ThemeSwitcher', () => {
       setTheme: vi.fn().mockReturnValue(mockThemes[1]),
       getContrastRatio: vi.fn().mockReturnValue(4.5),
       isAccessible: vi.fn().mockReturnValue(true),
+      getAvailableBaseThemes: vi.fn().mockReturnValue(['default', 'github', 'material']),
     } as unknown as ThemeManager;
   });
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global process, console */
 
 import { readFile, readdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
@@ -47,7 +48,7 @@ class DocsDashboard {
       if (brokenLinksTask && brokenLinksTask.brokenLinks) {
         this.stats.brokenLinks = brokenLinksTask.brokenLinks.length;
       }
-    } catch (error) {
+    } catch {
       // If no report exists, try to get last modified time of architecture docs
       try {
         const archPath = join(projectRoot, 'docs', 'architecture', 'README.md');
@@ -92,7 +93,7 @@ class DocsDashboard {
           }
         }
       }
-    } catch (error) {
+    } catch {
       // Directory doesn't exist
     }
   }
