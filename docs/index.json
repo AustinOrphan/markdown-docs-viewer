@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-24T05:12:29.150Z",
+  "generated": "2025-07-24T05:44:09.203Z",
   "structure": {
     "files": [
       {
@@ -118,7 +118,7 @@
               {
                 "name": "PersistentCache.md",
                 "path": "api/classes/PersistentCache.md",
-                "size": 3950
+                "size": 3954
               },
               {
                 "name": "SearchIndex.md",
@@ -263,7 +263,7 @@
               {
                 "name": "AdvancedSearchOptions.md",
                 "path": "api/interfaces/AdvancedSearchOptions.md",
-                "size": 3389
+                "size": 3394
               },
               {
                 "name": "DarkModeToggleOptions.md",
@@ -348,7 +348,7 @@
               {
                 "name": "ThemePreset.md",
                 "path": "api/interfaces/ThemePreset.md",
-                "size": 6383
+                "size": 6393
               },
               {
                 "name": "ThemeSwitcherOptions.md",

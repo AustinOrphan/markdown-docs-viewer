@@ -30,6 +30,7 @@ export class ThemeManager {
   private themes: Map<string, ThemePreset>;
   private options: ThemeManagerOptions;
   private container: HTMLElement | null = null;
+  private descriptionEnhancementPromise: Promise<void> | null = null;
 
   constructor(options: ThemeManagerOptions = {}) {
     this.options = {
@@ -39,14 +40,20 @@ export class ThemeManager {
     };
 
     this.themes = new Map();
-    this.initializeBuiltInThemes();
+
+    // Initialize built-in themes synchronously first
+    this.initializeBuiltInThemesSync();
+
+    // Set a default theme immediately for initial render
+    this.currentTheme = defaultTheme;
+    this.applyCSSVariables(defaultTheme);
 
     // Load saved theme or use default
     const savedThemeName = this.getSavedThemeName();
     const initialTheme = this.resolveInitialTheme(savedThemeName);
 
     // Properly set the theme through the normal flow to ensure consistency
-    if (initialTheme) {
+    if (initialTheme && initialTheme !== this.currentTheme) {
       this.currentTheme = initialTheme;
       // Apply CSS variables immediately
       this.applyCSSVariables(initialTheme);
@@ -59,17 +66,65 @@ export class ThemeManager {
         }, 0);
       }
     }
+
+    // Enhance theme descriptions asynchronously (optional)
+    this.descriptionEnhancementPromise = this.enhanceThemeDescriptions();
   }
 
-  private initializeBuiltInThemes(): void {
+  private initializeBuiltInThemesSync(): void {
     // Register all theme variants (light and dark) from the new theme system
     const allThemes = getAllThemeVariants();
 
-    allThemes.forEach(theme => {
+    for (const theme of allThemes) {
       const baseName = getThemeBaseName(theme.name);
       const mode = getThemeMode(theme.name);
 
-      const description = this.getThemeDescription(baseName, mode);
+      // Use basic descriptions for now, enhanced descriptions will be loaded async
+      const basicDescription = `${baseName} ${mode} theme`;
+
+      this.registerTheme({
+        ...theme,
+        description: basicDescription,
+        author: 'MarkdownDocsViewer',
+        version: '1.0.0',
+      });
+    }
+  }
+
+  private async enhanceThemeDescriptions(): Promise<void> {
+    // Enhance theme descriptions with detailed info from JSON file
+    const allThemes = this.getAvailableThemes();
+
+    for (const theme of allThemes) {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
+
+      try {
+        const description = await this.getThemeDescription(baseName, mode);
+
+        // Update the theme with enhanced description
+        const enhancedTheme = {
+          ...theme,
+          description,
+        };
+
+        this.registerTheme(enhancedTheme);
+      } catch (error) {
+        // Keep the basic description if enhancement fails
+        console.warn(`Failed to enhance description for theme ${theme.name}:`, error);
+      }
+    }
+  }
+
+  private async initializeBuiltInThemes(): Promise<void> {
+    // Register all theme variants (light and dark) from the new theme system
+    const allThemes = getAllThemeVariants();
+
+    for (const theme of allThemes) {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
+
+      const description = await this.getThemeDescription(baseName, mode);
 
       this.registerTheme({
         ...theme,
@@ -77,7 +132,7 @@ export class ThemeManager {
         author: 'MarkdownDocsViewer',
         version: '1.0.0',
       });
-    });
+    }
   }
 
   private resolveInitialTheme(savedThemeName: string | null): Theme {
@@ -137,8 +192,9 @@ export class ThemeManager {
     return defaultTheme;
   }
 
-  private getThemeDescription(baseName: string, mode: 'light' | 'dark'): string {
-    const descriptions: Record<string, { light: string; dark: string }> = {
+  private async getThemeDescription(baseName: string, mode: 'light' | 'dark'): Promise<string> {
+    const descriptions = await import('./theme-descriptions.json').then(m => m.default);
+    const defaultDescriptions = {
       default: {
         light: 'Clean and modern light theme',
         dark: 'Clean and modern dark theme',
@@ -147,45 +203,10 @@ export class ThemeManager {
         light: 'GitHub-inspired light theme',
         dark: 'GitHub-inspired dark theme',
       },
-      material: {
-        light: 'Material Design inspired light theme',
-        dark: 'Material Design inspired dark theme',
-      },
-      vscode: {
-        light: 'Visual Studio Code light',
-        dark: 'Visual Studio Code dark',
-      },
-      nord: {
-        light: 'Nord light - arctic inspired',
-        dark: 'Nord dark - arctic inspired',
-      },
-      dracula: {
-        light: 'Dracula light',
-        dark: 'Dracula dark',
-      },
-      solarized: {
-        light: 'Solarized light',
-        dark: 'Solarized dark',
-      },
-      monokai: {
-        light: 'Monokai light',
-        dark: 'Monokai dark',
-      },
-      ayu: {
-        light: 'Ayu light',
-        dark: 'Ayu dark',
-      },
-      catppuccin: {
-        light: 'Catppuccin Latte',
-        dark: 'Catppuccin Mocha',
-      },
-      tokyo: {
-        light: 'Tokyo Night light',
-        dark: 'Tokyo Night dark',
-      },
     };
 
-    return descriptions[baseName]?.[mode] || `${baseName} ${mode} theme`;
+    const allDescriptions = { ...defaultDescriptions, ...descriptions };
+    return (allDescriptions as any)[baseName]?.[mode] || `${baseName} ${mode} theme`;
   }
 
   public registerTheme(theme: ThemePreset): void {
@@ -226,6 +247,13 @@ export class ThemeManager {
 
   public getAvailableThemes(): ThemePreset[] {
     return Array.from(this.themes.values());
+  }
+
+  // Wait for theme descriptions to be enhanced (useful for tests)
+  public async waitForDescriptionEnhancement(): Promise<void> {
+    if (this.descriptionEnhancementPromise) {
+      await this.descriptionEnhancementPromise;
+    }
   }
 
   public getTheme(name: string): ThemePreset | undefined {

@@ -1,4 +1,5 @@
 import { Theme } from './types';
+import fontMappings from './font-mappings.json';
 
 // Base theme definitions with light/dark variants
 export const baseThemes = {
@@ -424,66 +425,6 @@ export const baseThemes = {
 
 // Helper function to get appropriate font family for a theme
 function getFontFamily(baseName: string, type: 'body' | 'heading' | 'code'): string {
-  const fontMappings = {
-    github: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-      heading:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-      code: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-    },
-    material: {
-      body: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-      heading: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-      code: '"Roboto Mono", Consolas, Monaco, monospace',
-    },
-    vscode: {
-      body: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-      heading: '"Segoe UI Semibold", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-      code: 'Consolas, "Courier New", monospace',
-    },
-    nord: {
-      body: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"JetBrains Mono", "Fira Code", Consolas, Monaco, monospace',
-    },
-    dracula: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"Fira Code", "JetBrains Mono", Consolas, Monaco, monospace',
-    },
-    solarized: {
-      body: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"Source Code Pro", Consolas, Monaco, monospace',
-    },
-    monokai: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"Monaco", "Menlo", "Ubuntu Mono", Consolas, monospace',
-    },
-    ayu: {
-      body: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"Fira Code", "Source Code Pro", Consolas, Monaco, monospace',
-    },
-    catppuccin: {
-      body: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"JetBrains Mono", "Fira Code", Consolas, Monaco, monospace',
-    },
-    tokyo: {
-      body: '"Hiragino Sans", "Yu Gothic UI", "Segoe UI", -apple-system, sans-serif',
-      heading: '"Hiragino Sans", "Yu Gothic UI", "Segoe UI", -apple-system, sans-serif',
-      code: '"SFMono-Regular", "Consolas", "Liberation Mono", Monaco, monospace',
-    },
-    default: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      heading:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      code: '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace',
-    },
-  };
-
   const themeMapping = fontMappings[baseName as keyof typeof fontMappings];
   return themeMapping ? themeMapping[type] : fontMappings.default[type];
 }
