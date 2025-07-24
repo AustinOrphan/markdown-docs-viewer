@@ -461,6 +461,13 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should handle keyboard navigation when no option is focused', () => {
+      // With accessibility improvements, the first menu item is auto-focused when dropdown opens
+      // So we need to remove focus first to test the no-focus scenario
+      const focusedElement = document.activeElement as HTMLElement;
+      if (focusedElement) {
+        focusedElement.blur();
+      }
+
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       container.dispatchEvent(event);
 
