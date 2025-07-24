@@ -111,3 +111,31 @@ Tests are organized by feature module with `tests/setup.ts` providing global con
 - **highlight.js** - Code syntax highlighting
 
 These are peer dependencies, allowing consumers to control versions.
+
+## Accessibility Implementation
+
+### WCAG 2.1 AA Compliance
+
+The library implements comprehensive accessibility features:
+
+- **Theme Switcher** - Automatically focuses first menu item when dropdown opens via `focusFirstMenuItem()`
+- **Focus Trapping** - Implemented in theme switcher dropdown with Tab/Shift+Tab cycling
+- **ARIA Attributes** - Proper roles, states, and properties for all interactive components
+- **Keyboard Navigation** - Full keyboard support for navigation, search, and theme switching
+- **Screen Reader Support** - Live regions for dynamic content announcements
+
+### Testing Considerations
+
+When writing tests for components with accessibility features:
+
+- Theme switcher dropdown always has a focused element when open
+- Navigation links support arrow key navigation with announcements
+- Search component implements ARIA combobox pattern
+- TOC (Table of Contents) announces active section changes
+
+### Mobile Enhancements
+
+- Theme switcher uses bottom sheet pattern on mobile
+- Swipe-to-close gesture for theme dropdown
+- Touch feedback with ripple effects
+- Safe area handling for iOS devices
