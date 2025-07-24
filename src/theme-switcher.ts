@@ -47,22 +47,34 @@ export class ThemeSwitcher {
     const themeGroups = this.groupThemesByBaseName(themes);
 
     return `
-      <div class="mdv-theme-switcher ${this.options.position === 'floating' ? 'mdv-theme-switcher-floating' : ''}">
+      <div class="mdv-theme-switcher ${this.options.position === 'floating' ? 'mdv-theme-switcher-floating' : ''}" role="region" aria-label="Theme selector">
         ${this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'separate' ? this.renderDarkModeToggle(currentMode) : ''}
-        <button class="mdv-theme-trigger" aria-label="Change theme" title="Change theme">
+        <button 
+          class="mdv-theme-trigger" 
+          aria-label="Change theme" 
+          aria-expanded="${this.isOpen}"
+          aria-haspopup="menu"
+          title="Change theme"
+        >
           ${this.getThemeIcon(currentBaseName, currentMode)}
           <span class="mdv-theme-name">${currentBaseName}</span>
+          <span class="mdv-dropdown-arrow" aria-hidden="true">▼</span>
         </button>
-        <div class="mdv-theme-dropdown ${this.isOpen ? 'open' : ''}" aria-hidden="${!this.isOpen}">
+        <div 
+          class="mdv-theme-dropdown ${this.isOpen ? 'open' : ''}" 
+          role="menu"
+          aria-hidden="${!this.isOpen}"
+          aria-labelledby="theme-dropdown-label"
+        >
           <div class="mdv-theme-dropdown-header">
-            <h3>Choose Theme</h3>
+            <h3 id="theme-dropdown-label">Choose Theme</h3>
             <div class="mdv-theme-header-actions">
               ${this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'inline' ? this.renderDarkModeToggle(currentMode) : ''}
               ${
                 this.shouldShowCustomThemeButton()
                   ? `
                 <button class="mdv-theme-custom-btn" aria-label="Create custom theme" title="Create custom theme">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                     <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
                   </svg>
                 </button>
@@ -71,7 +83,7 @@ export class ThemeSwitcher {
               }
             </div>
           </div>
-          <div class="mdv-theme-list">
+          <div class="mdv-theme-list" role="none">
             ${Object.entries(themeGroups)
               .map(([baseName, themeVariants]) =>
                 this.renderThemeGroup(baseName, themeVariants, currentBaseName === baseName)
@@ -140,8 +152,10 @@ export class ThemeSwitcher {
       <button 
         class="mdv-theme-option ${isActive ? 'active' : ''}" 
         data-theme="${baseName}"
+        role="menuitem"
         aria-label="Switch to ${baseName} theme"
         aria-current="${isActive ? 'true' : 'false'}"
+        tabindex="${isActive ? '0' : '-1'}"
       >
         <div class="mdv-theme-option-content">
           <div class="mdv-theme-option-info">
@@ -284,6 +298,16 @@ export class ThemeSwitcher {
   private toggleDropdown(): void {
     this.isOpen = !this.isOpen;
     this.updateDropdownState();
+
+    if (this.isOpen) {
+      // Focus first menu item when opening
+      this.focusFirstMenuItem();
+      // Trap focus within dropdown
+      this.setupFocusTrap();
+    } else {
+      // Remove focus trap when closing
+      this.removeFocusTrap();
+    }
   }
 
   private closeDropdown(): void {
@@ -297,9 +321,15 @@ export class ThemeSwitcher {
 
   private updateDropdownState(): void {
     const dropdown = this.container?.querySelector('.mdv-theme-dropdown');
+    const trigger = this.container?.querySelector('.mdv-theme-trigger');
+
     if (dropdown) {
       dropdown.classList.toggle('open', this.isOpen);
       dropdown.setAttribute('aria-hidden', (!this.isOpen).toString());
+    }
+
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', this.isOpen.toString());
     }
   }
 
@@ -419,6 +449,55 @@ export class ThemeSwitcher {
       options[newIndex]?.focus();
     }
   }
+
+  private focusFirstMenuItem(): void {
+    const firstOption = this.container?.querySelector('.mdv-theme-option') as HTMLElement;
+    firstOption?.focus();
+  }
+
+  private setupFocusTrap(): void {
+    if (!this.container) return;
+
+    // Get all focusable elements within the dropdown
+    const focusableElements = this.container.querySelectorAll(
+      '.mdv-theme-option, .mdv-dark-mode-toggle, .mdv-theme-custom-btn'
+    ) as NodeListOf<HTMLElement>;
+
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Handle Tab key to trap focus
+    this.focusTrapHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', this.focusTrapHandler);
+  }
+
+  private removeFocusTrap(): void {
+    if (this.focusTrapHandler) {
+      document.removeEventListener('keydown', this.focusTrapHandler);
+      this.focusTrapHandler = null;
+    }
+  }
+
+  private focusTrapHandler: ((e: KeyboardEvent) => void) | null = null;
 
   private openCustomThemeBuilder(): void {
     if (!this.themeBuilder) {

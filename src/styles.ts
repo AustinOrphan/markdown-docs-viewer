@@ -118,6 +118,7 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
     .mdv-search {
       padding: ${unit * 2}px;
       border-bottom: 1px solid ${colors.border};
+      position: relative;
     }
 
     .mdv-search-input {
@@ -135,6 +136,91 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       outline: none;
       border-color: ${colors.primary};
       box-shadow: 0 0 0 3px ${colors.primary}33;
+    }
+
+    /* Search results */
+    .mdv-search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: ${colors.surface};
+      border: 1px solid ${colors.border};
+      border-top: none;
+      border-radius: 0 0 ${borderRadius} ${borderRadius};
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .mdv-search-result {
+      padding: ${unit * 1.5}px ${unit * 2}px;
+      border-bottom: 1px solid ${colors.border};
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .mdv-search-result:last-child {
+      border-bottom: none;
+    }
+
+    .mdv-search-result:hover,
+    .mdv-search-result.active {
+      background-color: ${colors.background};
+    }
+
+    .mdv-search-result-title {
+      font-weight: 500;
+      color: ${colors.textPrimary};
+      margin-bottom: ${unit * 0.5}px;
+    }
+
+    .mdv-search-result-description {
+      font-size: 0.875rem;
+      color: ${colors.textSecondary};
+      margin-bottom: ${unit * 0.5}px;
+    }
+
+    .mdv-search-result-tags {
+      display: flex;
+      gap: ${unit * 0.5}px;
+      flex-wrap: wrap;
+    }
+
+    .mdv-search-tag {
+      font-size: 0.75rem;
+      padding: ${unit * 0.25}px ${unit * 0.5}px;
+      background-color: ${colors.primary}22;
+      color: ${colors.primary};
+      border-radius: ${borderRadius};
+    }
+
+    .mdv-search-result-category {
+      font-size: 0.75rem;
+      color: ${colors.textSecondary};
+      margin-top: ${unit * 0.5}px;
+      font-style: italic;
+    }
+
+    .mdv-search-no-results {
+      padding: ${unit * 2}px;
+      text-align: center;
+      color: ${colors.textSecondary};
+      font-style: italic;
+    }
+
+    /* Screen reader only content */
+    .mdv-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     /* Navigation */
