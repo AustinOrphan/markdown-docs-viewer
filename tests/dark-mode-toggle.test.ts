@@ -47,17 +47,23 @@ describe('DarkModeToggle', () => {
 
     it('should determine initial dark state based on current theme', () => {
       // Mock dark theme as current
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...darkTheme, name: 'dark' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...darkTheme,
+        name: 'default-dark',
+      });
 
-      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'dark' });
+      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
       expect(darkModeToggle.isDarkMode()).toBe(true);
     });
 
     it('should determine initial light state based on current theme', () => {
       // Mock light theme as current
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...defaultTheme, name: 'default' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...defaultTheme,
+        name: 'default-light',
+      });
 
-      darkModeToggle = new DarkModeToggle(themeManager, { lightThemeName: 'default' });
+      darkModeToggle = new DarkModeToggle(themeManager, { lightThemeName: 'default-light' });
       expect(darkModeToggle.isDarkMode()).toBe(false);
     });
   });
@@ -99,8 +105,11 @@ describe('DarkModeToggle', () => {
     });
 
     it('should render in dark state when initialized as dark', () => {
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...darkTheme, name: 'dark' });
-      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'dark' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...darkTheme,
+        name: 'default-dark',
+      });
+      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
 
       const html = darkModeToggle.render();
 
@@ -162,14 +171,17 @@ describe('DarkModeToggle', () => {
 
       darkModeToggle.toggle();
 
-      expect(mockSetTheme).toHaveBeenCalledWith('dark');
+      expect(mockSetTheme).toHaveBeenCalledWith('default-dark');
       expect(darkModeToggle.isDarkMode()).toBe(true);
     });
 
     it('should toggle from dark to light mode', () => {
       // Set initial dark state
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...darkTheme, name: 'dark' });
-      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'dark' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...darkTheme,
+        name: 'default-dark',
+      });
+      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
       container.innerHTML = darkModeToggle.render();
       darkModeToggle.attachTo(container);
 
@@ -178,7 +190,7 @@ describe('DarkModeToggle', () => {
 
       darkModeToggle.toggle();
 
-      expect(mockSetTheme).toHaveBeenCalledWith('default');
+      expect(mockSetTheme).toHaveBeenCalledWith('default-light');
       expect(darkModeToggle.isDarkMode()).toBe(false);
     });
 
@@ -237,21 +249,24 @@ describe('DarkModeToggle', () => {
 
       darkModeToggle.setDarkMode(true);
 
-      expect(mockSetTheme).toHaveBeenCalledWith('dark');
+      expect(mockSetTheme).toHaveBeenCalledWith('default-dark');
       expect(darkModeToggle.isDarkMode()).toBe(true);
     });
 
     it('should toggle to light mode when called with false', () => {
       // Set initial dark state
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...darkTheme, name: 'dark' });
-      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'dark' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...darkTheme,
+        name: 'default-dark',
+      });
+      darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
 
       const mockSetTheme = vi.mocked(themeManager.setTheme);
       mockSetTheme.mockReturnValue(defaultTheme);
 
       darkModeToggle.setDarkMode(false);
 
-      expect(mockSetTheme).toHaveBeenCalledWith('default');
+      expect(mockSetTheme).toHaveBeenCalledWith('default-light');
       expect(darkModeToggle.isDarkMode()).toBe(false);
     });
 
@@ -325,7 +340,7 @@ describe('DarkModeToggle', () => {
     it('should update state when external theme change event is received', () => {
       // Simulate external theme change to dark
       const themeChangeEvent = new CustomEvent('mdv-theme-changed', {
-        detail: { theme: { name: 'dark' } },
+        detail: { theme: { name: 'default-dark' } },
       });
 
       document.dispatchEvent(themeChangeEvent);
@@ -369,7 +384,7 @@ describe('DarkModeToggle', () => {
       const button = container.querySelector('.mdv-dark-toggle-btn') as HTMLElement;
       button.click();
 
-      expect(mockSetTheme).toHaveBeenCalledWith('dark');
+      expect(mockSetTheme).toHaveBeenCalledWith('default-dark');
       expect(darkModeToggle.isDarkMode()).toBe(true);
     });
   });

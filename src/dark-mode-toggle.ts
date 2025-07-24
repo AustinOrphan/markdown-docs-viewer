@@ -23,14 +23,14 @@ export class DarkModeToggle {
       position: 'header',
       showLabel: true,
       compact: false,
-      lightThemeName: 'default',
-      darkThemeName: 'dark',
+      lightThemeName: 'default-light',
+      darkThemeName: 'default-dark',
       ...options,
     };
 
     // Determine initial state based on current theme
     const currentThemeName = this.themeManager.getCurrentTheme().name;
-    this.isDark = currentThemeName === this.options.darkThemeName;
+    this.isDark = currentThemeName.includes('-dark');
   }
 
   public render(): string {
@@ -113,8 +113,13 @@ export class DarkModeToggle {
   }
 
   public toggle(): void {
-    const newTheme = this.isDark ? this.options.lightThemeName! : this.options.darkThemeName!;
-    const theme = this.themeManager.setTheme(newTheme);
+    // Get the current theme and toggle its mode
+    const currentTheme = this.themeManager.getCurrentTheme();
+    const currentBaseName = currentTheme.name.replace(/-light|-dark/, '');
+    const newMode = this.isDark ? 'light' : 'dark';
+    const newThemeName = `${currentBaseName}-${newMode}`;
+
+    const theme = this.themeManager.setTheme(newThemeName);
 
     if (theme) {
       this.isDark = !this.isDark;
@@ -281,7 +286,8 @@ export class DarkModeToggle {
       }
       
       .mdv-dark-toggle-btn:hover .mdv-dark-toggle-track {
-        background: var(--mdv-color-text-light);
+        background: var(--mdv-color-text);
+        opacity: 0.3;
       }
       
       .mdv-dark-toggle-btn.dark:hover .mdv-dark-toggle-track {
