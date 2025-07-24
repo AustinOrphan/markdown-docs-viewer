@@ -110,6 +110,17 @@ async function generateApiDocs() {
     if (stderr && !stderr.includes('warning')) logError(stderr);
 
     logInfo('API documentation generated successfully');
+
+    // Fix broken links in generated API docs
+    console.log('Fixing API documentation links...');
+    try {
+      const { fixApiLinks } = await import('./fix-api-links.js');
+      await fixApiLinks();
+      logInfo('Fixed broken links in API documentation');
+    } catch (error) {
+      logWarning('Failed to fix API links: ' + error.message);
+    }
+
     return { success: true };
   } catch (error) {
     logError(`Error generating API documentation: ${error.message}`);
@@ -379,6 +390,7 @@ async function main() {
     taskResults.push({ task: 'validateDocsStructure', ...(await validateDocsStructure()) });
     console.log('Validation complete');
 
+    // Run checkBrokenLinks after generateApiDocs which includes the fix-api-links step
     taskResults.push({ task: 'checkBrokenLinks', ...(await checkBrokenLinks()) });
     console.log('Link check complete');
 
