@@ -58,7 +58,7 @@ export default [
     ignores: [
       'dist/**',
       'demo/**',
-      'html/**',
+      '_archive/build-artifacts/html/**',
       'node_modules/**',
       'theming-options/**',
       '*.js',

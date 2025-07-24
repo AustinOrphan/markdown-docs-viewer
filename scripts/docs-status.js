@@ -38,7 +38,7 @@ class DocsDashboard {
   async collectStats() {
     // Check for last generation report
     try {
-      const reportPath = join(projectRoot, 'docs-report.json');
+      const reportPath = join(projectRoot, '_archive/debug-output/docs-report.json');
       const report = JSON.parse(await readFile(reportPath, 'utf-8'));
       this.stats.lastGenerated = report.timestamp;
 

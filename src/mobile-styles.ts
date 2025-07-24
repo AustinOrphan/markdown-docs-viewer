@@ -401,6 +401,33 @@ export function generateMobileLayout(): string {
         gap: var(--mdv-spacing-xs);
       }
       
+      /* Make dark mode toggle smaller on mobile */
+      .mdv-header-actions .mdv-dark-toggle-btn {
+        width: 40px;
+        height: 22px;
+        border-radius: 11px;
+      }
+      
+      .mdv-header-actions .mdv-dark-toggle-track {
+        border-radius: 11px;
+      }
+      
+      .mdv-header-actions .mdv-dark-toggle-thumb {
+        width: 18px;
+        height: 18px;
+        top: 2px;
+        left: 2px;
+      }
+      
+      .mdv-header-actions .mdv-dark-toggle-btn.dark .mdv-dark-toggle-thumb {
+        transform: translateX(18px);
+      }
+      
+      .mdv-header-actions .mdv-dark-toggle-icon svg {
+        width: 10px;
+        height: 10px;
+      }
+      
       .mdv-header-actions .mdv-dark-toggle-label {
         font-size: 0.75rem;
         display: none; /* Hide labels on small mobile screens */

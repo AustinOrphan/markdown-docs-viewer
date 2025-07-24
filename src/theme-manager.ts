@@ -50,6 +50,14 @@ export class ThemeManager {
       this.currentTheme = initialTheme;
       // Apply CSS variables immediately
       this.applyCSSVariables(initialTheme);
+
+      // Trigger the change callback for initial theme if provided
+      if (this.options.onThemeChange) {
+        // Use setTimeout to ensure it runs after constructor completes
+        setTimeout(() => {
+          this.options.onThemeChange!(initialTheme);
+        }, 0);
+      }
     }
   }
 
@@ -73,6 +81,7 @@ export class ThemeManager {
   }
 
   private resolveInitialTheme(savedThemeName: string | null): Theme {
+    // If no saved theme, use defaultTheme (which is default-light)
     if (!savedThemeName) {
       return defaultTheme;
     }
@@ -201,7 +210,8 @@ export class ThemeManager {
       fonts: this.mergeObjects(baseTheme.fonts, overrides.fonts || {}),
       spacing: this.mergeObjects(baseTheme.spacing, overrides.spacing || {}),
       borderRadius: overrides.borderRadius || baseTheme.borderRadius,
-      description: overrides.name?.includes('dark')
+      // Determine description based on the custom theme name and base theme
+      description: name.includes('dark')
         ? `Custom dark theme based on ${getThemeBaseName(baseTheme.name)}`
         : `Custom light theme based on ${getThemeBaseName(baseTheme.name)}`,
       author: 'User',
