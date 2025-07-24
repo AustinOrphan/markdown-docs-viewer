@@ -1,4 +1,5 @@
 import { Theme } from './types';
+import fontMappings from './font-mappings.json';
 
 // Base theme definitions with light/dark variants
 export const baseThemes = {
@@ -9,9 +10,7 @@ export const baseThemes = {
       background: '#ffffff',
       surface: '#f3f4f6',
       text: '#111827',
-      textPrimary: '#111827',
       textLight: '#6b7280',
-      textSecondary: '#6b7280',
       border: '#e5e7eb',
       code: '#8b5cf6',
       codeBackground: '#f3f4f6',
@@ -27,9 +26,7 @@ export const baseThemes = {
       background: '#0f172a',
       surface: '#1e293b',
       text: '#f1f5f9',
-      textPrimary: '#f1f5f9',
       textLight: '#94a3b8',
-      textSecondary: '#94a3b8',
       border: '#334155',
       code: '#a78bfa',
       codeBackground: '#1a202c',
@@ -47,9 +44,7 @@ export const baseThemes = {
       background: '#ffffff',
       surface: '#f6f8fa',
       text: '#1f2328',
-      textPrimary: '#1f2328',
       textLight: '#656d76',
-      textSecondary: '#656d76',
       border: '#d0d7de',
       code: '#0550ae',
       codeBackground: '#f6f8fa',
@@ -65,9 +60,7 @@ export const baseThemes = {
       background: '#0d1117',
       surface: '#161b22',
       text: '#e6edf3',
-      textPrimary: '#e6edf3',
       textLight: '#7d8590',
-      textSecondary: '#7d8590',
       border: '#30363d',
       code: '#79c0ff',
       codeBackground: '#161b22',
@@ -85,9 +78,7 @@ export const baseThemes = {
       background: '#ffffff',
       surface: '#f5f5f5',
       text: '#212121',
-      textPrimary: '#212121',
       textLight: '#757575',
-      textSecondary: '#757575',
       border: '#e0e0e0',
       code: '#673ab7',
       codeBackground: '#f5f5f5',
@@ -103,9 +94,7 @@ export const baseThemes = {
       background: '#121212',
       surface: '#1e1e1e',
       text: '#ffffff',
-      textPrimary: '#ffffff',
       textLight: '#b3b3b3',
-      textSecondary: '#b3b3b3',
       border: '#2e2e2e',
       code: '#ab47bc',
       codeBackground: '#1e1e1e',
@@ -123,9 +112,7 @@ export const baseThemes = {
       background: '#ffffff',
       surface: '#f3f3f3',
       text: '#323130',
-      textPrimary: '#323130',
       textLight: '#605e5c',
-      textSecondary: '#605e5c',
       border: '#c8c6c4',
       code: '#d83b01',
       codeBackground: '#f3f2f1',
@@ -141,9 +128,7 @@ export const baseThemes = {
       background: '#1e1e1e',
       surface: '#252526',
       text: '#cccccc',
-      textPrimary: '#cccccc',
       textLight: '#969696',
-      textSecondary: '#969696',
       border: '#3c3c3c',
       code: '#569cd6',
       codeBackground: '#1e1e1e',
@@ -161,9 +146,7 @@ export const baseThemes = {
       background: '#eceff4',
       surface: '#e5e9f0',
       text: '#2e3440',
-      textPrimary: '#2e3440',
       textLight: '#4c566a',
-      textSecondary: '#4c566a',
       border: '#d8dee9',
       code: '#b48ead',
       codeBackground: '#e5e9f0',
@@ -179,9 +162,7 @@ export const baseThemes = {
       background: '#2e3440',
       surface: '#3b4252',
       text: '#eceff4',
-      textPrimary: '#eceff4',
       textLight: '#d8dee9',
-      textSecondary: '#d8dee9',
       border: '#4c566a',
       code: '#b48ead',
       codeBackground: '#3b4252',
@@ -199,9 +180,7 @@ export const baseThemes = {
       background: '#f8f8f2',
       surface: '#f0f0f0',
       text: '#282a36',
-      textPrimary: '#282a36',
       textLight: '#6272a4',
-      textSecondary: '#6272a4',
       border: '#e0e0e0',
       code: '#bd93f9',
       codeBackground: '#f0f0f0',
@@ -217,9 +196,7 @@ export const baseThemes = {
       background: '#282a36',
       surface: '#44475a',
       text: '#f8f8f2',
-      textPrimary: '#f8f8f2',
       textLight: '#6272a4',
-      textSecondary: '#6272a4',
       border: '#6272a4',
       code: '#ff79c6',
       codeBackground: '#44475a',
@@ -275,9 +252,7 @@ export const baseThemes = {
       background: '#fafafa',
       surface: '#f0f0f0',
       text: '#272822',
-      textPrimary: '#272822',
       textLight: '#75715e',
-      textSecondary: '#75715e',
       border: '#e0e0e0',
       code: '#ae81ff',
       codeBackground: '#f0f0f0',
@@ -293,9 +268,7 @@ export const baseThemes = {
       background: '#272822',
       surface: '#3e3d32',
       text: '#f8f8f2',
-      textPrimary: '#f8f8f2',
       textLight: '#75715e',
-      textSecondary: '#75715e',
       border: '#49483e',
       code: '#ae81ff',
       codeBackground: '#3e3d32',
@@ -313,9 +286,7 @@ export const baseThemes = {
       background: '#fafafa',
       surface: '#f3f4f5',
       text: '#5c6166',
-      textPrimary: '#5c6166',
       textLight: '#828c99',
-      textSecondary: '#828c99',
       border: '#e7eaed',
       code: '#a37acc',
       codeBackground: '#f3f4f5',
@@ -351,9 +322,7 @@ export const baseThemes = {
       background: '#eff1f5',
       surface: '#e6e9ef',
       text: '#4c4f69',
-      textPrimary: '#4c4f69',
       textLight: '#6c6f85',
-      textSecondary: '#6c6f85',
       border: '#bcc0cc',
       code: '#8839ef',
       codeBackground: '#e6e9ef',
@@ -369,9 +338,7 @@ export const baseThemes = {
       background: '#1e1e2e',
       surface: '#313244',
       text: '#cdd6f4',
-      textPrimary: '#cdd6f4',
       textLight: '#a6adc8',
-      textSecondary: '#a6adc8',
       border: '#45475a',
       code: '#cba6f7',
       codeBackground: '#313244',
@@ -389,9 +356,7 @@ export const baseThemes = {
       background: '#d5d6db',
       surface: '#e1e2e7',
       text: '#0d2258',
-      textPrimary: '#0d2258',
       textLight: '#9699a3',
-      textSecondary: '#9699a3',
       border: '#a8adb7',
       code: '#5a4a78',
       codeBackground: '#e1e2e7',
@@ -407,9 +372,7 @@ export const baseThemes = {
       background: '#1a1b26',
       surface: '#24283b',
       text: '#c0caf5',
-      textPrimary: '#c0caf5',
       textLight: '#565f89',
-      textSecondary: '#565f89',
       border: '#414868',
       code: '#bb9af7',
       codeBackground: '#24283b',
@@ -424,66 +387,6 @@ export const baseThemes = {
 
 // Helper function to get appropriate font family for a theme
 function getFontFamily(baseName: string, type: 'body' | 'heading' | 'code'): string {
-  const fontMappings = {
-    github: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-      heading:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif',
-      code: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-    },
-    material: {
-      body: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-      heading: 'Roboto, "Helvetica Neue", Arial, sans-serif',
-      code: '"Roboto Mono", Consolas, Monaco, monospace',
-    },
-    vscode: {
-      body: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-      heading: '"Segoe UI Semibold", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-      code: 'Consolas, "Courier New", monospace',
-    },
-    nord: {
-      body: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"JetBrains Mono", "Fira Code", Consolas, Monaco, monospace',
-    },
-    dracula: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"Fira Code", "JetBrains Mono", Consolas, Monaco, monospace',
-    },
-    solarized: {
-      body: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"Source Code Pro", Consolas, Monaco, monospace',
-    },
-    monokai: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      heading: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      code: '"Monaco", "Menlo", "Ubuntu Mono", Consolas, monospace',
-    },
-    ayu: {
-      body: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"Fira Code", "Source Code Pro", Consolas, Monaco, monospace',
-    },
-    catppuccin: {
-      body: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      heading: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      code: '"JetBrains Mono", "Fira Code", Consolas, Monaco, monospace',
-    },
-    tokyo: {
-      body: '"Hiragino Sans", "Yu Gothic UI", "Segoe UI", -apple-system, sans-serif',
-      heading: '"Hiragino Sans", "Yu Gothic UI", "Segoe UI", -apple-system, sans-serif',
-      code: '"SFMono-Regular", "Consolas", "Liberation Mono", Monaco, monospace',
-    },
-    default: {
-      body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      heading:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      code: '"Fira Code", "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace',
-    },
-  };
-
   const themeMapping = fontMappings[baseName as keyof typeof fontMappings];
   return themeMapping ? themeMapping[type] : fontMappings.default[type];
 }
@@ -495,9 +398,17 @@ function createTheme(baseName: string, mode: 'light' | 'dark'): Theme {
     throw new Error(`Unknown theme: ${baseName}`);
   }
 
+  const themeColors = baseColors[mode] as any;
+  const colors = {
+    ...themeColors,
+    // Provide defaults for textPrimary and textSecondary if not explicitly defined
+    textPrimary: themeColors.textPrimary || themeColors.text,
+    textSecondary: themeColors.textSecondary || themeColors.textLight,
+  };
+
   return {
     name: `${baseName}-${mode}`,
-    colors: baseColors[mode],
+    colors,
     fonts: {
       body: getFontFamily(baseName, 'body'),
       heading: getFontFamily(baseName, 'heading'),
