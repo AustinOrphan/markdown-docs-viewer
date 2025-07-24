@@ -1,21 +1,213 @@
 {
-  "timestamp": "2025-07-23T14:29:23.596Z",
+  "timestamp": "2025-07-24T04:45:01.830Z",
   "results": [
     {
       "task": "generateApiDocs",
-      "success": false,
-      "error": "Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
+      "success": true
     },
     {
       "task": "validateDocsStructure",
-      "success": false,
-      "missingDocs": ["README.md", "architecture/README.md"],
-      "validDocs": ["API.md", "CONFIGURATION.md", "THEMING.md"]
+      "success": true,
+      "missingDocs": [],
+      "validDocs": [
+        "README.md",
+        "API.md",
+        "CONFIGURATION.md",
+        "THEMING.md",
+        "architecture/README.md"
+      ]
     },
     {
       "task": "checkBrokenLinks",
-      "success": true,
-      "brokenLinks": [],
+      "success": false,
+      "brokenLinks": [
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#constructor",
+          "text": "`constructor`",
+          "line": 39
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#clear",
+          "text": "`clear`",
+          "line": 55
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#delete",
+          "text": "`delete`",
+          "line": 77
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#entries",
+          "text": "`entries`",
+          "line": 93
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#get",
+          "text": "`get`",
+          "line": 115
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#getcapacity",
+          "text": "`getCapacity`",
+          "line": 131
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#getmemoryusage",
+          "text": "`getMemoryUsage`",
+          "line": 147
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#has",
+          "text": "`has`",
+          "line": 169
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#set",
+          "text": "`set`",
+          "line": 195
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md#size",
+          "text": "`size`",
+          "line": 211
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#casesensitive",
+          "text": "`caseSensitive`",
+          "line": 25
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#enabled",
+          "text": "`enabled`",
+          "line": 37
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#fuzzysearch",
+          "text": "`fuzzySearch`",
+          "line": 77
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#maxresults",
+          "text": "`maxResults`",
+          "line": 105
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#placeholder",
+          "text": "`placeholder`",
+          "line": 117
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md#searchintags",
+          "text": "`searchInTags`",
+          "line": 137
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#allowcustomthemes",
+          "text": "`allowCustomThemes`",
+          "line": 25
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#borderradius",
+          "text": "`borderRadius`",
+          "line": 45
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#colors",
+          "text": "`colors`",
+          "line": 121
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#compactdarktoggle",
+          "text": "`compactDarkToggle`",
+          "line": 133
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#customcss",
+          "text": "`customCSS`",
+          "line": 145
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#darktoggleposition",
+          "text": "`darkTogglePosition`",
+          "line": 157
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#enablepersistence",
+          "text": "`enablePersistence`",
+          "line": 177
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#fonts",
+          "text": "`fonts`",
+          "line": 201
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#name",
+          "text": "`name`",
+          "line": 213
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#showdarkmodelabel",
+          "text": "`showDarkModeLabel`",
+          "line": 225
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#showdescription",
+          "text": "`showDescription`",
+          "line": 237
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#showpreview",
+          "text": "`showPreview`",
+          "line": 249
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#spacing",
+          "text": "`spacing`",
+          "line": 273
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#storagekey",
+          "text": "`storageKey`",
+          "line": 285
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md#switcherposition",
+          "text": "`switcherPosition`",
+          "line": 297
+        }
+      ],
       "validLinks": [
         {
           "file": "docs/API.md",
@@ -26,15 +218,1040 @@
           "file": "docs/BROWSER_USAGE.md",
           "link": "../examples/",
           "text": "examples"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./API.md",
+          "text": "API Reference"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./CONFIGURATION.md",
+          "text": "Configuration Guide"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./THEMING.md",
+          "text": "Theming System"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./BROWSER_USAGE.md",
+          "text": "Browser Usage"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./INTEGRATION.md",
+          "text": "Integration Guide"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./architecture/README.md",
+          "text": "Architecture"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "../README.md",
+          "text": "README.md"
+        },
+        {
+          "file": "docs/README.md",
+          "link": "./api/",
+          "text": "api"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "enumerations/ErrorCode.md",
+          "text": "ErrorCode"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "enumerations/ErrorSeverity.md",
+          "text": "ErrorSeverity"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/AdvancedSearchManager.md",
+          "text": "AdvancedSearchManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ConsoleErrorLogger.md",
+          "text": "ConsoleErrorLogger"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/DarkModeToggle.md",
+          "text": "DarkModeToggle"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ErrorBoundary.md",
+          "text": "ErrorBoundary"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ExportManager.md",
+          "text": "ExportManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/I18nManager.md",
+          "text": "I18nManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/LazyLoader.md",
+          "text": "LazyLoader"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/LRUCache.md",
+          "text": "LRUCache"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/MarkdownDocsError.md",
+          "text": "MarkdownDocsError"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/MarkdownDocsViewer.md",
+          "text": "MarkdownDocsViewer"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/MemoryManager.md",
+          "text": "MemoryManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/PerformanceMonitor.md",
+          "text": "PerformanceMonitor"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/PersistentCache.md",
+          "text": "PersistentCache"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/SearchIndex.md",
+          "text": "SearchIndex"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/SearchManager.md",
+          "text": "SearchManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/TableOfContents.md",
+          "text": "TableOfContents"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ThemeBuilder.md",
+          "text": "ThemeBuilder"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ThemeManager.md",
+          "text": "ThemeManager"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "classes/ThemeSwitcher.md",
+          "text": "ThemeSwitcher"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/AdvancedSearchOptions.md",
+          "text": "AdvancedSearchOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/DarkModeToggleOptions.md",
+          "text": "DarkModeToggleOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/Document.md",
+          "text": "Document"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/DocumentationConfig.md",
+          "text": "DocumentationConfig"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/DocumentSource.md",
+          "text": "DocumentSource"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ErrorHandlingOptions.md",
+          "text": "ErrorHandlingOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ExportOptions.md",
+          "text": "ExportOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/I18nConfig.md",
+          "text": "I18nConfig"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/I18nMessages.md",
+          "text": "I18nMessages"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/MobileOptions.md",
+          "text": "MobileOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/NavigationOptions.md",
+          "text": "NavigationOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/PerformanceOptions.md",
+          "text": "PerformanceOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/RenderOptions.md",
+          "text": "RenderOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/SearchOptions.md",
+          "text": "SearchOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/TableOfContentsOptions.md",
+          "text": "TableOfContentsOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/Theme.md",
+          "text": "Theme"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ThemeBuilderOptions.md",
+          "text": "ThemeBuilderOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ThemePreset.md",
+          "text": "ThemePreset"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ThemeSwitcherOptions.md",
+          "text": "ThemeSwitcherOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "interfaces/ViewerState.md",
+          "text": "ViewerState"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "type-aliases/ExportFormat.md",
+          "text": "ExportFormat"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "variables/darkTheme.md",
+          "text": "darkTheme"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "variables/defaultMessages.md",
+          "text": "defaultMessages"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "variables/defaultTheme.md",
+          "text": "defaultTheme"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "variables/ErrorFactory.md",
+          "text": "ErrorFactory"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/addHeadingIds.md",
+          "text": "addHeadingIds"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/addPrintUtilities.md",
+          "text": "addPrintUtilities"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/createCustomTheme.md",
+          "text": "createCustomTheme"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/createExportOptions.md",
+          "text": "createExportOptions"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/createI18nConfig.md",
+          "text": "createI18nConfig"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/createLocaleMessages.md",
+          "text": "createLocaleMessages"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/createViewer.md",
+          "text": "createViewer"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/debounce.md",
+          "text": "debounce"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/generatePrintPreview.md",
+          "text": "generatePrintPreview"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/generatePrintStyles.md",
+          "text": "generatePrintStyles"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/getAllThemeVariants.md",
+          "text": "getAllThemeVariants"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/getAvailableThemeNames.md",
+          "text": "getAvailableThemeNames"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/getThemeBaseName.md",
+          "text": "getThemeBaseName"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/getThemeMode.md",
+          "text": "getThemeMode"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/throttle.md",
+          "text": "throttle"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/toggleThemeMode.md",
+          "text": "toggleThemeMode"
+        },
+        {
+          "file": "docs/api/README.md",
+          "link": "functions/withRetry.md",
+          "text": "withRetry"
+        },
+        {
+          "file": "docs/api/classes/AdvancedSearchManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/AdvancedSearchManager.md",
+          "link": "../interfaces/Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/classes/AdvancedSearchManager.md",
+          "link": "../interfaces/AdvancedSearchOptions.md",
+          "text": "`AdvancedSearchOptions`"
+        },
+        {
+          "file": "docs/api/classes/ConsoleErrorLogger.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ConsoleErrorLogger.md",
+          "link": "MarkdownDocsError.md",
+          "text": "`MarkdownDocsError`"
+        },
+        {
+          "file": "docs/api/classes/DarkModeToggle.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/DarkModeToggle.md",
+          "link": "ThemeManager.md",
+          "text": "`ThemeManager`"
+        },
+        {
+          "file": "docs/api/classes/DarkModeToggle.md",
+          "link": "../interfaces/DarkModeToggleOptions.md",
+          "text": "`DarkModeToggleOptions`"
+        },
+        {
+          "file": "docs/api/classes/ErrorBoundary.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ExportManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ExportManager.md",
+          "link": "MarkdownDocsViewer.md",
+          "text": "`MarkdownDocsViewer`"
+        },
+        {
+          "file": "docs/api/classes/ExportManager.md",
+          "link": "../interfaces/ExportOptions.md",
+          "text": "`ExportOptions`"
+        },
+        {
+          "file": "docs/api/classes/ExportManager.md",
+          "link": "../type-aliases/ExportFormat.md",
+          "text": "`ExportFormat`"
+        },
+        {
+          "file": "docs/api/classes/I18nManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/I18nManager.md",
+          "link": "../interfaces/I18nConfig.md",
+          "text": "`I18nConfig`"
+        },
+        {
+          "file": "docs/api/classes/I18nManager.md",
+          "link": "../interfaces/I18nMessages.md",
+          "text": "`I18nMessages`"
+        },
+        {
+          "file": "docs/api/classes/LRUCache.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/LRUCache.md",
+          "link": "PersistentCache.md",
+          "text": "`PersistentCache`"
+        },
+        {
+          "file": "docs/api/classes/LazyLoader.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsError.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsError.md",
+          "link": "../enumerations/ErrorCode.md",
+          "text": "`ErrorCode`"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsError.md",
+          "link": "../enumerations/ErrorSeverity.md",
+          "text": "`ErrorSeverity`"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsViewer.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsViewer.md",
+          "link": "../interfaces/DocumentationConfig.md",
+          "text": "`DocumentationConfig`"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsViewer.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsViewer.md",
+          "link": "../interfaces/Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/classes/MarkdownDocsViewer.md",
+          "link": "../interfaces/ViewerState.md",
+          "text": "`ViewerState`"
+        },
+        {
+          "file": "docs/api/classes/MemoryManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/PerformanceMonitor.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/PersistentCache.md",
+          "link": "LRUCache.md",
+          "text": "`LRUCache`"
+        },
+        {
+          "file": "docs/api/classes/SearchIndex.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/SearchIndex.md",
+          "link": "../interfaces/Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/classes/SearchManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/SearchManager.md",
+          "link": "../interfaces/SearchOptions.md",
+          "text": "`SearchOptions`"
+        },
+        {
+          "file": "docs/api/classes/SearchManager.md",
+          "link": "../interfaces/Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/classes/TableOfContents.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/TableOfContents.md",
+          "link": "../interfaces/TableOfContentsOptions.md",
+          "text": "`TableOfContentsOptions`"
+        },
+        {
+          "file": "docs/api/classes/ThemeBuilder.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ThemeBuilder.md",
+          "link": "ThemeManager.md",
+          "text": "`ThemeManager`"
+        },
+        {
+          "file": "docs/api/classes/ThemeBuilder.md",
+          "link": "../interfaces/ThemeBuilderOptions.md",
+          "text": "`ThemeBuilderOptions`"
+        },
+        {
+          "file": "docs/api/classes/ThemeManager.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ThemeManager.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/classes/ThemeManager.md",
+          "link": "../interfaces/ThemePreset.md",
+          "text": "`ThemePreset`"
+        },
+        {
+          "file": "docs/api/classes/ThemeSwitcher.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/classes/ThemeSwitcher.md",
+          "link": "ThemeManager.md",
+          "text": "`ThemeManager`"
+        },
+        {
+          "file": "docs/api/classes/ThemeSwitcher.md",
+          "link": "../interfaces/ThemeSwitcherOptions.md",
+          "text": "`ThemeSwitcherOptions`"
+        },
+        {
+          "file": "docs/api/enumerations/ErrorCode.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/enumerations/ErrorSeverity.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/addHeadingIds.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/addPrintUtilities.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createCustomTheme.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createCustomTheme.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/functions/createExportOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createExportOptions.md",
+          "link": "../interfaces/ExportOptions.md",
+          "text": "`ExportOptions`"
+        },
+        {
+          "file": "docs/api/functions/createI18nConfig.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createI18nConfig.md",
+          "link": "../interfaces/I18nConfig.md",
+          "text": "`I18nConfig`"
+        },
+        {
+          "file": "docs/api/functions/createLocaleMessages.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createLocaleMessages.md",
+          "link": "../interfaces/I18nMessages.md",
+          "text": "`I18nMessages`"
+        },
+        {
+          "file": "docs/api/functions/createViewer.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/createViewer.md",
+          "link": "../classes/MarkdownDocsViewer.md",
+          "text": "`MarkdownDocsViewer`"
+        },
+        {
+          "file": "docs/api/functions/createViewer.md",
+          "link": "../interfaces/DocumentationConfig.md",
+          "text": "`DocumentationConfig`"
+        },
+        {
+          "file": "docs/api/functions/debounce.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/generatePrintPreview.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/generatePrintPreview.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/functions/generatePrintStyles.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/generatePrintStyles.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/functions/getAllThemeVariants.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/getAllThemeVariants.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/functions/getAvailableThemeNames.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/getThemeBaseName.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/getThemeMode.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/throttle.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/toggleThemeMode.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/functions/withRetry.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/AdvancedSearchOptions.md",
+          "link": "SearchOptions.md",
+          "text": "`SearchOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DarkModeToggleOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/DarkModeToggleOptions.md",
+          "link": "Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/interfaces/Document.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentSource.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentSource.md",
+          "link": "Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "ErrorHandlingOptions.md",
+          "text": "`ErrorHandlingOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "MobileOptions.md",
+          "text": "`MobileOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "NavigationOptions.md",
+          "text": "`NavigationOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "PerformanceOptions.md",
+          "text": "`PerformanceOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "RenderOptions.md",
+          "text": "`RenderOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "SearchOptions.md",
+          "text": "`SearchOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/DocumentationConfig.md",
+          "link": "DocumentSource.md",
+          "text": "`DocumentSource`"
+        },
+        {
+          "file": "docs/api/interfaces/ErrorHandlingOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ExportOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ExportOptions.md",
+          "link": "../type-aliases/ExportFormat.md",
+          "text": "`ExportFormat`"
+        },
+        {
+          "file": "docs/api/interfaces/I18nConfig.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/I18nConfig.md",
+          "link": "I18nMessages.md",
+          "text": "`I18nMessages`"
+        },
+        {
+          "file": "docs/api/interfaces/I18nMessages.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/MobileOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/NavigationOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/PerformanceOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/RenderOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/SearchOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/SearchOptions.md",
+          "link": "AdvancedSearchOptions.md",
+          "text": "`AdvancedSearchOptions`"
+        },
+        {
+          "file": "docs/api/interfaces/TableOfContentsOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/Theme.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/Theme.md",
+          "link": "ThemePreset.md",
+          "text": "`ThemePreset`"
+        },
+        {
+          "file": "docs/api/interfaces/ThemeBuilderOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ThemeBuilderOptions.md",
+          "link": "ThemePreset.md",
+          "text": "`ThemePreset`"
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ThemePreset.md",
+          "link": "Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/interfaces/ThemeSwitcherOptions.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ThemeSwitcherOptions.md",
+          "link": "Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/interfaces/ViewerState.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/interfaces/ViewerState.md",
+          "link": "Document.md",
+          "text": "`Document`"
+        },
+        {
+          "file": "docs/api/type-aliases/ExportFormat.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/variables/ErrorFactory.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/variables/darkTheme.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/variables/darkTheme.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/api/variables/defaultMessages.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/variables/defaultMessages.md",
+          "link": "../interfaces/I18nMessages.md",
+          "text": "`I18nMessages`"
+        },
+        {
+          "file": "docs/api/variables/defaultTheme.md",
+          "link": "../README.md",
+          "text": "**@austinorphan/markdown-docs-viewer v1.0.0**"
+        },
+        {
+          "file": "docs/api/variables/defaultTheme.md",
+          "link": "../interfaces/Theme.md",
+          "text": "`Theme`"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./components/loader.md",
+          "text": "DocumentLoader"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./components/theme-manager.md",
+          "text": "ThemeManager"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./components/search.md",
+          "text": "SearchManager"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./components/router.md",
+          "text": "Router"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./components/performance.md",
+          "text": "PerformanceManager"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/",
+          "text": "Architecture Decision Records"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/001-use-typescript.md",
+          "text": "ADR-001: Use TypeScript"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/002-multiple-document-sources.md",
+          "text": "ADR-002: Support Multiple Document Sources"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/003-css-custom-properties.md",
+          "text": "ADR-003: CSS Custom Properties for Theming"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/004-client-side-only.md",
+          "text": "ADR-004: Client-Side Only Architecture"
+        },
+        {
+          "file": "docs/architecture/README.md",
+          "link": "./adr/005-marked-version.md",
+          "text": "ADR-005: Marked v15 for CommonJS Support"
         }
       ],
-      "totalChecked": 2
+      "totalChecked": 238
     },
     {
       "task": "generateDocsIndex",
       "success": true,
       "index": {
-        "generated": "2025-07-23T14:29:23.595Z",
+        "generated": "2025-07-24T04:45:01.827Z",
         "structure": {
           "files": [
             {
@@ -58,6 +1275,11 @@
               "size": 13960
             },
             {
+              "name": "README.md",
+              "path": "README.md",
+              "size": 773
+            },
+            {
               "name": "THEMING-VISUAL-GUIDE.md",
               "path": "THEMING-VISUAL-GUIDE.md",
               "size": 11410
@@ -70,21 +1292,564 @@
             {
               "name": "index.json",
               "path": "index.json",
-              "size": 1048
+              "size": 1049
             }
           ],
           "directories": {
             "api": {
-              "files": [],
-              "directories": {}
+              "files": [
+                {
+                  "name": "README.md",
+                  "path": "api/README.md",
+                  "size": 3260
+                }
+              ],
+              "directories": {
+                "classes": {
+                  "files": [
+                    {
+                      "name": "AdvancedSearchManager.md",
+                      "path": "api/classes/AdvancedSearchManager.md",
+                      "size": 3697
+                    },
+                    {
+                      "name": "ConsoleErrorLogger.md",
+                      "path": "api/classes/ConsoleErrorLogger.md",
+                      "size": 2159
+                    },
+                    {
+                      "name": "DarkModeToggle.md",
+                      "path": "api/classes/DarkModeToggle.md",
+                      "size": 2376
+                    },
+                    {
+                      "name": "ErrorBoundary.md",
+                      "path": "api/classes/ErrorBoundary.md",
+                      "size": 1105
+                    },
+                    {
+                      "name": "ExportManager.md",
+                      "path": "api/classes/ExportManager.md",
+                      "size": 1847
+                    },
+                    {
+                      "name": "I18nManager.md",
+                      "path": "api/classes/I18nManager.md",
+                      "size": 2910
+                    },
+                    {
+                      "name": "LRUCache.md",
+                      "path": "api/classes/LRUCache.md",
+                      "size": 3085
+                    },
+                    {
+                      "name": "LazyLoader.md",
+                      "path": "api/classes/LazyLoader.md",
+                      "size": 1348
+                    },
+                    {
+                      "name": "MarkdownDocsError.md",
+                      "path": "api/classes/MarkdownDocsError.md",
+                      "size": 2432
+                    },
+                    {
+                      "name": "MarkdownDocsViewer.md",
+                      "path": "api/classes/MarkdownDocsViewer.md",
+                      "size": 5325
+                    },
+                    {
+                      "name": "MemoryManager.md",
+                      "path": "api/classes/MemoryManager.md",
+                      "size": 2162
+                    },
+                    {
+                      "name": "PerformanceMonitor.md",
+                      "path": "api/classes/PerformanceMonitor.md",
+                      "size": 2599
+                    },
+                    {
+                      "name": "PersistentCache.md",
+                      "path": "api/classes/PersistentCache.md",
+                      "size": 3950
+                    },
+                    {
+                      "name": "SearchIndex.md",
+                      "path": "api/classes/SearchIndex.md",
+                      "size": 1316
+                    },
+                    {
+                      "name": "SearchManager.md",
+                      "path": "api/classes/SearchManager.md",
+                      "size": 2158
+                    },
+                    {
+                      "name": "TableOfContents.md",
+                      "path": "api/classes/TableOfContents.md",
+                      "size": 1857
+                    },
+                    {
+                      "name": "ThemeBuilder.md",
+                      "path": "api/classes/ThemeBuilder.md",
+                      "size": 2009
+                    },
+                    {
+                      "name": "ThemeManager.md",
+                      "path": "api/classes/ThemeManager.md",
+                      "size": 5227
+                    },
+                    {
+                      "name": "ThemeSwitcher.md",
+                      "path": "api/classes/ThemeSwitcher.md",
+                      "size": 1566
+                    }
+                  ],
+                  "directories": {}
+                },
+                "enumerations": {
+                  "files": [
+                    {
+                      "name": "ErrorCode.md",
+                      "path": "api/enumerations/ErrorCode.md",
+                      "size": 6122
+                    },
+                    {
+                      "name": "ErrorSeverity.md",
+                      "path": "api/enumerations/ErrorSeverity.md",
+                      "size": 1097
+                    }
+                  ],
+                  "directories": {}
+                },
+                "functions": {
+                  "files": [
+                    {
+                      "name": "addHeadingIds.md",
+                      "path": "api/functions/addHeadingIds.md",
+                      "size": 443
+                    },
+                    {
+                      "name": "addPrintUtilities.md",
+                      "path": "api/functions/addPrintUtilities.md",
+                      "size": 482
+                    },
+                    {
+                      "name": "createCustomTheme.md",
+                      "path": "api/functions/createCustomTheme.md",
+                      "size": 994
+                    },
+                    {
+                      "name": "createExportOptions.md",
+                      "path": "api/functions/createExportOptions.md",
+                      "size": 626
+                    },
+                    {
+                      "name": "createI18nConfig.md",
+                      "path": "api/functions/createI18nConfig.md",
+                      "size": 604
+                    },
+                    {
+                      "name": "createLocaleMessages.md",
+                      "path": "api/functions/createLocaleMessages.md",
+                      "size": 682
+                    },
+                    {
+                      "name": "createViewer.md",
+                      "path": "api/functions/createViewer.md",
+                      "size": 624
+                    },
+                    {
+                      "name": "debounce.md",
+                      "path": "api/functions/debounce.md",
+                      "size": 598
+                    },
+                    {
+                      "name": "generatePrintPreview.md",
+                      "path": "api/functions/generatePrintPreview.md",
+                      "size": 530
+                    },
+                    {
+                      "name": "generatePrintStyles.md",
+                      "path": "api/functions/generatePrintStyles.md",
+                      "size": 504
+                    },
+                    {
+                      "name": "getAllThemeVariants.md",
+                      "path": "api/functions/getAllThemeVariants.md",
+                      "size": 443
+                    },
+                    {
+                      "name": "getAvailableThemeNames.md",
+                      "path": "api/functions/getAvailableThemeNames.md",
+                      "size": 402
+                    },
+                    {
+                      "name": "getThemeBaseName.md",
+                      "path": "api/functions/getThemeBaseName.md",
+                      "size": 431
+                    },
+                    {
+                      "name": "getThemeMode.md",
+                      "path": "api/functions/getThemeMode.md",
+                      "size": 445
+                    },
+                    {
+                      "name": "throttle.md",
+                      "path": "api/functions/throttle.md",
+                      "size": 600
+                    },
+                    {
+                      "name": "toggleThemeMode.md",
+                      "path": "api/functions/toggleThemeMode.md",
+                      "size": 428
+                    },
+                    {
+                      "name": "withRetry.md",
+                      "path": "api/functions/withRetry.md",
+                      "size": 536
+                    }
+                  ],
+                  "directories": {}
+                },
+                "interfaces": {
+                  "files": [
+                    {
+                      "name": "AdvancedSearchOptions.md",
+                      "path": "api/interfaces/AdvancedSearchOptions.md",
+                      "size": 3389
+                    },
+                    {
+                      "name": "DarkModeToggleOptions.md",
+                      "path": "api/interfaces/DarkModeToggleOptions.md",
+                      "size": 1886
+                    },
+                    {
+                      "name": "Document.md",
+                      "path": "api/interfaces/Document.md",
+                      "size": 1875
+                    },
+                    {
+                      "name": "DocumentSource.md",
+                      "path": "api/interfaces/DocumentSource.md",
+                      "size": 1396
+                    },
+                    {
+                      "name": "DocumentationConfig.md",
+                      "path": "api/interfaces/DocumentationConfig.md",
+                      "size": 4689
+                    },
+                    {
+                      "name": "ErrorHandlingOptions.md",
+                      "path": "api/interfaces/ErrorHandlingOptions.md",
+                      "size": 1712
+                    },
+                    {
+                      "name": "ExportOptions.md",
+                      "path": "api/interfaces/ExportOptions.md",
+                      "size": 2534
+                    },
+                    {
+                      "name": "I18nConfig.md",
+                      "path": "api/interfaces/I18nConfig.md",
+                      "size": 969
+                    },
+                    {
+                      "name": "I18nMessages.md",
+                      "path": "api/interfaces/I18nMessages.md",
+                      "size": 374
+                    },
+                    {
+                      "name": "MobileOptions.md",
+                      "path": "api/interfaces/MobileOptions.md",
+                      "size": 4087
+                    },
+                    {
+                      "name": "NavigationOptions.md",
+                      "path": "api/interfaces/NavigationOptions.md",
+                      "size": 1364
+                    },
+                    {
+                      "name": "PerformanceOptions.md",
+                      "path": "api/interfaces/PerformanceOptions.md",
+                      "size": 2327
+                    },
+                    {
+                      "name": "RenderOptions.md",
+                      "path": "api/interfaces/RenderOptions.md",
+                      "size": 1652
+                    },
+                    {
+                      "name": "SearchOptions.md",
+                      "path": "api/interfaces/SearchOptions.md",
+                      "size": 1646
+                    },
+                    {
+                      "name": "TableOfContentsOptions.md",
+                      "path": "api/interfaces/TableOfContentsOptions.md",
+                      "size": 1616
+                    },
+                    {
+                      "name": "Theme.md",
+                      "path": "api/interfaces/Theme.md",
+                      "size": 4476
+                    },
+                    {
+                      "name": "ThemeBuilderOptions.md",
+                      "path": "api/interfaces/ThemeBuilderOptions.md",
+                      "size": 2670
+                    },
+                    {
+                      "name": "ThemePreset.md",
+                      "path": "api/interfaces/ThemePreset.md",
+                      "size": 6383
+                    },
+                    {
+                      "name": "ThemeSwitcherOptions.md",
+                      "path": "api/interfaces/ThemeSwitcherOptions.md",
+                      "size": 2475
+                    },
+                    {
+                      "name": "ViewerState.md",
+                      "path": "api/interfaces/ViewerState.md",
+                      "size": 1790
+                    }
+                  ],
+                  "directories": {}
+                },
+                "type-aliases": {
+                  "files": [
+                    {
+                      "name": "ExportFormat.md",
+                      "path": "api/type-aliases/ExportFormat.md",
+                      "size": 354
+                    }
+                  ],
+                  "directories": {}
+                },
+                "variables": {
+                  "files": [
+                    {
+                      "name": "ErrorFactory.md",
+                      "path": "api/variables/ErrorFactory.md",
+                      "size": 1281
+                    },
+                    {
+                      "name": "darkTheme.md",
+                      "path": "api/variables/darkTheme.md",
+                      "size": 366
+                    },
+                    {
+                      "name": "defaultMessages.md",
+                      "path": "api/variables/defaultMessages.md",
+                      "size": 420
+                    },
+                    {
+                      "name": "defaultTheme.md",
+                      "path": "api/variables/defaultTheme.md",
+                      "size": 375
+                    }
+                  ],
+                  "directories": {}
+                }
+              }
+            },
+            "architecture": {
+              "files": [
+                {
+                  "name": "README.md",
+                  "path": "architecture/README.md",
+                  "size": 8964
+                },
+                {
+                  "name": "documentation-guide.md",
+                  "path": "architecture/documentation-guide.md",
+                  "size": 5059
+                }
+              ],
+              "directories": {
+                "adr": {
+                  "files": [
+                    {
+                      "name": "001-use-typescript.md",
+                      "path": "architecture/adr/001-use-typescript.md",
+                      "size": 1512
+                    },
+                    {
+                      "name": "002-multiple-document-sources.md",
+                      "path": "architecture/adr/002-multiple-document-sources.md",
+                      "size": 2230
+                    },
+                    {
+                      "name": "003-css-custom-properties.md",
+                      "path": "architecture/adr/003-css-custom-properties.md",
+                      "size": 2997
+                    },
+                    {
+                      "name": "004-client-side-only.md",
+                      "path": "architecture/adr/004-client-side-only.md",
+                      "size": 2772
+                    },
+                    {
+                      "name": "005-marked-version.md",
+                      "path": "architecture/adr/005-marked-version.md",
+                      "size": 2637
+                    }
+                  ],
+                  "directories": {}
+                },
+                "components": {
+                  "files": [
+                    {
+                      "name": "advanced-search.md",
+                      "path": "architecture/components/advanced-search.md",
+                      "size": 13227
+                    },
+                    {
+                      "name": "dark-mode-toggle.md",
+                      "path": "architecture/components/dark-mode-toggle.md",
+                      "size": 5999
+                    },
+                    {
+                      "name": "errors.md",
+                      "path": "architecture/components/errors.md",
+                      "size": 20323
+                    },
+                    {
+                      "name": "export.md",
+                      "path": "architecture/components/export.md",
+                      "size": 12040
+                    },
+                    {
+                      "name": "factory.md",
+                      "path": "architecture/components/factory.md",
+                      "size": 12701
+                    },
+                    {
+                      "name": "i18n.md",
+                      "path": "architecture/components/i18n.md",
+                      "size": 15668
+                    },
+                    {
+                      "name": "index.md",
+                      "path": "architecture/components/index.md",
+                      "size": 12060
+                    },
+                    {
+                      "name": "loader.md",
+                      "path": "architecture/components/loader.md",
+                      "size": 18941
+                    },
+                    {
+                      "name": "mobile-styles.md",
+                      "path": "architecture/components/mobile-styles.md",
+                      "size": 11744
+                    },
+                    {
+                      "name": "navigation.md",
+                      "path": "architecture/components/navigation.md",
+                      "size": 11329
+                    },
+                    {
+                      "name": "performance.md",
+                      "path": "architecture/components/performance.md",
+                      "size": 13772
+                    },
+                    {
+                      "name": "print-styles.md",
+                      "path": "architecture/components/print-styles.md",
+                      "size": 10654
+                    },
+                    {
+                      "name": "router.md",
+                      "path": "architecture/components/router.md",
+                      "size": 8215
+                    },
+                    {
+                      "name": "search.md",
+                      "path": "architecture/components/search.md",
+                      "size": 15283
+                    },
+                    {
+                      "name": "styles.md",
+                      "path": "architecture/components/styles.md",
+                      "size": 9427
+                    },
+                    {
+                      "name": "theme-builder.md",
+                      "path": "architecture/components/theme-builder.md",
+                      "size": 10658
+                    },
+                    {
+                      "name": "theme-manager.md",
+                      "path": "architecture/components/theme-manager.md",
+                      "size": 7378
+                    },
+                    {
+                      "name": "theme-switcher.md",
+                      "path": "architecture/components/theme-switcher.md",
+                      "size": 7092
+                    },
+                    {
+                      "name": "themes.md",
+                      "path": "architecture/components/themes.md",
+                      "size": 16450
+                    },
+                    {
+                      "name": "toc.md",
+                      "path": "architecture/components/toc.md",
+                      "size": 13029
+                    },
+                    {
+                      "name": "types.md",
+                      "path": "architecture/components/types.md",
+                      "size": 17950
+                    },
+                    {
+                      "name": "utils.md",
+                      "path": "architecture/components/utils.md",
+                      "size": 16473
+                    },
+                    {
+                      "name": "viewer.md",
+                      "path": "architecture/components/viewer.md",
+                      "size": 18607
+                    }
+                  ],
+                  "directories": {}
+                },
+                "diagrams": {
+                  "files": [
+                    {
+                      "name": "c4-component-document.md",
+                      "path": "architecture/diagrams/c4-component-document.md",
+                      "size": 4306
+                    },
+                    {
+                      "name": "c4-container.md",
+                      "path": "architecture/diagrams/c4-container.md",
+                      "size": 4299
+                    },
+                    {
+                      "name": "c4-context.md",
+                      "path": "architecture/diagrams/c4-context.md",
+                      "size": 1929
+                    },
+                    {
+                      "name": "data-flow.md",
+                      "path": "architecture/diagrams/data-flow.md",
+                      "size": 6567
+                    }
+                  ],
+                  "directories": {}
+                }
+              }
             }
           }
         },
         "stats": {
-          "totalFiles": 7,
-          "totalDirectories": 1,
+          "totalFiles": 106,
+          "totalDirectories": 11,
           "filesByType": {
-            "md": 6,
+            "md": 105,
             "json": 1
           }
         }
@@ -93,132 +1858,401 @@
   ],
   "summary": {
     "totalTasks": 4,
-    "successful": 2,
-    "failed": 2
+    "successful": 3,
+    "failed": 1
   },
   "logs": [
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:21.723Z",
+      "timestamp": "2025-07-24T04:44:59.212Z",
       "message": "Starting documentation generation..."
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:21.724Z",
+      "timestamp": "2025-07-24T04:44:59.214Z",
       "message": "Generating API documentation..."
     },
     {
-      "level": "error",
-      "timestamp": "2025-07-23T14:29:23.592Z",
-      "message": "Error generating API documentation: Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
+      "level": "info",
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "\u001b[96m[info]\u001b[0m Loaded plugin typedoc-plugin-markdown\n\u001b[96m[info]\u001b[0m markdown generated at ./docs/api\n"
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.593Z",
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "API documentation generated successfully"
+    },
+    {
+      "level": "info",
+      "timestamp": "2025-07-24T04:45:01.810Z",
       "message": "Validating documentation structure..."
     },
     {
-      "level": "warn",
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "Missing documentation files:"
-    },
-    {
-      "level": "warn",
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "   - README.md"
-    },
-    {
-      "level": "warn",
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "   - architecture/README.md"
+      "level": "info",
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "Documentation structure is valid"
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.593Z",
+      "timestamp": "2025-07-24T04:45:01.811Z",
       "message": "Checking for broken links..."
     },
     {
-      "level": "info",
-      "timestamp": "2025-07-23T14:29:23.595Z",
-      "message": "No broken links found"
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "Found broken links:"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:39 - [`constructor`](LRUCache.md#constructor)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:55 - [`clear`](LRUCache.md#clear)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:77 - [`delete`](LRUCache.md#delete)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:93 - [`entries`](LRUCache.md#entries)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:115 - [`get`](LRUCache.md#get)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:131 - [`getCapacity`](LRUCache.md#getcapacity)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:147 - [`getMemoryUsage`](LRUCache.md#getmemoryusage)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:169 - [`has`](LRUCache.md#has)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:195 - [`set`](LRUCache.md#set)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:211 - [`size`](LRUCache.md#size)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:25 - [`caseSensitive`](SearchOptions.md#casesensitive)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:37 - [`enabled`](SearchOptions.md#enabled)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:77 - [`fuzzySearch`](SearchOptions.md#fuzzysearch)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:105 - [`maxResults`](SearchOptions.md#maxresults)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:117 - [`placeholder`](SearchOptions.md#placeholder)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:137 - [`searchInTags`](SearchOptions.md#searchintags)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:25 - [`allowCustomThemes`](Theme.md#allowcustomthemes)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:45 - [`borderRadius`](Theme.md#borderradius)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:121 - [`colors`](Theme.md#colors)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:133 - [`compactDarkToggle`](Theme.md#compactdarktoggle)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:145 - [`customCSS`](Theme.md#customcss)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:157 - [`darkTogglePosition`](Theme.md#darktoggleposition)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:177 - [`enablePersistence`](Theme.md#enablepersistence)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:201 - [`fonts`](Theme.md#fonts)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:213 - [`name`](Theme.md#name)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:225 - [`showDarkModeLabel`](Theme.md#showdarkmodelabel)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:237 - [`showDescription`](Theme.md#showdescription)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:249 - [`showPreview`](Theme.md#showpreview)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:273 - [`spacing`](Theme.md#spacing)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:285 - [`storageKey`](Theme.md#storagekey)"
+    },
+    {
+      "level": "error",
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:297 - [`switcherPosition`](Theme.md#switcherposition)"
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.595Z",
+      "timestamp": "2025-07-24T04:45:01.827Z",
       "message": "Generating documentation index..."
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.596Z",
+      "timestamp": "2025-07-24T04:45:01.830Z",
       "message": "Documentation index generated"
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.596Z",
-      "message": "   Total files: 7"
+      "timestamp": "2025-07-24T04:45:01.830Z",
+      "message": "   Total files: 106"
     },
     {
       "level": "info",
-      "timestamp": "2025-07-23T14:29:23.596Z",
-      "message": "   Total directories: 1"
+      "timestamp": "2025-07-24T04:45:01.830Z",
+      "message": "   Total directories: 11"
     }
   ],
   "errors": [
     {
-      "timestamp": "2025-07-23T14:29:23.592Z",
-      "message": "Error generating API documentation: Command failed: npx typedoc --out \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api\" --entryPoints \"/Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/src/index.ts\" --excludePrivate --excludeInternal --plugin typedoc-plugin-markdown --readme none\n\u001b[91m[error]\u001b[0m The plugin typedoc-plugin-markdown could not be loaded\n\u001b[91m[error]\u001b[0m Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'typedoc-plugin-markdown' imported from /Users/austinorphan/.npm/_npx/dafcb7cdaad6ed61/node_modules/typedoc/dist/lib/utils/plugins.js\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:256:9)\n    at packageResolve (node:internal/modules/esm/resolve:768:81)\n    at moduleResolve (node:internal/modules/esm/resolve:854:18)\n    at defaultResolve (node:internal/modules/esm/resolve:984:11)\n    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)\n    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)\n    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)\n    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)\n    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n\u001b[91m[error]\u001b[0m Found 2 errors and 0 warnings\n"
-    }
-  ],
-  "warnings": [
-    {
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "Missing documentation files:"
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "Found broken links:"
     },
     {
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "   - README.md"
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:39 - [`constructor`](LRUCache.md#constructor)"
     },
     {
-      "timestamp": "2025-07-23T14:29:23.593Z",
-      "message": "   - architecture/README.md"
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:55 - [`clear`](LRUCache.md#clear)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:77 - [`delete`](LRUCache.md#delete)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:93 - [`entries`](LRUCache.md#entries)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:115 - [`get`](LRUCache.md#get)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:131 - [`getCapacity`](LRUCache.md#getcapacity)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:147 - [`getMemoryUsage`](LRUCache.md#getmemoryusage)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:169 - [`has`](LRUCache.md#has)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:195 - [`set`](LRUCache.md#set)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/classes/PersistentCache.md:211 - [`size`](LRUCache.md#size)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:25 - [`caseSensitive`](SearchOptions.md#casesensitive)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:37 - [`enabled`](SearchOptions.md#enabled)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:77 - [`fuzzySearch`](SearchOptions.md#fuzzysearch)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:105 - [`maxResults`](SearchOptions.md#maxresults)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:117 - [`placeholder`](SearchOptions.md#placeholder)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/AdvancedSearchOptions.md:137 - [`searchInTags`](SearchOptions.md#searchintags)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:25 - [`allowCustomThemes`](Theme.md#allowcustomthemes)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:45 - [`borderRadius`](Theme.md#borderradius)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:121 - [`colors`](Theme.md#colors)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:133 - [`compactDarkToggle`](Theme.md#compactdarktoggle)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:145 - [`customCSS`](Theme.md#customcss)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:157 - [`darkTogglePosition`](Theme.md#darktoggleposition)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:177 - [`enablePersistence`](Theme.md#enablepersistence)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:201 - [`fonts`](Theme.md#fonts)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:213 - [`name`](Theme.md#name)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:225 - [`showDarkModeLabel`](Theme.md#showdarkmodelabel)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:237 - [`showDescription`](Theme.md#showdescription)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:249 - [`showPreview`](Theme.md#showpreview)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:273 - [`spacing`](Theme.md#spacing)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:285 - [`storageKey`](Theme.md#storagekey)"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.827Z",
+      "message": "   docs/api/interfaces/ThemePreset.md:297 - [`switcherPosition`](Theme.md#switcherposition)"
     }
   ],
+  "warnings": [],
   "info": [
     {
-      "timestamp": "2025-07-23T14:29:21.722Z",
+      "timestamp": "2025-07-24T04:44:59.210Z",
       "message": "Starting documentation generation..."
     },
     {
-      "timestamp": "2025-07-23T14:29:21.724Z",
+      "timestamp": "2025-07-24T04:44:59.214Z",
       "message": "Generating API documentation..."
     },
     {
-      "timestamp": "2025-07-23T14:29:23.593Z",
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "\u001b[96m[info]\u001b[0m Loaded plugin typedoc-plugin-markdown\n\u001b[96m[info]\u001b[0m markdown generated at ./docs/api\n"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "API documentation generated successfully"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.810Z",
       "message": "Validating documentation structure..."
     },
     {
-      "timestamp": "2025-07-23T14:29:23.593Z",
+      "timestamp": "2025-07-24T04:45:01.810Z",
+      "message": "Documentation structure is valid"
+    },
+    {
+      "timestamp": "2025-07-24T04:45:01.811Z",
       "message": "Checking for broken links..."
     },
     {
-      "timestamp": "2025-07-23T14:29:23.595Z",
-      "message": "No broken links found"
-    },
-    {
-      "timestamp": "2025-07-23T14:29:23.595Z",
+      "timestamp": "2025-07-24T04:45:01.827Z",
       "message": "Generating documentation index..."
     },
     {
-      "timestamp": "2025-07-23T14:29:23.596Z",
+      "timestamp": "2025-07-24T04:45:01.830Z",
       "message": "Documentation index generated"
     },
     {
-      "timestamp": "2025-07-23T14:29:23.596Z",
-      "message": "   Total files: 7"
+      "timestamp": "2025-07-24T04:45:01.830Z",
+      "message": "   Total files: 106"
     },
     {
-      "timestamp": "2025-07-23T14:29:23.596Z",
-      "message": "   Total directories: 1"
+      "timestamp": "2025-07-24T04:45:01.830Z",
+      "message": "   Total directories: 11"
     }
   ]
 }

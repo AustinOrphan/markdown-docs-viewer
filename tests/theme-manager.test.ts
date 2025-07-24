@@ -36,7 +36,7 @@ describe('ThemeManager', () => {
       themeManager = new ThemeManager();
 
       expect(themeManager.getCurrentTheme().name).toBe('default-light');
-      expect(themeManager.getAvailableThemes()).toHaveLength(6); // 3 base themes × 2 modes
+      expect(themeManager.getAvailableThemes()).toHaveLength(22); // 11 base themes × 2 modes
     });
 
     it('should initialize with custom options', () => {
@@ -91,6 +91,22 @@ describe('ThemeManager', () => {
       expect(themeNames).toContain('github-dark');
       expect(themeNames).toContain('material-light');
       expect(themeNames).toContain('material-dark');
+      expect(themeNames).toContain('vscode-light');
+      expect(themeNames).toContain('vscode-dark');
+      expect(themeNames).toContain('nord-light');
+      expect(themeNames).toContain('nord-dark');
+      expect(themeNames).toContain('dracula-light');
+      expect(themeNames).toContain('dracula-dark');
+      expect(themeNames).toContain('solarized-light');
+      expect(themeNames).toContain('solarized-dark');
+      expect(themeNames).toContain('monokai-light');
+      expect(themeNames).toContain('monokai-dark');
+      expect(themeNames).toContain('ayu-light');
+      expect(themeNames).toContain('ayu-dark');
+      expect(themeNames).toContain('catppuccin-light');
+      expect(themeNames).toContain('catppuccin-dark');
+      expect(themeNames).toContain('tokyo-light');
+      expect(themeNames).toContain('tokyo-dark');
     });
 
     it('should have proper theme structure for all built-in themes', () => {
