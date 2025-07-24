@@ -15,7 +15,7 @@ class DemoController {
   init() {
     // Initialize theme manager
     this.initializeThemeManager();
-    
+
     // Initialize controls
     this.setupControls();
 
@@ -31,20 +31,25 @@ class DemoController {
     this.themeManager = new ThemeManager({
       enablePersistence: true,
       storageKey: 'mdv-demo-theme',
-      onThemeChange: (theme) => {
+      onThemeChange: theme => {
         // Update body theme attribute for demo styling
         const mode = theme.name.includes('-dark') ? 'dark' : 'light';
         document.body.setAttribute('data-theme', mode);
-        
+
         // Update viewer theme if viewer exists
         if (this.viewer) {
           this.viewer.setTheme(theme);
         }
-        
+
         // Update status
         this.updateStatus('success', `Theme changed to ${theme.name}`);
-      }
+      },
     });
+
+    // Set initial body theme based on current theme
+    const initialTheme = this.themeManager.getCurrentTheme();
+    const initialMode = initialTheme.name.includes('-dark') ? 'dark' : 'light';
+    document.body.setAttribute('data-theme', initialMode);
 
     // Create theme switcher
     this.themeSwitcher = new ThemeSwitcher(this.themeManager, {
@@ -52,7 +57,7 @@ class DemoController {
       showDarkModeToggle: true,
       allowCustomThemes: true,
       showPreview: true,
-      showDescription: true
+      showDescription: true,
     });
   }
 
@@ -85,15 +90,10 @@ class DemoController {
     if (themeControlsContainer) {
       // Inject CSS styles for the theme switcher
       this.injectThemeSwitcherStyles();
-      
+
       // Render and attach the theme switcher
       themeControlsContainer.innerHTML = this.themeSwitcher.render();
       this.themeSwitcher.attachTo(themeControlsContainer);
-      
-      // Set initial body theme
-      const currentTheme = this.themeManager.getCurrentTheme();
-      const mode = currentTheme.name.includes('-dark') ? 'dark' : 'light';
-      document.body.setAttribute('data-theme', mode);
     }
   }
 
@@ -231,7 +231,6 @@ class DemoController {
     };
   }
 
-
   loadExample(exampleName) {
     this.updateStatus('loading', 'Loading example...');
     this.setProgress(30);
@@ -276,7 +275,6 @@ class DemoController {
       this.hideProgress();
     }
   }
-
 
   reloadViewer() {
     this.loadExample(this.currentExample);

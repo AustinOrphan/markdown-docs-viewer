@@ -137,7 +137,9 @@ export class ThemeBuilder {
                 </div>
               </div>
               
-              ${this.options.allowModeSelection ? `
+              ${
+                this.options.allowModeSelection
+                  ? `
               <div class="mdv-theme-builder-section">
                 <h3>Theme Mode</h3>
                 <div class="mdv-theme-builder-mode-selector">
@@ -157,7 +159,9 @@ export class ThemeBuilder {
                   </label>
                 </div>
               </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
               <div class="mdv-theme-builder-section">
                 <h3>Base Theme</h3>
@@ -517,7 +521,9 @@ export class ThemeBuilder {
 
     // Mode selection
     if (this.options.allowModeSelection) {
-      const modeInputs = this.container.querySelectorAll<HTMLInputElement>('input[name="theme-mode"]');
+      const modeInputs = this.container.querySelectorAll<HTMLInputElement>(
+        'input[name="theme-mode"]'
+      );
       modeInputs.forEach(input => {
         input.addEventListener('change', e => {
           const newMode = (e.target as HTMLInputElement).value as 'light' | 'dark';
@@ -622,18 +628,19 @@ export class ThemeBuilder {
     // Create the theme name with current mode
     const themeName = `${baseName}-${this.currentMode}`;
     const baseTheme = this.themeManager.getTheme(themeName);
-    
+
     if (baseTheme) {
       // Preserve custom name if user has set one
       const currentName = this.container?.querySelector<HTMLInputElement>('#theme-name')?.value;
-      const shouldPreserveName = currentName && currentName !== getThemeBaseName(this.currentTheme.name);
-      
+      const shouldPreserveName =
+        currentName && currentName !== getThemeBaseName(this.currentTheme.name);
+
       this.currentTheme = this.deepCloneTheme(baseTheme);
-      
+
       if (shouldPreserveName) {
         this.currentTheme.name = currentName;
       }
-      
+
       this.refreshInputs();
       this.updatePreview();
       this.updateAccessibilityCheck();
@@ -681,20 +688,20 @@ export class ThemeBuilder {
     // Get the custom theme name from the input, or use current theme name
     const themeNameInput = this.container?.querySelector<HTMLInputElement>('#theme-name');
     const customName = themeNameInput?.value || getThemeBaseName(this.currentTheme.name);
-    
+
     // Create the theme with the current mode
     const customThemeName = `${customName}-${this.currentMode}`;
-    
+
     // Use the new createCustomTheme from themes.ts instead of ThemeManager's method
     const customTheme = createCustomTheme(
-      getThemeBaseName(this.originalTheme.name), 
-      this.currentMode, 
+      getThemeBaseName(this.originalTheme.name),
+      this.currentMode,
       {
         ...this.currentTheme,
-        name: customThemeName
+        name: customThemeName,
       }
     );
-    
+
     // Register it with the theme manager
     this.themeManager.registerTheme(customTheme);
 
@@ -821,6 +828,7 @@ export class ThemeBuilder {
         margin: 0;
         font-size: 1.25rem;
         font-weight: 600;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-builder-close {
@@ -834,6 +842,7 @@ export class ThemeBuilder {
         border: none;
         border-radius: 6px;
         cursor: pointer;
+        color: var(--mdv-color-text);
         transition: background 0.2s ease;
       }
       
@@ -868,13 +877,15 @@ export class ThemeBuilder {
         margin: 0 0 12px 0;
         font-size: 1rem;
         font-weight: 600;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-builder-section h4 {
         margin: 16px 0 8px 0;
         font-size: 0.875rem;
         font-weight: 500;
-        color: var(--mdv-color-text-secondary);
+        color: var(--mdv-color-text);
+        opacity: 0.85;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -937,6 +948,7 @@ export class ThemeBuilder {
         margin-bottom: 4px;
         font-size: 0.875rem;
         font-weight: 500;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-builder-field input,
@@ -956,11 +968,17 @@ export class ThemeBuilder {
         border-color: var(--mdv-color-primary);
       }
       
+      .mdv-theme-builder-field input::placeholder {
+        color: var(--mdv-color-text);
+        opacity: 0.5;
+      }
+      
       .mdv-theme-builder-field small {
         display: block;
         margin-top: 4px;
         font-size: 0.75rem;
-        color: var(--mdv-color-text-secondary);
+        color: var(--mdv-color-text);
+        opacity: 0.75;
       }
       
       .mdv-theme-builder-color-field {
@@ -997,6 +1015,7 @@ export class ThemeBuilder {
         align-items: center;
         margin-bottom: 8px;
         font-size: 0.875rem;
+        color: var(--mdv-color-text);
       }
       
       .mdv-theme-builder-contrast-check:last-child {
@@ -1045,7 +1064,8 @@ export class ThemeBuilder {
       
       .mdv-theme-builder-btn-secondary {
         background: var(--mdv-color-background);
-        color: var(--mdv-color-text-primary);
+        color: var(--mdv-color-text);
+        border-color: var(--mdv-color-border);
       }
       
       .mdv-theme-builder-btn-secondary:hover {
@@ -1100,7 +1120,7 @@ export class ThemeBuilder {
         cursor: pointer;
       }
       
-      /* Mobile responsiveness */
+      /* Mobile responsiveness - maintain same components with responsive layout */
       @media (max-width: 768px) {
         .mdv-theme-builder {
           margin: 0;
@@ -1116,10 +1136,27 @@ export class ThemeBuilder {
           width: 100%;
           border-right: none;
           border-bottom: 1px solid var(--mdv-color-border);
+          max-height: 50vh;
+          overflow-y: auto;
+        }
+        
+        .mdv-theme-builder-preview {
+          max-height: 50vh;
+          border-top: 1px solid var(--mdv-color-border);
         }
         
         .mdv-theme-builder-actions {
           flex-direction: column;
+          position: sticky;
+          bottom: 0;
+          background: var(--mdv-color-background);
+          padding: 16px;
+          border-top: 1px solid var(--mdv-color-border);
+          box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mdv-theme-builder-actions button {
+          width: 100%;
         }
         
         .mdv-theme-builder-btn {

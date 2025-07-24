@@ -327,11 +327,11 @@ async function generateReport(taskResults) {
     info: results.info,
   };
 
-  const reportPath = join(projectRoot, 'docs-report.json');
+  const reportPath = join(projectRoot, '_archive/debug-output/docs-report.json');
   await writeFile(reportPath, JSON.stringify(report, null, 2));
 
   // Also write a human-readable summary
-  const summaryPath = join(projectRoot, 'docs-report.md');
+  const summaryPath = join(projectRoot, '_archive/debug-output/docs-report.md');
   const summary = `# Documentation Generation Report
 
 Generated: ${report.timestamp}
@@ -348,7 +348,7 @@ ${report.errors.length === 0 ? 'No errors found.' : report.errors.map(e => `- ${
 ${report.warnings.length === 0 ? 'No warnings found.' : report.warnings.map(w => `- ${w.message}`).join('\n')}
 
 ## Details
-See \`docs-report.json\` for full details.
+See \`_archive/debug-output/docs-report.json\` for full details.
 `;
 
   await writeFile(summaryPath, summary);

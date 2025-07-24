@@ -13,6 +13,7 @@ export interface ThemeSwitcherOptions {
   darkModeTogglePosition?: 'inline' | 'separate';
   onThemeChange?: (theme: Theme) => void;
   onModeChange?: (mode: 'light' | 'dark') => void;
+  customThemeAccess?: 'everyone' | 'none' | ((user?: any) => boolean);
 }
 
 export class ThemeSwitcher {
@@ -31,6 +32,7 @@ export class ThemeSwitcher {
       allowCustomThemes: true,
       showDarkModeToggle: true,
       darkModeTogglePosition: 'inline',
+      customThemeAccess: 'everyone',
       ...options,
     };
   }
@@ -57,9 +59,9 @@ export class ThemeSwitcher {
             <div class="mdv-theme-header-actions">
               ${this.options.showDarkModeToggle && this.options.darkModeTogglePosition === 'inline' ? this.renderDarkModeToggle(currentMode) : ''}
               ${
-                this.options.allowCustomThemes
+                this.shouldShowCustomThemeButton()
                   ? `
-                <button class="mdv-theme-custom-btn" aria-label="Create custom theme">
+                <button class="mdv-theme-custom-btn" aria-label="Create custom theme" title="Create custom theme">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                     <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
                   </svg>
@@ -70,13 +72,28 @@ export class ThemeSwitcher {
             </div>
           </div>
           <div class="mdv-theme-list">
-            ${Object.entries(themeGroups).map(([baseName, themeVariants]) => 
-              this.renderThemeGroup(baseName, themeVariants, currentBaseName === baseName)
-            ).join('')}
+            ${Object.entries(themeGroups)
+              .map(([baseName, themeVariants]) =>
+                this.renderThemeGroup(baseName, themeVariants, currentBaseName === baseName)
+              )
+              .join('')}
           </div>
         </div>
       </div>
     `;
+  }
+
+  private shouldShowCustomThemeButton(): boolean {
+    if (!this.options.allowCustomThemes) return false;
+
+    const access = this.options.customThemeAccess;
+    if (access === 'none') return false;
+    if (access === 'everyone') return true;
+    if (typeof access === 'function') {
+      // Pass user context if available (could be extended with actual user data)
+      return access();
+    }
+    return true;
   }
 
   private renderDarkModeToggle(currentMode: 'light' | 'dark'): string {
@@ -98,7 +115,7 @@ export class ThemeSwitcher {
 
   private groupThemesByBaseName(themes: ThemePreset[]): Record<string, ThemePreset[]> {
     const groups: Record<string, ThemePreset[]> = {};
-    
+
     themes.forEach(theme => {
       const baseName = getThemeBaseName(theme.name);
       if (!groups[baseName]) {
@@ -113,7 +130,7 @@ export class ThemeSwitcher {
   private renderThemeGroup(baseName: string, variants: ThemePreset[], isActive: boolean): string {
     // Only show the light variant in the list, but mark as active if either variant is active
     const lightVariant = variants.find(v => getThemeMode(v.name) === 'light') || variants[0];
-    
+
     return this.renderThemeOption(lightVariant, isActive);
   }
 
@@ -139,15 +156,6 @@ export class ThemeSwitcher {
           </div>
           ${this.options.showPreview ? this.renderThemePreview(theme) : ''}
         </div>
-        ${
-          isActive
-            ? `
-          <svg class="mdv-theme-option-check" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-          </svg>
-        `
-            : ''
-        }
       </button>
     `;
   }
@@ -258,15 +266,15 @@ export class ThemeSwitcher {
     const currentTheme = this.themeManager.getCurrentTheme();
     const newThemeName = toggleThemeMode(currentTheme.name);
     const newTheme = this.themeManager.setTheme(newThemeName);
-    
+
     if (newTheme) {
       const newMode = getThemeMode(newTheme.name);
       this.updateUI();
-      
+
       if (this.options.onModeChange) {
         this.options.onModeChange(newMode);
       }
-      
+
       if (this.options.onThemeChange) {
         this.options.onThemeChange(newTheme);
       }
@@ -281,6 +289,10 @@ export class ThemeSwitcher {
   private closeDropdown(): void {
     this.isOpen = false;
     this.updateDropdownState();
+
+    // Return focus to trigger button to avoid aria-hidden issues
+    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
+    trigger?.focus();
   }
 
   private updateDropdownState(): void {
@@ -295,7 +307,7 @@ export class ThemeSwitcher {
     const currentTheme = this.themeManager.getCurrentTheme();
     const currentMode = getThemeMode(currentTheme.name);
     const newThemeName = `${baseName}-${currentMode}`;
-    
+
     const theme = this.themeManager.setTheme(newThemeName);
     if (theme) {
       this.updateUI();
@@ -327,8 +339,14 @@ export class ThemeSwitcher {
     const darkModeToggle = this.container.querySelector('.mdv-dark-mode-toggle');
     if (darkModeToggle) {
       darkModeToggle.className = `mdv-dark-mode-toggle ${currentMode}`;
-      darkModeToggle.setAttribute('aria-label', `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`);
-      darkModeToggle.setAttribute('title', `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+      darkModeToggle.setAttribute(
+        'aria-label',
+        `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`
+      );
+      darkModeToggle.setAttribute(
+        'title',
+        `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`
+      );
     }
 
     // Update active state
@@ -346,12 +364,20 @@ export class ThemeSwitcher {
 
   private updateSeparateDarkModeToggle(currentMode: 'light' | 'dark'): void {
     // Find the separate dark mode toggle container
-    const separateToggle = this.container?.parentElement?.querySelector('.mdv-theme-switcher .mdv-dark-mode-toggle');
+    const separateToggle = this.container?.parentElement?.querySelector(
+      '.mdv-theme-switcher .mdv-dark-mode-toggle'
+    );
     if (separateToggle) {
       // Update the toggle state without re-rendering the entire component
       separateToggle.className = `mdv-dark-mode-toggle ${currentMode}`;
-      separateToggle.setAttribute('aria-label', `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`);
-      separateToggle.setAttribute('title', `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`);
+      separateToggle.setAttribute(
+        'aria-label',
+        `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`
+      );
+      separateToggle.setAttribute(
+        'title',
+        `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`
+      );
     }
   }
 
@@ -407,8 +433,18 @@ export class ThemeSwitcher {
 
       // Create container for theme builder
       const builderContainer = document.createElement('div');
+      builderContainer.className = 'mdv-theme-builder-container';
       builderContainer.innerHTML = this.themeBuilder.render();
       document.body.appendChild(builderContainer);
+
+      // Inject theme builder styles
+      const styleId = 'mdv-theme-builder-styles';
+      if (!document.getElementById(styleId)) {
+        const styleElement = document.createElement('style');
+        styleElement.id = styleId;
+        styleElement.textContent = this.themeBuilder.getStyles();
+        document.head.appendChild(styleElement);
+      }
 
       this.themeBuilder.attachTo(builderContainer);
     }
@@ -470,6 +506,7 @@ export class ThemeSwitcher {
         visibility: hidden;
         transform: translateY(-10px);
         transition: all 0.2s ease;
+        z-index: var(--mdv-z-popover, 1060);
       }
       
       .mdv-theme-dropdown.open {
@@ -567,7 +604,7 @@ export class ThemeSwitcher {
       
       .mdv-theme-option-description {
         font-size: 0.75rem;
-        opacity: 0.7;
+        opacity: 0.8;
       }
       
       .mdv-theme-option.active .mdv-theme-option-description {
@@ -584,10 +621,6 @@ export class ThemeSwitcher {
         height: 16px;
         border-radius: 4px;
         border: 1px solid rgba(0, 0, 0, 0.1);
-      }
-      
-      .mdv-theme-option-check {
-        flex-shrink: 0;
       }
       
       /* Dark mode toggle styles */
@@ -664,7 +697,8 @@ export class ThemeSwitcher {
       }
       
       .mdv-dark-mode-toggle:hover .mdv-dark-mode-toggle-track {
-        background: var(--mdv-color-text-light);
+        background: var(--mdv-color-text);
+        opacity: 0.3;
       }
       
       .mdv-dark-mode-toggle.dark:hover .mdv-dark-mode-toggle-track {
@@ -683,6 +717,7 @@ export class ThemeSwitcher {
           margin: 0;
           border-radius: var(--mdv-border-radius) var(--mdv-border-radius) 0 0;
           max-height: 70vh;
+          z-index: var(--mdv-z-popover, 1060);
         }
         
         .mdv-theme-switcher-floating {

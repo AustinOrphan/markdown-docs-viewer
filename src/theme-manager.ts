@@ -50,6 +50,14 @@ export class ThemeManager {
       this.currentTheme = initialTheme;
       // Apply CSS variables immediately
       this.applyCSSVariables(initialTheme);
+
+      // Trigger the change callback for initial theme if provided
+      if (this.options.onThemeChange) {
+        // Use setTimeout to ensure it runs after constructor completes
+        setTimeout(() => {
+          this.options.onThemeChange!(initialTheme);
+        }, 0);
+      }
     }
   }
 
@@ -73,6 +81,7 @@ export class ThemeManager {
   }
 
   private resolveInitialTheme(savedThemeName: string | null): Theme {
+    // If no saved theme, use defaultTheme (which is default-light)
     if (!savedThemeName) {
       return defaultTheme;
     }
