@@ -105,3 +105,35 @@ export function sanitizeCssValue(value: string | number | undefined | null): str
 
   return '';
 }
+
+/**
+ * Announces a message to screen readers using an ARIA live region
+ * @param message - The message to announce
+ * @param regionId - Unique ID for the live region (defaults to 'mdv-live-announcements')
+ * @param level - The politeness level for announcements ('polite' or 'assertive', defaults to 'polite')
+ */
+export function announceToScreenReader(
+  message: string,
+  regionId: string = 'mdv-live-announcements',
+  level: 'polite' | 'assertive' = 'polite'
+): void {
+  // Create or update live region
+  let liveRegion = document.getElementById(regionId);
+  if (!liveRegion) {
+    liveRegion = document.createElement('div');
+    liveRegion.id = regionId;
+    liveRegion.setAttribute('aria-live', level);
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'mdv-sr-only';
+    document.body.appendChild(liveRegion);
+  }
+
+  liveRegion.textContent = message;
+
+  // Clear after a delay to avoid repetitive announcements
+  setTimeout(() => {
+    if (liveRegion) {
+      liveRegion.textContent = '';
+    }
+  }, 1000);
+}

@@ -254,6 +254,22 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       cursor: pointer;
     }
 
+    button.mdv-nav-category {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: inherit;
+      margin: 0;
+      outline: none;
+    }
+
+    button.mdv-nav-category:focus-visible {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 2px;
+      border-radius: ${theme.borderRadius};
+    }
+
     .mdv-nav-category.collapsible:hover {
       color: ${colors.textPrimary};
     }
