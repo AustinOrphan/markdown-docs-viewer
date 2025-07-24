@@ -13,7 +13,7 @@ npm install @austinorphan/markdown-docs-viewer
 ### CDN Usage
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 ```
 
 ## Basic Setup

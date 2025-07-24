@@ -88,8 +88,8 @@
     </div>
 
     <!-- Load all dependencies from CDN -->
-    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
+    <script src="https://unpkg.com/marked@15.0.12/marked.min.js"></script>
+    <script src="https://unpkg.com/marked-highlight@2.2.2/lib/index.umd.js"></script>
 
     <!-- Load highlight.js core and languages -->
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
@@ -197,11 +197,11 @@ That's it! Your documentation viewer is ready to use.
 
 ${TRIPLE_BACKTICK}html
 <!-- Load dependencies -->
-<script src="https://unpkg.com/marked@12.0.0/marked.min.js"><\/script>
+<script src="https://unpkg.com/marked@15.0.12/marked.min.js"><\/script>
 <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"><\/script>
 
 <!-- Load the viewer -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"><\/script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"><\/script>
 ${TRIPLE_BACKTICK}
 
 ## Via NPM (For build tools)
@@ -218,7 +218,7 @@ ${TRIPLE_BACKTICK}
 
 ${TRIPLE_BACKTICK}html
 <script type="module">
-import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.es.js';
+import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
 <\/script>
 ${TRIPLE_BACKTICK}
 `,
