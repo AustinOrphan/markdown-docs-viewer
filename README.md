@@ -33,7 +33,28 @@ yarn add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
 pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
 ```
 
-### Basic Example
+### CDN (Quick start for browsers)
+
+```html
+<!-- Load dependencies -->
+<script src="https://unpkg.com/marked@15.0.12/marked.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+
+<!-- Load the viewer -->
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+```
+
+### ES Modules (Modern browsers)
+
+```html
+<script type="module">
+  import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+</script>
+```
+
+## Quick Start
+
+### NPM/Bundler Usage
 
 ```javascript
 import { createViewer } from '@austinorphan/markdown-docs-viewer';
@@ -232,6 +253,56 @@ const viewer = createViewer({
     ]
   }
 }
+```
+
+### Themes
+
+#### Using Built-in Themes
+
+**NPM/ES Modules:**
+
+```javascript
+import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
+
+const viewer = createViewer({
+  container: '#docs',
+  theme: darkTheme, // Can use theme object
+  // OR
+  theme: 'dark', // Can use theme name string
+  // ... other config
+});
+```
+
+**CDN/Browser:**
+
+```html
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<script>
+  const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+
+  const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    theme: darkTheme, // Must use theme object (not string) in CDN context
+    // ... other config
+  });
+</script>
+```
+
+> **Important:** When using CDN, always use theme objects (`defaultTheme`, `darkTheme`). String theme names only work with NPM imports. See [Theme Usage Clarification](./docs/THEME-USAGE-CLARIFICATION.md) for details.
+
+#### Custom Theme
+
+```javascript
+import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+
+const myTheme = createCustomTheme({
+  name: 'my-theme',
+  colors: {
+    primary: '#007acc',
+    background: '#1e1e1e',
+    // ... other colors
+  },
+});
 ```
 
 ### Navigation & Search
