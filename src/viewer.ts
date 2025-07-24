@@ -963,16 +963,24 @@ export class MarkdownDocsViewer {
 
     // Throttle resize events for performance
     let resizeTimeout: number;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = window.setTimeout(handleResize, 150);
-    });
+    window.addEventListener(
+      'resize',
+      () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(handleResize, 150);
+      },
+      { passive: true }
+    );
 
     // Handle orientation change
-    window.addEventListener('orientationchange', () => {
-      // Small delay to allow orientation change to complete
-      setTimeout(handleResize, 100);
-    });
+    window.addEventListener(
+      'orientationchange',
+      () => {
+        // Small delay to allow orientation change to complete
+        setTimeout(handleResize, 100);
+      },
+      { passive: true }
+    );
   }
 
   private updateResponsiveUI(): void {
@@ -1052,7 +1060,7 @@ export class MarkdownDocsViewer {
     ) as HTMLElement[];
     const currentIndex = allNavLinks.indexOf(currentLink);
 
-    let targetIndex = currentIndex;
+    let targetIndex: number;
 
     switch (e.key) {
       case 'ArrowDown':

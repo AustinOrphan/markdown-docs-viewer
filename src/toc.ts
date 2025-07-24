@@ -230,12 +230,16 @@ export class TableOfContents {
 
     // Handle scroll to update active heading
     let scrollTimeout: NodeJS.Timeout;
-    container.addEventListener('scroll', () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        this.updateActiveHeading(container, headingElements);
-      }, 100);
-    });
+    container.addEventListener(
+      'scroll',
+      () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          this.updateActiveHeading(container, headingElements);
+        }, 100);
+      },
+      { passive: true }
+    );
   }
 
   /**
