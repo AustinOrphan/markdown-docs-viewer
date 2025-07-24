@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-24T05:44:09.203Z",
+  "generated": "2025-07-24T20:24:51.969Z",
   "structure": {
     "files": [
       {
@@ -15,7 +15,7 @@
       {
         "name": "CONFIGURATION.md",
         "path": "CONFIGURATION.md",
-        "size": 9792
+        "size": 10139
       },
       {
         "name": "INTEGRATION.md",
@@ -25,7 +25,12 @@
       {
         "name": "README.md",
         "path": "README.md",
-        "size": 773
+        "size": 871
+      },
+      {
+        "name": "THEME-USAGE-CLARIFICATION.md",
+        "path": "THEME-USAGE-CLARIFICATION.md",
+        "size": 3887
       },
       {
         "name": "THEMING-VISUAL-GUIDE.md",
@@ -40,7 +45,7 @@
       {
         "name": "index.json",
         "path": "index.json",
-        "size": 18512
+        "size": 18647
       }
     ],
     "directories": {
@@ -118,7 +123,7 @@
               {
                 "name": "PersistentCache.md",
                 "path": "api/classes/PersistentCache.md",
-                "size": 3954
+                "size": 3968
               },
               {
                 "name": "SearchIndex.md",
@@ -143,7 +148,7 @@
               {
                 "name": "ThemeManager.md",
                 "path": "api/classes/ThemeManager.md",
-                "size": 5227
+                "size": 5530
               },
               {
                 "name": "ThemeSwitcher.md",
@@ -263,7 +268,7 @@
               {
                 "name": "AdvancedSearchOptions.md",
                 "path": "api/interfaces/AdvancedSearchOptions.md",
-                "size": 3394
+                "size": 3406
               },
               {
                 "name": "DarkModeToggleOptions.md",
@@ -348,12 +353,12 @@
               {
                 "name": "ThemePreset.md",
                 "path": "api/interfaces/ThemePreset.md",
-                "size": 6393
+                "size": 6423
               },
               {
                 "name": "ThemeSwitcherOptions.md",
                 "path": "api/interfaces/ThemeSwitcherOptions.md",
-                "size": 2758
+                "size": 2764
               },
               {
                 "name": "ViewerState.md",
@@ -469,7 +474,7 @@
               {
                 "name": "factory.md",
                 "path": "architecture/components/factory.md",
-                "size": 12701
+                "size": 12902
               },
               {
                 "name": "i18n.md",
@@ -559,7 +564,7 @@
               {
                 "name": "viewer.md",
                 "path": "architecture/components/viewer.md",
-                "size": 18607
+                "size": 18674
               }
             ],
             "directories": {}
@@ -594,10 +599,10 @@
     }
   },
   "stats": {
-    "totalFiles": 106,
+    "totalFiles": 107,
     "totalDirectories": 11,
     "filesByType": {
-      "md": 105,
+      "md": 106,
       "json": 1
     }
   }

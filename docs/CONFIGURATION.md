@@ -85,50 +85,65 @@ Combine different source types:
 
 ### Basic Theme Setup
 
+**NPM Usage:**
+
 ```typescript
+import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
+
 {
-  theme: {
-    default: 'light',  // 'light' or 'dark'
-    allowUserToggle: true  // Show theme toggle button
-  }
+  theme: darkTheme,      // Use theme object (recommended)
+  // OR
+  theme: 'dark',         // Use theme name string (NPM only)
+}
+```
+
+**CDN Usage:**
+
+```javascript
+const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+
+{
+  theme: darkTheme,      // Must use theme object in CDN context
 }
 ```
 
 ### Custom Themes
 
-Define custom color schemes:
+Define custom themes using the theme builder:
 
 ```typescript
-{
-  theme: {
-    default: 'corporate',
-    custom: {
-      corporate: {
-        colors: {
-          primary: '#2563eb',
-          secondary: '#64748b',
-          background: '#ffffff',
-          surface: '#f8fafc',
-          text: '#1e293b',
-          textSecondary: '#64748b',
-          border: '#e2e8f0',
-          accent: '#3b82f6'
-        },
-        fonts: {
-          body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
-          heading: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-          code: 'JetBrains Mono, Menlo, Monaco, monospace'
-        },
-        spacing: {
-          unit: 4,
-          small: '0.5rem',
-          medium: '1rem',
-          large: '1.5rem'
-        }
-      }
-    }
-  }
-}
+import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+
+const corporateTheme = createCustomTheme({
+  name: 'corporate',
+  colors: {
+    primary: '#2563eb',
+    secondary: '#64748b',
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: '#1e293b',
+    textSecondary: '#64748b',
+    border: '#e2e8f0',
+    accent: '#3b82f6',
+  },
+  fonts: {
+    body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+    heading: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    code: 'JetBrains Mono, Menlo, Monaco, monospace',
+  },
+  spacing: {
+    unit: 4,
+    containerMaxWidth: '1200px',
+    sidebarWidth: '280px',
+  },
+});
+
+// Use the custom theme
+const viewer = createViewer({
+  container: '#docs',
+  theme: corporateTheme,
+  // ... other config
+});
 ```
 
 ### Brand Colors
