@@ -151,6 +151,38 @@ export class ThemeManager {
         light: 'Material Design inspired light theme',
         dark: 'Material Design inspired dark theme',
       },
+      vscode: {
+        light: 'Visual Studio Code light',
+        dark: 'Visual Studio Code dark',
+      },
+      nord: {
+        light: 'Nord light - arctic inspired',
+        dark: 'Nord dark - arctic inspired',
+      },
+      dracula: {
+        light: 'Dracula light',
+        dark: 'Dracula dark',
+      },
+      solarized: {
+        light: 'Solarized light',
+        dark: 'Solarized dark',
+      },
+      monokai: {
+        light: 'Monokai light',
+        dark: 'Monokai dark',
+      },
+      ayu: {
+        light: 'Ayu light',
+        dark: 'Ayu dark',
+      },
+      catppuccin: {
+        light: 'Catppuccin Latte',
+        dark: 'Catppuccin Mocha',
+      },
+      tokyo: {
+        light: 'Tokyo Night light',
+        dark: 'Tokyo Night dark',
+      },
     };
 
     return descriptions[baseName]?.[mode] || `${baseName} ${mode} theme`;

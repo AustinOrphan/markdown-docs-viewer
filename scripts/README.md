@@ -26,7 +26,7 @@ npm run docs:generate
 
 - API documentation in `docs/api/`
 - Documentation index at `docs/index.json`
-- Generation report at `_archive/debug-output/docs-report.json` and `_archive/debug-output/docs-report.md`
+- Generation report at `docs-report.json` and `docs-report.md`
 
 ### 2. Documentation Status Dashboard (`docs-status.js`)
 

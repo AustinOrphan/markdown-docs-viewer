@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-23T14:29:23.595Z",
+  "generated": "2025-07-24T05:12:29.150Z",
   "structure": {
     "files": [
       {
@@ -23,6 +23,11 @@
         "size": 13960
       },
       {
+        "name": "README.md",
+        "path": "README.md",
+        "size": 773
+      },
+      {
         "name": "THEMING-VISUAL-GUIDE.md",
         "path": "THEMING-VISUAL-GUIDE.md",
         "size": 11410
@@ -35,21 +40,564 @@
       {
         "name": "index.json",
         "path": "index.json",
-        "size": 1048
+        "size": 18512
       }
     ],
     "directories": {
       "api": {
-        "files": [],
-        "directories": {}
+        "files": [
+          {
+            "name": "README.md",
+            "path": "api/README.md",
+            "size": 3260
+          }
+        ],
+        "directories": {
+          "classes": {
+            "files": [
+              {
+                "name": "AdvancedSearchManager.md",
+                "path": "api/classes/AdvancedSearchManager.md",
+                "size": 3697
+              },
+              {
+                "name": "ConsoleErrorLogger.md",
+                "path": "api/classes/ConsoleErrorLogger.md",
+                "size": 2159
+              },
+              {
+                "name": "DarkModeToggle.md",
+                "path": "api/classes/DarkModeToggle.md",
+                "size": 2376
+              },
+              {
+                "name": "ErrorBoundary.md",
+                "path": "api/classes/ErrorBoundary.md",
+                "size": 1105
+              },
+              {
+                "name": "ExportManager.md",
+                "path": "api/classes/ExportManager.md",
+                "size": 1847
+              },
+              {
+                "name": "I18nManager.md",
+                "path": "api/classes/I18nManager.md",
+                "size": 2910
+              },
+              {
+                "name": "LRUCache.md",
+                "path": "api/classes/LRUCache.md",
+                "size": 3085
+              },
+              {
+                "name": "LazyLoader.md",
+                "path": "api/classes/LazyLoader.md",
+                "size": 1348
+              },
+              {
+                "name": "MarkdownDocsError.md",
+                "path": "api/classes/MarkdownDocsError.md",
+                "size": 2432
+              },
+              {
+                "name": "MarkdownDocsViewer.md",
+                "path": "api/classes/MarkdownDocsViewer.md",
+                "size": 5325
+              },
+              {
+                "name": "MemoryManager.md",
+                "path": "api/classes/MemoryManager.md",
+                "size": 2162
+              },
+              {
+                "name": "PerformanceMonitor.md",
+                "path": "api/classes/PerformanceMonitor.md",
+                "size": 2599
+              },
+              {
+                "name": "PersistentCache.md",
+                "path": "api/classes/PersistentCache.md",
+                "size": 3950
+              },
+              {
+                "name": "SearchIndex.md",
+                "path": "api/classes/SearchIndex.md",
+                "size": 1316
+              },
+              {
+                "name": "SearchManager.md",
+                "path": "api/classes/SearchManager.md",
+                "size": 2158
+              },
+              {
+                "name": "TableOfContents.md",
+                "path": "api/classes/TableOfContents.md",
+                "size": 1857
+              },
+              {
+                "name": "ThemeBuilder.md",
+                "path": "api/classes/ThemeBuilder.md",
+                "size": 2009
+              },
+              {
+                "name": "ThemeManager.md",
+                "path": "api/classes/ThemeManager.md",
+                "size": 5227
+              },
+              {
+                "name": "ThemeSwitcher.md",
+                "path": "api/classes/ThemeSwitcher.md",
+                "size": 1566
+              }
+            ],
+            "directories": {}
+          },
+          "enumerations": {
+            "files": [
+              {
+                "name": "ErrorCode.md",
+                "path": "api/enumerations/ErrorCode.md",
+                "size": 6122
+              },
+              {
+                "name": "ErrorSeverity.md",
+                "path": "api/enumerations/ErrorSeverity.md",
+                "size": 1097
+              }
+            ],
+            "directories": {}
+          },
+          "functions": {
+            "files": [
+              {
+                "name": "addHeadingIds.md",
+                "path": "api/functions/addHeadingIds.md",
+                "size": 443
+              },
+              {
+                "name": "addPrintUtilities.md",
+                "path": "api/functions/addPrintUtilities.md",
+                "size": 482
+              },
+              {
+                "name": "createCustomTheme.md",
+                "path": "api/functions/createCustomTheme.md",
+                "size": 994
+              },
+              {
+                "name": "createExportOptions.md",
+                "path": "api/functions/createExportOptions.md",
+                "size": 626
+              },
+              {
+                "name": "createI18nConfig.md",
+                "path": "api/functions/createI18nConfig.md",
+                "size": 604
+              },
+              {
+                "name": "createLocaleMessages.md",
+                "path": "api/functions/createLocaleMessages.md",
+                "size": 682
+              },
+              {
+                "name": "createViewer.md",
+                "path": "api/functions/createViewer.md",
+                "size": 624
+              },
+              {
+                "name": "debounce.md",
+                "path": "api/functions/debounce.md",
+                "size": 598
+              },
+              {
+                "name": "generatePrintPreview.md",
+                "path": "api/functions/generatePrintPreview.md",
+                "size": 530
+              },
+              {
+                "name": "generatePrintStyles.md",
+                "path": "api/functions/generatePrintStyles.md",
+                "size": 504
+              },
+              {
+                "name": "getAllThemeVariants.md",
+                "path": "api/functions/getAllThemeVariants.md",
+                "size": 443
+              },
+              {
+                "name": "getAvailableThemeNames.md",
+                "path": "api/functions/getAvailableThemeNames.md",
+                "size": 402
+              },
+              {
+                "name": "getThemeBaseName.md",
+                "path": "api/functions/getThemeBaseName.md",
+                "size": 431
+              },
+              {
+                "name": "getThemeMode.md",
+                "path": "api/functions/getThemeMode.md",
+                "size": 445
+              },
+              {
+                "name": "throttle.md",
+                "path": "api/functions/throttle.md",
+                "size": 600
+              },
+              {
+                "name": "toggleThemeMode.md",
+                "path": "api/functions/toggleThemeMode.md",
+                "size": 428
+              },
+              {
+                "name": "withRetry.md",
+                "path": "api/functions/withRetry.md",
+                "size": 536
+              }
+            ],
+            "directories": {}
+          },
+          "interfaces": {
+            "files": [
+              {
+                "name": "AdvancedSearchOptions.md",
+                "path": "api/interfaces/AdvancedSearchOptions.md",
+                "size": 3389
+              },
+              {
+                "name": "DarkModeToggleOptions.md",
+                "path": "api/interfaces/DarkModeToggleOptions.md",
+                "size": 1886
+              },
+              {
+                "name": "Document.md",
+                "path": "api/interfaces/Document.md",
+                "size": 1875
+              },
+              {
+                "name": "DocumentSource.md",
+                "path": "api/interfaces/DocumentSource.md",
+                "size": 1396
+              },
+              {
+                "name": "DocumentationConfig.md",
+                "path": "api/interfaces/DocumentationConfig.md",
+                "size": 4689
+              },
+              {
+                "name": "ErrorHandlingOptions.md",
+                "path": "api/interfaces/ErrorHandlingOptions.md",
+                "size": 1712
+              },
+              {
+                "name": "ExportOptions.md",
+                "path": "api/interfaces/ExportOptions.md",
+                "size": 2534
+              },
+              {
+                "name": "I18nConfig.md",
+                "path": "api/interfaces/I18nConfig.md",
+                "size": 969
+              },
+              {
+                "name": "I18nMessages.md",
+                "path": "api/interfaces/I18nMessages.md",
+                "size": 374
+              },
+              {
+                "name": "MobileOptions.md",
+                "path": "api/interfaces/MobileOptions.md",
+                "size": 4087
+              },
+              {
+                "name": "NavigationOptions.md",
+                "path": "api/interfaces/NavigationOptions.md",
+                "size": 1364
+              },
+              {
+                "name": "PerformanceOptions.md",
+                "path": "api/interfaces/PerformanceOptions.md",
+                "size": 2327
+              },
+              {
+                "name": "RenderOptions.md",
+                "path": "api/interfaces/RenderOptions.md",
+                "size": 1652
+              },
+              {
+                "name": "SearchOptions.md",
+                "path": "api/interfaces/SearchOptions.md",
+                "size": 1646
+              },
+              {
+                "name": "TableOfContentsOptions.md",
+                "path": "api/interfaces/TableOfContentsOptions.md",
+                "size": 1616
+              },
+              {
+                "name": "Theme.md",
+                "path": "api/interfaces/Theme.md",
+                "size": 4476
+              },
+              {
+                "name": "ThemeBuilderOptions.md",
+                "path": "api/interfaces/ThemeBuilderOptions.md",
+                "size": 2670
+              },
+              {
+                "name": "ThemePreset.md",
+                "path": "api/interfaces/ThemePreset.md",
+                "size": 6383
+              },
+              {
+                "name": "ThemeSwitcherOptions.md",
+                "path": "api/interfaces/ThemeSwitcherOptions.md",
+                "size": 2758
+              },
+              {
+                "name": "ViewerState.md",
+                "path": "api/interfaces/ViewerState.md",
+                "size": 1790
+              }
+            ],
+            "directories": {}
+          },
+          "type-aliases": {
+            "files": [
+              {
+                "name": "ExportFormat.md",
+                "path": "api/type-aliases/ExportFormat.md",
+                "size": 354
+              }
+            ],
+            "directories": {}
+          },
+          "variables": {
+            "files": [
+              {
+                "name": "ErrorFactory.md",
+                "path": "api/variables/ErrorFactory.md",
+                "size": 1281
+              },
+              {
+                "name": "darkTheme.md",
+                "path": "api/variables/darkTheme.md",
+                "size": 366
+              },
+              {
+                "name": "defaultMessages.md",
+                "path": "api/variables/defaultMessages.md",
+                "size": 420
+              },
+              {
+                "name": "defaultTheme.md",
+                "path": "api/variables/defaultTheme.md",
+                "size": 375
+              }
+            ],
+            "directories": {}
+          }
+        }
+      },
+      "architecture": {
+        "files": [
+          {
+            "name": "README.md",
+            "path": "architecture/README.md",
+            "size": 8964
+          },
+          {
+            "name": "documentation-guide.md",
+            "path": "architecture/documentation-guide.md",
+            "size": 5059
+          }
+        ],
+        "directories": {
+          "adr": {
+            "files": [
+              {
+                "name": "001-use-typescript.md",
+                "path": "architecture/adr/001-use-typescript.md",
+                "size": 1512
+              },
+              {
+                "name": "002-multiple-document-sources.md",
+                "path": "architecture/adr/002-multiple-document-sources.md",
+                "size": 2230
+              },
+              {
+                "name": "003-css-custom-properties.md",
+                "path": "architecture/adr/003-css-custom-properties.md",
+                "size": 2997
+              },
+              {
+                "name": "004-client-side-only.md",
+                "path": "architecture/adr/004-client-side-only.md",
+                "size": 2772
+              },
+              {
+                "name": "005-marked-version.md",
+                "path": "architecture/adr/005-marked-version.md",
+                "size": 2637
+              }
+            ],
+            "directories": {}
+          },
+          "components": {
+            "files": [
+              {
+                "name": "advanced-search.md",
+                "path": "architecture/components/advanced-search.md",
+                "size": 13227
+              },
+              {
+                "name": "dark-mode-toggle.md",
+                "path": "architecture/components/dark-mode-toggle.md",
+                "size": 5999
+              },
+              {
+                "name": "errors.md",
+                "path": "architecture/components/errors.md",
+                "size": 20323
+              },
+              {
+                "name": "export.md",
+                "path": "architecture/components/export.md",
+                "size": 12040
+              },
+              {
+                "name": "factory.md",
+                "path": "architecture/components/factory.md",
+                "size": 12701
+              },
+              {
+                "name": "i18n.md",
+                "path": "architecture/components/i18n.md",
+                "size": 15668
+              },
+              {
+                "name": "index.md",
+                "path": "architecture/components/index.md",
+                "size": 12060
+              },
+              {
+                "name": "loader.md",
+                "path": "architecture/components/loader.md",
+                "size": 18941
+              },
+              {
+                "name": "mobile-styles.md",
+                "path": "architecture/components/mobile-styles.md",
+                "size": 11744
+              },
+              {
+                "name": "navigation.md",
+                "path": "architecture/components/navigation.md",
+                "size": 11329
+              },
+              {
+                "name": "performance.md",
+                "path": "architecture/components/performance.md",
+                "size": 13772
+              },
+              {
+                "name": "print-styles.md",
+                "path": "architecture/components/print-styles.md",
+                "size": 10654
+              },
+              {
+                "name": "router.md",
+                "path": "architecture/components/router.md",
+                "size": 8215
+              },
+              {
+                "name": "search.md",
+                "path": "architecture/components/search.md",
+                "size": 15283
+              },
+              {
+                "name": "styles.md",
+                "path": "architecture/components/styles.md",
+                "size": 9427
+              },
+              {
+                "name": "theme-builder.md",
+                "path": "architecture/components/theme-builder.md",
+                "size": 10658
+              },
+              {
+                "name": "theme-manager.md",
+                "path": "architecture/components/theme-manager.md",
+                "size": 7378
+              },
+              {
+                "name": "theme-switcher.md",
+                "path": "architecture/components/theme-switcher.md",
+                "size": 7092
+              },
+              {
+                "name": "themes.md",
+                "path": "architecture/components/themes.md",
+                "size": 16450
+              },
+              {
+                "name": "toc.md",
+                "path": "architecture/components/toc.md",
+                "size": 13029
+              },
+              {
+                "name": "types.md",
+                "path": "architecture/components/types.md",
+                "size": 17950
+              },
+              {
+                "name": "utils.md",
+                "path": "architecture/components/utils.md",
+                "size": 16473
+              },
+              {
+                "name": "viewer.md",
+                "path": "architecture/components/viewer.md",
+                "size": 18607
+              }
+            ],
+            "directories": {}
+          },
+          "diagrams": {
+            "files": [
+              {
+                "name": "c4-component-document.md",
+                "path": "architecture/diagrams/c4-component-document.md",
+                "size": 4306
+              },
+              {
+                "name": "c4-container.md",
+                "path": "architecture/diagrams/c4-container.md",
+                "size": 4299
+              },
+              {
+                "name": "c4-context.md",
+                "path": "architecture/diagrams/c4-context.md",
+                "size": 1929
+              },
+              {
+                "name": "data-flow.md",
+                "path": "architecture/diagrams/data-flow.md",
+                "size": 6567
+              }
+            ],
+            "directories": {}
+          }
+        }
       }
     }
   },
   "stats": {
-    "totalFiles": 7,
-    "totalDirectories": 1,
+    "totalFiles": 106,
+    "totalDirectories": 11,
     "filesByType": {
-      "md": 6,
+      "md": 105,
       "json": 1
     }
   }
