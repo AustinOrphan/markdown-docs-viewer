@@ -94,11 +94,13 @@ describe('ThemeBuilder', () => {
     });
 
     it('should copy current theme as starting point', () => {
-      themeManager.setTheme('dark');
+      themeManager.setTheme('default-dark');
       themeBuilder = new ThemeBuilder(themeManager);
 
       const html = themeBuilder.render();
-      expect(html).toContain('value="dark"'); // Theme name input should have dark theme name
+      // Theme name input should show base name and dark mode should be selected
+      expect(html).toContain('value="default"');
+      expect(html).toContain('value="dark" checked');
     });
   });
 
