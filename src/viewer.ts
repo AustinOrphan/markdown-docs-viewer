@@ -722,6 +722,18 @@ export class MarkdownDocsViewer {
               });
             }
           });
+
+          // Add keyboard navigation support
+          link.addEventListener('keydown', e => {
+            this.handleNavigationKeydown(e as KeyboardEvent, link as HTMLElement);
+          });
+        });
+
+        // Setup collapsible category keyboard support
+        this.container.querySelectorAll('.mdv-nav-category.collapsible').forEach(category => {
+          category.addEventListener('keydown', e => {
+            this.handleCategoryKeydown(e as KeyboardEvent, category as HTMLElement);
+          });
         });
 
         // Search
@@ -1032,6 +1044,114 @@ export class MarkdownDocsViewer {
       },
       { operation: 'loadDocument', documentId: docId }
     );
+  }
+
+  private handleNavigationKeydown(e: KeyboardEvent, currentLink: HTMLElement): void {
+    const allNavLinks = Array.from(
+      this.container.querySelectorAll('.mdv-nav-link')
+    ) as HTMLElement[];
+    const currentIndex = allNavLinks.indexOf(currentLink);
+
+    let targetIndex = currentIndex;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        targetIndex = (currentIndex + 1) % allNavLinks.length;
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        targetIndex = currentIndex === 0 ? allNavLinks.length - 1 : currentIndex - 1;
+        break;
+      case 'Home':
+        e.preventDefault();
+        targetIndex = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        targetIndex = allNavLinks.length - 1;
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        currentLink.click();
+        return;
+      default:
+        return;
+    }
+
+    if (targetIndex !== currentIndex && allNavLinks[targetIndex]) {
+      allNavLinks[targetIndex].focus();
+
+      // Announce navigation change for screen readers
+      this.announceNavigationChange(allNavLinks[targetIndex]);
+    }
+  }
+
+  private handleCategoryKeydown(e: KeyboardEvent, category: HTMLElement): void {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        this.toggleCategory(category);
+        break;
+      case 'ArrowDown': {
+        e.preventDefault();
+        // Focus first nav link in this category if expanded
+        const sublist = category.nextElementSibling as HTMLElement;
+        if (sublist && !sublist.hidden) {
+          const firstLink = sublist.querySelector('.mdv-nav-link') as HTMLElement;
+          firstLink?.focus();
+        }
+        break;
+      }
+    }
+  }
+
+  private toggleCategory(category: HTMLElement): void {
+    const sublist = category.nextElementSibling as HTMLElement;
+    const collapseIcon = category.querySelector('.mdv-collapse-icon') as HTMLElement;
+
+    if (sublist) {
+      const isExpanded = category.getAttribute('aria-expanded') === 'true';
+      const newExpanded = !isExpanded;
+
+      category.setAttribute('aria-expanded', newExpanded.toString());
+      sublist.hidden = !newExpanded;
+
+      if (collapseIcon) {
+        collapseIcon.style.transform = newExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+
+      // Announce state change
+      const announcement = `${category.textContent?.trim()} ${newExpanded ? 'expanded' : 'collapsed'}`;
+      this.announceToScreenReader(announcement);
+    }
+  }
+
+  private announceNavigationChange(link: HTMLElement): void {
+    const linkText = link.textContent?.trim() || '';
+    this.announceToScreenReader(`Focused: ${linkText}`);
+  }
+
+  private announceToScreenReader(message: string): void {
+    // Create or update live region
+    let liveRegion = document.getElementById('mdv-nav-announcements');
+    if (!liveRegion) {
+      liveRegion = document.createElement('div');
+      liveRegion.id = 'mdv-nav-announcements';
+      liveRegion.setAttribute('aria-live', 'polite');
+      liveRegion.setAttribute('aria-atomic', 'true');
+      liveRegion.className = 'mdv-sr-only';
+      document.body.appendChild(liveRegion);
+    }
+
+    liveRegion.textContent = message;
+
+    // Clear after a delay to avoid repetitive announcements
+    setTimeout(() => {
+      liveRegion.textContent = '';
+    }, 1000);
   }
 
   private handleSearch(query: string): void {
