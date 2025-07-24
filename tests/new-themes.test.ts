@@ -3,18 +3,19 @@ import { baseThemes, getAllThemeVariants, getThemeBaseName, getThemeMode } from 
 import { ThemeManager } from '../src/theme-manager';
 
 describe('New Theme Integration', () => {
-  describe('Base Themes Structure', () => {
-    const newThemes = [
-      'vscode',
-      'nord',
-      'dracula',
-      'solarized',
-      'monokai',
-      'ayu',
-      'catppuccin',
-      'tokyo',
-    ];
+  // Define the new themes array once to avoid repetition
+  const newThemes = [
+    'vscode',
+    'nord',
+    'dracula',
+    'solarized',
+    'monokai',
+    'ayu',
+    'catppuccin',
+    'tokyo',
+  ];
 
+  describe('Base Themes Structure', () => {
     newThemes.forEach(themeName => {
       it(`should have complete ${themeName} theme definition`, () => {
         const theme = baseThemes[themeName as keyof typeof baseThemes];
@@ -73,16 +74,6 @@ describe('New Theme Integration', () => {
       expect(allVariants).toHaveLength(expectedThemeCount);
 
       // Check that all new themes are included
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
       newThemes.forEach(themeName => {
         const lightVariant = allVariants.find(t => t.name === `${themeName}-light`);
         const darkVariant = allVariants.find(t => t.name === `${themeName}-dark`);
@@ -120,16 +111,6 @@ describe('New Theme Integration', () => {
       const themeManager = new ThemeManager();
       const availableThemes = themeManager.getAvailableThemes();
 
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
       newThemes.forEach(themeName => {
         const lightTheme = availableThemes.find(t => t.name === `${themeName}-light`);
         const darkTheme = availableThemes.find(t => t.name === `${themeName}-dark`);
@@ -147,16 +128,6 @@ describe('New Theme Integration', () => {
 
     it('should be able to set new themes', () => {
       const themeManager = new ThemeManager();
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
 
       newThemes.forEach(themeName => {
         // Test light variant
@@ -174,17 +145,6 @@ describe('New Theme Integration', () => {
 
   describe('Theme Utilities', () => {
     it('should correctly extract base names from new theme names', () => {
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
-
       newThemes.forEach(themeName => {
         expect(getThemeBaseName(`${themeName}-light`)).toBe(themeName);
         expect(getThemeBaseName(`${themeName}-dark`)).toBe(themeName);
@@ -192,17 +152,6 @@ describe('New Theme Integration', () => {
     });
 
     it('should correctly extract modes from new theme names', () => {
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
-
       newThemes.forEach(themeName => {
         expect(getThemeMode(`${themeName}-light`)).toBe('light');
         expect(getThemeMode(`${themeName}-dark`)).toBe('dark');
@@ -214,16 +163,6 @@ describe('New Theme Integration', () => {
     const themeManager = new ThemeManager();
 
     it('should have good contrast between text and background for all new themes', () => {
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
       const allVariants = getAllThemeVariants();
 
       newThemes.forEach(themeName => {
@@ -234,9 +173,6 @@ describe('New Theme Integration', () => {
         const lightContrast = themeManager.getContrastRatio(
           lightTheme.colors.text,
           lightTheme.colors.background
-        );
-        console.log(
-          `${themeName} light theme colors (text: ${lightTheme.colors.text}, background: ${lightTheme.colors.background}) contrast: ${lightContrast}`
         );
 
         // Allow lower contrast for solarized light theme as a special case
@@ -251,9 +187,6 @@ describe('New Theme Integration', () => {
           darkTheme.colors.text,
           darkTheme.colors.background
         );
-        console.log(
-          `${themeName} dark theme colors (text: ${darkTheme.colors.text}, background: ${darkTheme.colors.background}) contrast: ${darkContrast}`
-        );
         expect(darkContrast).toBeGreaterThanOrEqual(4.5);
       });
     });
@@ -262,16 +195,6 @@ describe('New Theme Integration', () => {
   describe('Theme Font Families', () => {
     it('should have appropriate font families for each theme', () => {
       const allVariants = getAllThemeVariants();
-      const newThemes = [
-        'vscode',
-        'nord',
-        'dracula',
-        'solarized',
-        'monokai',
-        'ayu',
-        'catppuccin',
-        'tokyo',
-      ];
 
       newThemes.forEach(themeName => {
         const lightTheme = allVariants.find(t => t.name === `${themeName}-light`)!;
@@ -317,22 +240,22 @@ describe('New Theme Integration', () => {
       const availableThemes = themeManager.getAvailableThemes();
 
       const expectedDescriptions = {
-        'vscode-light': 'Visual Studio Code inspired light theme',
-        'vscode-dark': 'Visual Studio Code inspired dark theme',
-        'nord-light': 'Nord light theme with arctic aesthetics',
-        'nord-dark': 'Nord dark theme with arctic aesthetics',
-        'dracula-light': 'Dracula-inspired light theme',
-        'dracula-dark': 'Popular Dracula dark theme',
-        'solarized-light': 'Solarized light - precision colors',
-        'solarized-dark': 'Solarized dark - precision colors',
-        'monokai-light': 'Monokai-inspired light theme',
-        'monokai-dark': 'Classic Monokai dark theme',
-        'ayu-light': 'Ayu light - elegant and minimal',
-        'ayu-dark': 'Ayu dark - elegant and minimal',
-        'catppuccin-light': 'Catppuccin Latte - pastel perfection',
-        'catppuccin-dark': 'Catppuccin Mocha - cozy dark theme',
-        'tokyo-light': 'Tokyo Night light - modern aesthetics',
-        'tokyo-dark': 'Tokyo Night dark - popular among developers',
+        'vscode-light': 'Visual Studio Code light',
+        'vscode-dark': 'Visual Studio Code dark',
+        'nord-light': 'Nord light - arctic inspired',
+        'nord-dark': 'Nord dark - arctic inspired',
+        'dracula-light': 'Dracula light',
+        'dracula-dark': 'Dracula dark',
+        'solarized-light': 'Solarized light',
+        'solarized-dark': 'Solarized dark',
+        'monokai-light': 'Monokai light',
+        'monokai-dark': 'Monokai dark',
+        'ayu-light': 'Ayu light',
+        'ayu-dark': 'Ayu dark',
+        'catppuccin-light': 'Catppuccin Latte',
+        'catppuccin-dark': 'Catppuccin Mocha',
+        'tokyo-light': 'Tokyo Night light',
+        'tokyo-dark': 'Tokyo Night dark',
       };
 
       Object.entries(expectedDescriptions).forEach(([themeName, expectedDescription]) => {

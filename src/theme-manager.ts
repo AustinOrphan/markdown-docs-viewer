@@ -152,36 +152,36 @@ export class ThemeManager {
         dark: 'Material Design inspired dark theme',
       },
       vscode: {
-        light: 'Visual Studio Code inspired light theme',
-        dark: 'Visual Studio Code inspired dark theme',
+        light: 'Visual Studio Code light',
+        dark: 'Visual Studio Code dark',
       },
       nord: {
-        light: 'Nord light theme with arctic aesthetics',
-        dark: 'Nord dark theme with arctic aesthetics',
+        light: 'Nord light - arctic inspired',
+        dark: 'Nord dark - arctic inspired',
       },
       dracula: {
-        light: 'Dracula-inspired light theme',
-        dark: 'Popular Dracula dark theme',
+        light: 'Dracula light',
+        dark: 'Dracula dark',
       },
       solarized: {
-        light: 'Solarized light - precision colors',
-        dark: 'Solarized dark - precision colors',
+        light: 'Solarized light',
+        dark: 'Solarized dark',
       },
       monokai: {
-        light: 'Monokai-inspired light theme',
-        dark: 'Classic Monokai dark theme',
+        light: 'Monokai light',
+        dark: 'Monokai dark',
       },
       ayu: {
-        light: 'Ayu light - elegant and minimal',
-        dark: 'Ayu dark - elegant and minimal',
+        light: 'Ayu light',
+        dark: 'Ayu dark',
       },
       catppuccin: {
-        light: 'Catppuccin Latte - pastel perfection',
-        dark: 'Catppuccin Mocha - cozy dark theme',
+        light: 'Catppuccin Latte',
+        dark: 'Catppuccin Mocha',
       },
       tokyo: {
-        light: 'Tokyo Night light - modern aesthetics',
-        dark: 'Tokyo Night dark - popular among developers',
+        light: 'Tokyo Night light',
+        dark: 'Tokyo Night dark',
       },
     };
 

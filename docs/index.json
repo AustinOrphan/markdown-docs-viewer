@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-24T04:45:01.827Z",
+  "generated": "2025-07-24T05:12:29.150Z",
   "structure": {
     "files": [
       {
@@ -40,7 +40,7 @@
       {
         "name": "index.json",
         "path": "index.json",
-        "size": 1049
+        "size": 18512
       }
     ],
     "directories": {
@@ -353,7 +353,7 @@
               {
                 "name": "ThemeSwitcherOptions.md",
                 "path": "api/interfaces/ThemeSwitcherOptions.md",
-                "size": 2475
+                "size": 2758
               },
               {
                 "name": "ViewerState.md",
