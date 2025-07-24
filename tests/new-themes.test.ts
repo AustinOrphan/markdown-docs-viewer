@@ -24,15 +24,14 @@ describe('New Theme Integration', () => {
         expect(theme.dark).toBeDefined();
 
         // Check that both light and dark variants have all required color properties
+        // Note: textPrimary and textSecondary are now generated with defaults
         const requiredColors = [
           'primary',
           'secondary',
           'background',
           'surface',
           'text',
-          'textPrimary',
           'textLight',
-          'textSecondary',
           'border',
           'code',
           'codeBackground',
@@ -49,6 +48,16 @@ describe('New Theme Integration', () => {
           expect(typeof theme.light[colorProp as keyof typeof theme.light]).toBe('string');
           expect(typeof theme.dark[colorProp as keyof typeof theme.dark]).toBe('string');
         });
+
+        // Check that generated themes have textPrimary and textSecondary
+        const allVariants = getAllThemeVariants();
+        const lightVariant = allVariants.find(t => t.name === `${themeName}-light`)!;
+        const darkVariant = allVariants.find(t => t.name === `${themeName}-dark`)!;
+
+        expect(lightVariant.colors.textPrimary).toBeDefined();
+        expect(lightVariant.colors.textSecondary).toBeDefined();
+        expect(darkVariant.colors.textPrimary).toBeDefined();
+        expect(darkVariant.colors.textSecondary).toBeDefined();
       });
 
       it(`should have valid color values for ${themeName}`, () => {
@@ -107,8 +116,9 @@ describe('New Theme Integration', () => {
   });
 
   describe('Theme Manager Integration', () => {
-    it('should register all new themes in ThemeManager', () => {
+    it('should register all new themes in ThemeManager', async () => {
       const themeManager = new ThemeManager();
+      await themeManager.waitForDescriptionEnhancement();
       const availableThemes = themeManager.getAvailableThemes();
 
       newThemes.forEach(themeName => {
@@ -235,8 +245,9 @@ describe('New Theme Integration', () => {
   });
 
   describe('Theme Descriptions', () => {
-    it('should have meaningful descriptions for all new themes', () => {
+    it('should have meaningful descriptions for all new themes', async () => {
       const themeManager = new ThemeManager();
+      await themeManager.waitForDescriptionEnhancement();
       const availableThemes = themeManager.getAvailableThemes();
 
       const expectedDescriptions = {

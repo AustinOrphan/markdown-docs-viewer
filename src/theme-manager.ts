@@ -30,6 +30,7 @@ export class ThemeManager {
   private themes: Map<string, ThemePreset>;
   private options: ThemeManagerOptions;
   private container: HTMLElement | null = null;
+  private descriptionEnhancementPromise: Promise<void> | null = null;
 
   constructor(options: ThemeManagerOptions = {}) {
     this.options = {
@@ -40,31 +41,79 @@ export class ThemeManager {
 
     this.themes = new Map();
 
-    // Initialize themes asynchronously
-    this.initializeBuiltInThemes().then(() => {
-      // Load saved theme or use default
-      const savedThemeName = this.getSavedThemeName();
-      const initialTheme = this.resolveInitialTheme(savedThemeName);
-
-      // Properly set the theme through the normal flow to ensure consistency
-      if (initialTheme) {
-        this.currentTheme = initialTheme;
-        // Apply CSS variables immediately
-        this.applyCSSVariables(initialTheme);
-
-        // Trigger the change callback for initial theme if provided
-        if (this.options.onThemeChange) {
-          // Use setTimeout to ensure it runs after constructor completes
-          setTimeout(() => {
-            this.options.onThemeChange!(initialTheme);
-          }, 0);
-        }
-      }
-    });
+    // Initialize built-in themes synchronously first
+    this.initializeBuiltInThemesSync();
 
     // Set a default theme immediately for initial render
     this.currentTheme = defaultTheme;
     this.applyCSSVariables(defaultTheme);
+
+    // Load saved theme or use default
+    const savedThemeName = this.getSavedThemeName();
+    const initialTheme = this.resolveInitialTheme(savedThemeName);
+
+    // Properly set the theme through the normal flow to ensure consistency
+    if (initialTheme && initialTheme !== this.currentTheme) {
+      this.currentTheme = initialTheme;
+      // Apply CSS variables immediately
+      this.applyCSSVariables(initialTheme);
+
+      // Trigger the change callback for initial theme if provided
+      if (this.options.onThemeChange) {
+        // Use setTimeout to ensure it runs after constructor completes
+        setTimeout(() => {
+          this.options.onThemeChange!(initialTheme);
+        }, 0);
+      }
+    }
+
+    // Enhance theme descriptions asynchronously (optional)
+    this.descriptionEnhancementPromise = this.enhanceThemeDescriptions();
+  }
+
+  private initializeBuiltInThemesSync(): void {
+    // Register all theme variants (light and dark) from the new theme system
+    const allThemes = getAllThemeVariants();
+
+    for (const theme of allThemes) {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
+
+      // Use basic descriptions for now, enhanced descriptions will be loaded async
+      const basicDescription = `${baseName} ${mode} theme`;
+
+      this.registerTheme({
+        ...theme,
+        description: basicDescription,
+        author: 'MarkdownDocsViewer',
+        version: '1.0.0',
+      });
+    }
+  }
+
+  private async enhanceThemeDescriptions(): Promise<void> {
+    // Enhance theme descriptions with detailed info from JSON file
+    const allThemes = this.getAvailableThemes();
+
+    for (const theme of allThemes) {
+      const baseName = getThemeBaseName(theme.name);
+      const mode = getThemeMode(theme.name);
+
+      try {
+        const description = await this.getThemeDescription(baseName, mode);
+
+        // Update the theme with enhanced description
+        const enhancedTheme = {
+          ...theme,
+          description,
+        };
+
+        this.registerTheme(enhancedTheme);
+      } catch (error) {
+        // Keep the basic description if enhancement fails
+        console.warn(`Failed to enhance description for theme ${theme.name}:`, error);
+      }
+    }
   }
 
   private async initializeBuiltInThemes(): Promise<void> {
@@ -198,6 +247,13 @@ export class ThemeManager {
 
   public getAvailableThemes(): ThemePreset[] {
     return Array.from(this.themes.values());
+  }
+
+  // Wait for theme descriptions to be enhanced (useful for tests)
+  public async waitForDescriptionEnhancement(): Promise<void> {
+    if (this.descriptionEnhancementPromise) {
+      await this.descriptionEnhancementPromise;
+    }
   }
 
   public getTheme(name: string): ThemePreset | undefined {
