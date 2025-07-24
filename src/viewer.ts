@@ -18,6 +18,7 @@ import {
   ConsoleErrorLogger,
   DEFAULT_RETRY_CONFIG,
 } from './errors';
+import { announceToScreenReader } from './utils';
 import {
   generateMobileCSS,
   addViewportMeta,
@@ -28,6 +29,10 @@ import {
 import { ThemeManager } from './theme-manager';
 import { ThemeSwitcher } from './theme-switcher';
 import { DarkModeToggle } from './dark-mode-toggle';
+
+// Swipe gesture constants
+const SWIPE_THRESHOLD = 50;
+const SWIPE_EDGE_THRESHOLD = 50;
 
 export class MarkdownDocsViewer {
   private config: DocumentationConfig;
@@ -301,7 +306,7 @@ export class MarkdownDocsViewer {
           swipeToNavigate: true,
           pinchToZoom: false,
           doubleTapToZoom: false,
-          swipeThreshold: 50,
+          swipeThreshold: SWIPE_THRESHOLD,
         },
         layout: {
           containerPadding: 16,
@@ -729,8 +734,14 @@ export class MarkdownDocsViewer {
           });
         });
 
-        // Setup collapsible category keyboard support
+        // Setup collapsible category support
         this.container.querySelectorAll('.mdv-nav-category.collapsible').forEach(category => {
+          // Click handler for button
+          category.addEventListener('click', () => {
+            this.toggleCategory(category as HTMLElement);
+          });
+
+          // Additional keyboard support
           category.addEventListener('keydown', e => {
             this.handleCategoryKeydown(e as KeyboardEvent, category as HTMLElement);
           });
@@ -856,7 +867,7 @@ export class MarkdownDocsViewer {
     let startX = 0;
     let startY = 0;
     let isSwipe = false;
-    const threshold = this.config.mobile?.gestures?.swipeThreshold || 50;
+    const threshold = this.config.mobile?.gestures?.swipeThreshold || SWIPE_THRESHOLD;
 
     const sidebar = this.container.querySelector('.mdv-sidebar') as HTMLElement;
     const content = this.container.querySelector('.mdv-content') as HTMLElement;
@@ -895,7 +906,7 @@ export class MarkdownDocsViewer {
         // Only trigger on mobile viewports
         if (isMobileViewport()) {
           // Swipe right to open sidebar (from left edge)
-          if (deltaX > threshold && startX < 50 && !this.state.sidebarOpen) {
+          if (deltaX > threshold && startX < SWIPE_EDGE_THRESHOLD && !this.state.sidebarOpen) {
             this.state.sidebarOpen = true;
             this.updateSidebar();
           }
@@ -1128,38 +1139,18 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
-        collapseIcon.style.transform = newExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
       }
 
       // Announce state change
       const announcement = `${category.textContent?.trim()} ${newExpanded ? 'expanded' : 'collapsed'}`;
-      this.announceToScreenReader(announcement);
+      announceToScreenReader(announcement, 'mdv-nav-announcements');
     }
   }
 
   private announceNavigationChange(link: HTMLElement): void {
     const linkText = link.textContent?.trim() || '';
-    this.announceToScreenReader(`Focused: ${linkText}`);
-  }
-
-  private announceToScreenReader(message: string): void {
-    // Create or update live region
-    let liveRegion = document.getElementById('mdv-nav-announcements');
-    if (!liveRegion) {
-      liveRegion = document.createElement('div');
-      liveRegion.id = 'mdv-nav-announcements';
-      liveRegion.setAttribute('aria-live', 'polite');
-      liveRegion.setAttribute('aria-atomic', 'true');
-      liveRegion.className = 'mdv-sr-only';
-      document.body.appendChild(liveRegion);
-    }
-
-    liveRegion.textContent = message;
-
-    // Clear after a delay to avoid repetitive announcements
-    setTimeout(() => {
-      liveRegion.textContent = '';
-    }, 1000);
+    announceToScreenReader(`Focused: ${linkText}`, 'mdv-nav-announcements');
   }
 
   private handleSearch(query: string): void {
