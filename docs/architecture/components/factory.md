@@ -53,7 +53,7 @@ const viewer = createViewer({
       { id: 'guide', title: 'User Guide', file: 'guide.md' },
     ],
   },
-  theme: 'default',
+  theme: defaultTheme, // For CDN: use theme object; For NPM: can use 'default' string
   search: { enabled: true },
   navigation: {
     showCategories: true,
@@ -203,7 +203,7 @@ function createDocumentationSite(baseConfig: Partial<DocumentationConfig>) {
       type: 'content',
       documents: [],
     },
-    theme: 'default',
+    theme: defaultTheme, // For CDN: use theme object; For NPM: can use 'default' string
     search: { enabled: true },
     navigation: {
       showCategories: true,
@@ -478,7 +478,7 @@ const viewer = quickStart('#test', [{ id: '1', title: 'Test', content: '# Test' 
 
 ```typescript
 const DEFAULT_CONFIG: Partial<DocumentationConfig> = {
-  theme: 'default',
+  theme: defaultTheme, // For CDN: use theme object; For NPM: can use 'default' string
   search: { enabled: true },
   navigation: {
     showCategories: true,

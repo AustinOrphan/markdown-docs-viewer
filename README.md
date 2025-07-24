@@ -25,7 +25,7 @@ npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight
 
 ```html
 <!-- Load dependencies -->
-<script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+<script src="https://unpkg.com/marked@15.0.12/marked.min.js"></script>
 <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
 
 <!-- Load the viewer -->
@@ -139,7 +139,7 @@ const viewer = new MarkdownDocsViewer({
       {
         id: 'readme',
         title: 'README',
-        file: 'microsoft/vscode/main/README.md'
+        file: 'owner/repo/main/README.md'
       }
     ]
   }
@@ -167,15 +167,36 @@ const viewer = new MarkdownDocsViewer({
 
 #### Using Built-in Themes
 
+**NPM/ES Modules:**
+
 ```javascript
 import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
 
 const viewer = createViewer({
   container: '#docs',
-  theme: darkTheme,
+  theme: darkTheme, // Can use theme object
+  // OR
+  theme: 'dark', // Can use theme name string
   // ... other config
 });
 ```
+
+**CDN/Browser:**
+
+```html
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<script>
+  const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+
+  const viewer = new MarkdownDocsViewer({
+    container: '#docs',
+    theme: darkTheme, // Must use theme object (not string) in CDN context
+    // ... other config
+  });
+</script>
+```
+
+> **Important:** When using CDN, always use theme objects (`defaultTheme`, `darkTheme`). String theme names only work with NPM imports. See [Theme Usage Clarification](./docs/THEME-USAGE-CLARIFICATION.md) for details.
 
 #### Custom Theme
 
@@ -557,7 +578,7 @@ const metrics = monitor.getMetrics();
 **"require is not defined"** - Use UMD build or ES modules in browser:
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 ```
 
 **"Cannot read properties of undefined (reading 'highlightElement')"** - Load highlight.js:
