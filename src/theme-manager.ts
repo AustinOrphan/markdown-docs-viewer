@@ -210,7 +210,8 @@ export class ThemeManager {
       fonts: this.mergeObjects(baseTheme.fonts, overrides.fonts || {}),
       spacing: this.mergeObjects(baseTheme.spacing, overrides.spacing || {}),
       borderRadius: overrides.borderRadius || baseTheme.borderRadius,
-      description: overrides.name?.includes('dark')
+      // Determine description based on the custom theme name and base theme
+      description: name.includes('dark')
         ? `Custom dark theme based on ${getThemeBaseName(baseTheme.name)}`
         : `Custom light theme based on ${getThemeBaseName(baseTheme.name)}`,
       author: 'User',

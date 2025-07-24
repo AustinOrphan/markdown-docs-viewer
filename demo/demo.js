@@ -46,11 +46,6 @@ class DemoController {
       },
     });
 
-    // Set initial body theme based on current theme
-    const initialTheme = this.themeManager.getCurrentTheme();
-    const initialMode = initialTheme.name.includes('-dark') ? 'dark' : 'light';
-    document.body.setAttribute('data-theme', initialMode);
-
     // Create theme switcher
     this.themeSwitcher = new ThemeSwitcher(this.themeManager, {
       position: 'header',
