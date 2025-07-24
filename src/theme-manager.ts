@@ -157,7 +157,7 @@ export class ThemeManager {
     };
 
     const allDescriptions = { ...defaultDescriptions, ...descriptions };
-    return allDescriptions[baseName]?.[mode] || `${baseName} ${mode} theme`;
+    return (allDescriptions as any)[baseName]?.[mode] || `${baseName} ${mode} theme`;
   }
 
   public registerTheme(theme: ThemePreset): void {
