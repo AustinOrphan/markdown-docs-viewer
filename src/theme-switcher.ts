@@ -4,6 +4,9 @@ import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
 import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
 
+// Mobile breakpoint constant
+const MOBILE_BREAKPOINT = 768;
+
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
   showPreview?: boolean;
@@ -62,7 +65,7 @@ export class ThemeSwitcher {
                 this.shouldShowCustomThemeButton()
                   ? `
                 <button class="mdv-theme-custom-btn" aria-label="Create custom theme" title="Create custom theme">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                     <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
                   </svg>
                 </button>
@@ -456,10 +459,27 @@ export class ThemeSwitcher {
     // Update trigger
     const trigger = this.container.querySelector('.mdv-theme-trigger');
     if (trigger) {
-      trigger.innerHTML = `
-        ${this.getThemeIcon(currentBaseName, currentMode)}
-        <span class="mdv-theme-name">${currentBaseName}</span>
-      `;
+      // Update icon and theme name without destroying the dropdown arrow
+      const iconAndName = trigger.querySelector('.mdv-theme-name');
+      if (iconAndName) {
+        // Update existing elements
+        const icon = this.getThemeIcon(currentBaseName, currentMode);
+        const firstNode = trigger.firstChild;
+        if (firstNode && firstNode.nodeType === Node.TEXT_NODE) {
+          firstNode.textContent = icon;
+        } else {
+          trigger.insertBefore(document.createTextNode(icon), trigger.firstChild);
+        }
+        iconAndName.textContent = currentBaseName;
+      } else {
+        // Fallback: preserve dropdown arrow if it exists
+        const dropdownArrow = trigger.querySelector('.mdv-dropdown-arrow');
+        trigger.innerHTML = `
+          ${this.getThemeIcon(currentBaseName, currentMode)}
+          <span class="mdv-theme-name">${currentBaseName}</span>
+          ${dropdownArrow ? dropdownArrow.outerHTML : '<span class="mdv-dropdown-arrow" aria-hidden="true">▼</span>'}
+        `;
+      }
     }
 
     // Update dark mode toggle
@@ -632,6 +652,16 @@ export class ThemeSwitcher {
         box-shadow: 0 2px 4px rgba(var(--mdv-color-text-rgb, 0, 0, 0), 0.1);
       }
       
+      .mdv-theme-trigger:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+      }
+      
+      .mdv-theme-trigger:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
       .mdv-theme-name {
         text-transform: capitalize;
         color: var(--mdv-color-text);
@@ -697,6 +727,17 @@ export class ThemeSwitcher {
         color: var(--mdv-color-primary);
       }
       
+      .mdv-theme-custom-btn:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+        color: var(--mdv-color-primary);
+      }
+      
+      .mdv-theme-custom-btn:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
       .mdv-theme-list {
         max-height: 320px;
         overflow-y: auto;
@@ -722,6 +763,24 @@ export class ThemeSwitcher {
       .mdv-theme-option:hover {
         background: var(--mdv-color-background);
         border-color: var(--mdv-color-border);
+      }
+      
+      .mdv-theme-option:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+        border-color: var(--mdv-color-primary);
+      }
+      
+      .mdv-theme-option:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
+      .mdv-theme-option.active:focus {
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 2px;
+        background: var(--mdv-color-primary);
+        border-color: var(--mdv-color-primary);
       }
       
       .mdv-theme-option.active {
@@ -853,8 +912,17 @@ export class ThemeSwitcher {
         filter: brightness(1.1);
       }
       
+      .mdv-dark-mode-toggle:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+      }
+      
+      .mdv-dark-mode-toggle:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
       /* Mobile styles */
-      @media (max-width: 768px) {
+      @media (max-width: ${MOBILE_BREAKPOINT}px) {
         .mdv-theme-dropdown {
           position: fixed;
           top: auto;
