@@ -65,11 +65,23 @@ function renderGroup(
       ${
         group.category !== 'All Documents'
           ? `
-        <div class="mdv-nav-category ${isCollapsible ? 'collapsible' : ''}"
-             ${isCollapsible ? `role="button" aria-expanded="true" aria-controls="${categoryId}" tabindex="0"` : ''}>
-          ${group.category}
-          ${isCollapsible ? '<span class="mdv-collapse-icon" aria-hidden="true">▼</span>' : ''}
-        </div>
+        ${
+          isCollapsible
+            ? `
+          <button class="mdv-nav-category collapsible"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="${categoryId}">
+            ${group.category}
+            <span class="mdv-collapse-icon" aria-hidden="true">▼</span>
+          </button>
+        `
+            : `
+          <div class="mdv-nav-category">
+            ${group.category}
+          </div>
+        `
+        }
       `
           : ''
       }

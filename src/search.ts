@@ -1,5 +1,6 @@
 import { SearchOptions, Document } from './types';
 import { SearchIndex, debounce } from './performance';
+import { announceToScreenReader } from './utils';
 
 export function createSearch(options: SearchOptions): string {
   return `
@@ -306,19 +307,7 @@ export class SearchManager {
         ? `No results found for "${query}"`
         : `${count} result${count === 1 ? '' : 's'} found for "${query}"`;
 
-    // Create a live region for screen reader announcements
-    const liveRegion = document.getElementById('mdv-search-live') || this.createLiveRegion();
-    liveRegion.textContent = announcement;
-  }
-
-  private createLiveRegion(): HTMLElement {
-    const liveRegion = document.createElement('div');
-    liveRegion.id = 'mdv-search-live';
-    liveRegion.setAttribute('aria-live', 'polite');
-    liveRegion.setAttribute('aria-atomic', 'true');
-    liveRegion.className = 'mdv-sr-only';
-    document.body.appendChild(liveRegion);
-    return liveRegion;
+    announceToScreenReader(announcement, 'mdv-search-live');
   }
 
   private escapeHtml(text: string): string {

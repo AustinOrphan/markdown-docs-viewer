@@ -1,5 +1,6 @@
 import { TableOfContentsOptions } from './types';
 import { marked, Token } from 'marked';
+import { announceToScreenReader } from './utils';
 
 export interface TOCItem {
   id: string;
@@ -295,14 +296,9 @@ export class TableOfContents {
 
   private announceActiveHeading(headingText: string): void {
     const announcement = `Current section: ${headingText}`;
-    const liveRegion = document.getElementById('toc-announcements');
-
-    if (liveRegion) {
-      liveRegion.textContent = announcement;
-      // Clear after a delay to avoid repeat announcements
-      setTimeout(() => {
-        liveRegion.textContent = '';
-      }, 1000);
+    // Only announce if the TOC live region exists (TOC is rendered)
+    if (document.getElementById('toc-announcements')) {
+      announceToScreenReader(announcement, 'toc-announcements');
     }
   }
 
