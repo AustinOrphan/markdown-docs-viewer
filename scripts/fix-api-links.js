@@ -19,15 +19,15 @@ export async function fixApiLinks() {
     file: join(apiDir, 'classes', 'PersistentCache.md'),
     replacements: [
       // Methods need parentheses - use word boundaries to avoid partial matches
-      { from: /LRUCache\.md#clear\b(?![\(\)])/g, to: 'LRUCache.md#clear()' },
-      { from: /LRUCache\.md#delete\b(?![\(\)])/g, to: 'LRUCache.md#delete()' },
-      { from: /LRUCache\.md#entries\b(?![\(\)])/g, to: 'LRUCache.md#entries()' },
-      { from: /LRUCache\.md#getcapacity\b(?![\(\)])/g, to: 'LRUCache.md#getcapacity()' },
-      { from: /LRUCache\.md#getmemoryusage\b(?![\(\)])/g, to: 'LRUCache.md#getmemoryusage()' },
-      { from: /LRUCache\.md#get\b(?![\(\)])/g, to: 'LRUCache.md#get()' },
-      { from: /LRUCache\.md#has\b(?![\(\)])/g, to: 'LRUCache.md#has()' },
-      { from: /LRUCache\.md#set\b(?![\(\)])/g, to: 'LRUCache.md#set()' },
-      { from: /LRUCache\.md#size\b(?![\(\)])/g, to: 'LRUCache.md#size()' },
+      { from: /LRUCache\.md#clear\b(?![(])/g, to: 'LRUCache.md#clear()' },
+      { from: /LRUCache\.md#delete\b(?![(])/g, to: 'LRUCache.md#delete()' },
+      { from: /LRUCache\.md#entries\b(?![(])/g, to: 'LRUCache.md#entries()' },
+      { from: /LRUCache\.md#getcapacity\b(?![(])/g, to: 'LRUCache.md#getcapacity()' },
+      { from: /LRUCache\.md#getmemoryusage\b(?![(])/g, to: 'LRUCache.md#getmemoryusage()' },
+      { from: /LRUCache\.md#get\b(?![(])/g, to: 'LRUCache.md#get()' },
+      { from: /LRUCache\.md#has\b(?![(])/g, to: 'LRUCache.md#has()' },
+      { from: /LRUCache\.md#set\b(?![(])/g, to: 'LRUCache.md#set()' },
+      { from: /LRUCache\.md#size\b(?![(])/g, to: 'LRUCache.md#size()' },
     ],
   });
 
