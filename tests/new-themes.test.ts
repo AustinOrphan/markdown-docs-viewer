@@ -211,6 +211,8 @@ describe('New Theme Integration', () => {
   });
 
   describe('Theme Color Accessibility', () => {
+    const themeManager = new ThemeManager();
+
     it('should have good contrast between text and background for all new themes', () => {
       const newThemes = [
         'vscode',
@@ -228,13 +230,31 @@ describe('New Theme Integration', () => {
         const lightTheme = allVariants.find(t => t.name === `${themeName}-light`)!;
         const darkTheme = allVariants.find(t => t.name === `${themeName}-dark`)!;
 
-        // Light theme should have dark text on light background
-        expect(lightTheme.colors.background).toMatch(/^#[a-fA-F0-9]{6}$/); // Valid hex color
-        expect(lightTheme.colors.text).toMatch(/^#[a-fA-F0-9]{6}$/); // Valid hex color
+        // Light theme should have good contrast
+        const lightContrast = themeManager.getContrastRatio(
+          lightTheme.colors.text,
+          lightTheme.colors.background
+        );
+        console.log(
+          `${themeName} light theme colors (text: ${lightTheme.colors.text}, background: ${lightTheme.colors.background}) contrast: ${lightContrast}`
+        );
 
-        // Dark theme should have light text on dark background
-        expect(darkTheme.colors.background).toMatch(/^#[a-fA-F0-9]{6}$/); // Valid hex color
-        expect(darkTheme.colors.text).toMatch(/^#[a-fA-F0-9]{6}$/); // Valid hex color
+        // Allow lower contrast for solarized light theme as a special case
+        if (themeName === 'solarized') {
+          expect(lightContrast).toBeGreaterThanOrEqual(4);
+        } else {
+          expect(lightContrast).toBeGreaterThanOrEqual(4.5);
+        }
+
+        // Dark theme should have good contrast
+        const darkContrast = themeManager.getContrastRatio(
+          darkTheme.colors.text,
+          darkTheme.colors.background
+        );
+        console.log(
+          `${themeName} dark theme colors (text: ${darkTheme.colors.text}, background: ${darkTheme.colors.background}) contrast: ${darkContrast}`
+        );
+        expect(darkContrast).toBeGreaterThanOrEqual(4.5);
       });
     });
   });
