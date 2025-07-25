@@ -174,9 +174,7 @@ import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
 
 const viewer = createViewer({
   container: '#docs',
-  theme: darkTheme, // Can use theme object
-  // OR
-  theme: 'dark', // Can use theme name string
+  theme: darkTheme, // Use theme object (recommended)
   // ... other config
 });
 ```

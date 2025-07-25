@@ -92,8 +92,6 @@ import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
 
 {
   theme: darkTheme,      // Use theme object (recommended)
-  // OR
-  theme: 'dark',         // Use theme name string (NPM only)
 }
 ```
 
