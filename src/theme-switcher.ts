@@ -4,7 +4,7 @@ import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
 import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
 
-// Mobile breakpoint constant
+// Mobile breakpoint constant (768px)
 const MOBILE_BREAKPOINT = 768;
 
 // Swipe-to-close threshold constant
