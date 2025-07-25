@@ -592,6 +592,27 @@ export class ThemeSwitcher {
     }
   }
 
+  public destroy(): void {
+    // Close any open dropdowns
+    this.closeDropdown();
+
+    // Clean up theme builder if it exists
+    if (this.themeBuilder) {
+      this.themeBuilder = null;
+    }
+
+    // Remove mobile backdrop if it exists
+    this.hideMobileBackdrop();
+    const backdrop = document.querySelector('.mdv-theme-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+
+    // Clear container reference
+    this.container = null;
+    this.isOpen = false;
+  }
+
   public getStyles(): string {
     return `
       .mdv-theme-switcher {
