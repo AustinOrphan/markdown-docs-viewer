@@ -105,3 +105,35 @@ export function sanitizeCssValue(value: string | number | undefined | null): str
 
   return '';
 }
+
+/**
+ * Announces a message to screen readers using a live region
+ * @param message - The message to announce
+ * @param containerId - Optional ID of the container to announce within
+ */
+export function announceToScreenReader(message: string, containerId?: string): void {
+  let announcements = document.querySelector(
+    `#${containerId || 'mdv-announcements'}`
+  ) as HTMLElement;
+
+  if (!announcements) {
+    announcements = document.createElement('div');
+    announcements.id = containerId || 'mdv-announcements';
+    announcements.setAttribute('aria-live', 'polite');
+    announcements.setAttribute('aria-atomic', 'true');
+    announcements.style.cssText = `
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    `;
+    document.body.appendChild(announcements);
+  }
+
+  // Clear previous announcement and set new one
+  announcements.textContent = '';
+  setTimeout(() => {
+    announcements.textContent = message;
+  }, 100);
+}

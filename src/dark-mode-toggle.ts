@@ -16,6 +16,8 @@ export class DarkModeToggle {
   private options: DarkModeToggleOptions;
   private container: HTMLElement | null = null;
   private isDark: boolean = false;
+  private clickHandler: (() => void) | null = null;
+  private themeChangeHandler: ((e: Event) => void) | null = null;
 
   constructor(themeManager: ThemeManager, options: DarkModeToggleOptions = {}) {
     this.themeManager = themeManager;
@@ -96,12 +98,14 @@ export class DarkModeToggle {
     const button = this.container.querySelector('.mdv-dark-toggle-btn');
     if (!button) return;
 
-    button.addEventListener('click', () => {
+    // Store click handler reference for cleanup
+    this.clickHandler = () => {
       this.toggle();
-    });
+    };
+    button.addEventListener('click', this.clickHandler);
 
-    // Listen for theme changes from other sources
-    document.addEventListener('mdv-theme-changed', (e: Event) => {
+    // Store theme change handler reference for cleanup
+    this.themeChangeHandler = (e: Event) => {
       const customEvent = e as CustomEvent;
       const themeName = customEvent.detail?.theme?.name;
       const isDark = themeName === this.options.darkThemeName;
@@ -109,7 +113,8 @@ export class DarkModeToggle {
         this.isDark = isDark;
         this.updateUI();
       }
-    });
+    };
+    document.addEventListener('mdv-theme-changed', this.themeChangeHandler);
   }
 
   public toggle(): void {
@@ -172,6 +177,26 @@ export class DarkModeToggle {
 
   public isDarkMode(): boolean {
     return this.isDark;
+  }
+
+  public destroy(): void {
+    // Remove event listeners if they exist
+    if (this.container && this.clickHandler) {
+      const button = this.container.querySelector('.mdv-dark-toggle-btn');
+      if (button) {
+        button.removeEventListener('click', this.clickHandler);
+      }
+    }
+
+    // Remove document event listener
+    if (this.themeChangeHandler) {
+      document.removeEventListener('mdv-theme-changed', this.themeChangeHandler);
+    }
+
+    // Clear references
+    this.container = null;
+    this.clickHandler = null;
+    this.themeChangeHandler = null;
   }
 
   public getStyles(): string {

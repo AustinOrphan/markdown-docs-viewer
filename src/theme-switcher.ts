@@ -4,6 +4,12 @@ import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
 import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
 
+// Mobile breakpoint constant (768px)
+const MOBILE_BREAKPOINT = 768;
+
+// Swipe-to-close threshold constant
+const SWIPE_TO_CLOSE_THRESHOLD = 100;
+
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
   showPreview?: boolean;
@@ -62,7 +68,7 @@ export class ThemeSwitcher {
                 this.shouldShowCustomThemeButton()
                   ? `
                 <button class="mdv-theme-custom-btn" aria-label="Create custom theme" title="Create custom theme">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                     <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
                   </svg>
                 </button>
@@ -260,6 +266,85 @@ export class ThemeSwitcher {
     this.container.addEventListener('keydown', e => {
       this.handleKeyboardNavigation(e as KeyboardEvent);
     });
+
+    // Mobile-specific enhancements
+    if (this.isMobile()) {
+      this.setupMobileInteractions();
+    }
+  }
+
+  private setupMobileInteractions(): void {
+    // Add backdrop for mobile
+    this.createMobileBackdrop();
+
+    // Handle swipe down to close on mobile
+    this.setupSwipeToClose();
+  }
+
+  private createMobileBackdrop(): HTMLElement {
+    let backdrop = document.querySelector('.mdv-theme-backdrop') as HTMLElement;
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'mdv-theme-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    backdrop.addEventListener('click', () => {
+      this.closeDropdown();
+    });
+
+    return backdrop;
+  }
+
+  private setupSwipeToClose(): void {
+    const dropdown = this.container?.querySelector('.mdv-theme-dropdown') as HTMLElement;
+    if (!dropdown) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        startY = e.touches[0].clientY;
+        currentY = startY;
+        isDragging = true;
+        dropdown.style.transition = 'none';
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || e.touches.length !== 1) return;
+
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+
+      // Only allow downward swipes
+      if (deltaY > 0) {
+        dropdown.style.transform = `translateY(${deltaY}px)`;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!isDragging) return;
+
+      isDragging = false;
+      dropdown.style.transition = '';
+
+      const deltaY = currentY - startY;
+
+      // If swiped down more than threshold or 30% of dropdown height, close it
+      if (deltaY > SWIPE_TO_CLOSE_THRESHOLD || deltaY > dropdown.offsetHeight * 0.3) {
+        this.closeDropdown();
+      } else {
+        dropdown.style.transform = '';
+      }
+    };
+
+    dropdown.addEventListener('touchstart', handleTouchStart, { passive: true });
+    dropdown.addEventListener('touchmove', handleTouchMove, { passive: true });
+    dropdown.addEventListener('touchend', handleTouchEnd, { passive: true });
+    dropdown.addEventListener('touchcancel', handleTouchEnd, { passive: true });
   }
 
   private toggleDarkMode(): void {
@@ -284,11 +369,28 @@ export class ThemeSwitcher {
   private toggleDropdown(): void {
     this.isOpen = !this.isOpen;
     this.updateDropdownState();
+
+    if (this.isOpen) {
+      // Show mobile backdrop
+      if (this.isMobile()) {
+        this.showMobileBackdrop();
+      }
+    } else {
+      // Hide mobile backdrop
+      if (this.isMobile()) {
+        this.hideMobileBackdrop();
+      }
+    }
   }
 
   private closeDropdown(): void {
     this.isOpen = false;
     this.updateDropdownState();
+
+    // Hide mobile backdrop
+    if (this.isMobile()) {
+      this.hideMobileBackdrop();
+    }
 
     // Return focus to trigger button to avoid aria-hidden issues
     const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
@@ -329,10 +431,27 @@ export class ThemeSwitcher {
     // Update trigger
     const trigger = this.container.querySelector('.mdv-theme-trigger');
     if (trigger) {
-      trigger.innerHTML = `
-        ${this.getThemeIcon(currentBaseName, currentMode)}
-        <span class="mdv-theme-name">${currentBaseName}</span>
-      `;
+      // Update icon and theme name without destroying the dropdown arrow
+      const iconAndName = trigger.querySelector('.mdv-theme-name');
+      if (iconAndName) {
+        // Update existing elements
+        const icon = this.getThemeIcon(currentBaseName, currentMode);
+        const firstNode = trigger.firstChild;
+        if (firstNode && firstNode.nodeType === Node.TEXT_NODE) {
+          firstNode.textContent = icon;
+        } else {
+          trigger.insertBefore(document.createTextNode(icon), trigger.firstChild);
+        }
+        iconAndName.textContent = currentBaseName;
+      } else {
+        // Fallback: preserve dropdown arrow if it exists
+        const dropdownArrow = trigger.querySelector('.mdv-dropdown-arrow');
+        trigger.innerHTML = `
+          ${this.getThemeIcon(currentBaseName, currentMode)}
+          <span class="mdv-theme-name">${currentBaseName}</span>
+          ${dropdownArrow ? dropdownArrow.outerHTML : '<span class="mdv-dropdown-arrow" aria-hidden="true">▼</span>'}
+        `;
+      }
     }
 
     // Update dark mode toggle
@@ -453,6 +572,47 @@ export class ThemeSwitcher {
     this.closeDropdown();
   }
 
+  private isMobile(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT;
+  }
+
+  private showMobileBackdrop(): void {
+    const backdrop = document.querySelector('.mdv-theme-backdrop');
+    if (backdrop) {
+      backdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  private hideMobileBackdrop(): void {
+    const backdrop = document.querySelector('.mdv-theme-backdrop');
+    if (backdrop) {
+      backdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+
+  public destroy(): void {
+    // Close any open dropdowns
+    this.closeDropdown();
+
+    // Clean up theme builder if it exists
+    if (this.themeBuilder) {
+      this.themeBuilder = null;
+    }
+
+    // Remove mobile backdrop if it exists
+    this.hideMobileBackdrop();
+    const backdrop = document.querySelector('.mdv-theme-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+
+    // Clear container reference
+    this.container = null;
+    this.isOpen = false;
+  }
+
   public getStyles(): string {
     return `
       .mdv-theme-switcher {
@@ -483,6 +643,16 @@ export class ThemeSwitcher {
       .mdv-theme-trigger:hover {
         background: var(--mdv-color-background);
         box-shadow: 0 2px 4px rgba(var(--mdv-color-text-rgb, 0, 0, 0), 0.1);
+      }
+      
+      .mdv-theme-trigger:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+      }
+      
+      .mdv-theme-trigger:focus:not(:focus-visible) {
+        outline: none;
       }
       
       .mdv-theme-name {
@@ -550,6 +720,17 @@ export class ThemeSwitcher {
         color: var(--mdv-color-primary);
       }
       
+      .mdv-theme-custom-btn:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+        color: var(--mdv-color-primary);
+      }
+      
+      .mdv-theme-custom-btn:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
       .mdv-theme-list {
         max-height: 320px;
         overflow-y: auto;
@@ -575,6 +756,24 @@ export class ThemeSwitcher {
       .mdv-theme-option:hover {
         background: var(--mdv-color-background);
         border-color: var(--mdv-color-border);
+      }
+      
+      .mdv-theme-option:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+        background: var(--mdv-color-background);
+        border-color: var(--mdv-color-primary);
+      }
+      
+      .mdv-theme-option:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
+      .mdv-theme-option.active:focus {
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 2px;
+        background: var(--mdv-color-primary);
+        border-color: var(--mdv-color-primary);
       }
       
       .mdv-theme-option.active {
@@ -706,8 +905,17 @@ export class ThemeSwitcher {
         filter: brightness(1.1);
       }
       
+      .mdv-dark-mode-toggle:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
+      }
+      
+      .mdv-dark-mode-toggle:focus:not(:focus-visible) {
+        outline: none;
+      }
+      
       /* Mobile styles */
-      @media (max-width: 768px) {
+      @media (max-width: ${MOBILE_BREAKPOINT}px) {
         .mdv-theme-dropdown {
           position: fixed;
           top: auto;
@@ -716,12 +924,162 @@ export class ThemeSwitcher {
           right: 0;
           margin: 0;
           border-radius: var(--mdv-border-radius) var(--mdv-border-radius) 0 0;
-          max-height: 70vh;
+          max-height: 85vh;
           z-index: var(--mdv-z-popover, 1060);
+          animation: slideUpMobile 0.3s ease-out;
+          padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        
+        .mdv-theme-dropdown.open {
+          animation: slideUpMobile 0.3s ease-out;
+        }
+        
+        @keyframes slideUpMobile {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        .mdv-theme-dropdown-header {
+          padding: 16px;
+          position: sticky;
+          top: 0;
+          background: var(--mdv-color-surface);
+          z-index: 1;
+          border-bottom: 1px solid var(--mdv-color-border);
+        }
+        
+        .mdv-theme-dropdown-header h3 {
+          font-size: 1rem;
+        }
+        
+        .mdv-theme-list {
+          padding: 12px;
+          padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+          max-height: calc(85vh - 60px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+        }
+        
+        .mdv-theme-option {
+          padding: 16px;
+          margin-bottom: 8px;
+          min-height: 60px;
+          touch-action: manipulation;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .mdv-theme-option::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 20px;
+          height: 20px;
+          background: radial-gradient(
+            circle,
+            rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.3) 0%,
+            rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.1) 50%,
+            transparent 70%
+          );
+          border-radius: 50%;
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0);
+          transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+          pointer-events: none;
+        }
+        
+        .mdv-theme-option:active {
+          transform: scale(0.98);
+        }
+        
+        .mdv-theme-option:active::after {
+          transform: translate(-50%, -50%) scale(6);
+          opacity: 1;
+        }
+        
+        .mdv-theme-preview {
+          gap: 4px;
+        }
+        
+        .mdv-theme-preview-color {
+          width: 20px;
+          height: 20px;
+          border-radius: 6px;
         }
         
         .mdv-theme-switcher-floating {
-          bottom: 60px;
+          bottom: calc(60px + env(safe-area-inset-bottom, 0));
+        }
+        
+        /* Mobile backdrop */
+        .mdv-theme-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: calc(var(--mdv-z-popover, 1060) - 1);
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+        }
+        
+        .mdv-theme-backdrop.show {
+          opacity: 1;
+          visibility: visible;
+        }
+        
+        /* Enhanced touch feedback */
+        @media (hover: none) and (pointer: coarse) {
+          .mdv-theme-option {
+            transition: transform 0.1s ease-out, background-color 0.1s ease-out;
+          }
+          
+          
+          .mdv-dark-mode-toggle {
+            transition: transform 0.2s ease-out;
+          }
+          
+          .mdv-dark-mode-toggle:active {
+            transform: scale(0.95);
+          }
+        }
+      }
+      
+      /* Small mobile optimizations */
+      @media (max-width: 400px) {
+        .mdv-theme-option-name {
+          font-size: 0.875rem;
+        }
+        
+        .mdv-theme-option-description {
+          font-size: 0.7rem;
+        }
+        
+        .mdv-theme-preview-color {
+          width: 16px;
+          height: 16px;
+        }
+        
+        .mdv-dark-mode-toggle {
+          width: 40px;
+          height: 22px;
+        }
+        
+        .mdv-dark-mode-toggle-thumb {
+          width: 18px;
+          height: 18px;
         }
       }
     `;
