@@ -142,44 +142,8 @@ export class MobileThemeQuickSwitcher {
       }
     });
 
-    // Add horizontal scroll with touch momentum
-    const scrollContainer = this.container.querySelector('.mdv-mobile-quick-themes-scroll');
-    if (scrollContainer) {
-      let isScrolling = false;
-      let startX = 0;
-      let scrollLeft = 0;
-
-      scrollContainer.addEventListener(
-        'touchstart',
-        (e: Event) => {
-          isScrolling = true;
-          const element = scrollContainer as HTMLElement;
-          startX = (e as TouchEvent).touches[0].pageX - element.offsetLeft;
-          scrollLeft = element.scrollLeft;
-        },
-        { passive: true }
-      );
-
-      scrollContainer.addEventListener(
-        'touchmove',
-        (e: Event) => {
-          if (!isScrolling) return;
-          const element = scrollContainer as HTMLElement;
-          const x = (e as TouchEvent).touches[0].pageX - element.offsetLeft;
-          const walk = (x - startX) * 2; // Scroll faster
-          element.scrollLeft = scrollLeft - walk;
-        },
-        { passive: true }
-      );
-
-      scrollContainer.addEventListener(
-        'touchend',
-        () => {
-          isScrolling = false;
-        },
-        { passive: true }
-      );
-    }
+    // Native horizontal scrolling is sufficient on mobile
+    // The CSS already has overflow-x: auto which provides native momentum scrolling
   }
 
   private selectTheme(baseName: string): void {
@@ -202,14 +166,14 @@ export class MobileThemeQuickSwitcher {
     if (!this.container) return;
 
     // Update active theme without destroying event listeners
-    const activeTheme = this.container.querySelector('.mdv-quick-theme-item.active');
+    const activeTheme = this.container.querySelector('.mdv-mobile-quick-theme.active');
     if (activeTheme) {
       activeTheme.classList.remove('active');
     }
 
     // Find and mark new active theme
     const currentTheme = this.themeManager.getCurrentTheme();
-    const currentBaseName = currentTheme.name.replace(/-light|-dark$/, '');
+    const currentBaseName = getThemeBaseName(currentTheme.name);
     const newActiveTheme = this.container.querySelector(`[data-theme="${currentBaseName}"]`);
     if (newActiveTheme) {
       newActiveTheme.classList.add('active');
