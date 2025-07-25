@@ -1,0 +1,24 @@
+npm:9: command not found: _omz_nvm_setup_completion
+npm:10: command not found: _omz_nvm_setup_autoload
+
+> @austinorphan/markdown-docs-viewer@1.0.0 docs:validate
+> node scripts/generate-docs.js && node scripts/docs-status.js
+
+Script started, running main...
+Starting documentation generation...
+Ensuring directories exist...
+Creating: /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs
+Creating: /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api
+Running tasks...
+Starting generateApiDocs...
+Cleaning directory: /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api
+Fixing API documentation links...
+Fixing API documentation links...
+Fixed links in /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api/classes/PersistentCache.md
+Fixed links in /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api/interfaces/AdvancedSearchOptions.md
+Fixed links in /Users/austinorphan/Library/Mobile Documents/com~apple~CloudDocs/src/markdown-docs-viewer/docs/api/interfaces/ThemePreset.md
+API link fixes complete!
+API docs complete
+Validation complete
+Link check complete
+Index generation complete

@@ -19,15 +19,17 @@ export async function fixApiLinks() {
     file: join(apiDir, 'classes', 'PersistentCache.md'),
     replacements: [
       // Methods need parentheses - use word boundaries to avoid partial matches
-      { from: /LRUCache\.md#clear\b(?![(])/g, to: 'LRUCache.md#clear()' },
-      { from: /LRUCache\.md#delete\b(?![(])/g, to: 'LRUCache.md#delete()' },
-      { from: /LRUCache\.md#entries\b(?![(])/g, to: 'LRUCache.md#entries()' },
-      { from: /LRUCache\.md#getcapacity\b(?![(])/g, to: 'LRUCache.md#getcapacity()' },
-      { from: /LRUCache\.md#getmemoryusage\b(?![(])/g, to: 'LRUCache.md#getmemoryusage()' },
-      { from: /LRUCache\.md#get\b(?![(])/g, to: 'LRUCache.md#get()' },
-      { from: /LRUCache\.md#has\b(?![(])/g, to: 'LRUCache.md#has()' },
-      { from: /LRUCache\.md#set\b(?![(])/g, to: 'LRUCache.md#set()' },
-      { from: /LRUCache\.md#size\b(?![(])/g, to: 'LRUCache.md#size()' },
+      { from: /LRUCache\.md#clear\b(?!\(\))/g, to: 'LRUCache.md#clear()' },
+      { from: /LRUCache\.md#delete\b(?!\(\))/g, to: 'LRUCache.md#delete()' },
+      { from: /LRUCache\.md#entries\b(?!\(\))/g, to: 'LRUCache.md#entries()' },
+      { from: /LRUCache\.md#getcapacity\b(?!\(\))/g, to: 'LRUCache.md#getcapacity()' },
+      { from: /LRUCache\.md#getmemoryusage\b(?!\(\))/g, to: 'LRUCache.md#getmemoryusage()' },
+      { from: /LRUCache\.md#get\b(?!\(\))/g, to: 'LRUCache.md#get()' },
+      { from: /LRUCache\.md#has\b(?!\(\))/g, to: 'LRUCache.md#has()' },
+      { from: /LRUCache\.md#set\b(?!\(\))/g, to: 'LRUCache.md#set()' },
+      { from: /LRUCache\.md#size\b(?!\(\))/g, to: 'LRUCache.md#size()' },
+      // Keep constructor without parentheses
+      { from: /LRUCache\.md#constructor\(\)/g, to: 'LRUCache.md#constructor' },
     ],
   });
 
@@ -53,6 +55,8 @@ export async function fixApiLinks() {
         from: /SearchOptions\.md#searchintags\b(?!\?)(?!\)\))/g,
         to: 'SearchOptions.md#searchintags?',
       },
+      // Also fix non-optional property
+      { from: /SearchOptions\.md#enabled\b/g, to: 'SearchOptions.md#enabled' },
     ],
   });
 
@@ -71,6 +75,12 @@ export async function fixApiLinks() {
       { from: /Theme\.md#showpreview\b(?!\?)(?!\)\))/g, to: 'Theme.md#showpreview?' },
       { from: /Theme\.md#storagekey\b(?!\?)(?!\)\))/g, to: 'Theme.md#storagekey?' },
       { from: /Theme\.md#switcherposition\b(?!\?)(?!\)\))/g, to: 'Theme.md#switcherposition?' },
+      // Also fix non-optional properties
+      { from: /Theme\.md#borderradius\b/g, to: 'Theme.md#borderradius' },
+      { from: /Theme\.md#colors\b/g, to: 'Theme.md#colors' },
+      { from: /Theme\.md#fonts\b/g, to: 'Theme.md#fonts' },
+      { from: /Theme\.md#name\b/g, to: 'Theme.md#name' },
+      { from: /Theme\.md#spacing\b/g, to: 'Theme.md#spacing' },
     ],
   });
 

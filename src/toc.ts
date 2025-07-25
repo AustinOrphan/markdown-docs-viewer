@@ -1,5 +1,6 @@
 import { TableOfContentsOptions } from './types';
 import { marked, Token } from 'marked';
+import { announceToScreenReader } from './utils';
 
 export interface TOCItem {
   id: string;
@@ -151,8 +152,9 @@ export class TableOfContents {
 
     return `
       <nav class="mdv-toc mdv-toc-${position} ${sticky} ${collapsible}" role="navigation" aria-label="Table of contents">
-        <h2 class="mdv-toc-title">Table of Contents</h2>
+        <h2 class="mdv-toc-title" id="toc-heading">Table of Contents</h2>
         ${this.renderTree(this.buildTree())}
+        <div class="mdv-sr-only" aria-live="polite" id="toc-announcements"></div>
       </nav>
     `;
   }
@@ -171,8 +173,12 @@ export class TableOfContents {
         const active = item.id === this.activeId ? 'mdv-toc-active' : '';
 
         return `
-        <li class="mdv-toc-item mdv-toc-level-${level} ${active}">
-          <a href="#${item.id}" class="mdv-toc-link" data-toc-id="${item.id}">
+        <li class="mdv-toc-item mdv-toc-level-${level} ${active}" role="listitem">
+          <a href="#${item.id}" 
+             class="mdv-toc-link" 
+             data-toc-id="${item.id}"
+             aria-current="${item.id === this.activeId ? 'location' : 'false'}"
+             role="link">
             ${item.text}
           </a>
           ${hasChildren ? this.renderTree(item.children, level + 1) : ''}
@@ -181,7 +187,7 @@ export class TableOfContents {
       })
       .join('');
 
-    return `<ul class="mdv-toc-list mdv-toc-list-${level}">${listItems}</ul>`;
+    return `<ul class="mdv-toc-list mdv-toc-list-${level}" role="list">${listItems}</ul>`;
   }
 
   /**
@@ -224,12 +230,16 @@ export class TableOfContents {
 
     // Handle scroll to update active heading
     let scrollTimeout: NodeJS.Timeout;
-    container.addEventListener('scroll', () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        this.updateActiveHeading(container, headingElements);
-      }, 100);
-    });
+    container.addEventListener(
+      'scroll',
+      () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          this.updateActiveHeading(container, headingElements);
+        }, 100);
+      },
+      { passive: true }
+    );
   }
 
   /**
@@ -259,14 +269,16 @@ export class TableOfContents {
    * Set active heading
    */
   private setActiveHeading(id: string): void {
+    const previousActiveId = this.activeId;
     this.activeId = id;
 
     // Update DOM
     document.querySelectorAll('.mdv-toc-link').forEach(link => {
-      link.classList.remove('mdv-toc-active');
-      if (link.getAttribute('data-toc-id') === id) {
-        link.classList.add('mdv-toc-active');
+      const isActive = link.getAttribute('data-toc-id') === id;
+      link.classList.toggle('mdv-toc-active', isActive);
+      link.setAttribute('aria-current', isActive ? 'location' : 'false');
 
+      if (isActive) {
         // Ensure active item is visible in TOC
         const tocContainer = link.closest('.mdv-toc');
         if (tocContainer && this.options.sticky) {
@@ -277,8 +289,21 @@ export class TableOfContents {
             link.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }
+
+        // Announce the change for screen readers
+        if (previousActiveId !== id) {
+          this.announceActiveHeading(link.textContent || '');
+        }
       }
     });
+  }
+
+  private announceActiveHeading(headingText: string): void {
+    const announcement = `Current section: ${headingText}`;
+    // Only announce if the TOC live region exists (TOC is rendered)
+    if (document.getElementById('toc-announcements')) {
+      announceToScreenReader(announcement, 'toc-announcements');
+    }
   }
 
   /**

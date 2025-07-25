@@ -17,9 +17,11 @@ export function createNavigation(
   }));
 
   return `
-    <ul class="mdv-nav-list">
-      ${sortedGroups.map(group => renderGroup(group, currentDoc, options)).join('')}
-    </ul>
+    <nav class="mdv-navigation" role="navigation" aria-label="Documentation navigation">
+      <ul class="mdv-nav-list" role="list">
+        ${sortedGroups.map(group => renderGroup(group, currentDoc, options)).join('')}
+      </ul>
+    </nav>
   `;
 }
 
@@ -56,20 +58,34 @@ function renderGroup(
   options: NavigationOptions
 ): string {
   const isCollapsible = options.collapsible && group.documents.length > 1;
+  const categoryId = `mdv-category-${group.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
   return `
-    <li class="mdv-nav-group">
+    <li class="mdv-nav-group" role="listitem">
       ${
         group.category !== 'All Documents'
           ? `
-        <div class="mdv-nav-category ${isCollapsible ? 'collapsible' : ''}">
-          ${group.category}
-          ${isCollapsible ? '<span class="mdv-collapse-icon">▼</span>' : ''}
-        </div>
+        ${
+          isCollapsible
+            ? `
+          <button class="mdv-nav-category collapsible"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="${categoryId}">
+            ${group.category}
+            <span class="mdv-collapse-icon" aria-hidden="true">▼</span>
+          </button>
+        `
+            : `
+          <div class="mdv-nav-category">
+            ${group.category}
+          </div>
+        `
+        }
       `
           : ''
       }
-      <ul class="mdv-nav-sublist">
+      <ul class="mdv-nav-sublist" role="list" ${isCollapsible ? `id="${categoryId}"` : ''}>
         ${group.documents.map(doc => renderDocument(doc, currentDoc, options)).join('')}
       </ul>
     </li>
@@ -89,10 +105,12 @@ function renderDocument(
       : '';
 
   return `
-    <li class="mdv-nav-item">
+    <li class="mdv-nav-item" role="listitem">
       <a href="#${doc.id}" 
          class="mdv-nav-link ${isActive ? 'active' : ''}"
-         data-doc-id="${doc.id}">
+         data-doc-id="${doc.id}"
+         aria-current="${isActive ? 'page' : 'false'}"
+         role="link">
         <span class="mdv-nav-title">${doc.title}</span>
         ${description}
         ${tags}

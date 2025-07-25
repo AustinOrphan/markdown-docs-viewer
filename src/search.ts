@@ -1,16 +1,32 @@
 import { SearchOptions, Document } from './types';
 import { SearchIndex, debounce } from './performance';
+import { announceToScreenReader } from './utils';
 
 export function createSearch(options: SearchOptions): string {
   return `
-    <div class="mdv-search">
+    <div class="mdv-search" role="search">
+      <label for="mdv-search-input" class="mdv-sr-only">Search documentation</label>
       <input 
+        id="mdv-search-input"
         type="text" 
         class="mdv-search-input" 
         placeholder="${options.placeholder || 'Search documentation...'}"
         aria-label="Search documentation"
+        aria-describedby="mdv-search-instructions"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        role="combobox"
+        autocomplete="off"
       />
-      <div class="mdv-search-results"></div>
+      <div id="mdv-search-instructions" class="mdv-sr-only">
+        Use arrow keys to navigate search results. Press Enter to select a result.
+      </div>
+      <div 
+        class="mdv-search-results" 
+        role="listbox" 
+        aria-label="Search results"
+        id="mdv-search-listbox"
+      ></div>
     </div>
   `;
 }
@@ -54,9 +70,10 @@ export class SearchManager {
       this.searchInput.addEventListener('blur', this.handleBlur.bind(this));
     }
 
-    // Hide results initially
+    // Hide results initially and set aria-expanded
     if (this.searchResults) {
       this.searchResults.style.display = 'none';
+      this.updateAriaExpanded(false);
     }
   }
 
@@ -125,11 +142,6 @@ export class SearchManager {
   ): void {
     if (results.length === 0) return;
 
-    // Remove current active class
-    if (activeResult) {
-      activeResult.classList.remove('active');
-    }
-
     let newIndex = 0;
     if (activeResult) {
       const currentIndex = Array.from(results).indexOf(activeResult);
@@ -142,7 +154,7 @@ export class SearchManager {
     if (newIndex < 0) newIndex = results.length - 1;
     if (newIndex >= results.length) newIndex = 0;
 
-    results[newIndex].classList.add('active');
+    this.updateActiveResult(newIndex);
     results[newIndex].scrollIntoView({ block: 'nearest' });
   }
 
@@ -186,11 +198,12 @@ export class SearchManager {
 
     if (results.length === 0) {
       this.searchResults.innerHTML = `
-        <div class="mdv-search-no-results">
+        <div class="mdv-search-no-results" role="status" aria-live="polite">
           No results found for "${this.escapeHtml(query)}"
         </div>
       `;
       this.showResults();
+      this.announceResults(0, query);
       return;
     }
 
@@ -205,7 +218,13 @@ export class SearchManager {
           : '';
 
         return `
-        <div class="mdv-search-result ${index === 0 ? 'active' : ''}" data-doc-id="${this.escapeHtml(doc.id)}">
+        <div 
+          class="mdv-search-result ${index === 0 ? 'active' : ''}" 
+          data-doc-id="${this.escapeHtml(doc.id)}"
+          role="option"
+          aria-selected="${index === 0 ? 'true' : 'false'}"
+          id="mdv-search-option-${index}"
+        >
           <div class="mdv-search-result-title">${highlightedTitle}</div>
           ${description ? `<div class="mdv-search-result-description">${description}</div>` : ''}
           ${tags ? `<div class="mdv-search-result-tags">${tags}</div>` : ''}
@@ -217,18 +236,21 @@ export class SearchManager {
 
     this.searchResults.innerHTML = resultsHtml;
 
+    // Update aria-activedescendant for the first result
+    if (this.searchInput && results.length > 0) {
+      this.searchInput.setAttribute('aria-activedescendant', 'mdv-search-option-0');
+    }
+
     // Add click handlers
-    this.searchResults.querySelectorAll('.mdv-search-result').forEach(result => {
+    this.searchResults.querySelectorAll('.mdv-search-result').forEach((result, index) => {
       result.addEventListener('click', () => this.selectResult(result));
       result.addEventListener('mouseenter', () => {
-        this.searchResults
-          ?.querySelectorAll('.mdv-search-result')
-          .forEach(r => r.classList.remove('active'));
-        result.classList.add('active');
+        this.updateActiveResult(index);
       });
     });
 
     this.showResults();
+    this.announceResults(results.length, query);
   }
 
   private highlightQuery(text: string, query: string): string {
@@ -245,13 +267,47 @@ export class SearchManager {
   private showResults(): void {
     if (this.searchResults) {
       this.searchResults.style.display = 'block';
+      this.updateAriaExpanded(true);
     }
   }
 
   private hideResults(): void {
     if (this.searchResults) {
       this.searchResults.style.display = 'none';
+      this.updateAriaExpanded(false);
+      if (this.searchInput) {
+        this.searchInput.removeAttribute('aria-activedescendant');
+      }
     }
+  }
+
+  private updateAriaExpanded(expanded: boolean): void {
+    if (this.searchInput) {
+      this.searchInput.setAttribute('aria-expanded', expanded.toString());
+    }
+  }
+
+  private updateActiveResult(index: number): void {
+    if (!this.searchResults) return;
+
+    const results = this.searchResults.querySelectorAll('.mdv-search-result');
+    results.forEach((result, i) => {
+      result.classList.toggle('active', i === index);
+      result.setAttribute('aria-selected', (i === index).toString());
+    });
+
+    if (this.searchInput) {
+      this.searchInput.setAttribute('aria-activedescendant', `mdv-search-option-${index}`);
+    }
+  }
+
+  private announceResults(count: number, query: string): void {
+    const announcement =
+      count === 0
+        ? `No results found for "${query}"`
+        : `${count} result${count === 1 ? '' : 's'} found for "${query}"`;
+
+    announceToScreenReader(announcement, 'mdv-search-live');
   }
 
   private escapeHtml(text: string): string {

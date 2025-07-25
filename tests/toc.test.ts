@@ -285,6 +285,11 @@ Not a heading
 
     it('should init scroll spy when enabled', () => {
       const container = document.getElementById('container')!;
+      container.innerHTML = `
+        <h1 id="heading-1">Heading 1</h1>
+        <h2 id="heading-2">Heading 2</h2>
+      `;
+
       const tokens = [
         { type: 'heading', depth: 1, text: 'Heading 1' },
         { type: 'heading', depth: 2, text: 'Heading 2' },
@@ -293,23 +298,46 @@ Not a heading
 
       toc.generate('# Heading 1\n## Heading 2');
 
-      // Spy on addEventListener
-      const addEventListenerSpy = vi.spyOn(container, 'addEventListener');
+      // Mock the IntersectionObserver with proper methods
+      const mockObserve = vi.fn();
+      const mockUnobserve = vi.fn();
+      const mockDisconnect = vi.fn();
+
+      (global.IntersectionObserver as any).mockImplementation((_callback: any, _options: any) => ({
+        observe: mockObserve,
+        unobserve: mockUnobserve,
+        disconnect: mockDisconnect,
+        takeRecords: vi.fn().mockReturnValue([]),
+        root: null,
+        rootMargin: '0px',
+        thresholds: [0],
+      }));
 
       toc.initScrollSpy(container);
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+      // Verify IntersectionObserver was called with correct options
+      expect(global.IntersectionObserver).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          rootMargin: '-20% 0% -70% 0%',
+          threshold: 0,
+        })
+      );
+
+      // Verify observe was called for heading elements
+      expect(mockObserve).toHaveBeenCalledTimes(2);
     });
 
     it('should not init scroll spy when disabled', () => {
       toc = new TableOfContents({ scrollSpy: false });
       const container = document.getElementById('container')!;
 
-      const addEventListenerSpy = vi.spyOn(container, 'addEventListener');
+      // Clear any previous calls to IntersectionObserver from setup
+      (global.IntersectionObserver as any).mockClear();
 
       toc.initScrollSpy(container);
 
-      expect(addEventListenerSpy).not.toHaveBeenCalled();
+      expect(global.IntersectionObserver).not.toHaveBeenCalled();
     });
 
     it('should handle container without headings', () => {

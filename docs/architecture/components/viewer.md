@@ -642,7 +642,7 @@ const viewer = new MarkdownDocsViewer({
     basePath: '/docs',
     files: ['intro.md', 'guide.md'],
   },
-  theme: 'default',
+  theme: defaultTheme, // For CDN: use theme object; For NPM: can use 'default' string
   search: { enabled: true },
   mobile: { enabled: true },
 });

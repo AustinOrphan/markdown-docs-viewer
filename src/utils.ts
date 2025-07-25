@@ -107,33 +107,37 @@ export function sanitizeCssValue(value: string | number | undefined | null): str
 }
 
 /**
- * Announces a message to screen readers using a live region
+ * Announces a message to screen readers using an ARIA live region
  * @param message - The message to announce
- * @param containerId - Optional ID of the container to announce within
+ * @param regionId - Unique ID for the live region (defaults to 'mdv-live-announcements')
+ * @param level - The politeness level for announcements ('polite' or 'assertive', defaults to 'polite')
  */
-export function announceToScreenReader(message: string, containerId?: string): void {
-  let announcements = document.querySelector(
-    `#${containerId || 'mdv-announcements'}`
-  ) as HTMLElement;
-
-  if (!announcements) {
-    announcements = document.createElement('div');
-    announcements.id = containerId || 'mdv-announcements';
-    announcements.setAttribute('aria-live', 'polite');
-    announcements.setAttribute('aria-atomic', 'true');
-    announcements.style.cssText = `
+export function announceToScreenReader(
+  message: string,
+  regionId: string = 'mdv-live-announcements',
+  level: 'polite' | 'assertive' = 'polite'
+): void {
+  // Create or update live region
+  let liveRegion = document.getElementById(regionId);
+  if (!liveRegion) {
+    liveRegion = document.createElement('div');
+    liveRegion.id = regionId;
+    liveRegion.setAttribute('aria-live', level);
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'mdv-sr-only';
+    liveRegion.style.cssText = `
       position: absolute;
       left: -10000px;
       width: 1px;
       height: 1px;
       overflow: hidden;
     `;
-    document.body.appendChild(announcements);
+    document.body.appendChild(liveRegion);
   }
 
   // Clear previous announcement and set new one
-  announcements.textContent = '';
+  liveRegion.textContent = '';
   setTimeout(() => {
-    announcements.textContent = message;
+    liveRegion.textContent = message;
   }, 100);
 }

@@ -974,16 +974,24 @@ export class MarkdownDocsViewer {
 
     // Throttle resize events for performance
     let resizeTimeout: number;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = window.setTimeout(handleResize, 150);
-    });
+    window.addEventListener(
+      'resize',
+      () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = window.setTimeout(handleResize, 150);
+      },
+      { passive: true }
+    );
 
     // Handle orientation change
-    window.addEventListener('orientationchange', () => {
-      // Small delay to allow orientation change to complete
-      setTimeout(handleResize, 100);
-    });
+    window.addEventListener(
+      'orientationchange',
+      () => {
+        // Small delay to allow orientation change to complete
+        setTimeout(handleResize, 100);
+      },
+      { passive: true }
+    );
   }
 
   private updateResponsiveUI(): void {
@@ -1063,7 +1071,7 @@ export class MarkdownDocsViewer {
     ) as HTMLElement[];
     const currentIndex = allNavLinks.indexOf(currentLink);
 
-    let targetIndex: number;
+    let targetIndex: number = currentIndex; // Initialize with current index
 
     switch (e.key) {
       case 'ArrowDown':
@@ -1131,6 +1139,7 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
+        // Follow common convention: 0deg when expanded, -90deg when collapsed
         collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
       }
 
@@ -1144,6 +1153,7 @@ export class MarkdownDocsViewer {
     const linkText = link.textContent?.trim() || '';
     announceToScreenReader(`Focused: ${linkText}`, 'mdv-nav-announcements');
   }
+
   private handleSearch(query: string): void {
     this.state.searchQuery = query;
 
