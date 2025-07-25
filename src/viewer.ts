@@ -1285,6 +1285,12 @@ export class MarkdownDocsViewer {
       if (this.router) {
         this.router.destroy();
       }
+      if (this.themeSwitcher && typeof this.themeSwitcher.destroy === 'function') {
+        this.themeSwitcher.destroy();
+      }
+      if (this.darkModeToggle && typeof this.darkModeToggle.destroy === 'function') {
+        this.darkModeToggle.destroy();
+      }
       this.container.innerHTML = '';
       this.logger.debug('MarkdownDocsViewer destroyed');
     } catch (error) {

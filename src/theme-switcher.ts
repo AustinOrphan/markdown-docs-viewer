@@ -7,6 +7,9 @@ import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
 // Mobile breakpoint constant
 const MOBILE_BREAKPOINT = 768;
 
+// Swipe-to-close threshold constant
+const SWIPE_TO_CLOSE_THRESHOLD = 100;
+
 export interface ThemeSwitcherOptions {
   position?: 'header' | 'footer' | 'sidebar' | 'floating';
   showPreview?: boolean;
@@ -333,8 +336,8 @@ export class ThemeSwitcher {
 
       const deltaY = currentY - startY;
 
-      // If swiped down more than 100px or 30% of dropdown height, close it
-      if (deltaY > 100 || deltaY > dropdown.offsetHeight * 0.3) {
+      // If swiped down more than threshold or 30% of dropdown height, close it
+      if (deltaY > SWIPE_TO_CLOSE_THRESHOLD || deltaY > dropdown.offsetHeight * 0.3) {
         this.closeDropdown();
       } else {
         dropdown.style.transform = '';
@@ -601,7 +604,7 @@ export class ThemeSwitcher {
   }
 
   private isMobile(): boolean {
-    return typeof window !== 'undefined' && window.innerWidth < 768;
+    return typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT;
   }
 
   private showMobileBackdrop(): void {
