@@ -302,6 +302,12 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       color: white;
     }
 
+    .mdv-nav-link:focus-visible {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 2px;
+      border-radius: ${theme.borderRadius};
+    }
+
     .mdv-nav-title {
       font-weight: 500;
       display: block;
@@ -389,6 +395,12 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       text-decoration: underline;
     }
 
+    .mdv-document-content a:focus-visible {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
     .mdv-document-content ul,
     .mdv-document-content ol {
       margin-bottom: ${unit * 2}px;
@@ -443,6 +455,11 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
 
     .mdv-copy-button:hover {
       background-color: ${colors.secondary};
+    }
+
+    .mdv-copy-button:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 2px;
     }
 
     .mdv-document-content blockquote {
