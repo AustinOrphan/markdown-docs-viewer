@@ -490,7 +490,6 @@ export function generateMobileLayout(): string {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
       }
       
       /* Dark theme support for sidebar */
@@ -555,12 +554,10 @@ export function generateMobileLayout(): string {
         padding: var(--mdv-spacing-md);
         border-radius: var(--mdv-mobile-border-radius);
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
       }
       
       .mdv-table-wrapper {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         margin: var(--mdv-spacing-md) 0;
       }
       
