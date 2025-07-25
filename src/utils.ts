@@ -125,15 +125,19 @@ export function announceToScreenReader(
     liveRegion.setAttribute('aria-live', level);
     liveRegion.setAttribute('aria-atomic', 'true');
     liveRegion.className = 'mdv-sr-only';
+    liveRegion.style.cssText = `
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    `;
     document.body.appendChild(liveRegion);
   }
 
-  liveRegion.textContent = message;
-
-  // Clear after a delay to avoid repetitive announcements
+  // Clear previous announcement and set new one
+  liveRegion.textContent = '';
   setTimeout(() => {
-    if (liveRegion) {
-      liveRegion.textContent = '';
-    }
-  }, 1000);
+    liveRegion.textContent = message;
+  }, 100);
 }

@@ -1139,8 +1139,8 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
-        // Follow common convention: 0deg when expanded, 90deg when collapsed
-        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
+        // Follow common convention: 0deg when expanded, -90deg when collapsed
+        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
       }
 
       // Announce state change
@@ -1294,6 +1294,12 @@ export class MarkdownDocsViewer {
       }
       if (this.router) {
         this.router.destroy();
+      }
+      if (this.themeSwitcher && typeof this.themeSwitcher.destroy === 'function') {
+        this.themeSwitcher.destroy();
+      }
+      if (this.darkModeToggle && typeof this.darkModeToggle.destroy === 'function') {
+        this.darkModeToggle.destroy();
       }
       this.container.innerHTML = '';
       this.logger.debug('MarkdownDocsViewer destroyed');
