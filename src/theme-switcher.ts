@@ -958,20 +958,29 @@ export class ThemeSwitcher {
         .mdv-theme-option::after {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.1);
+          top: 50%;
+          left: 50%;
+          width: 20px;
+          height: 20px;
+          background: radial-gradient(
+            circle,
+            rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.3) 0%,
+            rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.1) 50%,
+            transparent 70%
+          );
+          border-radius: 50%;
           opacity: 0;
-          transform: scale(0.95);
-          transition: transform 0.15s ease-out, opacity 0.15s ease-out;
-          border-radius: inherit;
+          transform: translate(-50%, -50%) scale(0);
+          transition: transform 0.2s ease-out, opacity 0.2s ease-out;
           pointer-events: none;
         }
         
+        .mdv-theme-option:active {
+          transform: scale(0.98);
+        }
+        
         .mdv-theme-option:active::after {
-          transform: scale(1);
+          transform: translate(-50%, -50%) scale(6);
           opacity: 1;
         }
         
