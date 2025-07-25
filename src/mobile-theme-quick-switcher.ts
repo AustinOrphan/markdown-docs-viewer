@@ -4,6 +4,7 @@ import { getThemeBaseName } from './themes';
 export interface MobileThemeQuickSwitcherOptions {
   themeManager: ThemeManager;
   maxRecentThemes?: number;
+  popularThemes?: string[];
   onThemeChange?: (themeName: string) => void;
 }
 
@@ -22,6 +23,7 @@ export class MobileThemeQuickSwitcher {
     this.themeManager = options.themeManager;
     this.options = {
       maxRecentThemes: 5,
+      popularThemes: ['github', 'vscode', 'material', 'nord', 'dracula'],
       ...options,
     };
 
@@ -76,7 +78,7 @@ export class MobileThemeQuickSwitcher {
     const currentTheme = getThemeBaseName(this.themeManager.getCurrentTheme().name);
 
     // Get popular themes that are not in recent
-    const popularThemes = ['github', 'vscode', 'material', 'nord', 'dracula']
+    const popularThemes = (this.options.popularThemes || [])
       .filter(theme => !this.recentThemes.includes(theme))
       .slice(0, 3);
 
@@ -234,7 +236,6 @@ export class MobileThemeQuickSwitcher {
         gap: 8px;
         padding: 0 12px;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
