@@ -1071,7 +1071,7 @@ export class MarkdownDocsViewer {
     ) as HTMLElement[];
     const currentIndex = allNavLinks.indexOf(currentLink);
 
-    let targetIndex: number;
+    let targetIndex: number = currentIndex; // Initialize with current index
 
     switch (e.key) {
       case 'ArrowDown':
@@ -1139,7 +1139,8 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
-        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+        // Follow common convention: 0deg when expanded, 90deg when collapsed
+        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(90deg)';
       }
 
       // Announce state change

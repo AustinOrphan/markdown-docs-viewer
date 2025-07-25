@@ -57,7 +57,6 @@ export class ThemeSwitcher {
           aria-label="Change theme" 
           aria-expanded="${this.isOpen}"
           aria-haspopup="menu"
-          title="Change theme"
         >
           ${this.getThemeIcon(currentBaseName, currentMode)}
           <span class="mdv-theme-name">${currentBaseName}</span>
@@ -116,7 +115,6 @@ export class ThemeSwitcher {
       <button 
         class="mdv-dark-mode-toggle ${currentMode}" 
         aria-label="Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode"
-        title="Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode"
       >
         <div class="mdv-dark-mode-toggle-track">
           <div class="mdv-dark-mode-toggle-thumb">
