@@ -485,10 +485,6 @@ export class ThemeSwitcher {
         'aria-label',
         `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`
       );
-      darkModeToggle.setAttribute(
-        'title',
-        `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`
-      );
     }
 
     // Update active state
@@ -515,10 +511,6 @@ export class ThemeSwitcher {
       separateToggle.setAttribute(
         'aria-label',
         `Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode`
-      );
-      separateToggle.setAttribute(
-        'title',
-        `Switch to ${currentMode === 'light' ? 'dark' : 'light'} mode`
       );
     }
   }
