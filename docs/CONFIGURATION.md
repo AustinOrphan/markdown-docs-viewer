@@ -33,7 +33,7 @@ Load markdown files from URLs:
 ```typescript
 {
   type: 'url',
-  url: 'https://example.com/docs/api.md'
+  url: 'https://raw.githubusercontent.com/user/repo/main/README.md'
 }
 ```
 
@@ -183,7 +183,7 @@ Add custom links and sections:
       {
         type: 'link',
         title: 'API Reference',
-        url: 'https://api.example.com'
+        url: 'https://api.mysite.com'
       },
       {
         type: 'separator'
