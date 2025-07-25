@@ -1046,7 +1046,6 @@ export class ThemeSwitcher {
             transition: transform 0.1s ease-out, background-color 0.1s ease-out;
           }
           
-          
           .mdv-dark-mode-toggle {
             transition: transform 0.2s ease-out;
           }
