@@ -279,9 +279,6 @@ export class ThemeSwitcher {
 
     // Handle swipe down to close on mobile
     this.setupSwipeToClose();
-
-    // Enhance touch interactions
-    this.enhanceTouchFeedback();
   }
 
   private createMobileBackdrop(): HTMLElement {
@@ -348,34 +345,6 @@ export class ThemeSwitcher {
     dropdown.addEventListener('touchmove', handleTouchMove, { passive: true });
     dropdown.addEventListener('touchend', handleTouchEnd, { passive: true });
     dropdown.addEventListener('touchcancel', handleTouchEnd, { passive: true });
-  }
-
-  private enhanceTouchFeedback(): void {
-    const options = this.container?.querySelectorAll('.mdv-theme-option');
-    if (!options) return;
-
-    options.forEach(option => {
-      // Add ripple effect on touch
-      option.addEventListener(
-        'touchstart',
-        (e: Event) => {
-          const touch = (e as TouchEvent).touches[0];
-          const rect = (option as HTMLElement).getBoundingClientRect();
-          const x = touch.clientX - rect.left;
-          const y = touch.clientY - rect.top;
-
-          const ripple = document.createElement('span');
-          ripple.className = 'mdv-theme-ripple';
-          ripple.style.left = `${x}px`;
-          ripple.style.top = `${y}px`;
-
-          option.appendChild(ripple);
-
-          setTimeout(() => ripple.remove(), 600);
-        },
-        { passive: true }
-      );
-    });
   }
 
   private toggleDarkMode(): void {
@@ -993,16 +962,17 @@ export class ThemeSwitcher {
           left: 0;
           right: 0;
           bottom: 0;
-          background: radial-gradient(circle, rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.15) 0%, transparent 70%);
+          background: rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.1);
           opacity: 0;
-          transform: scale(0);
-          transition: transform 0.5s ease-out, opacity 0.3s ease-out;
+          transform: scale(0.95);
+          transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+          border-radius: inherit;
+          pointer-events: none;
         }
         
         .mdv-theme-option:active::after {
-          transform: scale(2);
+          transform: scale(1);
           opacity: 1;
-          transition: none;
         }
         
         .mdv-theme-preview {
@@ -1046,10 +1016,6 @@ export class ThemeSwitcher {
             transition: transform 0.1s ease-out, background-color 0.1s ease-out;
           }
           
-          .mdv-theme-option:active {
-            transform: scale(0.98);
-            background-color: rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.1);
-          }
           
           .mdv-dark-mode-toggle {
             transition: transform 0.2s ease-out;
@@ -1084,25 +1050,6 @@ export class ThemeSwitcher {
         .mdv-dark-mode-toggle-thumb {
           width: 18px;
           height: 18px;
-        }
-      }
-      
-      /* Ripple effect for touch feedback */
-      .mdv-theme-ripple {
-        position: absolute;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(var(--mdv-color-primary-rgb, 9, 105, 218), 0.3);
-        transform: translate(-50%, -50%) scale(0);
-        animation: rippleEffect 0.6s ease-out;
-        pointer-events: none;
-      }
-      
-      @keyframes rippleEffect {
-        to {
-          transform: translate(-50%, -50%) scale(4);
-          opacity: 0;
         }
       }
     `;
