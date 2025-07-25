@@ -199,8 +199,19 @@ export class MobileThemeQuickSwitcher {
   private updateUI(): void {
     if (!this.container) return;
 
-    // Re-render the component
-    this.container.innerHTML = this.render();
+    // Update active theme without destroying event listeners
+    const activeTheme = this.container.querySelector('.mdv-quick-theme-item.active');
+    if (activeTheme) {
+      activeTheme.classList.remove('active');
+    }
+
+    // Find and mark new active theme
+    const currentTheme = this.themeManager.getCurrentTheme();
+    const currentBaseName = currentTheme.name.replace(/-light|-dark$/, '');
+    const newActiveTheme = this.container.querySelector(`[data-theme="${currentBaseName}"]`);
+    if (newActiveTheme) {
+      newActiveTheme.classList.add('active');
+    }
   }
 
   public getStyles(): string {
