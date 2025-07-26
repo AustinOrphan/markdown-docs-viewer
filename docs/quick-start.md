@@ -35,7 +35,7 @@ Perfect for prototyping or simple documentation sites.
   <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
 
   <script>
-    const { createViewer } = window.MarkdownDocsViewer;
+    const { createViewer, themes } = window.MarkdownDocsViewer;
 
     // Your documentation content
     const docs = [
@@ -61,9 +61,10 @@ Use the sidebar to navigate between sections. Try the search bar at the top to f
 ## Code Example
 
 \`\`\`javascript
+const { createViewer, themes } = window.MarkdownDocsViewer;
 const viewer = createViewer({
   container: '#docs',
-  theme: 'github-dark',
+  theme: themes.github.dark,
   source: { type: 'content', documents: [...] }
 });
 \`\`\`
@@ -372,7 +373,7 @@ const pdf = await exporter.exportPDF({
         type: 'content',
         documents: docs
       },
-      theme: 'github-light', // Try: github-dark, material-light, nord-dark, etc.
+      theme: themes.github.light, // Try: themes.github.dark, themes.material.light, themes.nord.dark, etc.
       navigation: {
         showCategories: true,
         collapsible: true
@@ -396,10 +397,10 @@ Save the file as `index.html` and open it in your browser. You'll see a fully fu
 
 Try different themes by changing the `theme` property:
 
-- `'github-light'` or `'github-dark'`
-- `'material-light'` or `'material-dark'`
-- `'nord-light'` or `'nord-dark'`
-- `'tokyo-light'` or `'tokyo-dark'`
+- `themes.github.light` or `themes.github.dark`
+- `themes.material.light` or `themes.material.dark`
+- `themes.nord.light` or `themes.nord.dark`
+- `themes.tokyo.light` or `themes.tokyo.dark`
 - And 7 more theme variants!
 
 ## Method 2: NPM/Build Tool 🛠️
@@ -576,9 +577,15 @@ document.addEventListener('DOMContentLoaded', () => {
 **Themes not loading**
 
 ```javascript
-// Ensure theme is properly referenced
-import { themes } from '@austinorphan/markdown-docs-viewer';
-viewer.setTheme(themes.github.dark); // Not 'github-dark'
+// For initial configuration, use theme objects:
+import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+createViewer({
+  theme: themes.github.dark, // ✅ Theme object required
+});
+
+// For runtime switching, both work:
+viewer.setTheme(themes.github.dark); // ✅ Theme object
+viewer.setTheme('github-dark'); // ✅ Theme name string
 ```
 
 Need more help? Check the [Browser Usage Guide](BROWSER_USAGE.md) or [open an issue](https://github.com/AustinOrphan/markdown-docs-viewer/issues).

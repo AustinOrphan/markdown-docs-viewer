@@ -153,10 +153,21 @@ npm install
 **Theme Not Loading**
 
 ```javascript
-// Correct theme usage
-import { themes } from '@austinorphan/markdown-docs-viewer';
-viewer.setTheme(themes.github.light); // ✅ Correct
-viewer.setTheme('github-light'); // ❌ Incorrect
+// For initial configuration (NPM):
+import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+createViewer({
+  theme: themes.github.light, // ✅ Theme object required
+});
+
+// For initial configuration (CDN):
+const { createViewer, themes } = window.MarkdownDocsViewer;
+createViewer({
+  theme: themes.github.light, // ✅ Theme object required
+});
+
+// For runtime theme switching (both NPM and CDN):
+viewer.setTheme(themes.github.light); // ✅ Theme object
+viewer.setTheme('github-light'); // ✅ Theme name string (also works)
 ```
 
 **Search Not Working**

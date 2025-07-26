@@ -1,123 +1,112 @@
-# Theme Usage Clarification: CDN vs NPM
+# Theme Usage Clarification: Configuration vs Runtime
 
-This document clarifies the correct usage of themes when using the Markdown Documentation Viewer via CDN or NPM.
+This document clarifies the correct usage of themes when configuring the Markdown Documentation Viewer initially vs switching themes at runtime.
 
 ## Important: Theme Parameter Types
 
-The `theme` parameter in the configuration accepts either:
+The theme parameter usage depends on the context:
 
-- A **Theme object** (recommended for CDN usage)
-- A **string** representing the theme name (available for NPM usage)
+- **Initial Configuration**: Only **Theme objects** are supported
+- **Runtime Switching**: Both **Theme objects** and **strings** are supported
 
-## CDN Usage (Browser/Script Tag)
+## Initial Configuration (Both CDN and NPM)
 
-When using the library via CDN with script tags, you must use the exported theme objects:
+For initial configuration, **only theme objects are supported** regardless of whether you're using CDN or NPM:
+
+**CDN Usage:**
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
 
 <script>
-  // Get the theme objects from the global namespace
-  const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
+  const { createViewer, themes } = window.MarkdownDocsViewer;
 
-  // CORRECT: Use theme objects
-  const viewer = new MarkdownDocsViewer({
+  // ✅ CORRECT: Use theme objects
+  const viewer = createViewer({
     container: '#docs',
-    theme: defaultTheme, // ✅ Use the theme object
-    // OR
-    theme: darkTheme, // ✅ Use the theme object
+    theme: themes.github.light, // Theme object required
     source: {
-      type: 'local',
-      documents: [
-        /* ... */
-      ],
+      /* ... */
     },
   });
 
-  // INCORRECT: Don't use strings in CDN context
-  const viewer = new MarkdownDocsViewer({
+  // ❌ INCORRECT: Strings don't work for initial config
+  const viewer = createViewer({
     container: '#docs',
-    theme: 'default', // ❌ Won't work properly in CDN context
+    theme: 'github-light', // Won't work!
     source: {
-      type: 'local',
-      documents: [
-        /* ... */
-      ],
+      /* ... */
     },
   });
 </script>
 ```
 
-### Available Theme Objects in CDN
-
-When using the UMD build, these theme objects are available:
-
-- `defaultTheme` - Light theme
-- `darkTheme` - Dark theme
-
-## NPM Usage (Module Import)
-
-When using the library via NPM with module imports, you can use either theme objects or strings:
+**NPM Usage:**
 
 ```javascript
-import { createViewer, defaultTheme, darkTheme } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
 
-// Option 1: Use theme objects (recommended)
+// ✅ CORRECT: Use theme objects
 const viewer = createViewer({
   container: '#docs',
-  theme: defaultTheme, // ✅ Theme object
+  theme: themes.github.light, // Theme object required
   source: {
-    type: 'local',
-    documents: [
-      /* ... */
-    ],
+    /* ... */
   },
 });
 
-// Option 2: Use theme name strings (also valid)
+// ❌ INCORRECT: Strings don't work for initial config
 const viewer = createViewer({
   container: '#docs',
-  theme: 'default', // ✅ String works in NPM context
+  theme: 'github-light', // Won't work!
   source: {
-    type: 'local',
-    documents: [
-      /* ... */
-    ],
+    /* ... */
   },
 });
 ```
 
-### Available Theme Names for NPM
+### Available Theme Objects
 
-When using strings, these theme names are available:
+These theme objects are available in both CDN and NPM contexts:
 
-- `'default'` or `'default-light'` - Light theme
-- `'default-dark'` or `'dark'` - Dark theme
-- `'github-light'` - GitHub light theme
-- `'github-dark'` - GitHub dark theme
-- `'nord-light'` - Nord light theme
-- `'nord-dark'` - Nord dark theme
-- `'solarized-light'` - Solarized light theme
-- `'solarized-dark'` - Solarized dark theme
+- `themes.default.light` and `themes.default.dark`
+- `themes.github.light` and `themes.github.dark`
+- `themes.material.light` and `themes.material.dark`
+- `themes.nord.light` and `themes.nord.dark`
+- `themes.tokyo.light` and `themes.tokyo.dark`
+- And more...
 
-## Dynamic Theme Switching
+## Runtime Theme Switching
 
-For dynamic theme switching, use the `setTheme` method:
+For dynamic theme switching after initialization, use the `setTheme()` method. This method accepts **both theme objects and strings**:
 
-### CDN Context
+**Both CDN and NPM:**
 
 ```javascript
-// Use theme objects
-viewer.setTheme(darkTheme);
+// ✅ Using theme objects (recommended)
+viewer.setTheme(themes.github.dark);
+viewer.setTheme(themes.material.light);
+
+// ✅ Using theme name strings (also works)
+viewer.setTheme('github-dark');
+viewer.setTheme('material-light');
 ```
 
-### NPM Context
+### Available Theme Names for Runtime Switching
 
-```javascript
-// Can use either objects or strings
-viewer.setTheme(darkTheme); // Theme object
-viewer.setTheme('github-dark'); // Theme name string
-```
+When using strings with `setTheme()`, these theme names are available:
+
+- `'default-light'` and `'default-dark'`
+- `'github-light'` and `'github-dark'`
+- `'material-light'` and `'material-dark'`
+- `'nord-light'` and `'nord-dark'`
+- `'tokyo-light'` and `'tokyo-dark'`
+- `'dracula-dark'`
+- `'solarized-light'` and `'solarized-dark'`
+- `'monokai-dark'`
+- `'ayu-light'` and `'ayu-dark'`
+- `'catppuccin-light'` and `'catppuccin-dark'`
+- `'vscode-light'` and `'vscode-dark'`
 
 ## Custom Themes
 
@@ -147,13 +136,13 @@ const viewer = createViewer({
 
 ## Summary
 
-- **CDN/Browser**: Always use theme objects (`defaultTheme`, `darkTheme`)
-- **NPM/Module**: Can use either theme objects or theme name strings
+- **Initial Configuration**: Always use theme objects (both CDN and NPM)
+- **Runtime Switching**: Can use either theme objects or theme name strings
 - **Custom Themes**: Always create and use as objects
-- **Best Practice**: When in doubt, use theme objects for consistency
+- **Best Practice**: Use theme objects for consistency
 
 This distinction exists because:
 
-1. In CDN context, the theme registry might not be fully initialized when using strings
-2. NPM builds have access to the full theme registry during initialization
-3. Theme objects are guaranteed to work in all contexts
+1. The `DocumentationConfig.theme` property is typed to only accept Theme objects
+2. The `setTheme()` method is overloaded to accept both Theme objects and strings
+3. Theme objects are guaranteed to work in all contexts and provide better TypeScript support
