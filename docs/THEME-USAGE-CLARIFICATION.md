@@ -16,7 +16,7 @@ For initial configuration, **only theme objects are supported** regardless of wh
 **CDN Usage:**
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 
 <script>
   const { createViewer, themes } = window.MarkdownDocsViewer;

@@ -28,11 +28,12 @@ Perfect for prototyping or simple documentation sites.
   <div id="docs"></div>
 
   <!-- Dependencies -->
-  <script src="https://unpkg.com/marked@latest/marked.min.js"></script>
-  <script src="https://unpkg.com/highlight.js@latest/lib/core.min.js"></script>
+  <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+  <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+  <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
 
   <!-- Markdown Docs Viewer -->
-  <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
+  <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 
   <script>
     const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -101,7 +102,7 @@ pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
 For quick prototyping, use our CDN:
 
 \`\`\`html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
+<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
 \`\`\`
 
 ## Next Steps
@@ -213,7 +214,7 @@ Choose from 11 beautiful themes, each with light and dark variants:
 - **vscode** - Visual Studio Code
 - **nord** - Arctic-inspired
 - **dracula** - Popular dark theme
-- **tokyo** - Tokyo Night theme
+- **Tokyo Night** - Vibrant night theme
 - **solarized** - Eye-friendly colors
 - **monokai** - Classic developer theme
 - **ayu** - Elegant and balanced
@@ -569,9 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```html
 <!-- Load highlight.js -->
-<script src="https://unpkg.com/highlight.js@latest/lib/core.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
 <!-- Load language-specific modules -->
-<script src="https://unpkg.com/highlight.js@latest/lib/languages/javascript.min.js"></script>
+<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
 ```
 
 **Themes not loading**
