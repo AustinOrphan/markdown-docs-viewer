@@ -1,5 +1,8 @@
 import { ThemeManager } from './theme-manager';
-import { getThemeBaseName } from './themes';
+// Utility function for theme management
+function getThemeBaseName(themeName: string): string {
+  return themeName.replace(/-(light|dark)$/, '');
+}
 
 export interface MobileThemeQuickSwitcherOptions {
   themeManager: ThemeManager;

@@ -1,11 +1,28 @@
 import { Theme } from './types';
-import {
-  defaultTheme,
-  getAllThemeVariants,
-  getAvailableThemeNames,
-  getThemeBaseName,
-  getThemeMode,
-} from './themes';
+import { themes } from './themes';
+
+// Utility functions for theme management
+function getThemeBaseName(themeName: string): string {
+  return themeName.replace(/-(light|dark)$/, '');
+}
+
+function getThemeMode(themeName: string): 'light' | 'dark' {
+  return themeName.endsWith('-dark') ? 'dark' : 'light';
+}
+
+function getAllThemeVariants(): Theme[] {
+  const allThemes: Theme[] = [];
+  Object.keys(themes).forEach(baseName => {
+    const themeGroup = themes[baseName as keyof typeof themes];
+    allThemes.push(themeGroup.light);
+    allThemes.push(themeGroup.dark);
+  });
+  return allThemes;
+}
+
+function getAvailableThemeNames(): string[] {
+  return Object.keys(themes);
+}
 
 export interface ThemeColor {
   name: string;
@@ -45,8 +62,8 @@ export class ThemeManager {
     this.initializeBuiltInThemesSync();
 
     // Set a default theme immediately for initial render
-    this.currentTheme = defaultTheme;
-    this.applyCSSVariables(defaultTheme);
+    this.currentTheme = themes.default.light;
+    this.applyCSSVariables(themes.default.light);
 
     // Load saved theme or use default
     const savedThemeName = this.getSavedThemeName();
@@ -136,9 +153,9 @@ export class ThemeManager {
   }
 
   private resolveInitialTheme(savedThemeName: string | null): Theme {
-    // If no saved theme, use defaultTheme (which is default-light)
+    // If no saved theme, use default light theme
     if (!savedThemeName) {
-      return defaultTheme;
+      return themes.default.light;
     }
 
     // Check if the saved theme exists exactly as-is (new format)
@@ -189,7 +206,7 @@ export class ThemeManager {
 
     // Fallback to default theme
     console.warn(`Could not resolve saved theme "${savedThemeName}", falling back to default`);
-    return defaultTheme;
+    return themes.default.light;
   }
 
   private async getThemeDescription(baseName: string, mode: 'light' | 'dark'): Promise<string> {
