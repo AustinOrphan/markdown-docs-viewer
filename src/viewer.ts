@@ -2,10 +2,10 @@ import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 import { DocumentationConfig, Document, ViewerState, Theme } from './types';
-import { defaultTheme } from './themes';
+import { themes } from './themes';
 import { generateStyles } from './styles';
 import { createNavigation } from './navigation';
-import { createSearch } from './search';
+import { createSearch, SearchManager } from './search';
 import { DocumentLoader } from './loader';
 import { Router } from './router';
 import {
@@ -46,6 +46,7 @@ export class MarkdownDocsViewer {
   private themeManager: ThemeManager;
   private themeSwitcher: ThemeSwitcher;
   private darkModeToggle: DarkModeToggle;
+  private searchManager: SearchManager | null = null;
 
   constructor(config: DocumentationConfig) {
     try {
@@ -117,6 +118,17 @@ export class MarkdownDocsViewer {
           }
         },
       });
+
+      // Initialize search manager if search is enabled
+      if (this.config.search?.enabled !== false) {
+        this.searchManager = new SearchManager(
+          this.config.search || { enabled: true },
+          (doc: Document) => {
+            // Navigate to selected document
+            this.loadDocument(doc.id);
+          }
+        );
+      }
 
       // Initialize the viewer
       this.init();
@@ -248,7 +260,7 @@ export class MarkdownDocsViewer {
 
     // Merge with defaults
     return {
-      theme: defaultTheme,
+      theme: themes.default.light,
       search: { enabled: true },
       navigation: {
         showCategories: true,
@@ -465,6 +477,11 @@ export class MarkdownDocsViewer {
 
         if (documents.length === 0) {
           this.logger.warn('No documents loaded');
+        }
+
+        // Update search index with loaded documents
+        if (this.searchManager) {
+          this.searchManager.updateIndex(documents, new Map());
         }
       },
       () => {
@@ -747,15 +764,10 @@ export class MarkdownDocsViewer {
           });
         });
 
-        // Search
-        const searchInput = this.container.querySelector('.mdv-search-input') as HTMLInputElement;
-        searchInput?.addEventListener('input', e => {
-          try {
-            this.handleSearch((e.target as HTMLInputElement).value);
-          } catch (error) {
-            this.logger.warn('Search input handling failed', { error });
-          }
-        });
+        // Attach SearchManager to DOM if enabled
+        if (this.config.search?.enabled !== false && this.searchManager) {
+          this.searchManager.attachToDOM(this.container);
+        }
 
         // Copy buttons
         this.container.querySelectorAll('.mdv-copy-button').forEach(button => {
@@ -1036,6 +1048,12 @@ export class MarkdownDocsViewer {
         this.state.currentDocument = doc;
         this.state.loading = false;
 
+        // Update search index with document content
+        if (this.searchManager && doc.content) {
+          const contentMap = new Map([[doc.id, doc.content]]);
+          this.searchManager.updateIndex(this.state.documents, contentMap);
+        }
+
         if (this.router) {
           this.router.setRoute(docId);
         }
@@ -1297,6 +1315,9 @@ export class MarkdownDocsViewer {
       }
       if (this.themeSwitcher && typeof this.themeSwitcher.destroy === 'function') {
         this.themeSwitcher.destroy();
+      }
+      if (this.searchManager && typeof this.searchManager.destroy === 'function') {
+        this.searchManager.destroy();
       }
       if (this.darkModeToggle && typeof this.darkModeToggle.destroy === 'function') {
         this.darkModeToggle.destroy();

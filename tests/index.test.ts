@@ -8,11 +8,13 @@ describe('Index Exports', () => {
   });
 
   it('should export themes', () => {
-    expect(exports.defaultTheme).toBeDefined();
-    expect(exports.defaultTheme.name).toBe('default-light');
+    expect(exports.themes).toBeDefined();
+    expect(exports.themes.default).toBeDefined();
+    expect(exports.themes.default.light.name).toBe('default-light');
+    expect(exports.themes.default.dark.name).toBe('default-dark');
 
-    expect(exports.darkTheme).toBeDefined();
-    expect(exports.darkTheme.name).toBe('default-dark');
+    expect(exports.createCustomTheme).toBeDefined();
+    expect(typeof exports.createCustomTheme).toBe('function');
   });
 
   it('should export factory functions', () => {
