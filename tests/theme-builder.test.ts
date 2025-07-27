@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ThemeBuilder } from '../src/theme-builder';
 import { ThemeManager } from '../src/theme-manager';
-import { defaultTheme } from '../src/themes';
+import { themes } from '../src/themes';
 
 // Mock localStorage
 const localStorageMock = {
@@ -264,9 +264,9 @@ describe('ThemeBuilder', () => {
       const html = themeBuilder.render();
 
       // Preview elements use inline styles for theme colors
-      expect(html).toContain(`color: ${defaultTheme.colors.link}`);
-      expect(html).toContain(`background: ${defaultTheme.colors.surface}`);
-      expect(html).toContain(`background: ${defaultTheme.colors.codeBackground}`);
+      expect(html).toContain(`color: ${themes.default.light.colors.link}`);
+      expect(html).toContain(`background: ${themes.default.light.colors.surface}`);
+      expect(html).toContain(`background: ${themes.default.light.colors.codeBackground}`);
     });
 
     it('should render primary and secondary buttons', () => {

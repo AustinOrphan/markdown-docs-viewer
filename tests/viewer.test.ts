@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { MarkdownDocsViewer } from '../src/viewer';
-import { defaultTheme } from '../src/themes';
+import { themes } from '../src/themes';
 
 // Mock dependencies
 vi.mock('marked', () => ({
@@ -257,7 +257,7 @@ describe('MarkdownDocsViewer', () => {
     it('should apply default configuration', () => {
       viewer = new MarkdownDocsViewer(mockConfig);
 
-      expect(viewer.config.theme).toEqual(defaultTheme);
+      expect(viewer.config.theme).toEqual(themes.default.light);
       expect(viewer.config.search?.enabled).toBe(true);
       expect(viewer.config.navigation?.showCategories).toBe(true);
     });
@@ -270,9 +270,9 @@ describe('MarkdownDocsViewer', () => {
 
     it('should set theme correctly', () => {
       const customTheme = {
-        ...defaultTheme,
+        ...themes.default.light,
         colors: {
-          ...defaultTheme.colors,
+          ...themes.default.light.colors,
           primary: '#ff0000',
         },
       };
@@ -283,9 +283,9 @@ describe('MarkdownDocsViewer', () => {
 
     it('should apply theme styles to document head', () => {
       const customTheme = {
-        ...defaultTheme,
+        ...themes.default.light,
         colors: {
-          ...defaultTheme.colors,
+          ...themes.default.light.colors,
           primary: '#ff0000',
         },
       };

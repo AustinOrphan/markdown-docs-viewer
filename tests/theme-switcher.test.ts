@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ThemeSwitcher } from '../src/theme-switcher';
 import { ThemeManager, ThemePreset } from '../src/theme-manager';
-import { defaultTheme, darkTheme } from '../src/themes';
+import { themes } from '../src/themes';
 
 describe('ThemeSwitcher', () => {
   let themeManager: ThemeManager;
@@ -16,14 +16,14 @@ describe('ThemeSwitcher', () => {
 
     // Mock themes
     mockThemes = [
-      { ...defaultTheme, description: 'Default light theme' },
-      { ...darkTheme, description: 'Default dark theme' },
+      { ...themes.default.light, description: 'Default light theme' },
+      { ...themes.default.dark, description: 'Default dark theme' },
       {
         name: 'github-light',
         description: 'GitHub light theme',
-        colors: { ...defaultTheme.colors, primary: '#0969da' },
-        fonts: defaultTheme.fonts,
-        spacing: defaultTheme.spacing,
+        colors: { ...themes.default.light.colors, primary: '#0969da' },
+        fonts: themes.default.light.fonts,
+        spacing: themes.default.light.spacing,
         borderRadius: '0.5rem',
       },
     ];
@@ -127,8 +127,8 @@ describe('ThemeSwitcher', () => {
 
       expect(html).toContain('mdv-theme-preview');
       expect(html).toContain('mdv-theme-preview-color');
-      expect(html).toContain(`background-color: ${defaultTheme.colors.background}`);
-      expect(html).toContain(`background-color: ${defaultTheme.colors.primary}`);
+      expect(html).toContain(`background-color: ${themes.default.light.colors.background}`);
+      expect(html).toContain(`background-color: ${themes.default.light.colors.primary}`);
     });
 
     it('should hide theme preview when disabled', () => {
@@ -145,7 +145,7 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should handle theme without description', () => {
-      const themesWithoutDesc = [{ ...defaultTheme, description: undefined }];
+      const themesWithoutDesc = [{ ...themes.default.light, description: undefined }];
       vi.mocked(themeManager.getAvailableThemes).mockReturnValue(themesWithoutDesc);
 
       const html = themeSwitcher.render();
@@ -490,7 +490,7 @@ describe('ThemeSwitcher', () => {
 
     it('should return default icon for unknown themes', () => {
       const unknownTheme = {
-        ...defaultTheme,
+        ...themes.default.light,
         name: 'unknown-theme',
         description: 'Unknown theme',
       };
@@ -560,7 +560,7 @@ describe('ThemeSwitcher', () => {
     });
 
     it('should handle theme without colors for preview', () => {
-      const themeWithoutColors = [{ ...defaultTheme, colors: undefined as never }];
+      const themeWithoutColors = [{ ...themes.default.light, colors: undefined as never }];
       vi.mocked(themeManager.getAvailableThemes).mockReturnValue(themeWithoutColors);
 
       // Disable preview to avoid accessing undefined colors

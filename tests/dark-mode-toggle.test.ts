@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { DarkModeToggle } from '../src/dark-mode-toggle';
 import { ThemeManager } from '../src/theme-manager';
-import { defaultTheme, darkTheme } from '../src/themes';
+import { themes } from '../src/themes';
 
 describe('DarkModeToggle', () => {
   let themeManager: ThemeManager;
@@ -15,9 +15,9 @@ describe('DarkModeToggle', () => {
 
     // Mock theme manager
     themeManager = {
-      getCurrentTheme: vi.fn().mockReturnValue(defaultTheme),
-      setTheme: vi.fn().mockReturnValue(darkTheme),
-      getAvailableThemes: vi.fn().mockReturnValue([defaultTheme, darkTheme]),
+      getCurrentTheme: vi.fn().mockReturnValue(themes.default.light),
+      setTheme: vi.fn().mockReturnValue(themes.default.dark),
+      getAvailableThemes: vi.fn().mockReturnValue([themes.default.light, themes.default.dark]),
     } as any;
   });
 
@@ -48,7 +48,7 @@ describe('DarkModeToggle', () => {
     it('should determine initial dark state based on current theme', () => {
       // Mock dark theme as current
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
-        ...darkTheme,
+        ...themes.default.dark,
         name: 'default-dark',
       });
 
@@ -59,7 +59,7 @@ describe('DarkModeToggle', () => {
     it('should determine initial light state based on current theme', () => {
       // Mock light theme as current
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
-        ...defaultTheme,
+        ...themes.default.light,
         name: 'default-light',
       });
 
@@ -106,7 +106,7 @@ describe('DarkModeToggle', () => {
 
     it('should render in dark state when initialized as dark', () => {
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
-        ...darkTheme,
+        ...themes.default.dark,
         name: 'default-dark',
       });
       darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
@@ -167,7 +167,7 @@ describe('DarkModeToggle', () => {
 
     it('should toggle from light to dark mode', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
@@ -178,7 +178,7 @@ describe('DarkModeToggle', () => {
     it('should toggle from dark to light mode', () => {
       // Set initial dark state
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
-        ...darkTheme,
+        ...themes.default.dark,
         name: 'default-dark',
       });
       darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
@@ -186,7 +186,7 @@ describe('DarkModeToggle', () => {
       darkModeToggle.attachTo(container);
 
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(defaultTheme);
+      mockSetTheme.mockReturnValue(themes.default.light);
 
       darkModeToggle.toggle();
 
@@ -199,7 +199,7 @@ describe('DarkModeToggle', () => {
       document.addEventListener('mdv-dark-mode-toggled', eventSpy);
 
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
@@ -207,7 +207,7 @@ describe('DarkModeToggle', () => {
         expect.objectContaining({
           detail: {
             isDark: true,
-            theme: darkTheme,
+            theme: themes.default.dark,
           },
         })
       );
@@ -220,11 +220,11 @@ describe('DarkModeToggle', () => {
       darkModeToggle = new DarkModeToggle(themeManager, { onToggle });
 
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
-      expect(onToggle).toHaveBeenCalledWith(true, darkTheme);
+      expect(onToggle).toHaveBeenCalledWith(true, themes.default.dark);
     });
 
     it('should handle theme manager returning null', () => {
@@ -245,7 +245,7 @@ describe('DarkModeToggle', () => {
 
     it('should toggle to dark mode when called with true', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.setDarkMode(true);
 
@@ -256,13 +256,13 @@ describe('DarkModeToggle', () => {
     it('should toggle to light mode when called with false', () => {
       // Set initial dark state
       vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
-        ...darkTheme,
+        ...themes.default.dark,
         name: 'default-dark',
       });
       darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'default-dark' });
 
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(defaultTheme);
+      mockSetTheme.mockReturnValue(themes.default.light);
 
       darkModeToggle.setDarkMode(false);
 
@@ -288,7 +288,7 @@ describe('DarkModeToggle', () => {
 
     it('should update button classes and attributes when toggled', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
@@ -300,7 +300,7 @@ describe('DarkModeToggle', () => {
 
     it('should update label text when toggled', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
@@ -310,7 +310,7 @@ describe('DarkModeToggle', () => {
 
     it('should update icon when toggled', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
@@ -324,7 +324,7 @@ describe('DarkModeToggle', () => {
 
       expect(() => {
         const mockSetTheme = vi.mocked(themeManager.setTheme);
-        mockSetTheme.mockReturnValue(darkTheme);
+        mockSetTheme.mockReturnValue(themes.default.dark);
         darkModeToggle.toggle();
       }).not.toThrow();
     });
@@ -379,7 +379,7 @@ describe('DarkModeToggle', () => {
 
     it('should toggle when button is clicked', () => {
       const mockSetTheme = vi.mocked(themeManager.setTheme);
-      mockSetTheme.mockReturnValue(darkTheme);
+      mockSetTheme.mockReturnValue(themes.default.dark);
 
       const button = container.querySelector('.mdv-dark-toggle-btn') as HTMLElement;
       button.click();
@@ -429,7 +429,10 @@ describe('DarkModeToggle', () => {
     });
 
     it('should render moon icon in dark mode', () => {
-      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({ ...darkTheme, name: 'dark' });
+      vi.mocked(themeManager.getCurrentTheme).mockReturnValue({
+        ...themes.default.dark,
+        name: 'dark',
+      });
       darkModeToggle = new DarkModeToggle(themeManager, { darkThemeName: 'dark' });
 
       const html = darkModeToggle.render();

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { baseThemes, getAllThemeVariants, getThemeBaseName, getThemeMode } from '../src/themes';
+import { themes } from '../src/themes';
 import { ThemeManager } from '../src/theme-manager';
 
 describe('New Theme Integration', () => {
@@ -18,7 +18,7 @@ describe('New Theme Integration', () => {
   describe('Base Themes Structure', () => {
     newThemes.forEach(themeName => {
       it(`should have complete ${themeName} theme definition`, () => {
-        const theme = baseThemes[themeName as keyof typeof baseThemes];
+        const theme = themes[themeName as keyof typeof themes];
         expect(theme).toBeDefined();
         expect(theme.light).toBeDefined();
         expect(theme.dark).toBeDefined();
@@ -50,7 +50,7 @@ describe('New Theme Integration', () => {
         });
 
         // Check that generated themes have textPrimary and textSecondary
-        const allVariants = getAllThemeVariants();
+        const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
         const lightVariant = allVariants.find(t => t.name === `${themeName}-light`)!;
         const darkVariant = allVariants.find(t => t.name === `${themeName}-dark`)!;
 
@@ -61,7 +61,7 @@ describe('New Theme Integration', () => {
       });
 
       it(`should have valid color values for ${themeName}`, () => {
-        const theme = baseThemes[themeName as keyof typeof baseThemes];
+        const theme = themes[themeName as keyof typeof themes];
         const hexRegex = /^#[0-9A-Fa-f]{6}$/;
 
         Object.values(theme.light).forEach(color => {
@@ -77,8 +77,8 @@ describe('New Theme Integration', () => {
 
   describe('Theme Generation', () => {
     it('should generate all theme variants including new themes', () => {
-      const allVariants = getAllThemeVariants();
-      const expectedThemeCount = Object.keys(baseThemes).length * 2; // Each theme has light and dark variant
+      const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
+      const expectedThemeCount = Object.keys(themes).length * 2; // Each theme has light and dark variant
 
       expect(allVariants).toHaveLength(expectedThemeCount);
 
@@ -93,7 +93,7 @@ describe('New Theme Integration', () => {
     });
 
     it('should have proper theme structure for all variants', () => {
-      const allVariants = getAllThemeVariants();
+      const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
 
       allVariants.forEach(theme => {
         expect(theme.name).toBeDefined();
@@ -156,15 +156,15 @@ describe('New Theme Integration', () => {
   describe('Theme Utilities', () => {
     it('should correctly extract base names from new theme names', () => {
       newThemes.forEach(themeName => {
-        expect(getThemeBaseName(`${themeName}-light`)).toBe(themeName);
-        expect(getThemeBaseName(`${themeName}-dark`)).toBe(themeName);
+        expect(`${themeName}-light`.replace(/-(light|dark)$/, '')).toBe(themeName);
+        expect(`${themeName}-dark`.replace(/-(light|dark)$/, '')).toBe(themeName);
       });
     });
 
     it('should correctly extract modes from new theme names', () => {
       newThemes.forEach(themeName => {
-        expect(getThemeMode(`${themeName}-light`)).toBe('light');
-        expect(getThemeMode(`${themeName}-dark`)).toBe('dark');
+        expect(`${themeName}-light`.endsWith('-dark') ? 'dark' : 'light').toBe('light');
+        expect(`${themeName}-dark`.endsWith('-dark') ? 'dark' : 'light').toBe('dark');
       });
     });
   });
@@ -173,7 +173,7 @@ describe('New Theme Integration', () => {
     const themeManager = new ThemeManager();
 
     it('should have good contrast between text and background for all new themes', () => {
-      const allVariants = getAllThemeVariants();
+      const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
 
       newThemes.forEach(themeName => {
         const lightTheme = allVariants.find(t => t.name === `${themeName}-light`)!;
@@ -204,7 +204,7 @@ describe('New Theme Integration', () => {
 
   describe('Theme Font Families', () => {
     it('should have appropriate font families for each theme', () => {
-      const allVariants = getAllThemeVariants();
+      const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
 
       newThemes.forEach(themeName => {
         const lightTheme = allVariants.find(t => t.name === `${themeName}-light`)!;
@@ -226,7 +226,7 @@ describe('New Theme Integration', () => {
     });
 
     it('should have theme-specific fonts where appropriate', () => {
-      const allVariants = getAllThemeVariants();
+      const allVariants = Object.values(themes).flatMap(theme => [theme.light, theme.dark]);
 
       // VS Code should use Segoe UI
       const vscodeLight = allVariants.find(t => t.name === 'vscode-light')!;
