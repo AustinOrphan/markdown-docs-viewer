@@ -39,11 +39,17 @@ export class SearchManager {
   private debouncedSearch: (query: string) => void;
   private currentQuery: string = '';
   private onDocumentSelect?: (doc: Document) => void;
+  private onSearchQueryChange?: (query: string) => void;
 
-  constructor(options: SearchOptions, onDocumentSelect?: (doc: Document) => void) {
+  constructor(
+    options: SearchOptions,
+    onDocumentSelect?: (doc: Document) => void,
+    onSearchQueryChange?: (query: string) => void
+  ) {
     this.options = options;
     this.searchIndex = new SearchIndex();
     this.onDocumentSelect = onDocumentSelect;
+    this.onSearchQueryChange = onSearchQueryChange;
 
     // Create debounced search function
     this.debouncedSearch = debounce(
@@ -81,6 +87,11 @@ export class SearchManager {
     const target = event.target as HTMLInputElement;
     const query = target.value.trim();
     this.currentQuery = query;
+
+    // Notify viewer of search query change
+    if (this.onSearchQueryChange) {
+      this.onSearchQueryChange(query);
+    }
 
     if (query.length === 0) {
       this.hideResults();

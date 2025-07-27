@@ -195,7 +195,7 @@ describe('ThemeSwitcher', () => {
       expect(dropdown.getAttribute('aria-hidden')).toBe('false');
     });
 
-    it('should close dropdown when clicking outside', () => {
+    it('should close dropdown when clicking outside', done => {
       const trigger = container.querySelector('.mdv-theme-trigger') as HTMLElement;
       const dropdown = container.querySelector('.mdv-theme-dropdown') as HTMLElement;
 
@@ -203,11 +203,15 @@ describe('ThemeSwitcher', () => {
       trigger.click();
       expect(dropdown.classList.contains('open')).toBe(true);
 
-      // Click outside
-      document.body.click();
+      // Wait for requestAnimationFrame to attach the document click handler
+      requestAnimationFrame(() => {
+        // Click outside
+        document.body.click();
 
-      expect(dropdown.classList.contains('open')).toBe(false);
-      expect(dropdown.getAttribute('aria-hidden')).toBe('true');
+        expect(dropdown.classList.contains('open')).toBe(false);
+        expect(dropdown.getAttribute('aria-hidden')).toBe('true');
+        done();
+      });
     });
 
     it('should not close dropdown when clicking inside', () => {

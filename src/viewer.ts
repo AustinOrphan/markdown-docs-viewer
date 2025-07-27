@@ -126,6 +126,10 @@ export class MarkdownDocsViewer {
           (doc: Document) => {
             // Navigate to selected document
             this.loadDocument(doc.id);
+          },
+          (query: string) => {
+            // Update viewer search state
+            this.handleSearch(query);
           }
         );
       }
