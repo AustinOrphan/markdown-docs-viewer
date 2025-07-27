@@ -439,14 +439,14 @@ export class ThemeSwitcher {
       this.hideMobileBackdrop();
     }
 
-    // Return focus to trigger button to avoid aria-hidden issues
-    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
-    trigger?.focus();
-
     // Remove document click handler
     if (this.documentClickHandler) {
       document.removeEventListener('click', this.documentClickHandler);
     }
+
+    // Return focus to trigger button to avoid aria-hidden issues
+    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
+    trigger?.focus();
   }
 
   private updateDropdownState(): void {
