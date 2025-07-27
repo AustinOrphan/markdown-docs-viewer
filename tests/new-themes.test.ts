@@ -43,10 +43,14 @@ describe('New Theme Integration', () => {
         ];
 
         requiredColors.forEach(colorProp => {
-          expect(theme.light[colorProp as keyof typeof theme.light]).toBeDefined();
-          expect(theme.dark[colorProp as keyof typeof theme.dark]).toBeDefined();
-          expect(typeof theme.light[colorProp as keyof typeof theme.light]).toBe('string');
-          expect(typeof theme.dark[colorProp as keyof typeof theme.dark]).toBe('string');
+          expect(theme.light.colors[colorProp as keyof typeof theme.light.colors]).toBeDefined();
+          expect(theme.dark.colors[colorProp as keyof typeof theme.dark.colors]).toBeDefined();
+          expect(typeof theme.light.colors[colorProp as keyof typeof theme.light.colors]).toBe(
+            'string'
+          );
+          expect(typeof theme.dark.colors[colorProp as keyof typeof theme.dark.colors]).toBe(
+            'string'
+          );
         });
 
         // Check that generated themes have textPrimary and textSecondary
@@ -64,11 +68,11 @@ describe('New Theme Integration', () => {
         const theme = themes[themeName as keyof typeof themes];
         const hexRegex = /^#[0-9A-Fa-f]{6}$/;
 
-        Object.values(theme.light).forEach(color => {
+        Object.values(theme.light.colors).forEach(color => {
           expect(hexRegex.test(color)).toBe(true);
         });
 
-        Object.values(theme.dark).forEach(color => {
+        Object.values(theme.dark.colors).forEach(color => {
           expect(hexRegex.test(color)).toBe(true);
         });
       });
