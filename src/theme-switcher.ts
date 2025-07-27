@@ -2,7 +2,21 @@ import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
-import { getThemeBaseName, getThemeMode, toggleThemeMode } from './themes';
+// Utility functions for theme management
+function getThemeBaseName(themeName: string): string {
+  return themeName.replace(/-(light|dark)$/, '');
+}
+
+function getThemeMode(themeName: string): 'light' | 'dark' {
+  return themeName.endsWith('-dark') ? 'dark' : 'light';
+}
+
+function toggleThemeMode(themeName: string): string {
+  const baseName = getThemeBaseName(themeName);
+  const currentMode = getThemeMode(themeName);
+  const newMode = currentMode === 'light' ? 'dark' : 'light';
+  return `${baseName}-${newMode}`;
+}
 
 // Mobile breakpoint constant (768px)
 const MOBILE_BREAKPOINT = 768;
@@ -266,12 +280,12 @@ export class ThemeSwitcher {
       this.openCustomThemeBuilder();
     });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', e => {
+    // Create bound handler for document clicks
+    this.documentClickHandler = (e: Event) => {
       if (!this.container?.contains(e.target as Node)) {
         this.closeDropdown();
       }
-    });
+    };
 
     // Keyboard navigation
     this.container.addEventListener('keydown', e => {
@@ -390,12 +404,25 @@ export class ThemeSwitcher {
       if (this.isMobile()) {
         this.showMobileBackdrop();
       }
+
+      // Add document click handler with delay to prevent immediate closing
+      if (this.documentClickHandler) {
+        // Use requestAnimationFrame to ensure the click event has finished propagating
+        requestAnimationFrame(() => {
+          document.addEventListener('click', this.documentClickHandler!);
+        });
+      }
     } else {
       // Remove focus trap when closing
       this.removeFocusTrap();
       // Hide mobile backdrop
       if (this.isMobile()) {
         this.hideMobileBackdrop();
+      }
+
+      // Remove document click handler
+      if (this.documentClickHandler) {
+        document.removeEventListener('click', this.documentClickHandler);
       }
     }
   }
@@ -404,9 +431,17 @@ export class ThemeSwitcher {
     this.isOpen = false;
     this.updateDropdownState();
 
+    // Remove focus trap when closing
+    this.removeFocusTrap();
+
     // Hide mobile backdrop
     if (this.isMobile()) {
       this.hideMobileBackdrop();
+    }
+
+    // Remove document click handler
+    if (this.documentClickHandler) {
+      document.removeEventListener('click', this.documentClickHandler);
     }
 
     // Return focus to trigger button to avoid aria-hidden issues
@@ -602,6 +637,7 @@ export class ThemeSwitcher {
   }
 
   private focusTrapHandler: ((e: KeyboardEvent) => void) | null = null;
+  private documentClickHandler: ((e: Event) => void) | null = null;
 
   private openCustomThemeBuilder(): void {
     if (!this.themeBuilder) {

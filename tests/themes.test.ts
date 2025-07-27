@@ -1,91 +1,93 @@
 import { describe, it, expect } from 'vitest';
-import { defaultTheme, darkTheme, createCustomTheme } from '../src/themes';
+import { themes, createCustomTheme } from '../src/themes';
 
 describe('Themes', () => {
-  describe('defaultTheme', () => {
+  describe('themes.default.light', () => {
     it('should have all required color properties', () => {
-      expect(defaultTheme.colors).toBeDefined();
-      expect(defaultTheme.colors.primary).toBeDefined();
-      expect(defaultTheme.colors.background).toBeDefined();
-      expect(defaultTheme.colors.surface).toBeDefined();
-      expect(defaultTheme.colors.text).toBeDefined();
-      expect(defaultTheme.colors.textLight).toBeDefined();
-      expect(defaultTheme.colors.border).toBeDefined();
-      expect(defaultTheme.colors.code).toBeDefined();
-      expect(defaultTheme.colors.codeBackground).toBeDefined();
+      expect(themes.default.light.colors).toBeDefined();
+      expect(themes.default.light.colors.primary).toBeDefined();
+      expect(themes.default.light.colors.background).toBeDefined();
+      expect(themes.default.light.colors.surface).toBeDefined();
+      expect(themes.default.light.colors.text).toBeDefined();
+      expect(themes.default.light.colors.textLight).toBeDefined();
+      expect(themes.default.light.colors.border).toBeDefined();
+      expect(themes.default.light.colors.code).toBeDefined();
+      expect(themes.default.light.colors.codeBackground).toBeDefined();
     });
 
     it('should have valid CSS color values', () => {
       // Test that color values are valid CSS colors (hex format)
       const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
-      expect(defaultTheme.colors.primary).toMatch(hexColorRegex);
-      expect(defaultTheme.colors.background).toMatch(hexColorRegex);
-      expect(defaultTheme.colors.text).toMatch(hexColorRegex);
+      expect(themes.default.light.colors.primary).toMatch(hexColorRegex);
+      expect(themes.default.light.colors.background).toMatch(hexColorRegex);
+      expect(themes.default.light.colors.text).toMatch(hexColorRegex);
     });
 
     it('should have all required font properties', () => {
-      expect(defaultTheme.fonts).toBeDefined();
-      expect(defaultTheme.fonts.body).toBeDefined();
-      expect(defaultTheme.fonts.heading).toBeDefined();
-      expect(defaultTheme.fonts.code).toBeDefined();
+      expect(themes.default.light.fonts).toBeDefined();
+      expect(themes.default.light.fonts.body).toBeDefined();
+      expect(themes.default.light.fonts.heading).toBeDefined();
+      expect(themes.default.light.fonts.code).toBeDefined();
     });
 
     it('should have valid font stacks', () => {
       // Font stacks should be non-empty strings
-      expect(defaultTheme.fonts.body).toBeTypeOf('string');
-      expect(defaultTheme.fonts.body.length).toBeGreaterThan(0);
+      expect(themes.default.light.fonts.body).toBeTypeOf('string');
+      expect(themes.default.light.fonts.body.length).toBeGreaterThan(0);
 
-      expect(defaultTheme.fonts.heading).toBeTypeOf('string');
-      expect(defaultTheme.fonts.heading.length).toBeGreaterThan(0);
+      expect(themes.default.light.fonts.heading).toBeTypeOf('string');
+      expect(themes.default.light.fonts.heading.length).toBeGreaterThan(0);
 
-      expect(defaultTheme.fonts.code).toBeTypeOf('string');
-      expect(defaultTheme.fonts.code.length).toBeGreaterThan(0);
+      expect(themes.default.light.fonts.code).toBeTypeOf('string');
+      expect(themes.default.light.fonts.code.length).toBeGreaterThan(0);
     });
   });
 
-  describe('darkTheme', () => {
+  describe('themes.default.dark', () => {
     it('should have all required color properties', () => {
-      expect(darkTheme.colors).toBeDefined();
-      expect(darkTheme.colors.primary).toBeDefined();
-      expect(darkTheme.colors.background).toBeDefined();
-      expect(darkTheme.colors.surface).toBeDefined();
-      expect(darkTheme.colors.text).toBeDefined();
-      expect(darkTheme.colors.textLight).toBeDefined();
-      expect(darkTheme.colors.border).toBeDefined();
-      expect(darkTheme.colors.code).toBeDefined();
-      expect(darkTheme.colors.codeBackground).toBeDefined();
+      expect(themes.default.dark.colors).toBeDefined();
+      expect(themes.default.dark.colors.primary).toBeDefined();
+      expect(themes.default.dark.colors.background).toBeDefined();
+      expect(themes.default.dark.colors.surface).toBeDefined();
+      expect(themes.default.dark.colors.text).toBeDefined();
+      expect(themes.default.dark.colors.textLight).toBeDefined();
+      expect(themes.default.dark.colors.border).toBeDefined();
+      expect(themes.default.dark.colors.code).toBeDefined();
+      expect(themes.default.dark.colors.codeBackground).toBeDefined();
     });
 
     it('should have different colors from default theme', () => {
       // Dark theme should have different background colors
-      expect(darkTheme.colors.background).not.toBe(defaultTheme.colors.background);
-      expect(darkTheme.colors.text).not.toBe(defaultTheme.colors.text);
+      expect(themes.default.dark.colors.background).not.toBe(
+        themes.default.light.colors.background
+      );
+      expect(themes.default.dark.colors.text).not.toBe(themes.default.light.colors.text);
     });
 
     it('should have dark background colors', () => {
       // Dark theme should have dark backgrounds (approximate check)
       // This is a simple check - in a real app you might use color parsing
-      expect(darkTheme.colors.background.toLowerCase()).toMatch(/^#[0-4]/);
+      expect(themes.default.dark.colors.background.toLowerCase()).toMatch(/^#[0-4]/);
     });
 
     it('should have light text colors for contrast', () => {
       // Dark theme should have light text for contrast
-      expect(darkTheme.colors.text.toLowerCase()).toMatch(/^#[a-f9]/);
+      expect(themes.default.dark.colors.text.toLowerCase()).toMatch(/^#[a-f9]/);
     });
 
     it('should have same font structure as default theme', () => {
-      expect(darkTheme.fonts).toBeDefined();
-      expect(darkTheme.fonts.body).toBeDefined();
-      expect(darkTheme.fonts.heading).toBeDefined();
-      expect(darkTheme.fonts.code).toBeDefined();
+      expect(themes.default.dark.fonts).toBeDefined();
+      expect(themes.default.dark.fonts.body).toBeDefined();
+      expect(themes.default.dark.fonts.heading).toBeDefined();
+      expect(themes.default.dark.fonts.code).toBeDefined();
     });
   });
 
   describe('Theme Validation', () => {
     it('should have consistent structure between themes', () => {
-      const defaultKeys = Object.keys(defaultTheme.colors).sort();
-      const darkKeys = Object.keys(darkTheme.colors).sort();
+      const defaultKeys = Object.keys(themes.default.light.colors).sort();
+      const darkKeys = Object.keys(themes.default.dark.colors).sort();
 
       expect(darkKeys).toEqual(defaultKeys);
     });
@@ -93,8 +95,8 @@ describe('Themes', () => {
     it('should have valid CSS units for spacing if present', () => {
       const cssUnitRegex = /^\d+(\.\d+)?(px|em|rem|%|vh|vw)$/;
 
-      if (defaultTheme.spacing) {
-        Object.values(defaultTheme.spacing).forEach(value => {
+      if (themes.default.light.spacing) {
+        Object.values(themes.default.light.spacing).forEach(value => {
           if (typeof value === 'string') {
             expect(value).toMatch(cssUnitRegex);
           }
@@ -105,12 +107,11 @@ describe('Themes', () => {
     it('should have valid CSS units for radius if present', () => {
       const cssUnitRegex = /^\d+(\.\d+)?(px|em|rem|%)$/;
 
-      if (defaultTheme.radius) {
-        Object.values(defaultTheme.radius).forEach(value => {
-          if (typeof value === 'string') {
-            expect(value).toMatch(cssUnitRegex);
-          }
-        });
+      if (themes.default.light.borderRadius) {
+        // Note: borderRadius is a single value, not an object
+        if (typeof themes.default.light.borderRadius === 'string') {
+          expect(themes.default.light.borderRadius).toMatch(cssUnitRegex);
+        }
       }
     });
   });
@@ -129,49 +130,51 @@ describe('Themes', () => {
       };
 
       // Default theme: light background should have dark text
-      if (isLightBackground(defaultTheme.colors.background)) {
-        expect(isDarkText(defaultTheme.colors.text)).toBeTruthy();
+      if (isLightBackground(themes.default.light.colors.background)) {
+        expect(isDarkText(themes.default.light.colors.text)).toBeTruthy();
       }
 
       // Dark theme: dark background should have light text
-      if (!isLightBackground(darkTheme.colors.background)) {
-        expect(!isDarkText(darkTheme.colors.text)).toBeTruthy();
+      if (!isLightBackground(themes.default.dark.colors.background)) {
+        expect(!isDarkText(themes.default.dark.colors.text)).toBeTruthy();
       }
     });
 
     it('should not rely only on color for information', () => {
       // Both themes should have the same structure
       // This ensures information isn't conveyed through color alone
-      expect(Object.keys(defaultTheme.colors)).toEqual(Object.keys(darkTheme.colors));
+      expect(Object.keys(themes.default.light.colors)).toEqual(
+        Object.keys(themes.default.dark.colors)
+      );
     });
   });
 
   describe('Custom Theme Creation', () => {
     it('should be possible to extend default theme', () => {
       const customTheme = {
-        ...defaultTheme,
+        ...themes.default.light,
         colors: {
-          ...defaultTheme.colors,
+          ...themes.default.light.colors,
           primary: '#ff0000',
         },
       };
 
       expect(customTheme.colors.primary).toBe('#ff0000');
-      expect(customTheme.colors.background).toBe(defaultTheme.colors.background);
-      expect(customTheme.fonts).toBe(defaultTheme.fonts);
+      expect(customTheme.colors.background).toBe(themes.default.light.colors.background);
+      expect(customTheme.fonts).toBe(themes.default.light.fonts);
     });
 
     it('should be possible to extend dark theme', () => {
       const customDarkTheme = {
-        ...darkTheme,
+        ...themes.default.dark,
         colors: {
-          ...darkTheme.colors,
+          ...themes.default.dark.colors,
           primary: '#00ff00',
         },
       };
 
       expect(customDarkTheme.colors.primary).toBe('#00ff00');
-      expect(customDarkTheme.colors.background).toBe(darkTheme.colors.background);
+      expect(customDarkTheme.colors.background).toBe(themes.default.dark.colors.background);
     });
 
     it('should be possible to create completely custom theme', () => {
@@ -207,8 +210,8 @@ describe('Themes', () => {
       });
 
       expect(customTheme.colors.primary).toBe('#ff0000');
-      expect(customTheme.colors.background).toBe(defaultTheme.colors.background);
-      expect(customTheme.fonts).toEqual(defaultTheme.fonts);
+      expect(customTheme.colors.background).toBe(themes.default.light.colors.background);
+      expect(customTheme.fonts).toEqual(themes.default.light.fonts);
     });
 
     it('should create custom theme based on dark theme when name contains dark', () => {
@@ -220,8 +223,8 @@ describe('Themes', () => {
       });
 
       expect(customDarkTheme.colors.primary).toBe('#00ff00');
-      expect(customDarkTheme.colors.background).toBe(darkTheme.colors.background);
-      expect(customDarkTheme.fonts).toEqual(darkTheme.fonts);
+      expect(customDarkTheme.colors.background).toBe(themes.default.dark.colors.background);
+      expect(customDarkTheme.fonts).toEqual(themes.default.dark.fonts);
     });
 
     it('should merge all theme properties', () => {
@@ -238,16 +241,16 @@ describe('Themes', () => {
       });
 
       expect(customTheme.colors.primary).toBe('#123456');
-      expect(customTheme.colors.background).toBe(defaultTheme.colors.background);
+      expect(customTheme.colors.background).toBe(themes.default.light.colors.background);
       expect(customTheme.fonts.body).toBe('Custom Font');
-      expect(customTheme.fonts.heading).toBe(defaultTheme.fonts.heading);
-      expect(customTheme.spacing.xs).toBe('0.25rem');
+      expect(customTheme.fonts.heading).toBe(themes.default.light.fonts.heading);
+      expect(customTheme.spacing.unit).toBe(8); // spacing.xs doesn't exist, using unit
     });
 
     it('should handle empty overrides', () => {
       const customTheme = createCustomTheme({});
 
-      expect(customTheme).toEqual(defaultTheme);
+      expect(customTheme).toEqual(themes.default.light);
     });
 
     it('should handle overrides with undefined values', () => {
@@ -257,9 +260,9 @@ describe('Themes', () => {
         spacing: undefined,
       });
 
-      expect(customTheme.colors).toEqual(defaultTheme.colors);
-      expect(customTheme.fonts).toEqual(defaultTheme.fonts);
-      expect(customTheme.spacing).toEqual(defaultTheme.spacing);
+      expect(customTheme.colors).toEqual(themes.default.light.colors);
+      expect(customTheme.fonts).toEqual(themes.default.light.fonts);
+      expect(customTheme.spacing).toEqual(themes.default.light.spacing);
     });
 
     it('should handle new signature with base name and mode', () => {
@@ -286,7 +289,7 @@ describe('Themes', () => {
       expect(customTheme.name).toBe('dark');
       expect(customTheme.colors.primary).toBe('#abcdef');
       // Should use default dark theme as base
-      expect(customTheme.colors.background).toBe(darkTheme.colors.background);
+      expect(customTheme.colors.background).toBe(themes.default.dark.colors.background);
     });
   });
 });

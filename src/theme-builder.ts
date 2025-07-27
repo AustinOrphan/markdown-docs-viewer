@@ -6,7 +6,16 @@ import {
   sanitizeFontFamily,
   sanitizeCssValue,
 } from './utils';
-import { getThemeBaseName, getThemeMode, createCustomTheme } from './themes';
+import { createCustomTheme } from './themes';
+
+// Utility functions for theme management
+function getThemeBaseName(themeName: string): string {
+  return themeName.replace(/-(light|dark)$/, '');
+}
+
+function getThemeMode(themeName: string): 'light' | 'dark' {
+  return themeName.endsWith('-dark') ? 'dark' : 'light';
+}
 
 type ThemeColors = Theme['colors'];
 type ThemeFonts = Theme['fonts'];

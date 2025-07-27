@@ -1,8 +1,8 @@
 import { Theme } from './types';
 import fontMappings from './font-mappings.json';
 
-// Base theme definitions with light/dark variants
-export const baseThemes = {
+// Base theme definitions with light/dark variants - internal use only
+const baseThemes = {
   default: {
     light: {
       primary: '#3b82f6',
@@ -237,10 +237,10 @@ export const baseThemes = {
       secondary: '#2aa198',
       background: '#fdf6e3',
       surface: '#eee8d5',
-      text: '#657b83',
+      text: '#586e75', // Darkened from #657b83 for better contrast
       textPrimary: '#073642',
-      textLight: '#93a1a1',
-      textSecondary: '#839496',
+      textLight: '#586e75', // Darkened from #93a1a1 for WCAG AA
+      textSecondary: '#586e75', // Darkened from #839496 for readability
       border: '#93a1a1',
       code: '#d33682',
       codeBackground: '#eee8d5',
@@ -315,8 +315,8 @@ export const baseThemes = {
       surface: '#f3f4f5',
       text: '#5c6166',
       textPrimary: '#5c6166',
-      textLight: '#828c99',
-      textSecondary: '#828c99',
+      textLight: '#5c6166', // Darkened from #828c99 to match main text
+      textSecondary: '#5c6166', // Darkened from #828c99 for WCAG compliance
       border: '#e7eaed',
       code: '#a37acc',
       codeBackground: '#f3f4f5',
@@ -391,8 +391,8 @@ export const baseThemes = {
       surface: '#e1e2e7',
       text: '#0d2258',
       textPrimary: '#0d2258',
-      textLight: '#9699a3',
-      textSecondary: '#9699a3',
+      textLight: '#5c5f69', // Significantly darkened from #9699a3 for 4.5:1 ratio
+      textSecondary: '#5c5f69', // Significantly darkened from #9699a3 for readability
       border: '#a8adb7',
       code: '#5a4a78',
       codeBackground: '#e1e2e7',
@@ -453,43 +453,14 @@ function createTheme(baseName: string, mode: 'light' | 'dark'): Theme {
   };
 }
 
-// Export default themes for backward compatibility
-export const defaultTheme: Theme = createTheme('default', 'light');
-export const darkTheme: Theme = createTheme('default', 'dark');
-
 // Helper function to get theme name without mode suffix
-export function getThemeBaseName(themeName: string): string {
+function getThemeBaseName(themeName: string): string {
   return themeName.replace(/-(light|dark)$/, '');
 }
 
 // Helper function to get theme mode from name
-export function getThemeMode(themeName: string): 'light' | 'dark' {
+function getThemeMode(themeName: string): 'light' | 'dark' {
   return themeName.endsWith('-dark') ? 'dark' : 'light';
-}
-
-// Helper function to toggle theme mode
-export function toggleThemeMode(themeName: string): string {
-  const baseName = getThemeBaseName(themeName);
-  const currentMode = getThemeMode(themeName);
-  const newMode = currentMode === 'light' ? 'dark' : 'light';
-  return `${baseName}-${newMode}`;
-}
-
-// Helper function to create both light and dark variants of all themes
-export function getAllThemeVariants(): Theme[] {
-  const themes: Theme[] = [];
-
-  Object.keys(baseThemes).forEach(baseName => {
-    themes.push(createTheme(baseName, 'light'));
-    themes.push(createTheme(baseName, 'dark'));
-  });
-
-  return themes;
-}
-
-// Get available theme names (just base names)
-export function getAvailableThemeNames(): string[] {
-  return Object.keys(baseThemes);
 }
 
 // Overloaded function for backward compatibility
@@ -576,3 +547,16 @@ export function createCustomTheme(
     'Invalid arguments to createCustomTheme. Use either createCustomTheme(overrides) or createCustomTheme(baseName, mode, overrides)'
   );
 }
+
+// Type for the exported themes object
+type ThemesExport = { [key: string]: { light: Theme; dark: Theme } };
+
+// Export themes object - generated programmatically from baseThemes
+export const themes = Object.keys(baseThemes).reduce((acc, baseName) => {
+  const key = baseName as keyof typeof baseThemes;
+  acc[key] = {
+    light: createTheme(key, 'light'),
+    dark: createTheme(key, 'dark'),
+  };
+  return acc;
+}, {} as ThemesExport);

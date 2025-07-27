@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Public API</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+      }
+      #docs {
+        height: 100vh;
+      }
+      .api-test {
+        padding: 20px;
+        background: #f0f0f0;
+      }
+      .api-test h2 {
+        margin-top: 0;
+      }
+      .api-test pre {
+        background: white;
+        padding: 10px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="api-test">
+      <h2>Public API Test</h2>
+      <p>Check console for detailed results</p>
+      <pre id="api-results"></pre>
+    </div>
+    <div id="docs"></div>
+
+    <!-- Dependencies -->
+    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+
+    <!-- Local UMD build -->
+    <script src="./dist/index.umd.cjs"></script>
+
+    <script>
+      // Test what's available in the public API
+      const MDV = window.MarkdownDocsViewer;
+      const results = document.getElementById('api-results');
+
+      function log(message) {
+        console.log(message);
+        results.textContent += message + '\n';
+      }
+
+      log('=== Testing Public API ===\n');
+
+      // Test core exports
+      log('✓ MarkdownDocsViewer: ' + typeof MDV.MarkdownDocsViewer);
+      log('✓ createViewer: ' + typeof MDV.createViewer);
+      log('✓ quickStart: ' + typeof MDV.quickStart);
+
+      // Test theme exports
+      log('\n=== Theme Exports ===');
+      log('✓ themes object: ' + typeof MDV.themes);
+      log(
+        MDV.defaultTheme === undefined
+          ? '✓ defaultTheme is correctly undefined'
+          : '✗ defaultTheme still exists'
+      );
+      log(
+        MDV.darkTheme === undefined
+          ? '✓ darkTheme is correctly undefined'
+          : '✗ darkTheme still exists'
+      );
+      log('✓ createCustomTheme: ' + typeof MDV.createCustomTheme);
+
+      // Test specific themes
+      if (MDV.themes) {
+        log('\n=== Available Themes ===');
+        Object.keys(MDV.themes).forEach(themeName => {
+          const theme = MDV.themes[themeName];
+          log(`✓ themes.${themeName}.light: ${theme.light ? 'available' : 'missing'}`);
+          log(`✓ themes.${themeName}.dark: ${theme.dark ? 'available' : 'missing'}`);
+        });
+      }
+
+      // Test other exports
+      log('\n=== Other Exports ===');
+      log('✓ ThemeManager: ' + typeof MDV.ThemeManager);
+      log('✓ ThemeSwitcher: ' + typeof MDV.ThemeSwitcher);
+      log('✓ SearchManager: ' + typeof MDV.SearchManager);
+      log('✓ ExportManager: ' + typeof MDV.ExportManager);
+
+      // Test creating a viewer with themes
+      log('\n=== Testing Viewer Creation ===');
+      try {
+        MDV.createViewer({
+          container: '#docs',
+          theme: MDV.themes.github.light,
+          source: {
+            type: 'content',
+            documents: [
+              {
+                id: 'test',
+                title: 'Test Document',
+                content: '# Test\n\nThis is a test using `themes.github.light`',
+              },
+            ],
+          },
+        });
+        log('✓ Viewer created successfully with themes.github.light');
+      } catch (error) {
+        log('✗ Error creating viewer: ' + error.message);
+      }
+    </script>
+  </body>
+</html>
