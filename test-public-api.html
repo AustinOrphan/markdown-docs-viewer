@@ -62,8 +62,16 @@
       // Test theme exports
       log('\n=== Theme Exports ===');
       log('✓ themes object: ' + typeof MDV.themes);
-      log('✓ defaultTheme: ' + typeof MDV.defaultTheme);
-      log('✓ darkTheme: ' + typeof MDV.darkTheme);
+      log(
+        MDV.defaultTheme === undefined
+          ? '✓ defaultTheme is correctly undefined'
+          : '✗ defaultTheme still exists'
+      );
+      log(
+        MDV.darkTheme === undefined
+          ? '✓ darkTheme is correctly undefined'
+          : '✗ darkTheme still exists'
+      );
       log('✓ createCustomTheme: ' + typeof MDV.createCustomTheme);
 
       // Test specific themes
@@ -86,7 +94,7 @@
       // Test creating a viewer with themes
       log('\n=== Testing Viewer Creation ===');
       try {
-        const viewer = MDV.createViewer({
+        MDV.createViewer({
           container: '#docs',
           theme: MDV.themes.github.light,
           source: {

@@ -431,6 +431,9 @@ export class ThemeSwitcher {
     this.isOpen = false;
     this.updateDropdownState();
 
+    // Remove focus trap when closing
+    this.removeFocusTrap();
+
     // Hide mobile backdrop
     if (this.isMobile()) {
       this.hideMobileBackdrop();

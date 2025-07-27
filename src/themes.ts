@@ -548,50 +548,15 @@ export function createCustomTheme(
   );
 }
 
-// Export themes object for easy access
-export const themes = {
-  default: {
-    light: createTheme('default', 'light'),
-    dark: createTheme('default', 'dark'),
-  },
-  github: {
-    light: createTheme('github', 'light'),
-    dark: createTheme('github', 'dark'),
-  },
-  material: {
-    light: createTheme('material', 'light'),
-    dark: createTheme('material', 'dark'),
-  },
-  vscode: {
-    light: createTheme('vscode', 'light'),
-    dark: createTheme('vscode', 'dark'),
-  },
-  nord: {
-    light: createTheme('nord', 'light'),
-    dark: createTheme('nord', 'dark'),
-  },
-  dracula: {
-    light: createTheme('dracula', 'light'),
-    dark: createTheme('dracula', 'dark'),
-  },
-  solarized: {
-    light: createTheme('solarized', 'light'),
-    dark: createTheme('solarized', 'dark'),
-  },
-  monokai: {
-    light: createTheme('monokai', 'light'),
-    dark: createTheme('monokai', 'dark'),
-  },
-  ayu: {
-    light: createTheme('ayu', 'light'),
-    dark: createTheme('ayu', 'dark'),
-  },
-  catppuccin: {
-    light: createTheme('catppuccin', 'light'),
-    dark: createTheme('catppuccin', 'dark'),
-  },
-  tokyo: {
-    light: createTheme('tokyo', 'light'),
-    dark: createTheme('tokyo', 'dark'),
-  },
-};
+// Type for the exported themes object
+type ThemesExport = { [key: string]: { light: Theme; dark: Theme } };
+
+// Export themes object - generated programmatically from baseThemes
+export const themes = Object.keys(baseThemes).reduce((acc, baseName) => {
+  const key = baseName as keyof typeof baseThemes;
+  acc[key] = {
+    light: createTheme(key, 'light'),
+    dark: createTheme(key, 'dark'),
+  };
+  return acc;
+}, {} as ThemesExport);
