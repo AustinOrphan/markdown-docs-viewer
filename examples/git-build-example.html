@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Markdown Docs Viewer - CDN Example</title>
+    <title>Markdown Docs Viewer - Git Build Example</title>
 
     <!-- Load syntax highlighting styles -->
     <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css" />
@@ -70,7 +70,7 @@
   <body>
     <div class="header">
       <h1>Markdown Documentation Viewer</h1>
-      <p>Complete CDN Example - No Build Step Required</p>
+      <p>Complete Git Build Example - Using Local Build</p>
     </div>
 
     <div class="controls">
@@ -193,33 +193,36 @@ That's it! Your documentation viewer is ready to use.
                   tags: ['install', 'setup'],
                   content: `# Installation
 
-## Via CDN (Recommended for quick start)
-
-${TRIPLE_BACKTICK}html
-<!-- Load dependencies -->
-<script src="https://unpkg.com/marked@15.0.12/marked.min.js"><\/script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"><\/script>
-
-<!-- Load the viewer -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"><\/script>
-${TRIPLE_BACKTICK}
-
-## Via NPM (For build tools)
+## Via Git Clone + Build
 
 ${TRIPLE_BACKTICK}bash
-npm install @austinorphan/markdown-docs-viewer marked highlight.js
+# Clone and build
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
+${TRIPLE_BACKTICK}
+
+${TRIPLE_BACKTICK}html
+<!-- Load dependencies from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"><\/script>
+
+<!-- Load your built viewer -->
+<script src="path/to/your/built/dist/index.umd.cjs"><\/script>
+${TRIPLE_BACKTICK}
+
+## Via Git Submodule
+
+${TRIPLE_BACKTICK}bash
+# Add as submodule and build
+git submodule add https://github.com/AustinOrphan/markdown-docs-viewer.git viewer
+cd viewer && npm install && npm run build && cd ..
 ${TRIPLE_BACKTICK}
 
 ${TRIPLE_BACKTICK}javascript
-import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
-${TRIPLE_BACKTICK}
-
-## Via ES Modules
-
-${TRIPLE_BACKTICK}html
-<script type="module">
-import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
-<\/script>
+// Import from your local build
+import { MarkdownDocsViewer } from './viewer/dist/index.es.js';
 ${TRIPLE_BACKTICK}
 `,
                 },
@@ -474,7 +477,7 @@ ${TRIPLE_BACKTICK}
 ## JSON
 ${TRIPLE_BACKTICK}json
 {
-    "name": "@austinorphan/markdown-docs-viewer",
+    "name": "markdown-docs-viewer",
     "version": "1.0.0",
     "description": "A themeable markdown documentation viewer",
     "features": ["theming", "search", "responsive"]
@@ -494,7 +497,7 @@ This page demonstrates a custom theme!
 ## Creating Custom Themes
 
 ${TRIPLE_BACKTICK}javascript
-import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+import { createCustomTheme } from './path/to/markdown-docs-viewer/dist/index.es.js';
 
 const myTheme = createCustomTheme({
     colors: {

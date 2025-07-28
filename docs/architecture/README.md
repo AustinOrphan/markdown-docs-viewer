@@ -1,5 +1,7 @@
 # Architecture Documentation
 
+> **⚠️ Package Availability Notice**: This package is not yet published to NPM or CDN. Build from source first. See [main README](../../README.md) for instructions.
+
 This document provides a comprehensive overview of the Markdown Docs Viewer architecture, following the C4 model and Arc42 documentation standards.
 
 ## Table of Contents
@@ -247,9 +249,12 @@ dist/
    const { createViewer } = require('@austinorphan/markdown-docs-viewer');
    ```
 
-3. **Script Tag** (CDN)
+3. **Script Tag** (CDN - Not Yet Available)
    ```html
-   <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+   <!-- Not yet available on CDN -->
+   <!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+   <!-- Use your locally built file -->
+   <script src="path/to/your/built/index.umd.cjs"></script>
    ```
 
 ## Cross-Cutting Concepts

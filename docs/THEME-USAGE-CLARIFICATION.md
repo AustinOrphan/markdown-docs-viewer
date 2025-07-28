@@ -1,5 +1,7 @@
 # Theme Usage Clarification: Configuration vs Runtime
 
+> **⚠️ Package Availability Notice**: This package is not yet published to NPM or CDN. Please build from source first. The examples below show the intended usage once published.
+
 This document clarifies the correct usage of themes when configuring the Markdown Documentation Viewer initially vs switching themes at runtime.
 
 ## Important: Theme Parameter Types
@@ -16,7 +18,9 @@ For initial configuration, **only theme objects are supported** regardless of wh
 **CDN Usage:**
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<!-- Not yet available on CDN -->
+<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+<script src="path/to/your/built/index.umd.cjs"></script>
 
 <script>
   const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -44,7 +48,11 @@ For initial configuration, **only theme objects are supported** regardless of wh
 **NPM Usage:**
 
 ```javascript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+// Not yet available on NPM
+// import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+
+// Import from your local build:
+import { createViewer, themes } from './path/to/built/index.es.js';
 
 // ✅ CORRECT: Use theme objects
 const viewer = createViewer({
@@ -113,7 +121,11 @@ When using strings with `setTheme()`, these theme names are available:
 Custom themes should always be created as objects:
 
 ```javascript
-import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+// Not yet available on NPM
+// import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+
+// Import from your local build:
+import { createCustomTheme } from './path/to/built/index.es.js';
 
 const myTheme = createCustomTheme({
   name: 'my-custom-theme',

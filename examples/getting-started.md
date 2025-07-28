@@ -4,16 +4,36 @@ Welcome to the Markdown Documentation Viewer! This comprehensive guide will help
 
 ## Quick Installation
 
-### NPM Installation
+### Git Clone Method
 
 ```bash
-npm install @austinorphan/markdown-docs-viewer
+# Clone the repository
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
 ```
 
-### CDN Usage
+### Git Submodule Method (Recommended)
+
+```bash
+# Add as submodule in your project
+git submodule add https://github.com/AustinOrphan/markdown-docs-viewer.git viewer
+cd viewer
+npm install
+npm run build
+cd ..
+```
+
+### Browser Usage
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<!-- Load dependencies from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+
+<!-- Load your built viewer -->
+<script src="path/to/your/built/dist/index.umd.cjs"></script>
 ```
 
 ## Basic Setup
@@ -21,7 +41,7 @@ npm install @austinorphan/markdown-docs-viewer
 Here's a minimal example to get you started:
 
 ```javascript
-import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
+import { MarkdownDocsViewer } from './path/to/markdown-docs-viewer/dist/index.es.js';
 
 const viewer = new MarkdownDocsViewer({
   container: '#documentation',

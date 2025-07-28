@@ -1,5 +1,7 @@
 # Documentation
 
+> **⚠️ Package Availability Notice**: This package is not yet published to NPM or CDN. Please follow the build-from-source instructions in individual guides.
+
 Welcome to the comprehensive documentation for the Markdown Documentation Viewer library.
 
 ## 🚀 Getting Started
@@ -29,7 +31,14 @@ New to the library? Start here for the fastest path to success:
 ### Installation
 
 ```bash
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Not yet available on NPM - build from source required
+# npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+
+# Clone and build instead:
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
 ```
 
 ### Basic Usage
@@ -46,10 +55,14 @@ const viewer = createViewer({
 });
 ```
 
-### CDN Usage
+### CDN Usage (Not Yet Available)
 
 ```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<!-- Not yet available on CDN -->
+<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+
+<!-- Use your locally built file instead -->
+<script src="path/to/your/built/index.umd.cjs"></script>
 <script>
   const { createViewer } = window.MarkdownDocsViewer;
   // ... use createViewer
@@ -126,7 +139,7 @@ The `api/` directory contains automatically generated TypeDoc documentation:
 ### Community
 
 - **[GitHub Repository](https://github.com/AustinOrphan/markdown-docs-viewer)** - Source code and issues
-- **[NPM Package](https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer)** - Package information
+- **[NPM Package](https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer)** - Package information (not yet published)
 - **[Live Demo](https://austinorphan.github.io/markdown-docs-viewer/)** - Interactive demonstration
 
 ## 🆘 Troubleshooting
@@ -153,8 +166,11 @@ npm install
 **Theme Not Loading**
 
 ```javascript
-// For initial configuration (NPM):
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+// For initial configuration (when available on NPM):
+// import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+
+// Currently - import from local build:
+import { createViewer, themes } from './path/to/built/index.es.js';
 createViewer({
   theme: themes.github.light, // ✅ Theme object required
 });

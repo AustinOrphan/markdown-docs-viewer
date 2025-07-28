@@ -1,6 +1,5 @@
 # Markdown Docs Viewer
 
-[![npm version](https://badge.fury.io/js/%40austinorphan%2Fmarkdown-docs-viewer.svg)](https://badge.fury.io/js/%40austinorphan%2Fmarkdown-docs-viewer)
 [![Build Status](https://github.com/AustinOrphan/markdown-docs-viewer/workflows/CI/badge.svg)](https://github.com/AustinOrphan/markdown-docs-viewer/actions)
 [![Coverage Status](https://codecov.io/gh/AustinOrphan/markdown-docs-viewer/branch/main/graph/badge.svg)](https://codecov.io/gh/AustinOrphan/markdown-docs-viewer)
 
@@ -20,67 +19,19 @@ A powerful, themeable, and highly configurable markdown documentation viewer des
 
 ## 🚀 Quick Start
 
-### Installation
+### Method 1: Git Clone (Direct Usage)
 
 ```bash
-# Using npm
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Clone the repository
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
 
-# Using yarn
-yarn add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
-
-# Using pnpm
-pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Install dependencies and build
+npm install
+npm run build
 ```
 
-### CDN (Quick start for browsers)
-
-```html
-<!-- Load dependencies -->
-<script src="https://unpkg.com/marked@15.0.12/marked.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-
-<!-- Load the viewer -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
-```
-
-### ES Modules (Modern browsers)
-
-```html
-<script type="module">
-  import { MarkdownDocsViewer } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
-</script>
-```
-
-## Quick Start
-
-### NPM/Bundler Usage
-
-```javascript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
-
-// Create a documentation viewer
-const viewer = createViewer({
-  container: '#docs',
-  source: {
-    type: 'local',
-    documents: [
-      {
-        id: 'intro',
-        title: 'Getting Started',
-        file: 'intro.md',
-      },
-      {
-        id: 'api',
-        title: 'API Reference',
-        file: 'api.md',
-      },
-    ],
-  },
-});
-```
-
-### CDN Usage (No Build Step)
+Then copy `dist/index.umd.cjs` to your project and use it:
 
 ```html
 <!DOCTYPE html>
@@ -91,38 +42,28 @@ const viewer = createViewer({
   <body>
     <div id="docs"></div>
 
-    <!-- Load dependencies -->
-    <script src="https://unpkg.com/marked@latest/marked.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@latest/lib/core.min.js"></script>
+    <!-- Load dependencies from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.1.4/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
 
-    <!-- Load the viewer -->
-    <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@latest/dist/index.umd.cjs"></script>
+    <!-- Load your built viewer -->
+    <script src="index.umd.cjs"></script>
 
     <script>
-      const { createViewer } = window.MarkdownDocsViewer;
+      const { createViewer, themes } = window.MarkdownDocsViewer;
 
-      createViewer({
+      const viewer = createViewer({
         container: '#docs',
+        title: 'My Documentation',
+        theme: themes.default.light,
         source: {
           type: 'content',
           documents: [
             {
               id: 'welcome',
               title: 'Welcome',
-              content: `
-# Welcome to My Documentation
-
-This is a **markdown** document with:
-
-- Syntax highlighting
-- Search functionality  
-- Mobile-responsive design
-- Beautiful themes
-
-## Getting Started
-
-Start exploring the documentation using the sidebar navigation.
-          `,
+              content: '# Welcome\n\nThis is your documentation!',
             },
           ],
         },
@@ -132,79 +73,53 @@ Start exploring the documentation using the sidebar navigation.
 </html>
 ```
 
-## 🎨 Built-in Themes
+### Method 2: Git Submodule (Recommended for Projects)
 
-Choose from 11 professionally designed themes, each with light and dark variants:
+This is how [training-science-docs](https://github.com/AustinOrphan/training-science-docs) uses it:
 
-| Theme           | Description                   | Best For                 |
-| --------------- | ----------------------------- | ------------------------ |
-| **Default**     | Clean, modern design          | General documentation    |
-| **GitHub**      | GitHub-inspired styling       | Open source projects     |
-| **Material**    | Google Material Design        | Modern applications      |
-| **VS Code**     | Visual Studio Code theme      | Developer tools          |
-| **Nord**        | Arctic-inspired color palette | Minimalist design        |
-| **Dracula**     | Popular dark theme            | Developer documentation  |
-| **Tokyo Night** | Vibrant night theme           | Modern interfaces        |
-| **Solarized**   | Low-contrast, eye-friendly    | Long reading sessions    |
-| **Monokai**     | Classic dark theme            | Code-heavy documentation |
-| **Ayu**         | Elegant, balanced colors      | Design-focused content   |
-| **Catppuccin**  | Pastel color palette          | Creative projects        |
+```bash
+# Add as git submodule
+git submodule add https://github.com/AustinOrphan/markdown-docs-viewer.git viewer
 
-### Theme Usage
+# Build the viewer
+cd viewer
+npm install
+npm run build
+cd ..
 
-```javascript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
-
-// Using a built-in theme
-const viewer = createViewer({
-  container: '#docs',
-  theme: themes.github.dark, // or themes.github.light
-  source: {
-    /* ... */
-  },
-});
-
-// Custom theme
-const viewer = createViewer({
-  container: '#docs',
-  theme: {
-    name: 'my-custom-theme',
-    colors: {
-      primary: '#007acc',
-      background: '#ffffff',
-      text: '#333333',
-      // ... other theme properties
-    },
-  },
-  source: {
-    /* ... */
-  },
-});
+# Use in your HTML
 ```
 
-## 📖 Documentation
+```html
+<script src="./viewer/dist/index.umd.cjs"></script>
+<script>
+  const { createViewer, themes } = window.MarkdownDocsViewer;
+  // ... use as above
+</script>
+```
 
-### Core Guides
+## 🎨 Built-in Themes
 
-- 📋 **[Quick Start Guide](docs/quick-start.md)** - Get up and running in 5 minutes
-- ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - Complete configuration reference
-- 🎨 **[Theming Guide](docs/THEMING.md)** - Create and customize themes
-- 🌐 **[Browser Usage](docs/BROWSER_USAGE.md)** - Using without a build system
+Access themes via the `themes` object:
 
-### Advanced Topics
+```javascript
+const { createViewer, themes } = window.MarkdownDocsViewer;
 
-- 📚 **[API Reference](docs/API.md)** - Complete API documentation
-- 🏗️ **[Architecture](docs/architecture/README.md)** - Technical architecture overview
-- 🔌 **[Integration Guide](docs/INTEGRATION.md)** - Framework integration examples
-- 🎯 **[Performance Guide](docs/performance.md)** - Optimization techniques
+// Available themes (each has .light and .dark variants):
+themes.default.light; // Clean, modern design
+themes.github.dark; // GitHub-inspired styling
+themes.material.light; // Google Material Design
+themes.vscode.dark; // Visual Studio Code theme
+themes.nord.light; // Arctic-inspired colors
+themes.dracula.dark; // Popular dark theme
+themes.tokyo.dark; // Vibrant night theme
+themes.solarized.light; // Eye-friendly colors
+themes.monokai.dark; // Classic developer theme
+themes.ayu.light; // Elegant, balanced design
+themes.catppuccin.light; // Pastel color palette
+```
 
-### Examples
-
-- 🌐 **[Live Demo](https://austinorphan.github.io/markdown-docs-viewer/)** - Interactive demonstration
-- 💻 **[CodePen Examples](https://codepen.io/collection/XMzKvY)** - Copy-paste examples
-- 📁 **[Example Projects](examples/)** - Complete working projects
-
-## 🔧 Configuration
+## 📖 Configuration
 
 ### Document Sources
 
@@ -212,14 +127,14 @@ const viewer = createViewer({
 
 ```javascript
 {
-  source: {
-    type: 'local',
-    basePath: '/docs',
-    documents: [
-      { id: 'intro', title: 'Introduction', file: 'intro.md' },
-      { id: 'guide', title: 'User Guide', file: 'guide.md', category: 'Guides' }
-    ]
-  }
+    source: {
+        type: 'local',
+        basePath: '/docs',
+        documents: [
+            { id: 'intro', title: 'Introduction', file: 'intro.md' },
+            { id: 'guide', title: 'User Guide', file: 'guide.md', category: 'Guides' }
+        ]
+    }
 }
 ```
 
@@ -227,16 +142,14 @@ const viewer = createViewer({
 
 ```javascript
 {
-  source: {
-    type: 'github',
-    documents: [
-      {
-        id: 'readme',
-        title: 'README',
-        file: 'owner/repo/main/README.md'
-      }
-    ]
-  }
+    source: {
+        type: 'github',
+        documents: [{
+            id: 'readme',
+            title: 'README',
+            file: 'owner/repo/main/README.md'
+        }]
+    }
 }
 ```
 
@@ -244,93 +157,63 @@ const viewer = createViewer({
 
 ```javascript
 {
-  source: {
-    type: 'url',
-    baseUrl: 'https://api.github.com/repos/user/repo/contents/docs',
-    headers: { 'Authorization': 'token your-token' },
-    documents: [
-      { id: 'api', title: 'API Docs', file: 'api.md' }
-    ]
-  }
+    source: {
+        type: 'url',
+        baseUrl: 'https://raw.githubusercontent.com/user/repo/main/docs',
+        documents: [
+            { id: 'api', title: 'API Docs', file: 'api.md' }
+        ]
+    }
 }
 ```
 
-### Themes
-
-#### Using Built-in Themes
-
-**NPM/ES Modules:**
-
-```javascript
-import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
-
-const viewer = createViewer({
-  container: '#docs',
-  theme: darkTheme, // Use theme object (recommended)
-  // ... other config
-});
-```
-
-**CDN/Browser:**
-
-```html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
-<script>
-  const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
-
-  const viewer = new MarkdownDocsViewer({
-    container: '#docs',
-    theme: darkTheme, // Must use theme object (not string) in CDN context
-    // ... other config
-  });
-</script>
-```
-
-> **Important:** When using CDN, always use theme objects (`defaultTheme`, `darkTheme`). String theme names only work with NPM imports. See [Theme Usage Clarification](./docs/THEME-USAGE-CLARIFICATION.md) for details.
-
-#### Custom Theme
-
-```javascript
-import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
-
-const myTheme = createCustomTheme({
-  name: 'my-theme',
-  colors: {
-    primary: '#007acc',
-    background: '#1e1e1e',
-    // ... other colors
-  },
-});
-```
-
-### Navigation & Search
+#### Inline Content
 
 ```javascript
 {
-  navigation: {
-    showCategories: true,
-    collapsible: true,
-    showTags: true,
-    sortBy: 'order' // 'title' | 'order' | 'date'
-  },
-  search: {
-    enabled: true,
-    fuzzySearch: true,
-    searchInTags: true,
-    maxResults: 10
-  }
+    source: {
+        type: 'content',
+        documents: [{
+            id: 'welcome',
+            title: 'Welcome',
+            content: '# Welcome\n\nMarkdown content here...'
+        }]
+    }
 }
 ```
 
-## 🚀 Performance
+## 🛠️ Development
 
-Optimized for speed and efficiency:
+### Development Commands
 
-- **Lazy Loading**: Documents loaded only when needed
-- **Smart Caching**: LRU cache with localStorage persistence
-- **Efficient Rendering**: Virtual scrolling for large documents
-- **Bundle Size**: < 50KB gzipped (excluding peer dependencies)
-- **Memory Management**: Automatic cleanup and garbage collection
+- `npm run dev` - Start Vite development server on port 5000
+- `npm run build` - Build library (ES + UMD) and generate TypeScript declarations
+- `npm run preview` - Preview built library
+- `npm test` - Run all tests once
+- `npm run test:watch` - Run tests in watch mode
+- `npm run lint` - Lint TypeScript files with ESLint
+
+### Project Structure
+
+```
+src/
+  ├── viewer.ts           # Main MarkdownDocsViewer class
+  ├── factory.ts          # createViewer() and quickStart() functions
+  ├── themes.ts           # Theme system and built-in themes
+  ├── loader.ts           # Document loading from various sources
+  ├── search.ts           # Search functionality
+  ├── navigation.ts       # Sidebar navigation
+  ├── toc.ts             # Table of contents generation
+  └── types.ts           # TypeScript type definitions
+```
+
+### Build Output
+
+The build process creates:
+
+- `dist/index.es.js` - ES module build
+- `dist/index.umd.cjs` - UMD build for browsers
+- `dist/index.d.ts` - TypeScript declarations
 
 ## 🌍 Browser Support
 
@@ -338,7 +221,14 @@ Optimized for speed and efficiency:
 - ✅ **Firefox** 85+
 - ✅ **Safari** 14+
 - ✅ **Mobile Browsers** iOS Safari 14+, Chrome Mobile 88+
-- ✅ **Module Support** ES2020, CommonJS, UMD
+
+## 📄 Dependencies
+
+The viewer requires these peer dependencies (loaded from CDN):
+
+- [marked](https://marked.js.org/) - Markdown parser
+- [marked-highlight](https://github.com/markedjs/marked-highlight) - Syntax highlighting for Marked
+- [highlight.js](https://highlightjs.org/) - Syntax highlighting library
 
 ## 🤝 Contributing
 
@@ -347,21 +237,10 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Development Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
 cd markdown-docs-viewer
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
-
-# Run tests
-npm test
-
-# Build the project
-npm run build
 ```
 
 ## 📄 License
@@ -376,4 +255,4 @@ npm run build
 
 ---
 
-**[⬆ Back to Top](#markdown-docs-viewer)** | **[📖 View Documentation](docs/)** | **[🎮 Try Demo](https://austinorphan.github.io/markdown-docs-viewer/)**
+**[📖 View Documentation](docs/)** | **[🎮 Try Demo](https://austinorphan.github.io/markdown-docs-viewer/)**
