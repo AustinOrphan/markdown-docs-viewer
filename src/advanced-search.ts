@@ -1,5 +1,6 @@
 import { Document, AdvancedSearchOptions } from './types';
 import { SearchIndex, debounce } from './performance';
+import { escapeHtml } from './utils';
 
 export interface SearchResult {
   document: Document;
@@ -353,7 +354,7 @@ export class AdvancedSearchManager {
                   <label>Categories</label>
                   <select multiple class="mdv-filter-categories">
                     ${options.filters.categories
-                      .map(cat => `<option value="${cat}">${cat}</option>`)
+                      .map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`)
                       .join('')}
                   </select>
                 </div>
@@ -368,7 +369,7 @@ export class AdvancedSearchManager {
                   <label>Tags</label>
                   <select multiple class="mdv-filter-tags">
                     ${options.filters.tags
-                      .map(tag => `<option value="${tag}">${tag}</option>`)
+                      .map(tag => `<option value="${escapeHtml(tag)}">${escapeHtml(tag)}</option>`)
                       .join('')}
                   </select>
                 </div>
@@ -393,12 +394,12 @@ export class AdvancedSearchManager {
     const doc = result.document;
 
     return `
-      <div class="mdv-search-result" data-doc-id="${doc.id}">
+      <div class="mdv-search-result" data-doc-id="${escapeHtml(doc.id)}">
         <h3 class="mdv-search-result-title">
           ${
             result.highlights.find(h => h.field === 'title')
               ? highlightText(doc.title, result.highlights.find(h => h.field === 'title')!.text)
-              : doc.title
+              : escapeHtml(doc.title)
           }
         </h3>
         
@@ -412,7 +413,7 @@ export class AdvancedSearchManager {
                     doc.description,
                     result.highlights.find(h => h.field === 'description')!.text
                   )
-                : doc.description
+                : escapeHtml(doc.description)
             }
           </p>
         `
@@ -431,8 +432,8 @@ export class AdvancedSearchManager {
           .join('')}
         
         <div class="mdv-search-result-meta">
-          ${doc.category ? `<span class="mdv-search-result-category">${doc.category}</span>` : ''}
-          ${doc.tags?.map(tag => `<span class="mdv-search-result-tag">${tag}</span>`).join('') || ''}
+          ${doc.category ? `<span class="mdv-search-result-category">${escapeHtml(doc.category)}</span>` : ''}
+          ${doc.tags?.map(tag => `<span class="mdv-search-result-tag">${escapeHtml(tag)}</span>`).join('') || ''}
         </div>
       </div>
     `;

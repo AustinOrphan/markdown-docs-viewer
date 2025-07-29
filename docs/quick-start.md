@@ -45,9 +45,9 @@ Add as a git submodule for project integration:
   <div id="docs"></div>
 
   <!-- Dependencies -->
-  <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-  <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-  <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+  <script src="<!-- JavaScript is included in the main highlight.js bundle -->"></script>
 
   <!-- Markdown Docs Viewer -->
   <script src="path/to/your/built/index.umd.cjs"></script>
@@ -596,9 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```html
 <!-- Load highlight.js -->
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
 <!-- Load language-specific modules -->
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+<script src="<!-- JavaScript is included in the main highlight.js bundle -->"></script>
 ```
 
 **Themes not loading**

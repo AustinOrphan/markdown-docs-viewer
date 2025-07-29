@@ -64,7 +64,7 @@ npm install
 npm run build
 ```
 
-Then copy `dist/index.umd.cjs` to your project and use it:
+Then copy `dist/markdown-docs-viewer.umd.cjs` to your project and use it:
 
 ```html
 <!DOCTYPE html>
@@ -76,12 +76,12 @@ Then copy `dist/index.umd.cjs` to your project and use it:
     <div id="docs"></div>
 
     <!-- Load dependencies from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.1.4/lib/index.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
 
     <!-- Load your built viewer -->
-    <script src="index.umd.cjs"></script>
+    <script src="markdown-docs-viewer.umd.cjs"></script>
 
     <script>
       const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -124,7 +124,7 @@ cd ..
 ```
 
 ```html
-<script src="./viewer/dist/index.umd.cjs"></script>
+<script src="./viewer/dist/markdown-docs-viewer.umd.cjs"></script>
 <script>
   const { createViewer, themes } = window.MarkdownDocsViewer;
   // ... use as above
@@ -286,8 +286,8 @@ src/
 
 The build process creates:
 
-- `dist/index.es.js` - ES module build
-- `dist/index.umd.cjs` - UMD build for browsers
+- `dist/markdown-docs-viewer.js` - ES module build
+- `dist/markdown-docs-viewer.umd.cjs` - UMD build for browsers
 - `dist/index.d.ts` - TypeScript declarations
 
 ## 🌍 Browser Support
