@@ -1247,9 +1247,9 @@ export class MarkdownDocsViewer {
 
     try {
       if (expanded) {
-        localStorage.removeItem(storageKey); // Default is collapsed, so only save non-default state
+        localStorage.setItem(storageKey, 'expanded');
       } else {
-        localStorage.setItem(storageKey, 'collapsed');
+        localStorage.removeItem(storageKey); // Default is collapsed, so remove when collapsed
       }
     } catch {
       // Ignore storage errors
@@ -1263,9 +1263,9 @@ export class MarkdownDocsViewer {
       const storageKey = `mdv-nav-${categoryText.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
 
       try {
-        const isCollapsed = localStorage.getItem(storageKey) === 'collapsed';
-        if (!isCollapsed) {
-          // Expand categories that were previously expanded
+        const isExpanded = localStorage.getItem(storageKey) === 'expanded';
+        if (isExpanded) {
+          // Only expand categories that were explicitly expanded by the user
           this.toggleCategory(categoryElement);
         }
       } catch {

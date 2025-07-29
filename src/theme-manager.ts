@@ -1,28 +1,11 @@
 import { Theme } from './types';
-import { themes } from './themes';
-
-// Utility functions for theme management
-function getThemeBaseName(themeName: string): string {
-  return themeName.replace(/-(light|dark)$/, '');
-}
-
-function getThemeMode(themeName: string): 'light' | 'dark' {
-  return themeName.endsWith('-dark') ? 'dark' : 'light';
-}
-
-function getAllThemeVariants(): Theme[] {
-  const allThemes: Theme[] = [];
-  Object.keys(themes).forEach(baseName => {
-    const themeGroup = themes[baseName as keyof typeof themes];
-    allThemes.push(themeGroup.light);
-    allThemes.push(themeGroup.dark);
-  });
-  return allThemes;
-}
-
-function getAvailableThemeNames(): string[] {
-  return Object.keys(themes);
-}
+import {
+  themes,
+  getThemeBaseName,
+  getThemeMode,
+  getAllThemeVariants,
+  getAvailableThemeNames,
+} from './themes';
 
 export interface ThemeColor {
   name: string;

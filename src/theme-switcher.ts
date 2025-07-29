@@ -2,15 +2,9 @@ import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
-// Utility functions for theme management
-function getThemeBaseName(themeName: string): string {
-  return themeName.replace(/-(light|dark)$/, '');
-}
+import { getThemeBaseName, getThemeMode } from './themes';
 
-function getThemeMode(themeName: string): 'light' | 'dark' {
-  return themeName.endsWith('-dark') ? 'dark' : 'light';
-}
-
+// Additional utility function specific to theme switcher
 function toggleThemeMode(themeName: string): string {
   const baseName = getThemeBaseName(themeName);
   const currentMode = getThemeMode(themeName);
