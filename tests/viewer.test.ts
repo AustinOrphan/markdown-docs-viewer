@@ -821,5 +821,246 @@ describe('MarkdownDocsViewer', () => {
       expect(result).toBeDefined();
       expect(result.length).toBeGreaterThan(0);
     });
+
+    it('should render header with theme switcher and dark mode toggle', () => {
+      const configWithUI = {
+        ...mockConfig,
+        ui: {
+          showThemeSwitcher: true,
+          darkModeToggle: { enabled: true },
+        },
+      };
+      const viewerWithUI = new MarkdownDocsViewer(configWithUI);
+      const renderHeader = viewerWithUI['renderHeader'];
+      const result = renderHeader.call(viewerWithUI);
+
+      expect(result).toContain('mdv-header');
+      expect(typeof result).toBe('string');
+    });
+
+    it('should render sidebar content', () => {
+      const renderSidebar = viewer['renderSidebar'];
+      const result = renderSidebar.call(viewer);
+
+      expect(result).toContain('mdv-sidebar');
+      expect(typeof result).toBe('string');
+    });
+
+    it('should render main content area', () => {
+      const renderContent = viewer['renderContent'];
+      const result = renderContent.call(viewer);
+
+      expect(typeof result).toBe('string');
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    it('should render footer', () => {
+      const renderFooter = viewer['renderFooter'];
+      const result = renderFooter.call(viewer);
+
+      expect(typeof result).toBe('string');
+    });
+  });
+
+  describe('Navigation State Management', () => {
+    beforeEach(() => {
+      viewer = new MarkdownDocsViewer(mockConfig);
+    });
+
+    it('should save and restore navigation state', () => {
+      // Test desktop sidebar state restoration specifically
+      const loadState = viewer['loadDesktopSidebarState'];
+      const collapsed = loadState.call(viewer);
+
+      expect(typeof collapsed).toBe('boolean');
+    });
+
+    it('should save desktop sidebar state', () => {
+      const saveState = viewer['saveDesktopSidebarState'];
+      expect(() => saveState.call(viewer, true)).not.toThrow();
+    });
+
+    it('should restore navigation state for categories', () => {
+      const restoreState = viewer['restoreNavigationState'];
+      // Just test that the method doesn't throw
+      expect(() => restoreState.call(viewer)).not.toThrow();
+    });
+
+    it('should handle category toggling', () => {
+      const mockCategory = {
+        querySelector: vi.fn().mockReturnValue({
+          hidden: false,
+          setAttribute: vi.fn(),
+          getAttribute: vi.fn(),
+        }),
+        getAttribute: vi.fn().mockReturnValue('test-category'),
+        setAttribute: vi.fn(),
+      };
+
+      const toggleCategory = viewer['toggleCategory'];
+      expect(() => toggleCategory.call(viewer, mockCategory as any)).not.toThrow();
+    });
+  });
+
+  describe('Mobile and Responsive Features', () => {
+    beforeEach(() => {
+      const mobileConfig = {
+        ...mockConfig,
+        mobile: {
+          enabled: true,
+          gestures: { swipeToNavigate: true },
+          performance: { enableTouchOptimizations: true },
+          navigation: { showBackdrop: true, closeOnOutsideClick: true },
+        },
+      };
+      viewer = new MarkdownDocsViewer(mobileConfig);
+    });
+
+    it('should setup mobile interactions', () => {
+      const setupMobile = viewer['setupMobileInteractions'];
+      expect(() => setupMobile.call(viewer)).not.toThrow();
+    });
+
+    it('should setup sidebar backdrop', () => {
+      // Mock querySelector to return a proper backdrop element
+      const mockBackdrop = {
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      };
+      mockContainer.querySelector = vi.fn().mockReturnValue(mockBackdrop);
+
+      const setupBackdrop = viewer['setupSidebarBackdrop'];
+      expect(() => setupBackdrop.call(viewer)).not.toThrow();
+    });
+
+    it('should setup swipe gestures', () => {
+      const setupSwipe = viewer['setupSwipeGestures'];
+      expect(() => setupSwipe.call(viewer)).not.toThrow();
+    });
+
+    it('should setup touch optimizations', () => {
+      const setupTouch = viewer['setupTouchOptimizations'];
+      expect(() => setupTouch.call(viewer)).not.toThrow();
+    });
+
+    it('should setup responsive handlers', () => {
+      const setupResponsive = viewer['setupResponsiveHandlers'];
+      expect(() => setupResponsive.call(viewer)).not.toThrow();
+    });
+
+    it('should update responsive UI', () => {
+      const updateUI = viewer['updateResponsiveUI'];
+      expect(() => updateUI.call(viewer)).not.toThrow();
+    });
+
+    it('should update sidebar state', () => {
+      const updateSidebar = viewer['updateSidebar'];
+      expect(() => updateSidebar.call(viewer)).not.toThrow();
+    });
+
+    it('should update desktop sidebar', () => {
+      const updateDesktop = viewer['updateDesktopSidebar'];
+      expect(() => updateDesktop.call(viewer)).not.toThrow();
+    });
+  });
+
+  describe('Keyboard Navigation', () => {
+    beforeEach(() => {
+      viewer = new MarkdownDocsViewer(mockConfig);
+    });
+
+    it('should handle navigation keydown events', () => {
+      const mockLink = {
+        focus: vi.fn(),
+        getAttribute: vi.fn().mockReturnValue('test-doc'),
+        click: vi.fn(),
+      };
+      const mockEvent = {
+        key: 'ArrowDown',
+        preventDefault: vi.fn(),
+      };
+
+      const handleKeydown = viewer['handleNavigationKeydown'];
+      expect(() => handleKeydown.call(viewer, mockEvent as any, mockLink as any)).not.toThrow();
+    });
+
+    it('should handle category keydown events', () => {
+      const mockCategory = {
+        querySelector: vi.fn(),
+        getAttribute: vi.fn(),
+      };
+      const mockEvent = {
+        key: 'Enter',
+        preventDefault: vi.fn(),
+      };
+
+      const handleCategoryKeydown = viewer['handleCategoryKeydown'];
+      expect(() =>
+        handleCategoryKeydown.call(viewer, mockEvent as any, mockCategory as any)
+      ).not.toThrow();
+    });
+
+    it('should announce navigation changes', () => {
+      const mockLink = {
+        textContent: 'Test Link',
+      };
+
+      // Mock document.getElementById for the announcements container
+      const originalGetElementById = document.getElementById;
+      document.getElementById = vi.fn().mockReturnValue({
+        textContent: '',
+        setAttribute: vi.fn(),
+      });
+
+      const announceChange = viewer['announceNavigationChange'];
+      expect(() => announceChange.call(viewer, mockLink as any)).not.toThrow();
+
+      // Restore original function
+      document.getElementById = originalGetElementById;
+    });
+  });
+
+  describe('Additional Methods', () => {
+    beforeEach(() => {
+      viewer = new MarkdownDocsViewer(mockConfig);
+    });
+
+    it('should refresh the viewer', async () => {
+      await expect(viewer.refresh()).resolves.not.toThrow();
+    });
+
+    it('should handle search queries', () => {
+      const handleSearch = viewer['handleSearch'];
+      expect(() => handleSearch.call(viewer, 'test query')).not.toThrow();
+    });
+
+    it('should handle errors with error handler', () => {
+      const error = new Error('Test error');
+      const handleError = viewer['handleError'];
+      expect(() => handleError.call(viewer, error as any)).not.toThrow();
+    });
+
+    it('should configure marked parser', () => {
+      const configureMarked = viewer['configureMarked'];
+      expect(() => configureMarked.call(viewer)).not.toThrow();
+    });
+
+    it('should attach event listeners', () => {
+      const attachListeners = viewer['attachEventListeners'];
+      expect(() => attachListeners.call(viewer)).not.toThrow();
+    });
+
+    it('should validate dependencies', () => {
+      const validateDeps = viewer['validateDependencies'];
+      expect(() => validateDeps.call(viewer)).not.toThrow();
+    });
+
+    it('should save navigation state for categories', () => {
+      const mockCategory = {
+        getAttribute: vi.fn().mockReturnValue('test-category'),
+      };
+      const saveNavState = viewer['saveNavigationState'];
+      expect(() => saveNavState.call(viewer, mockCategory as any, true)).not.toThrow();
+    });
   });
 });
