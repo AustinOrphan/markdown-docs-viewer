@@ -111,7 +111,54 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: width 0.3s ease, transform 0.3s ease;
+    }
+
+    .mdv-sidebar.collapsed {
+      width: 60px;
+    }
+
+    .mdv-sidebar.collapsed .mdv-search,
+    .mdv-sidebar.collapsed .mdv-navigation {
+      display: none;
+    }
+
+    /* Sidebar Header with Toggle */
+    .mdv-sidebar-header {
+      display: none; /* Hidden on mobile, shown on desktop */
+      padding: ${unit * 1.5}px;
+      border-bottom: 1px solid ${colors.border};
+      background-color: ${colors.surface};
+    }
+
+    .mdv-desktop-sidebar-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: ${unit}px;
+      border-radius: ${borderRadius};
+      color: ${colors.textSecondary};
+      transition: all 0.2s;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .mdv-desktop-sidebar-toggle:hover {
+      background-color: ${colors.background};
+      color: ${colors.textPrimary};
+    }
+
+    .mdv-desktop-sidebar-toggle:focus-visible {
+      outline: 2px solid ${colors.primary};
+      outline-offset: 2px;
+    }
+
+    .mdv-sidebar-toggle-icon {
+      font-size: 1rem;
+      transition: transform 0.2s;
     }
 
     /* Search */
@@ -275,7 +322,7 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
     }
 
     .mdv-collapse-icon {
-      transition: transform 0.2s;
+      transition: opacity 0.2s;
     }
 
     .mdv-nav-item {
@@ -344,7 +391,7 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
     .mdv-document {
       max-width: ${spacing.containerMaxWidth};
       margin: 0 auto;
-      padding: ${unit * 4}px;
+      padding: ${unit * 2}px;
     }
 
     .mdv-document-title {
