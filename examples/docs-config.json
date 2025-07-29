@@ -1,0 +1,36 @@
+{
+  "title": "My Awesome Documentation",
+  "theme": "github-light",
+  "source": {
+    "path": "./docs",
+    "exclude": ["**/drafts/**", "**/_*", "**/node_modules/**"]
+  },
+  "navigation": {
+    "autoSort": true,
+    "showCategories": true,
+    "collapsible": true,
+    "showTags": false,
+    "showDescription": true
+  },
+  "search": {
+    "enabled": true,
+    "placeholder": "Search documentation...",
+    "fuzzySearch": true,
+    "caseSensitive": false
+  },
+  "branding": {
+    "footer": "© 2025 My Company. Built with Markdown Docs Viewer."
+  },
+  "features": {
+    "tableOfContents": true,
+    "codeHighlighting": true,
+    "darkMode": true,
+    "print": true,
+    "export": false
+  },
+  "performance": {
+    "lazyLoading": true,
+    "cacheSize": 50,
+    "prefetchNext": true
+  }
+}

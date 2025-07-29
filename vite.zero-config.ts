@@ -4,9 +4,10 @@ import { resolve } from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/zero-config.ts'),
       name: 'MarkdownDocsViewer',
       formats: ['es', 'umd'],
+      fileName: format => `zero-config.${format === 'es' ? 'es.js' : 'umd.cjs'}`,
     },
     rollupOptions: {
       external: ['marked', 'marked-highlight', 'highlight.js'],

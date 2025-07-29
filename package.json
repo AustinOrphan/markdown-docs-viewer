@@ -19,7 +19,8 @@
   ],
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && tsc",
+    "build": "vite build && tsc && npm run build:zero-config",
+    "build:zero-config": "vite build --config vite.zero-config.ts",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
     "test": "vitest run",
@@ -41,7 +42,8 @@
     "docs:validate": "node scripts/generate-docs.js && node scripts/docs-status.js",
     "docs:watch": "nodemon --watch src --watch docs --ext ts,md --exec 'npm run docs:generate'",
     "docs:mermaid": "node scripts/convert-mermaid.js",
-    "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run"
+    "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run",
+    "dist:create": "npm run build && node scripts/create-distribution.js"
   },
   "keywords": [
     "markdown",
