@@ -23,7 +23,7 @@ New to the library? Start here for the fastest path to success:
 ### Advanced Topics
 
 - **[Architecture Overview](architecture/README.md)** - Technical architecture and design decisions
-- **[Performance Guide](performance.md)** - Optimization techniques and best practices
+- **[Performance Guide](architecture/components/performance.md)** - Optimization techniques and best practices
 - **[Theming Visual Guide](THEMING-VISUAL-GUIDE.md)** - Visual examples and theme showcase
 
 ## 🎯 Quick Reference
@@ -120,7 +120,7 @@ The `api/` directory contains automatically generated TypeDoc documentation:
 
 - **[Classes](api/classes/)** - Core classes and their methods
 - **[Interfaces](api/interfaces/)** - TypeScript interfaces and types
-- **[Modules](api/modules/)** - Module exports and organization
+- **[API Documentation](api/README.md)** - Complete API reference
 
 ### Contributing
 
@@ -194,14 +194,13 @@ viewer.setTheme('github-light'); // ✅ Theme name string (also works)
 
 ### Getting Help
 
-1. **Check the [FAQ](FAQ.md)** for common questions
-2. **Review [examples](../examples/)** for working code
-3. **Search [existing issues](https://github.com/AustinOrphan/markdown-docs-viewer/issues)**
-4. **Create a [new issue](https://github.com/AustinOrphan/markdown-docs-viewer/issues/new)** with a minimal reproduction
+1. **Review [examples](../examples/)** for working code
+2. **Search [existing issues](https://github.com/AustinOrphan/markdown-docs-viewer/issues)**
+3. **Create a [new issue](https://github.com/AustinOrphan/markdown-docs-viewer/issues/new)** with a minimal reproduction
 
 ## 📄 License
 
-This project is licensed under the [MIT License](../LICENSE).
+This project is licensed under the MIT License (see LICENSE file in the root directory).
 
 ---
 

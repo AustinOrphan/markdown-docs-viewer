@@ -139,9 +139,9 @@ For quick prototyping, use your locally built file:
 
 ## Next Steps
 
-1. [Basic Usage](api) - Learn the fundamentals
-2. [Theming](theming) - Customize the appearance
-3. [Advanced Features](advanced) - Explore powerful features
+1. [Basic Usage](#api) - Learn the fundamentals
+2. [Theming](#theming) - Customize the appearance
+3. [Advanced Features](#advanced) - Explore powerful features
         `
       },
       {
@@ -570,21 +570,21 @@ createViewer({
 
 ### 🎨 Customize
 
-- Try different [built-in themes](THEMING.md#built-in-themes)
-- Create a [custom theme](THEMING.md#custom-themes)
-- Add [theme switching](THEMING.md#theme-switcher)
+- Try different [built-in themes](THEMING.md)
+- Create a [custom theme](THEMING.md)
+- Add [theme switching](THEMING.md)
 
 ### ⚡ Optimize
 
-- Enable [performance features](CONFIGURATION.md#performance-options)
-- Configure [advanced search](CONFIGURATION.md#search-options)
-- Add [export functionality](API.md#export-manager)
+- Enable [performance features](CONFIGURATION.md)
+- Configure [advanced search](CONFIGURATION.md)
+- Add [export functionality](API.md)
 
 ### 🔌 Integrate
 
-- [React integration](INTEGRATION.md#react)
-- [Vue integration](INTEGRATION.md#vue)
-- [Angular integration](INTEGRATION.md#angular)
+- [React integration](INTEGRATION.md)
+- [Vue integration](INTEGRATION.md)
+- [Angular integration](INTEGRATION.md)
 
 ## Troubleshooting
 
@@ -634,4 +634,4 @@ Need more help? Check the [Browser Usage Guide](BROWSER_USAGE.md) or [open an is
 
 ---
 
-**[⬅ Back to README](../README.md)** | **[➡ Configuration Guide](CONFIGURATION.md)**
+**[⬅ Back to README](README.md)** | **[➡ Configuration Guide](CONFIGURATION.md)**
