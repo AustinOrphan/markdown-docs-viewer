@@ -768,6 +768,9 @@ export class MarkdownDocsViewer {
           });
         });
 
+        // Restore navigation collapsed state from localStorage
+        this.restoreNavigationState();
+
         // Attach SearchManager to DOM if enabled
         if (this.config.search?.enabled !== false && this.searchManager) {
           this.searchManager.attachToDOM(this.container);
@@ -1161,14 +1164,50 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
-        // Follow common convention: 0deg when expanded, -90deg when collapsed
-        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+        // Arrow points right (▶) when collapsed, down when expanded
+        collapseIcon.style.transform = newExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
       }
+
+      // Save collapsed state
+      this.saveNavigationState(category, newExpanded);
 
       // Announce state change
       const announcement = `${category.textContent?.trim()} ${newExpanded ? 'expanded' : 'collapsed'}`;
       announceToScreenReader(announcement, 'mdv-nav-announcements');
     }
+  }
+
+  private saveNavigationState(category: HTMLElement, expanded: boolean): void {
+    const categoryText = category.textContent?.trim() || '';
+    const storageKey = `mdv-nav-${categoryText.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+    try {
+      if (expanded) {
+        localStorage.removeItem(storageKey); // Default is collapsed, so only save non-default state
+      } else {
+        localStorage.setItem(storageKey, 'collapsed');
+      }
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }
+
+  private restoreNavigationState(): void {
+    this.container.querySelectorAll('.mdv-nav-category.collapsible').forEach(category => {
+      const categoryElement = category as HTMLElement;
+      const categoryText = categoryElement.textContent?.trim() || '';
+      const storageKey = `mdv-nav-${categoryText.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+      try {
+        const isCollapsed = localStorage.getItem(storageKey) === 'collapsed';
+        if (!isCollapsed) {
+          // Expand categories that were previously expanded
+          this.toggleCategory(categoryElement);
+        }
+      } catch (e) {
+        // Ignore storage errors
+      }
+    });
   }
 
   private announceNavigationChange(link: HTMLElement): void {

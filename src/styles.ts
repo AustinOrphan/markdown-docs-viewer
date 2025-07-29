@@ -129,7 +129,7 @@ export function generateStyles(theme: Theme, _config: DocumentationConfig): stri
       border-radius: ${borderRadius};
       color: ${colors.textPrimary};
       font-size: 0.875rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background-color 0.2s, color 0.2s;
     }
 
     .mdv-search-input:focus {
