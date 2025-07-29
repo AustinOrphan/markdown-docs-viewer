@@ -1251,7 +1251,7 @@ export class MarkdownDocsViewer {
       } else {
         localStorage.setItem(storageKey, 'collapsed');
       }
-    } catch (e) {
+    } catch {
       // Ignore storage errors
     }
   }
@@ -1268,7 +1268,7 @@ export class MarkdownDocsViewer {
           // Expand categories that were previously expanded
           this.toggleCategory(categoryElement);
         }
-      } catch (e) {
+      } catch {
         // Ignore storage errors
       }
     });
@@ -1277,7 +1277,7 @@ export class MarkdownDocsViewer {
   private loadDesktopSidebarState(): boolean {
     try {
       return localStorage.getItem('mdv-desktop-sidebar-collapsed') === 'true';
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -1289,7 +1289,7 @@ export class MarkdownDocsViewer {
       } else {
         localStorage.removeItem('mdv-desktop-sidebar-collapsed');
       }
-    } catch (e) {
+    } catch {
       // Ignore storage errors
     }
   }
