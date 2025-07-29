@@ -232,6 +232,11 @@ export function generateConfig(): string {
  * DOM ready helper
  */
 function onDOMReady(callback: () => void): void {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return;
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', callback);
   } else {
