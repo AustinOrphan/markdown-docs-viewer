@@ -2,15 +2,9 @@ import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
 import { escapeHtmlAttribute } from './utils';
-// Utility functions for theme management
-function getThemeBaseName(themeName: string): string {
-  return themeName.replace(/-(light|dark)$/, '');
-}
+import { getThemeBaseName, getThemeMode } from './themes';
 
-function getThemeMode(themeName: string): 'light' | 'dark' {
-  return themeName.endsWith('-dark') ? 'dark' : 'light';
-}
-
+// Additional utility function specific to theme switcher
 function toggleThemeMode(themeName: string): string {
   const baseName = getThemeBaseName(themeName);
   const currentMode = getThemeMode(themeName);
@@ -428,6 +422,10 @@ export class ThemeSwitcher {
   }
 
   private closeDropdown(): void {
+    // Return focus to trigger button BEFORE setting aria-hidden to avoid accessibility issues
+    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
+    trigger?.focus();
+
     this.isOpen = false;
     this.updateDropdownState();
 
@@ -443,10 +441,6 @@ export class ThemeSwitcher {
     if (this.documentClickHandler) {
       document.removeEventListener('click', this.documentClickHandler);
     }
-
-    // Return focus to trigger button to avoid aria-hidden issues
-    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
-    trigger?.focus();
   }
 
   private updateDropdownState(): void {

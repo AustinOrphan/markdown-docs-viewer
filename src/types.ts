@@ -201,6 +201,7 @@ export interface ViewerState {
   loading: boolean;
   error: Error | null;
   sidebarOpen: boolean;
+  desktopSidebarCollapsed: boolean;
 }
 
 export type ExportFormat = 'pdf' | 'html';

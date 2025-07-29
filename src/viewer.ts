@@ -75,6 +75,7 @@ export class MarkdownDocsViewer {
         loading: false,
         error: null,
         sidebarOpen: false,
+        desktopSidebarCollapsed: this.loadDesktopSidebarState(),
       };
 
       // Find and validate container
@@ -485,7 +486,14 @@ export class MarkdownDocsViewer {
 
         // Update search index with loaded documents
         if (this.searchManager) {
-          this.searchManager.updateIndex(documents, new Map());
+          // Create content map from documents that have inline content
+          const contentMap = new Map<string, string>();
+          documents.forEach(doc => {
+            if (doc.content) {
+              contentMap.set(doc.id, doc.content);
+            }
+          });
+          this.searchManager.updateIndex(documents, contentMap);
         }
       },
       () => {
@@ -581,9 +589,16 @@ export class MarkdownDocsViewer {
     );
 
     const search = this.config.search?.enabled ? createSearch(this.config.search) : '';
+    const mobileOpen = this.state.sidebarOpen ? 'open' : '';
+    const desktopCollapsed = this.state.desktopSidebarCollapsed ? 'collapsed' : '';
 
     return `
-      <aside class="mdv-sidebar ${this.state.sidebarOpen ? 'open' : ''}">
+      <aside class="mdv-sidebar ${mobileOpen} ${desktopCollapsed}">
+        <div class="mdv-sidebar-header">
+          <button class="mdv-desktop-sidebar-toggle" aria-label="Toggle navigation sidebar" title="Toggle sidebar">
+            <span class="mdv-sidebar-toggle-icon">${this.state.desktopSidebarCollapsed ? '◀' : '▶'}</span>
+          </button>
+        </div>
         ${search}
         <nav class="mdv-navigation">
           ${navigation}
@@ -722,8 +737,29 @@ export class MarkdownDocsViewer {
           this.updateSidebar();
         });
 
+        // Desktop sidebar toggle
+        const desktopToggle = this.container.querySelector('.mdv-desktop-sidebar-toggle');
+        desktopToggle?.addEventListener('click', () => {
+          this.state.desktopSidebarCollapsed = !this.state.desktopSidebarCollapsed;
+          this.saveDesktopSidebarState(this.state.desktopSidebarCollapsed);
+          this.updateDesktopSidebar();
+        });
+
+        // Keyboard shortcut for desktop sidebar toggle (Ctrl+B)
+        document.addEventListener('keydown', e => {
+          if (e.ctrlKey && e.key === 'b' && !e.shiftKey && !e.altKey && !e.metaKey) {
+            e.preventDefault();
+            this.state.desktopSidebarCollapsed = !this.state.desktopSidebarCollapsed;
+            this.saveDesktopSidebarState(this.state.desktopSidebarCollapsed);
+            this.updateDesktopSidebar();
+          }
+        });
+
         // Mobile touch gestures and interactions
         this.setupMobileInteractions();
+
+        // Initialize desktop sidebar state
+        this.updateDesktopSidebar();
 
         // Theme switcher
         const themeSwitcherContainer = this.container.querySelector('.mdv-theme-switcher');
@@ -767,6 +803,9 @@ export class MarkdownDocsViewer {
             this.handleCategoryKeydown(e as KeyboardEvent, category as HTMLElement);
           });
         });
+
+        // Restore navigation collapsed state from localStorage
+        this.restoreNavigationState();
 
         // Attach SearchManager to DOM if enabled
         if (this.config.search?.enabled !== false && this.searchManager) {
@@ -829,6 +868,34 @@ export class MarkdownDocsViewer {
     // Prevent body scroll when sidebar is open on mobile
     if (isMobileViewport() && document.body && document.body.style) {
       document.body.style.overflow = this.state.sidebarOpen ? 'hidden' : '';
+    }
+  }
+
+  private updateDesktopSidebar(): void {
+    const sidebar = this.container.querySelector('.mdv-sidebar');
+    const toggleIcon = this.container.querySelector('.mdv-sidebar-toggle-icon');
+
+    if (sidebar) {
+      sidebar.classList.toggle('collapsed', this.state.desktopSidebarCollapsed);
+    }
+
+    if (toggleIcon) {
+      toggleIcon.textContent = this.state.desktopSidebarCollapsed ? '◀' : '▶';
+    }
+
+    // Update ARIA attributes
+    const toggleButton = this.container.querySelector('.mdv-desktop-sidebar-toggle');
+    if (toggleButton) {
+      toggleButton.setAttribute(
+        'aria-label',
+        this.state.desktopSidebarCollapsed
+          ? 'Expand navigation sidebar'
+          : 'Collapse navigation sidebar'
+      );
+      toggleButton.setAttribute(
+        'title',
+        this.state.desktopSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+      );
     }
   }
 
@@ -1161,13 +1228,69 @@ export class MarkdownDocsViewer {
       sublist.hidden = !newExpanded;
 
       if (collapseIcon) {
-        // Follow common convention: 0deg when expanded, -90deg when collapsed
-        collapseIcon.style.transform = newExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+        // Use different arrow characters based on state for better UX
+        collapseIcon.textContent = newExpanded ? '▼' : '▶';
       }
+
+      // Save collapsed state
+      this.saveNavigationState(category, newExpanded);
 
       // Announce state change
       const announcement = `${category.textContent?.trim()} ${newExpanded ? 'expanded' : 'collapsed'}`;
       announceToScreenReader(announcement, 'mdv-nav-announcements');
+    }
+  }
+
+  private saveNavigationState(category: HTMLElement, expanded: boolean): void {
+    const categoryText = category.textContent?.trim() || '';
+    const storageKey = `mdv-nav-${categoryText.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+    try {
+      if (expanded) {
+        localStorage.setItem(storageKey, 'expanded');
+      } else {
+        localStorage.removeItem(storageKey); // Default is collapsed, so remove when collapsed
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
+  private restoreNavigationState(): void {
+    this.container.querySelectorAll('.mdv-nav-category.collapsible').forEach(category => {
+      const categoryElement = category as HTMLElement;
+      const categoryText = categoryElement.textContent?.trim() || '';
+      const storageKey = `mdv-nav-${categoryText.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+
+      try {
+        const isExpanded = localStorage.getItem(storageKey) === 'expanded';
+        if (isExpanded) {
+          // Only expand categories that were explicitly expanded by the user
+          this.toggleCategory(categoryElement);
+        }
+      } catch {
+        // Ignore storage errors
+      }
+    });
+  }
+
+  private loadDesktopSidebarState(): boolean {
+    try {
+      return localStorage.getItem('mdv-desktop-sidebar-collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  private saveDesktopSidebarState(collapsed: boolean): void {
+    try {
+      if (collapsed) {
+        localStorage.setItem('mdv-desktop-sidebar-collapsed', 'true');
+      } else {
+        localStorage.removeItem('mdv-desktop-sidebar-collapsed');
+      }
+    } catch {
+      // Ignore storage errors
     }
   }
 
@@ -1181,7 +1304,7 @@ export class MarkdownDocsViewer {
 
     if (!query.trim()) {
       this.state.searchResults = [];
-      this.render();
+      // Don't re-render when clearing search - this destroys focus
       return;
     }
 
@@ -1206,7 +1329,7 @@ export class MarkdownDocsViewer {
       });
 
       this.state.searchResults = results.slice(0, this.config.search?.maxResults || 10);
-      this.render();
+      // Don't call render() here - SearchManager handles its own UI
     } catch (error) {
       this.logger.error('Search operation failed', { query, error });
       this.state.searchResults = [];

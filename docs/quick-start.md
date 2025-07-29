@@ -4,11 +4,28 @@ Get your markdown documentation site up and running in just 5 minutes!
 
 ## Overview
 
-The Markdown Docs Viewer transforms your markdown files into a beautiful, searchable documentation website. This guide will walk you through the fastest ways to get started.
+The Markdown Docs Viewer transforms your markdown files into a beautiful, searchable documentation website. This library is distributed via git clone/submodule - no NPM packages or CDN setup.
 
-## Method 1: CDN (No Build Step) ⚡
+## Method 1: Git Clone ⚡
 
-Perfect for prototyping or simple documentation sites.
+Clone and build the library locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+
+# Install dependencies and build
+npm install
+npm run build
+
+# The built files will be in dist/
+# Copy dist/index.umd.cjs to your project
+```
+
+## Method 2: Git Submodule (Recommended for Projects)
+
+Add as a git submodule for project integration:
 
 ### 1. Create an HTML file
 
@@ -33,7 +50,7 @@ Perfect for prototyping or simple documentation sites.
   <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
 
   <!-- Markdown Docs Viewer -->
-  <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+  <script src="path/to/your/built/index.umd.cjs"></script>
 
   <script>
     const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -82,34 +99,49 @@ Happy documenting! 🚀
 
 ## Package Managers
 
-### npm
+### npm (Not Yet Available)
 \`\`\`bash
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Not yet published to NPM
+# npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+
+# Build from source instead:
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
 \`\`\`
 
-### yarn
+### yarn (Not Yet Available)
 \`\`\`bash
-yarn add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Not yet published to NPM
+# yarn add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+
+# Use build from source method above
 \`\`\`
 
-### pnpm
+### pnpm (Not Yet Available)
 \`\`\`bash
-pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Not yet published to NPM
+# pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+
+# Use build from source method above
 \`\`\`
 
-## CDN
+## CDN (Not Yet Available)
 
-For quick prototyping, use our CDN:
+For quick prototyping, use your locally built file:
 
 \`\`\`html
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+<!-- Not yet available on CDN -->
+<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+<script src="path/to/your/built/index.umd.cjs"></script>
 \`\`\`
 
 ## Next Steps
 
-1. [Basic Usage](api) - Learn the fundamentals
-2. [Theming](theming) - Customize the appearance
-3. [Advanced Features](advanced) - Explore powerful features
+1. [Basic Usage](#api) - Learn the fundamentals
+2. [Theming](#theming) - Customize the appearance
+3. [Advanced Features](#advanced) - Explore powerful features
         `
       },
       {
@@ -122,7 +154,7 @@ For quick prototyping, use our CDN:
 ## Creating a Viewer
 
 \`\`\`javascript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -223,7 +255,7 @@ Choose from 11 beautiful themes, each with light and dark variants:
 ## Using Themes
 
 \`\`\`javascript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 
 // Light theme
 const viewer = createViewer({
@@ -267,7 +299,7 @@ viewer.setTheme(customTheme);
 Add runtime theme switching:
 
 \`\`\`javascript
-import { ThemeSwitcher } from '@austinorphan/markdown-docs-viewer';
+import { ThemeSwitcher } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 
 const switcher = new ThemeSwitcher(viewer.themeManager, {
   position: 'top-right',
@@ -346,7 +378,7 @@ switcher.attachTo('#theme-switcher');
 ## Export Features
 
 \`\`\`javascript
-import { ExportManager } from '@austinorphan/markdown-docs-viewer';
+import { ExportManager } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 
 const exporter = new ExportManager(viewer);
 
@@ -404,21 +436,29 @@ Try different themes by changing the `theme` property:
 - `themes.tokyo.light` or `themes.tokyo.dark`
 - And 7 more theme variants!
 
-## Method 2: NPM/Build Tool 🛠️
+## Method 3: Using with Build Tools 🛠️
 
-For production applications or when using a build system.
+For production applications using webpack, vite, etc.
 
-### 1. Install dependencies
+### 1. Clone and build
 
 ```bash
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Clone to a local directory
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
+
+# Install peer dependencies in your project
+cd /your/project
+npm install marked marked-highlight highlight.js
 ```
 
 ### 2. Create your viewer
 
 ```javascript
 // main.js
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -475,7 +515,7 @@ const viewer = createViewer({
 </html>
 ```
 
-## Method 3: Existing Markdown Files 📁
+## Method 4: Existing Markdown Files 📁
 
 Already have markdown files? Point the viewer to them:
 
@@ -530,21 +570,21 @@ createViewer({
 
 ### 🎨 Customize
 
-- Try different [built-in themes](THEMING.md#built-in-themes)
-- Create a [custom theme](THEMING.md#custom-themes)
-- Add [theme switching](THEMING.md#theme-switcher)
+- Try different [built-in themes](THEMING.md)
+- Create a [custom theme](THEMING.md)
+- Add [theme switching](THEMING.md)
 
 ### ⚡ Optimize
 
-- Enable [performance features](CONFIGURATION.md#performance-options)
-- Configure [advanced search](CONFIGURATION.md#search-options)
-- Add [export functionality](API.md#export-manager)
+- Enable [performance features](CONFIGURATION.md)
+- Configure [advanced search](CONFIGURATION.md)
+- Add [export functionality](API.md)
 
 ### 🔌 Integrate
 
-- [React integration](INTEGRATION.md#react)
-- [Vue integration](INTEGRATION.md#vue)
-- [Angular integration](INTEGRATION.md#angular)
+- [React integration](INTEGRATION.md)
+- [Vue integration](INTEGRATION.md)
+- [Angular integration](INTEGRATION.md)
 
 ## Troubleshooting
 
@@ -562,8 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
 **"require is not defined" in browser**
 
 ```html
-<!-- Use UMD build for browser -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+<!-- Use your locally built UMD file -->
+<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script> -->
+<script src="path/to/your/built/index.umd.cjs"></script>
 ```
 
 **Syntax highlighting not working**
@@ -579,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```javascript
 // For initial configuration, use theme objects:
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
 createViewer({
   theme: themes.github.dark, // ✅ Theme object required
 });
@@ -593,4 +634,4 @@ Need more help? Check the [Browser Usage Guide](BROWSER_USAGE.md) or [open an is
 
 ---
 
-**[⬅ Back to README](../README.md)** | **[➡ Configuration Guide](CONFIGURATION.md)**
+**[⬅ Back to README](README.md)** | **[➡ Configuration Guide](CONFIGURATION.md)**

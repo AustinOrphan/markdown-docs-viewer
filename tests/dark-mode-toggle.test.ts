@@ -78,16 +78,16 @@ describe('DarkModeToggle', () => {
 
       expect(html).toContain('mdv-dark-mode-toggle');
       expect(html).toContain('mdv-dark-toggle-btn');
-      expect(html).toContain('Light Mode');
+      expect(html).not.toContain('Light Mode');
       expect(html).toContain('aria-checked="false"');
       expect(html).toContain('Switch to dark mode');
     });
 
-    it('should render toggle HTML without label when showLabel is false', () => {
-      darkModeToggle = new DarkModeToggle(themeManager, { showLabel: false });
+    it('should render toggle HTML with label when showLabel is true', () => {
+      darkModeToggle = new DarkModeToggle(themeManager, { showLabel: true });
       const html = darkModeToggle.render();
 
-      expect(html).not.toContain('Light Mode');
+      expect(html).toContain('Light Mode');
     });
 
     it('should render compact toggle when compact is true', () => {
@@ -113,7 +113,7 @@ describe('DarkModeToggle', () => {
 
       const html = darkModeToggle.render();
 
-      expect(html).toContain('Dark Mode');
+      expect(html).not.toContain('Dark Mode');
       expect(html).toContain('aria-checked="true"');
       expect(html).toContain('Switch to light mode');
       expect(html).toContain('dark');
@@ -298,14 +298,19 @@ describe('DarkModeToggle', () => {
       expect(button?.getAttribute('aria-label')).toBe('Switch to light mode');
     });
 
-    it('should update label text when toggled', () => {
+    it('should update label text when toggled with showLabel enabled', () => {
+      // Create a toggle with showLabel=true
+      darkModeToggle = new DarkModeToggle(themeManager, { showLabel: true });
+      container.innerHTML = darkModeToggle.render();
+      darkModeToggle.attachTo(container);
+
       const mockSetTheme = vi.mocked(themeManager.setTheme);
       mockSetTheme.mockReturnValue(themes.default.dark);
 
       darkModeToggle.toggle();
 
       const label = container.querySelector('.mdv-dark-toggle-label');
-      expect(label?.textContent).toBe('Dark Mode');
+      expect(label?.textContent?.trim()).toBe('Dark Mode');
     });
 
     it('should update icon when toggled', () => {

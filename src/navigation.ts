@@ -70,10 +70,10 @@ function renderGroup(
             ? `
           <button class="mdv-nav-category collapsible"
                   type="button"
-                  aria-expanded="true"
+                  aria-expanded="false"
                   aria-controls="${categoryId}">
             ${group.category}
-            <span class="mdv-collapse-icon" aria-hidden="true">▼</span>
+            <span class="mdv-collapse-icon" aria-hidden="true">▶</span>
           </button>
         `
             : `
@@ -85,7 +85,7 @@ function renderGroup(
       `
           : ''
       }
-      <ul class="mdv-nav-sublist" role="list" ${isCollapsible ? `id="${categoryId}"` : ''}>
+      <ul class="mdv-nav-sublist" role="list" ${isCollapsible ? `id="${categoryId}" hidden` : ''}>
         ${group.documents.map(doc => renderDocument(doc, currentDoc, options)).join('')}
       </ul>
     </li>

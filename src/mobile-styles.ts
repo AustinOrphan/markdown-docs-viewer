@@ -173,6 +173,10 @@ export function generateMediaQueries(): string {
         height: auto;
       }
       
+      .mdv-sidebar-header {
+        display: block; /* Show on desktop */
+      }
+      
       .mdv-content {
         margin-left: var(--mdv-nav-width);
       }

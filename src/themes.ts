@@ -454,12 +454,12 @@ function createTheme(baseName: string, mode: 'light' | 'dark'): Theme {
 }
 
 // Helper function to get theme name without mode suffix
-function getThemeBaseName(themeName: string): string {
+export function getThemeBaseName(themeName: string): string {
   return themeName.replace(/-(light|dark)$/, '');
 }
 
 // Helper function to get theme mode from name
-function getThemeMode(themeName: string): 'light' | 'dark' {
+export function getThemeMode(themeName: string): 'light' | 'dark' {
   return themeName.endsWith('-dark') ? 'dark' : 'light';
 }
 
@@ -560,3 +560,19 @@ export const themes = Object.keys(baseThemes).reduce((acc, baseName) => {
   };
   return acc;
 }, {} as ThemesExport);
+
+// Export utility functions for getting all theme variants
+export function getAllThemeVariants(): Theme[] {
+  const allThemes: Theme[] = [];
+  Object.keys(themes).forEach(baseName => {
+    const themeGroup = themes[baseName as keyof typeof themes];
+    allThemes.push(themeGroup.light);
+    allThemes.push(themeGroup.dark);
+  });
+  return allThemes;
+}
+
+// Export utility function for getting available theme names
+export function getAvailableThemeNames(): string[] {
+  return Object.keys(themes);
+}

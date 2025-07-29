@@ -1,10 +1,36 @@
 # Browser Usage Guide
 
-This guide shows you how to use the Markdown Documentation Viewer in different browser environments.
+This guide shows you how to use the Markdown Documentation Viewer in browser environments using git-based distribution.
 
-## Quick Start
+## Installation Method (Git Clone/Submodule)
 
-### Option 1: CDN (Recommended for beginners)
+The library is distributed via git clone or submodule - no NPM packages required:
+
+```bash
+# Clone the repository
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+
+# Install dependencies
+npm install
+
+# Build the library
+npm run build
+
+# The built files will be in dist/
+# - dist/index.umd.cjs for browser usage
+# - dist/index.es.js for ES modules
+```
+
+Then reference the built file in your HTML:
+
+```html
+<script src="path/to/your/built/index.umd.cjs"></script>
+```
+
+## Usage Methods
+
+### Option 1: UMD Build (Browser Scripts)
 
 ```html
 <!DOCTYPE html>
@@ -23,16 +49,16 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
 
-    <!-- Load the viewer -->
-    <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+    <!-- Load your built viewer -->
+    <script src="path/to/your/built/index.umd.cjs"></script>
 
     <script>
-      const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+      const { createViewer, themes } = window.MarkdownDocsViewer;
 
-      const viewer = new MarkdownDocsViewer({
+      const viewer = createViewer({
         container: '#docs',
         title: 'My Documentation',
-        theme: defaultTheme,
+        theme: themes.default.light,
         source: {
           type: 'local',
           documents: [
@@ -49,17 +75,16 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
 </html>
 ```
 
-### Option 2: ES Modules (Modern browsers)
+### Option 2: ES Modules
 
 ```html
 <script type="module">
-  import {
-    MarkdownDocsViewer,
-    defaultTheme,
-  } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+  // Import from your built ES module
+  import { createViewer, themes } from './path/to/your/built/index.es.js';
 
-  const viewer = new MarkdownDocsViewer({
+  const viewer = createViewer({
     container: '#docs',
+    theme: themes.default.light,
     source: {
       type: 'local',
       documents: [
@@ -70,19 +95,21 @@ This guide shows you how to use the Markdown Documentation Viewer in different b
 </script>
 ```
 
-### Option 3: NPM + Bundler (Webpack, Vite, etc.)
+### Option 3: With Build Tools
 
 ```bash
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Install peer dependencies
+npm install marked marked-highlight highlight.js
 ```
 
 ```javascript
-import { MarkdownDocsViewer, defaultTheme } from '@austinorphan/markdown-docs-viewer';
+// Import from your local build
+import { createViewer, themes } from './path/to/markdown-docs-viewer/dist/index.es.js';
 import 'highlight.js/styles/github.css'; // Optional styles
 
-const viewer = new MarkdownDocsViewer({
+const viewer = createViewer({
   container: '#docs',
-  theme: defaultTheme,
+  theme: themes.default.light,
   source: {
     type: 'local',
     documents: [
@@ -138,7 +165,7 @@ The viewer handles missing dependencies gracefully:
 
 ```javascript
 try {
-  const viewer = new MarkdownDocsViewer({
+  const viewer = createViewer({
     container: '#docs',
     source: {
       /* config */
@@ -166,7 +193,8 @@ try {
 <!-- Instead of require(), use UMD -->
 <script src="path/to/index.umd.cjs"></script>
 <script>
-  const viewer = new MarkdownDocsViewer(config);
+  const { createViewer } = window.MarkdownDocsViewer;
+  const viewer = createViewer(config);
 </script>
 
 <!-- Or use ES modules -->
@@ -198,7 +226,8 @@ try {
   // Make sure container exists before creating viewer
   const container = document.getElementById('docs');
   if (container) {
-    const viewer = new MarkdownDocsViewer({
+    const { createViewer } = window.MarkdownDocsViewer;
+    const viewer = createViewer({
       container: '#docs',
       // ...
     });
@@ -236,8 +265,8 @@ Here's a complete, working example:
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/css.min.js"></script>
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/json.min.js"></script>
 
-    <!-- Viewer -->
-    <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script>
+    <!-- Your built viewer -->
+    <script src="path/to/your/built/index.umd.cjs"></script>
 
     <script>
       function showError(message) {
@@ -263,12 +292,12 @@ Here's a complete, working example:
         hideError();
 
         try {
-          const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
+          const { createViewer, themes } = window.MarkdownDocsViewer;
 
-          const viewer = new MarkdownDocsViewer({
+          const viewer = createViewer({
             container: '#docs-container',
             title: 'My Documentation',
-            theme: defaultTheme,
+            theme: themes.default.light,
             source: {
               type: 'local',
               documents: [
@@ -291,7 +320,8 @@ This is a complete example of the Markdown Documentation Viewer running in a bro
 ## Code Example
 
 \`\`\`javascript
-const viewer = new MarkdownDocsViewer({
+const { createViewer } = window.MarkdownDocsViewer;
+const viewer = createViewer({
     container: '#docs',
     source: {
         type: 'local',
@@ -318,7 +348,8 @@ Main class for creating documentation viewers.
 ### Constructor
 
 \`\`\`typescript
-new MarkdownDocsViewer(config: DocumentationConfig)
+import { createViewer } from '@austinorphan/markdown-docs-viewer';
+createViewer(config: DocumentationConfig)
 \`\`\`
 
 ### Methods
@@ -372,7 +403,7 @@ viewer.destroy();
           let isDark = false;
           themeSwitcher.addEventListener('click', () => {
             isDark = !isDark;
-            viewer.setTheme(isDark ? darkTheme : defaultTheme);
+            viewer.setTheme(isDark ? themes.default.dark : themes.default.light);
             themeSwitcher.textContent = isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme';
           });
 
