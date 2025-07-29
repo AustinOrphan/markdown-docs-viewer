@@ -19,7 +19,38 @@ A powerful, themeable, and highly configurable markdown documentation viewer des
 
 ## 🚀 Quick Start
 
-### Method 1: Git Clone (Direct Usage)
+### Method 1: Zero Configuration (Simplest)
+
+Download the zero-config bundle and use it immediately:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Documentation</title>
+  </head>
+  <body>
+    <div id="docs"></div>
+
+    <!-- Load dependencies from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+
+    <!-- Load the zero-config viewer -->
+    <script src="zero-config.umd.cjs"></script>
+
+    <script>
+      // That's it! Automatically discovers docs in ./docs/ folder
+      MarkdownDocsViewer.init();
+    </script>
+  </body>
+</html>
+```
+
+Place your markdown files in a `docs/` folder and they'll be automatically discovered and displayed!
+
+### Method 2: Git Clone (Direct Usage)
 
 ```bash
 # Clone the repository
@@ -73,7 +104,7 @@ Then copy `dist/index.umd.cjs` to your project and use it:
 </html>
 ```
 
-### Method 2: Git Submodule (Recommended for Projects)
+### Method 3: Git Submodule (Recommended for Projects)
 
 This is how [training-science-docs](https://github.com/AustinOrphan/training-science-docs) uses it:
 
@@ -96,6 +127,48 @@ cd ..
   const { createViewer, themes } = window.MarkdownDocsViewer;
   // ... use as above
 </script>
+```
+
+## 📦 Zero Configuration API
+
+The zero-config bundle provides a simple API for drop-in usage:
+
+```javascript
+// Initialize with auto-discovery
+MarkdownDocsViewer.init({
+  title: 'My Docs', // Optional: Override title
+  theme: 'github-dark', // Optional: Set theme
+  docsPath: './documentation', // Optional: Change docs folder (default: ./docs)
+  configPath: './docs-config.json', // Optional: Use config file
+});
+
+// Runtime controls
+MarkdownDocsViewer.setTheme('dracula');
+MarkdownDocsViewer.reload();
+MarkdownDocsViewer.getAvailableThemes();
+```
+
+### Configuration File (Optional)
+
+Create a `docs-config.json` file for persistent configuration:
+
+```json
+{
+  "title": "My Documentation",
+  "theme": "material-light",
+  "source": {
+    "path": "./docs",
+    "exclude": ["**/drafts/**", "**/_*"]
+  },
+  "navigation": {
+    "autoSort": true,
+    "showCategories": true
+  },
+  "search": {
+    "enabled": true,
+    "fuzzySearch": true
+  }
+}
 ```
 
 ## 🎨 Built-in Themes

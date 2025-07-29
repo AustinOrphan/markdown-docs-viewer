@@ -4,7 +4,6 @@ import { Theme } from './types';
 export interface DarkModeToggleOptions {
   position?: 'header' | 'footer' | 'floating';
   showLabel?: boolean;
-  compact?: boolean;
   lightThemeName?: string;
   darkThemeName?: string;
   onToggle?: (isDark: boolean, theme: Theme) => void;
@@ -24,7 +23,6 @@ export class DarkModeToggle {
     this.options = {
       position: 'header',
       showLabel: false,
-      compact: false,
       lightThemeName: 'default-light',
       darkThemeName: 'default-dark',
       ...options,
@@ -39,9 +37,9 @@ export class DarkModeToggle {
     const toggleId = `mdv-dark-toggle-${++DarkModeToggle.instanceCounter}`;
 
     return `
-      <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''} ${this.options.compact ? 'mdv-dark-toggle-compact' : ''}">
+      <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''}">
         ${
-          this.options.showLabel && !this.options.compact
+          this.options.showLabel
             ? `
           <span class="mdv-dark-toggle-label">
             ${this.isDark ? 'Dark' : 'Light'} Mode
@@ -108,13 +106,24 @@ export class DarkModeToggle {
     this.themeChangeHandler = (e: Event) => {
       const customEvent = e as CustomEvent;
       const themeName = customEvent.detail?.theme?.name;
-      const isDark = themeName === this.options.darkThemeName;
+      const isDark = themeName?.includes('-dark') || false;
       if (isDark !== this.isDark) {
         this.isDark = isDark;
         this.updateUI();
       }
     };
     document.addEventListener('mdv-theme-changed', this.themeChangeHandler);
+
+    // Listen for dark mode toggle events from other instances
+    const darkModeToggleHandler = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const isDark = customEvent.detail?.isDark;
+      if (isDark !== undefined && isDark !== this.isDark) {
+        this.isDark = isDark;
+        this.updateUI();
+      }
+    };
+    document.addEventListener('mdv-dark-mode-toggled', darkModeToggleHandler);
   }
 
   public toggle(): void {
@@ -214,9 +223,6 @@ export class DarkModeToggle {
         z-index: var(--mdv-z-fixed, 1030);
       }
       
-      .mdv-dark-toggle-compact {
-        gap: 8px;
-      }
       
       .mdv-dark-toggle-label {
         font-size: 0.875rem;
