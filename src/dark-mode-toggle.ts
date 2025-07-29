@@ -23,7 +23,7 @@ export class DarkModeToggle {
     this.themeManager = themeManager;
     this.options = {
       position: 'header',
-      showLabel: true,
+      showLabel: false,
       compact: false,
       lightThemeName: 'default-light',
       darkThemeName: 'default-dark',
