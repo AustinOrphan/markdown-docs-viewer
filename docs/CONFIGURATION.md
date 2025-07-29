@@ -173,13 +173,20 @@ const viewer = createViewer({
 **Available Built-in Themes:**
 
 ```javascript
-themes.github.light / themes.github.dark;
-themes.material.light / themes.material.dark;
-themes.nord.light / themes.nord.dark;
-themes.solarized.light / themes.solarized.dark;
+// Light themes
+themes.github.light;
+themes.material.light;
+themes.nord.light;
+themes.solarized.light;
+themes.atomOne.light;
+
+// Dark themes
+themes.github.dark;
+themes.material.dark;
+themes.nord.dark;
+themes.solarized.dark;
 themes.dracula.dark;
 themes.monokai.dark;
-themes.atomOne.light;
 ```
 
 ### Custom Themes

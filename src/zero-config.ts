@@ -8,6 +8,7 @@ import { MarkdownDocsViewer } from './viewer';
 import { ConfigLoader } from './config-loader';
 import { AutoDiscovery } from './auto-discovery';
 import { themes } from './themes';
+import { escapeHtml } from './utils';
 
 export interface ZeroConfigOptions {
   container?: string | HTMLElement;
@@ -163,7 +164,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
           
           <details style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 0.5rem;">
             <summary style="cursor: pointer; font-weight: 600;">🔍 Technical Details</summary>
-            <pre style="margin-top: 1rem; font-size: 0.875rem; white-space: pre-wrap;">${error}</pre>
+            <pre style="margin-top: 1rem; font-size: 0.875rem; white-space: pre-wrap;">${escapeHtml((error as Error).stack || String(error))}</pre>
           </details>
         </div>
       `;

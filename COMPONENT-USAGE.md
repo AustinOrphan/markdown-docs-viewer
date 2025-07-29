@@ -259,9 +259,10 @@ MarkdownDocsViewer.init({
    ```html
    <meta
      http-equiv="Content-Security-Policy"
-     content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net"
+     content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';"
    />
    ```
+   Note: The 'unsafe-inline' directives are required for the viewer's dynamic styling and initialization. For enhanced security in production, consider using CSP nonces or hashes instead.
 
 ## 🐛 Troubleshooting
 

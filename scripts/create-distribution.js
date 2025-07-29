@@ -53,7 +53,7 @@ async function createDistribution() {
   // Copy example docs
   const exampleDocs = [
     { src: 'examples/docs/README.md', dest: 'docs/README.md' },
-    { src: 'examples/docs/getting-started.md', dest: 'docs/getting-started.md' },
+    { src: 'examples/getting-started.md', dest: 'docs/getting-started.md' },
   ];
 
   for (const doc of exampleDocs) {
