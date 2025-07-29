@@ -176,7 +176,7 @@ jobs:
           npm install ../*.tgz
 
           # Test that the package is importable
-          node -e "const viewer = require('@austinorphan/markdown-docs-viewer'); console.log('Package imported successfully');"
+          node -e "const viewer = require('markdown-docs-viewer'); console.log('Package imported successfully');"
 
       - name: Upload package
         uses: actions/upload-artifact@v4
