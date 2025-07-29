@@ -428,6 +428,10 @@ export class ThemeSwitcher {
   }
 
   private closeDropdown(): void {
+    // Return focus to trigger button BEFORE setting aria-hidden to avoid accessibility issues
+    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
+    trigger?.focus();
+
     this.isOpen = false;
     this.updateDropdownState();
 
@@ -443,10 +447,6 @@ export class ThemeSwitcher {
     if (this.documentClickHandler) {
       document.removeEventListener('click', this.documentClickHandler);
     }
-
-    // Return focus to trigger button to avoid aria-hidden issues
-    const trigger = this.container?.querySelector('.mdv-theme-trigger') as HTMLElement;
-    trigger?.focus();
   }
 
   private updateDropdownState(): void {
