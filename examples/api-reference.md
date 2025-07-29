@@ -45,7 +45,7 @@ Changes the current theme.
 **Example:**
 
 ```javascript
-import { darkTheme } from '@austinorphan/markdown-docs-viewer';
+import { darkTheme } from '../dist/index.es.js';
 viewer.setTheme(darkTheme);
 ```
 
@@ -336,7 +336,7 @@ Factory function for creating viewer instances.
 **Example:**
 
 ```javascript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer } from '../dist/index.es.js';
 
 const viewer = createViewer({
     container: '#docs',
@@ -364,7 +364,7 @@ Parse markdown content to HTML.
 **Example:**
 
 ```javascript
-import { parseMarkdown } from '@austinorphan/markdown-docs-viewer';
+import { parseMarkdown } from '../dist/index.es.js';
 
 const html = parseMarkdown('# Hello World\n\nThis is **bold** text.');
 ```
@@ -387,7 +387,7 @@ Helper for loading documentation from GitHub repositories.
 **Example:**
 
 ```javascript
-import { loadGitHubDocs } from '@austinorphan/markdown-docs-viewer';
+import { loadGitHubDocs } from '../dist/index.es.js';
 
 const docs = await loadGitHubDocs('microsoft/typescript', {
   branch: 'main',
@@ -499,12 +499,7 @@ try {
 The library is written in TypeScript and provides full type definitions:
 
 ```typescript
-import {
-  MarkdownDocsViewer,
-  DocumentationConfig,
-  Document,
-  Theme,
-} from '@austinorphan/markdown-docs-viewer';
+import { MarkdownDocsViewer, DocumentationConfig, Document, Theme } from '../dist/index.es.js';
 
 const config: DocumentationConfig = {
   container: '#docs',
@@ -564,7 +559,7 @@ const viewer: MarkdownDocsViewer = new MarkdownDocsViewer(config);
 
 ```javascript
 // Dynamically import the viewer
-const { MarkdownDocsViewer } = await import('@austinorphan/markdown-docs-viewer');
+const { MarkdownDocsViewer } = await import('../dist/index.es.js');
 ```
 
 ## Migration Guide

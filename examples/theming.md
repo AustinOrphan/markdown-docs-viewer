@@ -9,7 +9,7 @@ The viewer comes with carefully crafted built-in themes:
 ### Default (Light) Theme
 
 ```javascript
-import { MarkdownDocsViewer, defaultTheme } from '@austinorphan/markdown-docs-viewer';
+import { MarkdownDocsViewer, defaultTheme } from '../dist/index.es.js';
 
 const viewer = new MarkdownDocsViewer({
   theme: defaultTheme,
@@ -20,7 +20,7 @@ const viewer = new MarkdownDocsViewer({
 ### Dark Theme
 
 ```javascript
-import { MarkdownDocsViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
+import { MarkdownDocsViewer, darkTheme } from '../dist/index.es.js';
 
 const viewer = new MarkdownDocsViewer({
   theme: darkTheme,

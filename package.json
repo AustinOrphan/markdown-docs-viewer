@@ -1,6 +1,6 @@
 {
-  "name": "@austinorphan/markdown-docs-viewer",
-  "version": "1.0.0",
+  "name": "markdown-docs-viewer",
+  "version": "0.1.0",
   "description": "A generic, themeable markdown documentation viewer",
   "type": "module",
   "main": "dist/index.umd.cjs",

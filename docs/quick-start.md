@@ -97,44 +97,30 @@ Happy documenting! 🚀
         content: `
 # Installation Guide
 
-## Package Managers
+## Building from Source
 
-### npm (Not Yet Available)
+This library is distributed via Git. Build it locally:
+
 \`\`\`bash
-# Not yet published to NPM
-# npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
-
-# Build from source instead:
+# Clone the repository
 git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
 cd markdown-docs-viewer
 npm install
 npm run build
 \`\`\`
 
-### yarn (Not Yet Available)
-\`\`\`bash
-# Not yet published to NPM
-# yarn add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+## Using the Built Library
 
-# Use build from source method above
-\`\`\`
-
-### pnpm (Not Yet Available)
-\`\`\`bash
-# Not yet published to NPM
-# pnpm add @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
-
-# Use build from source method above
-\`\`\`
-
-## CDN (Not Yet Available)
-
-For quick prototyping, use your locally built file:
+After building, use the generated files from the `dist/` directory:
 
 \`\`\`html
-<!-- Not yet available on CDN -->
-<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
-<script src="path/to/your/built/index.umd.cjs"></script>
+<!-- For browser usage -->
+<script src="path/to/dist/index.umd.cjs"></script>
+
+<!-- For ES modules -->
+<script type="module">
+  import { createViewer, themes } from './path/to/dist/index.es.js';
+</script>
 \`\`\`
 
 ## Next Steps
@@ -602,9 +588,8 @@ document.addEventListener('DOMContentLoaded', () => {
 **"require is not defined" in browser**
 
 ```html
-<!-- Use your locally built UMD file -->
-<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script> -->
-<script src="path/to/your/built/index.umd.cjs"></script>
+<!-- Use the UMD build -->
+<script src="path/to/dist/index.umd.cjs"></script>
 ```
 
 **Syntax highlighting not working**

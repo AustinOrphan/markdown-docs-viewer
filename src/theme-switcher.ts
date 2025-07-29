@@ -1,6 +1,7 @@
 import { Theme } from './types';
 import { ThemeManager, ThemePreset } from './theme-manager';
 import { ThemeBuilder } from './theme-builder';
+import { DarkModeToggle } from './dark-mode-toggle';
 import { escapeHtmlAttribute } from './utils';
 import { getThemeBaseName, getThemeMode } from './themes';
 
@@ -35,6 +36,7 @@ export class ThemeSwitcher {
   private container: HTMLElement | null = null;
   private isOpen: boolean = false;
   private themeBuilder: ThemeBuilder | null = null;
+  private darkModeToggle: DarkModeToggle;
 
   constructor(themeManager: ThemeManager, options: ThemeSwitcherOptions = {}) {
     this.themeManager = themeManager;
@@ -48,6 +50,19 @@ export class ThemeSwitcher {
       customThemeAccess: 'everyone',
       ...options,
     };
+
+    // Initialize dark mode toggle
+    this.darkModeToggle = new DarkModeToggle(themeManager, {
+      showLabel: false, // Don't show label inside dropdown
+      onToggle: (isDark, theme) => {
+        if (this.options.onThemeChange) {
+          this.options.onThemeChange(theme);
+        }
+        if (this.options.onModeChange) {
+          this.options.onModeChange(isDark ? 'dark' : 'light');
+        }
+      },
+    });
   }
 
   public render(): string {
@@ -120,20 +135,8 @@ export class ThemeSwitcher {
     return true;
   }
 
-  private renderDarkModeToggle(currentMode: 'light' | 'dark'): string {
-    return `
-      <button 
-        class="mdv-dark-mode-toggle ${currentMode}" 
-        aria-label="Toggle ${currentMode === 'light' ? 'dark' : 'light'} mode"
-      >
-        <div class="mdv-dark-mode-toggle-track">
-          <div class="mdv-dark-mode-toggle-thumb">
-            <span class="mdv-dark-mode-icon light-icon">☀️</span>
-            <span class="mdv-dark-mode-icon dark-icon">🌙</span>
-          </div>
-        </div>
-      </button>
-    `;
+  private renderDarkModeToggle(_currentMode: 'light' | 'dark'): string {
+    return this.darkModeToggle.render();
   }
 
   private groupThemesByBaseName(themes: ThemePreset[]): Record<string, ThemePreset[]> {
@@ -241,6 +244,12 @@ export class ThemeSwitcher {
   private setupEventListeners(): void {
     if (!this.container) return;
 
+    // Attach dark mode toggle to its container
+    const darkModeContainer = this.container.querySelector('.mdv-dark-mode-toggle');
+    if (darkModeContainer) {
+      this.darkModeToggle.attachTo(darkModeContainer as HTMLElement);
+    }
+
     // Toggle dropdown
     const trigger = this.container.querySelector('.mdv-theme-trigger');
     trigger?.addEventListener('click', e => {
@@ -258,13 +267,7 @@ export class ThemeSwitcher {
         return;
       }
 
-      // Dark mode toggle
-      const darkModeToggle = target.closest('.mdv-dark-mode-toggle') as HTMLElement;
-      if (darkModeToggle) {
-        e.stopPropagation();
-        this.toggleDarkMode();
-        return;
-      }
+      // Dark mode toggle is handled by DarkModeToggle instance
     });
 
     // Custom theme button

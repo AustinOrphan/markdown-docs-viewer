@@ -7,7 +7,7 @@ Comprehensive guide to configuring the Markdown Documentation Viewer.
 The simplest configuration requires only a container and document source:
 
 ```typescript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -149,7 +149,7 @@ Organize documents with categories and tags:
 **NPM Usage:**
 
 ```typescript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -187,7 +187,7 @@ themes.atomOne.light;
 Define custom themes using the theme builder:
 
 ```typescript
-import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+import { createCustomTheme } from './dist/index.es.js';
 
 const corporateTheme = createCustomTheme({
   name: 'corporate',
@@ -389,7 +389,7 @@ For simple documentation:
 ## Complete Configuration Example
 
 ```typescript
-import { createViewer, themes, createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes, createCustomTheme } from './dist/index.es.js';
 
 // Create a custom theme
 const corporateTheme = createCustomTheme({
@@ -566,7 +566,7 @@ import {
   Theme,
   SearchOptions,
   NavigationOptions,
-} from '@austinorphan/markdown-docs-viewer';
+} from './dist/index.es.js';
 
 const config: DocumentationConfig = {
   container: '#docs',

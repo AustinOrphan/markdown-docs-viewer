@@ -103,7 +103,7 @@
 
 &lt;!-- Load and use the viewer --&gt;
 &lt;script type="module"&gt;
-import { createViewer, themes } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+import { createViewer, themes } from '../dist/index.es.js';
 
 const viewer = createViewer({
     container: '#docs-container',
@@ -148,7 +148,7 @@ ${TRIPLE_BACKTICK}
 &lt;script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Load the viewer UMD build --&gt;
-&lt;script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"&gt;&lt;/script&gt;
+&lt;script src="../dist/index.umd.cjs"&gt;&lt;/script&gt;
 
 &lt;div id="docs-container"&gt;&lt;/div&gt;
 
@@ -179,10 +179,14 @@ const viewer = createViewer({
       <p>For build tools like Webpack, Vite, or Rollup:</p>
 
       <pre><code># Install dependencies
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Clone and build the library
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
 
 # In your JavaScript/TypeScript file:
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 import 'highlight.js/styles/github.css'; // Optional: add syntax highlighting styles
 
 const viewer = createViewer({
@@ -375,7 +379,7 @@ This viewer was loaded using ES modules approach.
 - Better for bundlers
 
 ${TRIPLE_BACKTICK}javascript
-import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 ${TRIPLE_BACKTICK}
                                 `,
                 },

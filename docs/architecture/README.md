@@ -240,19 +240,20 @@ dist/
 1. **ES Modules** (Recommended)
 
    ```javascript
-   import { createViewer } from '@austinorphan/markdown-docs-viewer';
+   import { createViewer } from '../../dist/index.es.js';
    ```
 
 2. **CommonJS** (Node.js/Legacy)
 
    ```javascript
-   const { createViewer } = require('@austinorphan/markdown-docs-viewer');
+   // CommonJS: Build the library and require the built file
+   const { createViewer } = require('../../dist/index.umd.cjs');
    ```
 
 3. **Script Tag** (CDN - Not Yet Available)
    ```html
    <!-- Not yet available on CDN -->
-   <!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+   <!-- This library is distributed via Git, not CDN -->
    <!-- Use your locally built file -->
    <script src="path/to/your/built/index.umd.cjs"></script>
    ```

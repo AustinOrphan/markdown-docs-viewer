@@ -348,7 +348,7 @@ Main class for creating documentation viewers.
 ### Constructor
 
 \`\`\`typescript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer } from './dist/index.es.js';
 createViewer(config: DocumentationConfig)
 \`\`\`
 

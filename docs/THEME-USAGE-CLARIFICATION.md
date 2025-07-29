@@ -19,7 +19,7 @@ For initial configuration, **only theme objects are supported** regardless of wh
 
 ```html
 <!-- Not yet available on CDN -->
-<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+<!-- This library is distributed via Git, not CDN -->
 <script src="path/to/your/built/index.umd.cjs"></script>
 
 <script>
@@ -49,7 +49,7 @@ For initial configuration, **only theme objects are supported** regardless of wh
 
 ```javascript
 // Not yet available on NPM
-// import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+// Import from local build:
 
 // Import from your local build:
 import { createViewer, themes } from './path/to/built/index.es.js';
@@ -122,7 +122,7 @@ Custom themes should always be created as objects:
 
 ```javascript
 // Not yet available on NPM
-// import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+// Import from local build:
 
 // Import from your local build:
 import { createCustomTheme } from './path/to/built/index.es.js';
