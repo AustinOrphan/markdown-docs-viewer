@@ -3,6 +3,8 @@
 [![Build Status](https://github.com/AustinOrphan/markdown-docs-viewer/workflows/CI/badge.svg)](https://github.com/AustinOrphan/markdown-docs-viewer/actions)
 [![Coverage Status](https://codecov.io/gh/AustinOrphan/markdown-docs-viewer/branch/main/graph/badge.svg)](https://codecov.io/gh/AustinOrphan/markdown-docs-viewer)
 
+<!-- Version 0.1.0 - Git-based distribution -->
+
 A powerful, themeable, and highly configurable markdown documentation viewer designed for modern web applications. Transform your markdown files into beautiful, searchable documentation sites with minimal setup.
 
 ## ✨ Key Features
