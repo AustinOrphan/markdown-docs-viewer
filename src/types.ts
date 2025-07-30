@@ -403,7 +403,7 @@ export function validateConfig(config: DocumentationConfig): void {
     let hostname: string | undefined;
     try {
       hostname = new URL(config.source.baseUrl!).hostname;
-    } catch (e) {
+    } catch {
       hostname = undefined;
     }
     const allowedHosts = ['github.com', 'www.github.com'];
