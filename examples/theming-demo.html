@@ -587,11 +587,18 @@ ${TRIPLE_BACKTICK}
         console.log('Theme demo initialized successfully');
       } catch (error) {
         console.error('Failed to create viewer:', error);
-        document.getElementById('docs-container').innerHTML = `
-                <div style="padding: 20px; background: #fee; color: #c00;">
-                    <strong>Error:</strong> ${error.message}
-                </div>
-            `;
+        // Create DOM structure safely without innerHTML
+        const container = document.getElementById('docs-container');
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'padding: 20px; background: #fee; color: #c00;';
+
+        const errorStrong = document.createElement('strong');
+        errorStrong.textContent = 'Error: ';
+        errorDiv.appendChild(errorStrong);
+        errorDiv.appendChild(document.createTextNode(error.message));
+
+        container.innerHTML = ''; // Clear container first
+        container.appendChild(errorDiv);
       }
 
       function showThemeInfo(message) {

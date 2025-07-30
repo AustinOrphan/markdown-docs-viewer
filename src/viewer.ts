@@ -1,7 +1,7 @@
 import { marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
-import { DocumentationConfig, Document, ViewerState, Theme } from './types';
+import { DocumentationConfig, Document, ViewerState, Theme, validateConfig } from './types';
 import { themes } from './themes';
 import { generateStyles } from './styles';
 import { createNavigation } from './navigation';
@@ -18,7 +18,7 @@ import {
   ConsoleErrorLogger,
   DEFAULT_RETRY_CONFIG,
 } from './errors';
-import { announceToScreenReader } from './utils';
+import { announceToScreenReader, escapeHtml } from './utils';
 import {
   generateMobileCSS,
   addViewportMeta,
@@ -59,6 +59,9 @@ export class MarkdownDocsViewer {
       this.errorBoundary = new ErrorBoundary(error => {
         this.handleError(error);
       });
+
+      // Validate configuration early
+      validateConfig(config);
 
       // Validate and set up configuration
       this.config = this.validateAndMergeConfig(config);
@@ -669,7 +672,7 @@ export class MarkdownDocsViewer {
         errorDetails = `
           <details class="mdv-error-details">
             <summary>Error Details</summary>
-            <pre><code>${JSON.stringify(error.toJSON(), null, 2)}</code></pre>
+            <pre><code>${escapeHtml(JSON.stringify(error.toJSON(), null, 2))}</code></pre>
           </details>
         `;
       }
@@ -678,7 +681,7 @@ export class MarkdownDocsViewer {
         errorDetails = `
           <details class="mdv-error-details">
             <summary>Error Details</summary>
-            <pre><code>${error.stack || error.message}</code></pre>
+            <pre><code>${escapeHtml(error.stack || error.message)}</code></pre>
           </details>
         `;
       }
@@ -689,7 +692,7 @@ export class MarkdownDocsViewer {
         <div class="mdv-error">
           <div class="mdv-error-icon">⚠️</div>
           <h2>Oops! Something went wrong</h2>
-          <p class="mdv-error-message">${errorMessage}</p>
+          <p class="mdv-error-message">${escapeHtml(errorMessage)}</p>
           ${retryButton}
           ${errorDetails}
         </div>

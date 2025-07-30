@@ -18,6 +18,9 @@ vi.mock('../src/config-loader');
 vi.mock('../src/auto-discovery');
 vi.mock('../src/viewer');
 
+// Import the mocked createViewer after mocking
+import { createViewer } from '../src/factory';
+
 describe('Zero Config API', () => {
   let mockConfigLoader: any;
   let mockAutoDiscovery: any;
@@ -63,9 +66,7 @@ describe('Zero Config API', () => {
 
     // Mock createViewer
     mockCreateViewer = vi.fn().mockReturnValue(mockViewer);
-    vi.doMock('../src/factory', () => ({
-      createViewer: mockCreateViewer,
-    }));
+    vi.mocked(createViewer).mockImplementation(mockCreateViewer);
 
     // Mock console methods
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -73,10 +74,18 @@ describe('Zero Config API', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    // Reset global viewer by calling getViewer and destroying if present
+    const viewer = getViewer();
+    if (viewer) {
+      await viewer.destroy();
+    }
+
+    // Reset the module to clear global state
+    vi.resetModules();
+
     document.body.innerHTML = '';
     vi.clearAllMocks();
-    vi.resetModules();
   });
 
   describe('init', () => {
@@ -120,12 +129,24 @@ describe('Zero Config API', () => {
       expect(viewer).toBe(mockViewer);
     });
 
-    it('should throw error for invalid container string', async () => {
+    it('should return error viewer for invalid container string', async () => {
       const options: ZeroConfigOptions = {
         container: '#nonexistent',
       };
 
-      await expect(init(options)).rejects.toThrow('Container element "#nonexistent" not found');
+      const viewer = await init(options);
+      expect(viewer).toBeDefined();
+      expect(viewer.destroy).toBeDefined();
+      expect(viewer.setTheme).toBeDefined();
+
+      // Should log the container error
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to initialize'),
+        expect.objectContaining({ message: 'Container element "#nonexistent" not found' })
+      );
+
+      // Since the error handling fallback tried to find a container but the querySelector was mocked to return null,
+      // no HTML would be injected. The important thing is that an error viewer was returned instead of throwing.
     });
 
     it('should auto-detect container when none provided', async () => {
@@ -152,7 +173,7 @@ describe('Zero Config API', () => {
 
       await init();
 
-      // Should parse theme name and mode  
+      // Should parse theme name and mode
       expect(mockCreateViewer).toHaveBeenCalledWith(
         expect.objectContaining({
           theme: themes.github.dark,
@@ -176,33 +197,37 @@ describe('Zero Config API', () => {
 
       await init();
 
-      expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('No documents found')
-      );
+      expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('No documents found'));
     });
 
     it('should handle initialization errors gracefully', async () => {
       const error = new Error('Test error');
       mockConfigLoader.loadConfig.mockRejectedValue(error);
 
-      await expect(init()).rejects.toThrow(error);
+      const viewer = await init();
+      expect(viewer).toBeDefined();
+      expect(viewer.destroy).toBeDefined();
+      expect(viewer.setTheme).toBeDefined();
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to initialize'),
+        expect.stringContaining('Failed to load configuration:'),
         error
       );
     });
 
     it('should display error message in container on failure', async () => {
       const error = new Error('Test error');
-      mockConfigLoader.loadConfig.mockRejectedValue(error);
+      // Mock createViewer to throw an error to trigger viewer creation error display
+      mockCreateViewer.mockImplementation(() => {
+        throw error;
+      });
 
-      try {
-        await init();
-      } catch {
-        // Expected to throw
-      }
+      const viewer = await init();
+      expect(viewer).toBeDefined();
+      expect(viewer.destroy).toBeDefined();
+      expect(viewer.setTheme).toBeDefined();
 
-      expect(mockContainer.innerHTML).toContain('Setup Required');
+      // Error viewer should be created and error should be displayed
+      expect(mockContainer.innerHTML).toContain('Viewer Creation Failed');
       expect(mockContainer.innerHTML).toContain('Test error');
     });
 
@@ -211,25 +236,31 @@ describe('Zero Config API', () => {
       document.body.appendChild(customContainer);
 
       const error = new Error('Test error');
-      mockConfigLoader.loadConfig.mockRejectedValue(error);
+      // Mock createViewer to throw an error to trigger viewer creation error display
+      mockCreateViewer.mockImplementation(() => {
+        throw error;
+      });
 
       const options: ZeroConfigOptions = {
         container: customContainer,
       };
 
-      try {
-        await init(options);
-      } catch {
-        // Expected to throw
-      }
+      const viewer = await init(options);
+      expect(viewer).toBeDefined();
+      expect(viewer.destroy).toBeDefined();
+      expect(viewer.setTheme).toBeDefined();
 
-      expect(customContainer.innerHTML).toContain('Setup Required');
+      // Error should be displayed in custom container
+      expect(customContainer.innerHTML).toContain('Viewer Creation Failed');
     });
   });
 
   describe('getViewer', () => {
-    it('should return null when no viewer initialized', () => {
-      expect(getViewer()).toBeNull();
+    it('should return null when no viewer initialized', async () => {
+      // Reset module state to ensure clean test
+      await vi.resetModules();
+      const { getViewer: freshGetViewer } = await import('../src/zero-config');
+      expect(freshGetViewer()).toBeNull();
     });
 
     it('should return viewer after initialization', async () => {
@@ -271,12 +302,14 @@ describe('Zero Config API', () => {
   });
 
   describe('setTheme', () => {
-    it('should warn when no viewer initialized', () => {
-      setTheme('github-dark');
+    it('should warn when no viewer initialized', async () => {
+      // Reset module state to ensure clean test
+      await vi.resetModules();
+      const { setTheme: freshSetTheme } = await import('../src/zero-config');
 
-      expect(console.warn).toHaveBeenCalledWith(
-        'No viewer instance found. Call init() first.'
-      );
+      freshSetTheme('github-dark');
+
+      expect(console.warn).toHaveBeenCalledWith('No viewer instance found. Call init() first.');
     });
 
     it('should set theme on existing viewer', async () => {
@@ -362,12 +395,15 @@ describe('Zero Config API', () => {
         container: '#nonexistent',
       };
 
-      try {
-        await init(options);
-      } catch (e) {
-        // Should still throw the original error
-        expect(e).toBe(error);
-      }
+      const viewer = await init(options);
+      expect(viewer).toBeDefined();
+      expect(viewer.destroy).toBeDefined();
+      expect(viewer.setTheme).toBeDefined();
+      // Both errors should have been logged
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to load configuration:'),
+        error
+      );
     });
 
     it('should handle missing theme parts gracefully', async () => {

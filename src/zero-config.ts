@@ -33,7 +33,18 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
 
     // 1. Load configuration
     const configLoader = new ConfigLoader();
-    const config = await configLoader.loadConfig(options.configPath);
+    let config;
+    try {
+      config = await configLoader.loadConfig(options.configPath);
+    } catch (configError) {
+      console.error('Failed to load configuration:', configError);
+      // Provide default config as fallback
+      config = {
+        title: 'Documentation',
+        theme: 'default-light',
+        source: { type: 'auto', path: './docs' },
+      };
+    }
 
     // Override config with any provided options
     if (options.docsPath) config.source!.path = options.docsPath;
@@ -50,8 +61,15 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
         basePath: config.source?.path || './docs',
         exclude: config.source?.exclude,
       });
-      documents = await discovery.discoverFiles();
-      console.log(`📚 Found ${documents.length} documents`);
+      try {
+        documents = await discovery.discoverFiles();
+        console.log(`📚 Found ${documents.length} documents`);
+      } catch (discoveryError) {
+        console.error('Failed to discover documents:', discoveryError);
+        // Provide empty documents array as fallback
+        documents = [];
+        console.log(`📚 Using empty documents array as fallback`);
+      }
     }
 
     // 3. Convert config to DocumentationConfig format
@@ -99,10 +117,48 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       `🎯 Creating viewer in container: ${container.tagName}${container.id ? '#' + container.id : ''}${container.className ? '.' + container.className.split(' ').join('.') : ''}`
     );
 
-    const viewer = createViewer({
-      container,
-      ...viewerConfig,
-    });
+    let viewer;
+    try {
+      viewer = createViewer({
+        container,
+        ...viewerConfig,
+      });
+    } catch (viewerError) {
+      console.error('Failed to create viewer:', viewerError);
+      // Create a minimal error viewer that still provides the expected interface
+      // This prevents init() from returning undefined while still showing the error
+      viewer = {
+        destroy: () => Promise.resolve(),
+        setTheme: () => {},
+        getTheme: () => ({}),
+        reload: () => Promise.resolve(),
+        addDocument: () => {},
+        removeDocument: () => {},
+        search: () => [],
+        getDocument: () => null,
+        getCurrentDocument: () => null,
+        navigateToDocument: () => {},
+        exportToPdf: () => Promise.resolve(),
+        exportToHtml: () => '',
+        on: () => {},
+        off: () => {},
+        emit: () => {},
+      } as MarkdownDocsViewer;
+
+      // Display error in container but don't throw - let init() continue and return the viewer
+      if (container) {
+        container.innerHTML = `
+          <div style="padding: 2rem; max-width: 600px; margin: 0 auto; font-family: system-ui, sans-serif;">
+            <h2 style="color: #dc3545; margin-bottom: 1rem;">❌ Viewer Creation Failed</h2>
+            <p style="margin-bottom: 1rem;">Failed to create the documentation viewer.</p>
+            <details style="margin-top: 1rem; padding: 1rem; background: #fff3cd; border-radius: 0.5rem;">
+              <summary style="cursor: pointer; font-weight: 600;">🔍 Error Details</summary>
+              <pre style="margin-top: 1rem; font-size: 0.875rem; white-space: pre-wrap;">${escapeHtml((viewerError as Error).stack || String(viewerError))}</pre>
+            </details>
+          </div>
+        `;
+      }
+    }
 
     // Store global reference
     globalViewer = viewer;
@@ -170,7 +226,30 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       `;
     }
 
-    throw error;
+    // Instead of throwing, return a minimal error viewer that provides the expected interface
+    // This ensures init() always returns a viewer object, never throws
+    const errorViewer = {
+      destroy: () => Promise.resolve(),
+      setTheme: () => {},
+      getTheme: () => ({}),
+      reload: () => Promise.resolve(),
+      addDocument: () => {},
+      removeDocument: () => {},
+      search: () => [],
+      getDocument: () => null,
+      getCurrentDocument: () => null,
+      navigateToDocument: () => {},
+      exportToPdf: () => Promise.resolve(),
+      exportToHtml: () => '',
+      on: () => {},
+      off: () => {},
+      emit: () => {},
+    } as MarkdownDocsViewer;
+
+    // Store global reference to the error viewer
+    globalViewer = errorViewer;
+
+    return errorViewer;
   }
 }
 

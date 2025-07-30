@@ -43,7 +43,10 @@
     "docs:watch": "nodemon --watch src --watch docs --ext ts,md --exec 'npm run docs:generate'",
     "docs:mermaid": "node scripts/convert-mermaid.js",
     "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run",
-    "dist:create": "npm run build && node scripts/create-distribution.js"
+    "dist:create": "npm run build && node scripts/create-distribution.js",
+    "sync-tasks": "node scripts/sync-task-progress.js",
+    "sync-tasks:watch": "node scripts/sync-task-progress.js --watch",
+    "sync-tasks:json-to-md": "node scripts/sync-task-progress.js --json-to-md"
   },
   "keywords": [
     "markdown",
@@ -65,6 +68,7 @@
     "@typescript-eslint/parser": "^8.38.0",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
+    "chokidar": "^4.0.3",
     "eslint": "^9.32.0",
     "globals": "^16.3.0",
     "highlight.js": "^11.11.1",

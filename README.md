@@ -259,6 +259,13 @@ themes.catppuccin.light; // Pastel color palette
 
 ## 🛠️ Development
 
+### Node.js Requirements
+
+- **Node.js**: 20.17.0 or higher
+- **Tested versions**: 20.17.0 and 22.x
+
+This project is tested in CI against Node.js 20.17.0 and the latest version of Node.js 22. For best compatibility, use Node.js 20.17.0 or higher.
+
 ### Development Commands
 
 - `npm run dev` - Start Vite development server on port 5000

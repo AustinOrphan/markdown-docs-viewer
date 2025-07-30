@@ -619,20 +619,40 @@ Resize your browser window to see the responsive behavior in action!
 
           // Show error in viewer container
           const container = document.getElementById('docs-viewer');
-          container.innerHTML = `
-                    <div style="padding: 40px; text-align: center;">
-                        <h2 style="color: #721c24; margin-bottom: 16px;">⚠️ Error Demonstration</h2>
-                        <p style="color: #721c24; background: #f8d7da; padding: 16px; border-radius: 6px; margin: 0;">
-                            <strong>Error:</strong> ${error.message}
-                        </p>
-                        <p style="margin-top: 16px; color: #6a737d; font-size: 14px;">
-                            This demonstrates how the viewer handles configuration errors gracefully.
-                        </p>
-                        <button onclick="loadBasicExample()" style="margin-top: 16px; padding: 8px 16px; background: #0969da; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            Load Working Example
-                        </button>
-                    </div>
-                `;
+          // Create DOM structure safely without innerHTML
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = 'padding: 40px; text-align: center;';
+
+          const heading = document.createElement('h2');
+          heading.style.cssText = 'color: #721c24; margin-bottom: 16px;';
+          heading.textContent = '⚠️ Error Demonstration';
+
+          const errorPara = document.createElement('p');
+          errorPara.style.cssText =
+            'color: #721c24; background: #f8d7da; padding: 16px; border-radius: 6px; margin: 0;';
+          const errorStrong = document.createElement('strong');
+          errorStrong.textContent = 'Error: ';
+          errorPara.appendChild(errorStrong);
+          errorPara.appendChild(document.createTextNode(error.message));
+
+          const descPara = document.createElement('p');
+          descPara.style.cssText = 'margin-top: 16px; color: #6a737d; font-size: 14px;';
+          descPara.textContent =
+            'This demonstrates how the viewer handles configuration errors gracefully.';
+
+          const button = document.createElement('button');
+          button.style.cssText =
+            'margin-top: 16px; padding: 8px 16px; background: #0969da; color: white; border: none; border-radius: 4px; cursor: pointer;';
+          button.textContent = 'Load Working Example';
+          button.onclick = loadBasicExample;
+
+          errorDiv.appendChild(heading);
+          errorDiv.appendChild(errorPara);
+          errorDiv.appendChild(descPara);
+          errorDiv.appendChild(button);
+
+          container.innerHTML = ''; // Clear container first
+          container.appendChild(errorDiv);
         }
       }
 

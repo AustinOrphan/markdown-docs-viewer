@@ -467,11 +467,18 @@ ${TRIPLE_BACKTICK}
           showStatus('error-status', 'error', `Error caught: ${error.message}`);
 
           const container = document.getElementById('error-container');
-          container.innerHTML = `
-                    <div style="padding: 20px; background: #f8d7da; color: #721c24; border-radius: 4px;">
-                        <strong>Initialization Error:</strong> ${error.message}
-                    </div>
-                `;
+          // Create DOM structure safely without innerHTML
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText =
+            'padding: 20px; background: #f8d7da; color: #721c24; border-radius: 4px;';
+
+          const errorStrong = document.createElement('strong');
+          errorStrong.textContent = 'Initialization Error: ';
+          errorDiv.appendChild(errorStrong);
+          errorDiv.appendChild(document.createTextNode(error.message));
+
+          container.innerHTML = ''; // Clear container first
+          container.appendChild(errorDiv);
         }
       }
     </script>

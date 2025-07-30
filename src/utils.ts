@@ -107,6 +107,44 @@ export function sanitizeCssValue(value: string | number | undefined | null): str
 }
 
 /**
+ * Creates a safe HTML template string by escaping all interpolated values
+ * Use this for HTML templates that include user data or dynamic content
+ * @param strings - Template string parts
+ * @param values - Values to be escaped and interpolated
+ * @returns Safe HTML string with escaped values
+ * @example
+ * const safeHtml = html`<div class="error">${userInput}</div>`;
+ */
+export function html(strings: TemplateStringsArray, ...values: any[]): string {
+  let result = strings[0];
+
+  for (let i = 0; i < values.length; i++) {
+    result += escapeHtml(values[i]) + strings[i + 1];
+  }
+
+  return result;
+}
+
+/**
+ * Creates a safe HTML template string with attribute-safe escaping for interpolated values
+ * Use this for HTML templates where values will be inserted into attributes
+ * @param strings - Template string parts
+ * @param values - Values to be escaped for attribute use and interpolated
+ * @returns Safe HTML string with attribute-escaped values
+ * @example
+ * const safeHtml = htmlAttr`<div title="${userTitle}" class="${userClass}">Content</div>`;
+ */
+export function htmlAttr(strings: TemplateStringsArray, ...values: any[]): string {
+  let result = strings[0];
+
+  for (let i = 0; i < values.length; i++) {
+    result += escapeHtmlAttribute(values[i]) + strings[i + 1];
+  }
+
+  return result;
+}
+
+/**
  * Announces a message to screen readers using an ARIA live region
  * @param message - The message to announce
  * @param regionId - Unique ID for the live region (defaults to 'mdv-live-announcements')

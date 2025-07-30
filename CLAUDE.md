@@ -4,6 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+### Node.js Version Requirements
+
+This project requires **Node.js 20.17.0** or higher:
+
+- **Recommended**: Node.js 20.17.0 (used in CI for all build/test jobs)
+- **Supported**: Node.js 20.17.0 and 22.x (tested in CI across Linux, Windows, and macOS)
+- **Minimum**: Node.js 20.17.0
+
+The CI pipeline tests against Node.js 20.17.0 and 22.x to ensure compatibility across versions.
+
 ### Building and Development
 
 - `npm run dev` - Start Vite development server on port 5000
@@ -147,19 +157,19 @@ When writing tests for components with accessibility features:
 **Problem**: GitHub Actions checks getting stuck in "pending" state for extended periods (hours).
 
 **Root Causes**:
+
 1. GitHub infrastructure issues (service degradation)
 2. Workflow queue deadlocks in GitHub's backend
 3. Corrupted local git repository preventing proper workflow cancellation
 
 **Solutions Applied**:
-1. **Queue Management**: 
+
+1. **Queue Management**:
    - Cancel old stuck runs: `gh run cancel <run-id>`
    - Use `gh run list --limit 10 | grep queued` to identify stuck runs
-   
 2. **Force Fresh Runs**:
    - Push empty commit: `git commit --allow-empty -m "chore: trigger CI"`
    - Close/reopen PR to reset all checks
-   
 3. **Git Repository Corruption Fix**:
    - Symptoms: `fatal: not a git repository` despite .git directory existing
    - Missing files: `.git/config`, `.git/HEAD`
@@ -170,6 +180,7 @@ When writing tests for components with accessibility features:
 **Issue**: `src/zero-config.ts` auto-init can cause infinite loops during CI tests.
 
 **Fix Applied**: Added test environment check to prevent auto-init:
+
 ```typescript
 // Check if we're in a test environment and skip auto-init
 if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
@@ -182,11 +193,13 @@ if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
 ### Build System Gotchas
 
 **Dual Build Configuration**:
+
 - Main library: `vite.config.ts` (produces `dist/markdown-docs-viewer.js` and `.umd.cjs`)
 - Zero-config: `vite.zero-config.ts` (produces `dist/zero-config.es.js` and `.umd.cjs`)
 - **Critical**: Use `emptyOutDir: false` in zero-config to prevent deleting main build files
 
 **Package.json Export Paths**: Must match actual build output filenames exactly:
+
 ```json
 {
   "main": "dist/markdown-docs-viewer.umd.cjs",
