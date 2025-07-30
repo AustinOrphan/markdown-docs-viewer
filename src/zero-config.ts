@@ -249,6 +249,11 @@ function onDOMReady(callback: () => void): void {
  * Users can disable this by setting window.MarkdownDocsViewer.autoInit = false
  */
 onDOMReady(() => {
+  // Check if we're in a test environment and skip auto-init
+  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
+    return;
+  }
+
   // Check if auto-init is disabled
   if ((window as any).MarkdownDocsViewer?.autoInit === false) {
     return;

@@ -44,14 +44,25 @@ export class AutoDiscovery {
    */
   async discoverFiles(): Promise<Document[]> {
     try {
-      const files = await this.scanDirectory(this.options.basePath);
-      const documents = await Promise.all(files.map(file => this.processFile(file)));
+      // Add timeout to prevent hanging in CI
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('File discovery timeout')), 30000);
+      });
 
-      return this.sortDocuments(documents.filter(doc => doc !== null) as Document[]);
+      const discoveryPromise = this.performDiscovery();
+
+      return await Promise.race([discoveryPromise, timeoutPromise]);
     } catch (error) {
-      console.warn('Auto-discovery failed, falling back to empty document list:', error);
+      console.warn('Auto-discovery failed:', error);
       return [];
     }
+  }
+
+  private async performDiscovery(): Promise<Document[]> {
+    const files = await this.scanDirectory(this.options.basePath);
+    const documents = await Promise.all(files.map(file => this.processFile(file)));
+
+    return this.sortDocuments(documents.filter(doc => doc !== null) as Document[]);
   }
 
   /**
