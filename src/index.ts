@@ -2,6 +2,21 @@ export { MarkdownDocsViewer } from './viewer';
 export * from './types';
 export { themes, createCustomTheme } from './themes';
 export { createViewer, quickStart } from './factory';
+
+// Zero-config API for drop-in usage
+export {
+  init,
+  getViewer,
+  reload,
+  setTheme,
+  getAvailableThemes,
+  generateConfig,
+} from './zero-config';
+export { default as ZeroConfig } from './zero-config';
+
+// Configuration and auto-discovery
+export { ConfigLoader, loadConfig, type DocsConfig } from './config-loader';
+export { AutoDiscovery, autoDiscoverDocs, type AutoDiscoveryOptions } from './auto-discovery';
 export {
   MarkdownDocsError,
   ErrorCode,

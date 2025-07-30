@@ -103,14 +103,14 @@
 
 &lt;!-- Load and use the viewer --&gt;
 &lt;script type="module"&gt;
-import { MarkdownDocsViewer, defaultTheme } from 'https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.es.js';
+import { createViewer, themes } from '../dist/index.es.js';
 
-const viewer = new MarkdownDocsViewer({
+const viewer = createViewer({
     container: '#docs-container',
     title: 'My Documentation',
-    theme: defaultTheme,
+    theme: themes.github.light,
     source: {
-        type: 'local',
+        type: 'content',
         documents: [
             {
                 id: 'intro',
@@ -148,18 +148,19 @@ ${TRIPLE_BACKTICK}
 &lt;script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Load the viewer UMD build --&gt;
-&lt;script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"&gt;&lt;/script&gt;
+&lt;script src="../dist/index.umd.cjs"&gt;&lt;/script&gt;
 
 &lt;div id="docs-container"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // MarkdownDocsViewer is now available globally
-const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+const { createViewer, themes } = window.MarkdownDocsViewer;
 
-const viewer = new MarkdownDocsViewer({
+const viewer = createViewer({
     container: '#docs-container',
+    theme: themes.github.light,
     source: {
-        type: 'local',
+        type: 'content',
         documents: [/* your documents */]
     }
 });
@@ -178,17 +179,21 @@ const viewer = new MarkdownDocsViewer({
       <p>For build tools like Webpack, Vite, or Rollup:</p>
 
       <pre><code># Install dependencies
-npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# Clone and build the library
+git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
+cd markdown-docs-viewer
+npm install
+npm run build
 
 # In your JavaScript/TypeScript file:
-import { MarkdownDocsViewer, defaultTheme, darkTheme } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 import 'highlight.js/styles/github.css'; // Optional: add syntax highlighting styles
 
-const viewer = new MarkdownDocsViewer({
+const viewer = createViewer({
     container: '#docs',
-    theme: defaultTheme,
+    theme: themes.github.light,
     source: {
-        type: 'local',
+        type: 'content',
         documents: [
             {
                 id: 'guide',
@@ -211,9 +216,18 @@ const viewer = new MarkdownDocsViewer({
 
       <pre><code>&lt;script&gt;
 try {
-    const viewer = new MarkdownDocsViewer({
+    const { createViewer, themes } = window.MarkdownDocsViewer;
+    
+    const viewer = createViewer({
         container: '#docs',
-        source: { /* config */ },
+        theme: themes.github.light,
+        source: { 
+            type: 'content',
+            documents: [/* your documents */]
+        },
+        errorHandling: {
+            showErrorDetails: true
+        },
         onError: (error) => {
             console.error('Viewer error:', error);
             
@@ -262,22 +276,27 @@ function showErrorMessage(message) {
       <h2>5. Common Configurations</h2>
 
       <h3>Basic Configuration</h3>
-      <pre><code>const basicConfig = {
+      <pre><code>const { createViewer, themes } = window.MarkdownDocsViewer;
+
+const basicConfig = {
     container: '#docs',
     title: 'My Docs',
+    theme: themes.github.light,
     source: {
-        type: 'local',
+        type: 'content',
         documents: [/* documents */]
     }
 };</code></pre>
 
       <h3>Advanced Configuration</h3>
-      <pre><code>const advancedConfig = {
+      <pre><code>const { createViewer, themes } = window.MarkdownDocsViewer;
+
+const advancedConfig = {
     container: '#docs',
     title: 'Advanced Documentation',
     logo: '/path/to/logo.png',
     footer: '© 2024 My Company',
-    theme: darkTheme,
+    theme: themes.github.dark,
     navigation: {
         showCategories: true,
         showTags: true,
@@ -295,9 +314,13 @@ function showErrorMessage(message) {
     },
     source: {
         type: 'github',
-        repository: 'owner/repo',
-        branch: 'main',
-        docsPath: 'docs'
+        documents: [
+            {
+                id: 'readme',
+                title: 'README',
+                file: 'owner/repo/main/README.md'
+            }
+        ]
     },
     onDocumentLoad: (doc) => {
         console.log('Loaded:', doc.title);
@@ -334,14 +357,14 @@ function showErrorMessage(message) {
           showStatus('esm-status', 'warning', 'Loading ES Module example...');
 
           // For demo purposes, we'll use the UMD build
-          const { MarkdownDocsViewer, defaultTheme } = window.MarkdownDocsViewer;
+          const { createViewer, themes } = window.MarkdownDocsViewer;
 
-          new MarkdownDocsViewer({
+          createViewer({
             container: '#esm-container',
             title: 'ES Module Example',
-            theme: defaultTheme,
+            theme: themes.github.light,
             source: {
-              type: 'local',
+              type: 'content',
               documents: [
                 {
                   id: 'intro',
@@ -356,7 +379,7 @@ This viewer was loaded using ES modules approach.
 - Better for bundlers
 
 ${TRIPLE_BACKTICK}javascript
-import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 ${TRIPLE_BACKTICK}
                                 `,
                 },
@@ -374,14 +397,14 @@ ${TRIPLE_BACKTICK}
         try {
           showStatus('umd-status', 'warning', 'Loading UMD example...');
 
-          const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+          const { createViewer, themes } = window.MarkdownDocsViewer;
 
-          new MarkdownDocsViewer({
+          createViewer({
             container: '#umd-container',
             title: 'UMD Example',
-            theme: darkTheme,
+            theme: themes.github.dark,
             source: {
-              type: 'local',
+              type: 'content',
               documents: [
                 {
                   id: 'umd-info',
@@ -398,7 +421,8 @@ This viewer was loaded using the UMD build.
 ${TRIPLE_BACKTICK}html
 <script src="path/to/index.umd.cjs"><\/script>
 <script>
-  const viewer = new MarkdownDocsViewer(config);
+  const { createViewer, themes } = window.MarkdownDocsViewer;
+  const viewer = createViewer(config);
 <\/script>
 ${TRIPLE_BACKTICK}
                                 `,
@@ -418,12 +442,12 @@ ${TRIPLE_BACKTICK}
           showStatus('error-status', 'warning', 'Simulating error scenario...');
 
           // Simulate missing container error
-          const { MarkdownDocsViewer } = window.MarkdownDocsViewer;
+          const { createViewer } = window.MarkdownDocsViewer;
 
-          new MarkdownDocsViewer({
+          createViewer({
             container: '#non-existent-container',
             source: {
-              type: 'local',
+              type: 'content',
               documents: [],
             },
             onError: error => {

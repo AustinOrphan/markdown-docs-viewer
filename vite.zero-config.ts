@@ -1,15 +1,15 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import dts from 'vite-plugin-dts';
 
 export default defineConfig({
-  plugins: [dts({ include: ['src'] })],
   build: {
+    outDir: 'dist',
+    emptyOutDir: false,
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/zero-config.ts'),
       name: 'MarkdownDocsViewer',
       formats: ['es', 'umd'],
-      fileName: 'markdown-docs-viewer',
+      fileName: format => `zero-config.${format === 'es' ? 'es.js' : 'umd.cjs'}`,
     },
     rollupOptions: {
       external: ['marked', 'marked-highlight', 'highlight.js'],

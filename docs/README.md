@@ -32,7 +32,7 @@ New to the library? Start here for the fastest path to success:
 
 ```bash
 # Not yet available on NPM - build from source required
-# npm install @austinorphan/markdown-docs-viewer marked marked-highlight highlight.js
+# This library is distributed via Git - build from source:
 
 # Clone and build instead:
 git clone https://github.com/AustinOrphan/markdown-docs-viewer.git
@@ -44,7 +44,7 @@ npm run build
 ### Basic Usage
 
 ```javascript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer } from './dist/index.es.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -59,7 +59,7 @@ const viewer = createViewer({
 
 ```html
 <!-- Not yet available on CDN -->
-<!-- <script src="https://unpkg.com/@austinorphan/markdown-docs-viewer@1.0.0/dist/index.umd.cjs"></script> -->
+<!-- This library is distributed via Git, not CDN -->
 
 <!-- Use your locally built file instead -->
 <script src="path/to/your/built/index.umd.cjs"></script>
@@ -139,7 +139,7 @@ The `api/` directory contains automatically generated TypeDoc documentation:
 ### Community
 
 - **[GitHub Repository](https://github.com/AustinOrphan/markdown-docs-viewer)** - Source code and issues
-- **[NPM Package](https://www.npmjs.com/package/@austinorphan/markdown-docs-viewer)** - Package information (not yet published)
+<!-- Library is distributed via Git, not NPM -->
 - **[Live Demo](https://austinorphan.github.io/markdown-docs-viewer/)** - Interactive demonstration
 
 ## 🆘 Troubleshooting
@@ -167,7 +167,7 @@ npm install
 
 ```javascript
 // For initial configuration (when available on NPM):
-// import { createViewer, themes } from '@austinorphan/markdown-docs-viewer';
+// Import from local build:
 
 // Currently - import from local build:
 import { createViewer, themes } from './path/to/built/index.es.js';

@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-24T20:24:51.969Z",
+  "generated": "2025-07-29T14:01:08.764Z",
   "structure": {
     "files": [
       {
@@ -10,12 +10,12 @@
       {
         "name": "BROWSER_USAGE.md",
         "path": "BROWSER_USAGE.md",
-        "size": 11500
+        "size": 12140
       },
       {
         "name": "CONFIGURATION.md",
         "path": "CONFIGURATION.md",
-        "size": 10139
+        "size": 10102
       },
       {
         "name": "INTEGRATION.md",
@@ -25,12 +25,12 @@
       {
         "name": "README.md",
         "path": "README.md",
-        "size": 871
+        "size": 8084
       },
       {
         "name": "THEME-USAGE-CLARIFICATION.md",
         "path": "THEME-USAGE-CLARIFICATION.md",
-        "size": 3887
+        "size": 4570
       },
       {
         "name": "THEMING-VISUAL-GUIDE.md",
@@ -45,7 +45,12 @@
       {
         "name": "index.json",
         "path": "index.json",
-        "size": 18647
+        "size": 17892
+      },
+      {
+        "name": "quick-start.md",
+        "path": "quick-start.md",
+        "size": 14246
       }
     ],
     "directories": {
@@ -54,7 +59,7 @@
           {
             "name": "README.md",
             "path": "api/README.md",
-            "size": 3260
+            "size": 2982
           }
         ],
         "directories": {
@@ -73,7 +78,7 @@
               {
                 "name": "DarkModeToggle.md",
                 "path": "api/classes/DarkModeToggle.md",
-                "size": 2376
+                "size": 2615
               },
               {
                 "name": "ErrorBoundary.md",
@@ -133,7 +138,7 @@
               {
                 "name": "SearchManager.md",
                 "path": "api/classes/SearchManager.md",
-                "size": 2158
+                "size": 2231
               },
               {
                 "name": "TableOfContents.md",
@@ -153,7 +158,7 @@
               {
                 "name": "ThemeSwitcher.md",
                 "path": "api/classes/ThemeSwitcher.md",
-                "size": 1566
+                "size": 1801
               }
             ],
             "directories": {}
@@ -226,34 +231,14 @@
                 "size": 504
               },
               {
-                "name": "getAllThemeVariants.md",
-                "path": "api/functions/getAllThemeVariants.md",
-                "size": 443
-              },
-              {
-                "name": "getAvailableThemeNames.md",
-                "path": "api/functions/getAvailableThemeNames.md",
-                "size": 402
-              },
-              {
-                "name": "getThemeBaseName.md",
-                "path": "api/functions/getThemeBaseName.md",
-                "size": 431
-              },
-              {
-                "name": "getThemeMode.md",
-                "path": "api/functions/getThemeMode.md",
-                "size": 445
+                "name": "quickStart.md",
+                "path": "api/functions/quickStart.md",
+                "size": 608
               },
               {
                 "name": "throttle.md",
                 "path": "api/functions/throttle.md",
                 "size": 600
-              },
-              {
-                "name": "toggleThemeMode.md",
-                "path": "api/functions/toggleThemeMode.md",
-                "size": 428
               },
               {
                 "name": "withRetry.md",
@@ -363,7 +348,7 @@
               {
                 "name": "ViewerState.md",
                 "path": "api/interfaces/ViewerState.md",
-                "size": 1790
+                "size": 2016
               }
             ],
             "directories": {}
@@ -386,19 +371,14 @@
                 "size": 1281
               },
               {
-                "name": "darkTheme.md",
-                "path": "api/variables/darkTheme.md",
-                "size": 366
-              },
-              {
                 "name": "defaultMessages.md",
                 "path": "api/variables/defaultMessages.md",
                 "size": 420
               },
               {
-                "name": "defaultTheme.md",
-                "path": "api/variables/defaultTheme.md",
-                "size": 375
+                "name": "themes.md",
+                "path": "api/variables/themes.md",
+                "size": 338
               }
             ],
             "directories": {}
@@ -410,7 +390,7 @@
           {
             "name": "README.md",
             "path": "architecture/README.md",
-            "size": 8964
+            "size": 9325
           },
           {
             "name": "documentation-guide.md",
@@ -599,10 +579,10 @@
     }
   },
   "stats": {
-    "totalFiles": 107,
+    "totalFiles": 103,
     "totalDirectories": 11,
     "filesByType": {
-      "md": 106,
+      "md": 102,
       "json": 1
     }
   }

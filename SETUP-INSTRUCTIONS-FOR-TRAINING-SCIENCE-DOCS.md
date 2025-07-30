@@ -215,8 +215,8 @@ Both `docs-viewer.html` and `docs/index.html` need to be updated to use the new 
 Once we publish to a CDN, the setup would be:
 
 ```html
-<!-- In the future when published to CDN -->
-<script src="https://unpkg.com/@austinorphan/markdown-docs-viewer/dist/index.umd.cjs"></script>
+<!-- This library is distributed via Git, not CDN -->
+<script src="path/to/dist/index.umd.cjs"></script>
 ```
 
 ### Method 3: Git Submodule (Current but Not Recommended)

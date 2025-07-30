@@ -30,7 +30,7 @@ The library includes several built-in themes:
 ### Basic Configuration
 
 ```javascript
-import { MarkdownDocsViewer } from '@austinorphan/markdown-docs-viewer';
+import { MarkdownDocsViewer } from './dist/index.es.js';
 
 const viewer = new MarkdownDocsViewer({
   container: '#docs',
@@ -64,7 +64,7 @@ const viewer = new MarkdownDocsViewer({
 You can also use the components independently:
 
 ```javascript
-import { ThemeManager, ThemeSwitcher, DarkModeToggle } from '@austinorphan/markdown-docs-viewer';
+import { ThemeManager, ThemeSwitcher, DarkModeToggle } from './dist/index.es.js';
 
 // Initialize theme manager
 const themeManager = new ThemeManager({

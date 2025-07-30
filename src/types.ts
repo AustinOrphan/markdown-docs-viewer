@@ -57,7 +57,6 @@ export interface Theme {
   allowCustomThemes?: boolean;
   darkTogglePosition?: 'header' | 'footer' | 'floating';
   showDarkModeLabel?: boolean;
-  compactDarkToggle?: boolean;
 }
 
 export interface SearchOptions {

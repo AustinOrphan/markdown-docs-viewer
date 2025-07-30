@@ -90,12 +90,7 @@ describe('DarkModeToggle', () => {
       expect(html).toContain('Light Mode');
     });
 
-    it('should render compact toggle when compact is true', () => {
-      darkModeToggle = new DarkModeToggle(themeManager, { compact: true });
-      const html = darkModeToggle.render();
-
-      expect(html).toContain('mdv-dark-toggle-compact');
-    });
+    // Compact option was removed in favor of consistent sizing
 
     it('should render floating toggle when position is floating', () => {
       darkModeToggle = new DarkModeToggle(themeManager, { position: 'floating' });
@@ -319,7 +314,7 @@ describe('DarkModeToggle', () => {
 
       darkModeToggle.toggle();
 
-      const icon = container.querySelector('.mdv-dark-toggle-icon');
+      const icon = container.querySelector('.mdv-dark-mode-icon.dark-icon');
       expect(icon?.innerHTML).toContain('path'); // Moon icon has path element
     });
 

@@ -38,16 +38,19 @@ Then reference the built file in your HTML:
   <head>
     <title>My Documentation</title>
     <!-- Optional: Add syntax highlighting styles -->
-    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css"
+    />
   </head>
   <body>
     <div id="docs"></div>
 
     <!-- Load dependencies -->
-    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+    <script src="<!-- Language files not needed - included in main bundle -->"></script>
 
     <!-- Load your built viewer -->
     <script src="path/to/your/built/index.umd.cjs"></script>
@@ -139,16 +142,16 @@ The viewer requires these dependencies:
 
 ```html
 <!-- Required -->
-<script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
 
 <!-- Optional: For syntax highlighting -->
-<script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
 
 <!-- Add language support as needed -->
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/python.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/css.min.js"></script>
+<script src="<!-- Language files not needed - included in main bundle -->"></script>
+<script src="<!-- Language files not needed - included in main bundle -->"></script>
+<script src="<!-- Language files not needed - included in main bundle -->"></script>
 ```
 
 ### Via NPM
@@ -210,8 +213,8 @@ try {
 **Solution:** Load highlight.js properly:
 
 ```html
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-<script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+<script src="<!-- Language files not needed - included in main bundle -->"></script>
 ```
 
 #### 3. "Container element not found"
@@ -248,7 +251,10 @@ Here's a complete, working example:
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentation Viewer</title>
-    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css"
+    />
   </head>
   <body>
     <div id="app">
@@ -257,13 +263,13 @@ Here's a complete, working example:
     </div>
 
     <!-- Dependencies -->
-    <script src="https://unpkg.com/marked@12.0.0/marked.min.js"></script>
-    <script src="https://unpkg.com/marked-highlight@2.1.0/lib/index.umd.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/core.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/typescript.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/css.min.js"></script>
-    <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+    <script src="<!-- Language files not needed - included in main bundle -->"></script>
+    <script src="<!-- Language files not needed - included in main bundle -->"></script>
+    <script src="<!-- Language files not needed - included in main bundle -->"></script>
+    <script src="<!-- Language files not needed - included in main bundle -->"></script>
 
     <!-- Your built viewer -->
     <script src="path/to/your/built/index.umd.cjs"></script>
@@ -348,7 +354,7 @@ Main class for creating documentation viewers.
 ### Constructor
 
 \`\`\`typescript
-import { createViewer } from '@austinorphan/markdown-docs-viewer';
+import { createViewer } from './dist/index.es.js';
 createViewer(config: DocumentationConfig)
 \`\`\`
 

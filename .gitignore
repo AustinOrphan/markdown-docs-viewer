@@ -22,3 +22,6 @@ docs/diagrams/images/
 
 # Temporary directories
 theming-options/
+
+# Distribution build artifacts
+distribution/

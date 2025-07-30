@@ -4,7 +4,6 @@ import { Theme } from './types';
 export interface DarkModeToggleOptions {
   position?: 'header' | 'footer' | 'floating';
   showLabel?: boolean;
-  compact?: boolean;
   lightThemeName?: string;
   darkThemeName?: string;
   onToggle?: (isDark: boolean, theme: Theme) => void;
@@ -24,7 +23,6 @@ export class DarkModeToggle {
     this.options = {
       position: 'header',
       showLabel: false,
-      compact: false,
       lightThemeName: 'default-light',
       darkThemeName: 'default-dark',
       ...options,
@@ -39,9 +37,9 @@ export class DarkModeToggle {
     const toggleId = `mdv-dark-toggle-${++DarkModeToggle.instanceCounter}`;
 
     return `
-      <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''} ${this.options.compact ? 'mdv-dark-toggle-compact' : ''}">
+      <div class="mdv-dark-mode-toggle ${this.options.position === 'floating' ? 'mdv-dark-toggle-floating' : ''}">
         ${
-          this.options.showLabel && !this.options.compact
+          this.options.showLabel
             ? `
           <span class="mdv-dark-toggle-label">
             ${this.isDark ? 'Dark' : 'Light'} Mode
@@ -58,11 +56,10 @@ export class DarkModeToggle {
           aria-label="${this.isDark ? 'Switch to light mode' : 'Switch to dark mode'}"
           title="${this.isDark ? 'Switch to light mode' : 'Switch to dark mode'}"
         >
-          <div class="mdv-dark-toggle-track">
-            <div class="mdv-dark-toggle-thumb">
-              <div class="mdv-dark-toggle-icon">
-                ${this.isDark ? this.getMoonIcon() : this.getSunIcon()}
-              </div>
+          <div class="mdv-dark-mode-toggle-track">
+            <div class="mdv-dark-mode-toggle-thumb">
+              <div class="mdv-dark-mode-icon light-icon">${this.getSunIcon()}</div>
+              <div class="mdv-dark-mode-icon dark-icon">${this.getMoonIcon()}</div>
             </div>
           </div>
         </button>
@@ -72,17 +69,17 @@ export class DarkModeToggle {
 
   private getSunIcon(): string {
     return `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="5"></circle>
-        <path d="m12 1v6m0 14v6M4.22 4.22l4.24 4.24m8.48 8.48l4.24 4.24m-19.9-12h6m14 0h6M6.46 17.54l-4.24 4.24M17.54 6.46l4.24-4.24"></path>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 2V6M12 18V22M22 12H18M6 12H2M19.07 4.93L16.24 7.76M7.76 16.24L4.93 19.07M19.07 19.07L16.24 16.24M7.76 7.76L4.93 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     `;
   }
 
   private getMoonIcon(): string {
     return `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21.64 13a1 1 0 0 0-1.05-.14 8.05 8.05 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Z"/>
       </svg>
     `;
   }
@@ -108,13 +105,24 @@ export class DarkModeToggle {
     this.themeChangeHandler = (e: Event) => {
       const customEvent = e as CustomEvent;
       const themeName = customEvent.detail?.theme?.name;
-      const isDark = themeName === this.options.darkThemeName;
+      const isDark = themeName?.includes('-dark') || false;
       if (isDark !== this.isDark) {
         this.isDark = isDark;
         this.updateUI();
       }
     };
     document.addEventListener('mdv-theme-changed', this.themeChangeHandler);
+
+    // Listen for dark mode toggle events from other instances
+    const darkModeToggleHandler = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const isDark = customEvent.detail?.isDark;
+      if (isDark !== undefined && isDark !== this.isDark) {
+        this.isDark = isDark;
+        this.updateUI();
+      }
+    };
+    document.addEventListener('mdv-dark-mode-toggled', darkModeToggleHandler);
   }
 
   public toggle(): void {
@@ -148,7 +156,6 @@ export class DarkModeToggle {
 
     const button = this.container.querySelector('.mdv-dark-toggle-btn');
     const label = this.container.querySelector('.mdv-dark-toggle-label');
-    const icon = this.container.querySelector('.mdv-dark-toggle-icon');
 
     if (button) {
       button.className = `mdv-dark-toggle-btn ${this.isDark ? 'dark' : 'light'}`;
@@ -162,10 +169,6 @@ export class DarkModeToggle {
 
     if (label) {
       label.textContent = `${this.isDark ? 'Dark' : 'Light'} Mode`;
-    }
-
-    if (icon) {
-      icon.innerHTML = this.isDark ? this.getMoonIcon() : this.getSunIcon();
     }
   }
 
@@ -214,9 +217,6 @@ export class DarkModeToggle {
         z-index: var(--mdv-z-fixed, 1030);
       }
       
-      .mdv-dark-toggle-compact {
-        gap: 8px;
-      }
       
       .mdv-dark-toggle-label {
         font-size: 0.875rem;
@@ -227,97 +227,97 @@ export class DarkModeToggle {
       
       .mdv-dark-toggle-btn {
         position: relative;
-        width: 52px;
-        height: 28px;
+        width: 44px;
+        height: 24px;
         padding: 0;
         background: transparent;
         border: none;
         cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 14px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
         outline: none;
       }
       
-      .mdv-dark-toggle-btn:focus-visible {
-        box-shadow: 0 0 0 2px var(--mdv-color-primary);
+      .mdv-dark-toggle-btn:focus {
+        outline: 2px solid var(--mdv-color-primary);
+        outline-offset: 2px;
       }
       
-      .mdv-dark-toggle-compact .mdv-dark-toggle-btn {
-        width: 44px;
-        height: 24px;
-        border-radius: 12px;
+      .mdv-dark-toggle-btn:focus:not(:focus-visible) {
+        outline: none;
       }
       
-      .mdv-dark-toggle-track {
+      .mdv-dark-mode-toggle-track {
         width: 100%;
         height: 100%;
         background: var(--mdv-color-border);
-        border-radius: 14px;
+        border-radius: 12px;
         position: relative;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.3s ease;
       }
       
-      .mdv-dark-toggle-btn.dark .mdv-dark-toggle-track {
+      .mdv-dark-toggle-btn.dark .mdv-dark-mode-toggle-track {
         background: var(--mdv-color-primary);
       }
       
-      .mdv-dark-toggle-compact .mdv-dark-toggle-track {
-        border-radius: 12px;
-      }
-      
-      .mdv-dark-toggle-thumb {
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        width: 24px;
-        height: 24px;
-        background: var(--mdv-color-surface);
-        border-radius: 50%;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      
-      .mdv-dark-toggle-btn.dark .mdv-dark-toggle-thumb {
-        transform: translateX(24px);
-        background: var(--mdv-color-surface);
-      }
-      
-      .mdv-dark-toggle-compact .mdv-dark-toggle-thumb {
-        width: 20px;
-        height: 20px;
-      }
-      
-      .mdv-dark-toggle-compact .mdv-dark-toggle-btn.dark .mdv-dark-toggle-thumb {
-        transform: translateX(20px);
-      }
-      
-      .mdv-dark-toggle-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--mdv-color-text);
-        transition: all 0.2s ease;
-      }
-      
-      .mdv-dark-toggle-btn.light .mdv-dark-toggle-icon {
-        color: #fbbf24; /* Yellow sun */
-      }
-      
-      .mdv-dark-toggle-btn.dark .mdv-dark-toggle-icon {
-        color: #60a5fa; /* Blue moon */
-      }
-      
-      .mdv-dark-toggle-btn:hover .mdv-dark-toggle-track {
+      .mdv-dark-toggle-btn:hover .mdv-dark-mode-toggle-track {
         background: var(--mdv-color-text);
         opacity: 0.3;
       }
       
-      .mdv-dark-toggle-btn.dark:hover .mdv-dark-toggle-track {
+      .mdv-dark-toggle-btn.dark:hover .mdv-dark-mode-toggle-track {
         background: var(--mdv-color-primary);
-        opacity: 0.8;
+        filter: brightness(1.1);
+      }
+      
+      .mdv-dark-mode-toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: var(--mdv-color-surface);
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+      }
+      
+      .mdv-dark-toggle-btn.dark .mdv-dark-mode-toggle-thumb {
+        transform: translateX(20px);
+      }
+      
+      .mdv-dark-mode-icon {
+        position: absolute;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .mdv-dark-mode-icon svg {
+        width: 14px;
+        height: 14px;
+        color: var(--mdv-color-text);
+      }
+      
+      .mdv-dark-toggle-btn.light .light-icon {
+        opacity: 1;
+      }
+      
+      .mdv-dark-toggle-btn.light .dark-icon {
+        opacity: 0;
+      }
+      
+      .mdv-dark-toggle-btn.dark .light-icon {
+        opacity: 0;
+      }
+      
+      .mdv-dark-toggle-btn.dark .dark-icon {
+        opacity: 1;
       }
       
       /* Mobile styles */

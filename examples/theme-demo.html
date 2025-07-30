@@ -115,20 +115,14 @@
       let viewer;
 
       try {
-        const { MarkdownDocsViewer } = window.MarkdownDocsViewer;
+        const { createViewer, themes } = window.MarkdownDocsViewer;
 
-        viewer = new MarkdownDocsViewer({
+        viewer = createViewer({
           container: '#docs-container',
           title: 'Theme Documentation',
-          theme: {
-            name: 'default',
-            switcherPosition: 'header',
-            showPreview: true,
-            showDescription: true,
-            allowCustomThemes: true,
-          },
+          theme: themes.default.light,
           source: {
-            type: 'local',
+            type: 'content',
             documents: [
               {
                 id: 'theming-overview',
@@ -168,21 +162,25 @@ The viewer comes with several built-in themes:
 
 ${TRIPLE_BACKTICK}javascript
 // Initialize with a specific theme
-const viewer = new MarkdownDocsViewer({
+import { createViewer, themes } from '../dist/index.es.js';
+
+const viewer = createViewer({
     container: '#docs',
-    theme: {
-        name: 'dark',
-        switcherPosition: 'header',
-        allowCustomThemes: true
+    theme: themes.github.dark,
+    source: {
+        type: 'content',
+        documents: [/* your docs */]
     }
 });
 
 // Change theme programmatically
-viewer.setTheme('github');
+viewer.updateConfig({
+    theme: themes.material.light
+});
 
-// Get available themes
-const themes = viewer.getAvailableThemes();
-console.log(themes);
+// Get current state
+const state = viewer.getState();
+console.log('Current theme:', state.theme);
 ${TRIPLE_BACKTICK}
 
 ## CSS Variables

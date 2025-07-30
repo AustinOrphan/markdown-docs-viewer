@@ -4,25 +4,44 @@ Comprehensive guide to configuring the Markdown Documentation Viewer.
 
 ## Basic Configuration
 
-The simplest configuration requires only a title and document sources:
+The simplest configuration requires only a container and document source:
 
 ```typescript
-const config = {
+import { createViewer, themes } from './dist/index.es.js';
+
+const viewer = createViewer({
+  container: '#docs',
   title: 'My Documentation',
-  sources: [{ type: 'local', path: './docs/' }],
-};
+  theme: themes.github.light,
+  source: {
+    type: 'content',
+    documents: [
+      {
+        id: 'welcome',
+        title: 'Welcome',
+        content: '# Welcome\n\nThis is your documentation!',
+      },
+    ],
+  },
+});
 ```
 
 ## Document Sources
 
 ### Local Files
 
-Load markdown files from a local directory:
+Load markdown files from your web server:
 
 ```typescript
 {
-  type: 'local',
-  path: './docs/'  // Path to directory containing markdown files
+  source: {
+    type: 'local',
+    basePath: '/docs',
+    documents: [
+      { id: 'intro', title: 'Introduction', file: 'intro.md' },
+      { id: 'guide', title: 'User Guide', file: 'guide.md', category: 'Guides' }
+    ]
+  }
 }
 ```
 
@@ -32,8 +51,14 @@ Load markdown files from URLs:
 
 ```typescript
 {
-  type: 'url',
-  url: 'https://raw.githubusercontent.com/user/repo/main/README.md'
+  source: {
+    type: 'url',
+    baseUrl: 'https://raw.githubusercontent.com/user/repo/main/docs',
+    documents: [
+      { id: 'readme', title: 'README', file: 'README.md' },
+      { id: 'api', title: 'API Docs', file: 'api.md' }
+    ]
+  }
 }
 ```
 
@@ -43,11 +68,21 @@ Load documentation directly from a GitHub repository:
 
 ```typescript
 {
-  type: 'github',
-  owner: 'username',
-  repo: 'repository-name',
-  branch: 'main',  // Optional, defaults to 'main'
-  path: 'docs/'    // Optional, defaults to repository root
+  source: {
+    type: 'github',
+    documents: [
+      {
+        id: 'readme',
+        title: 'README',
+        file: 'owner/repo/main/README.md'
+      },
+      {
+        id: 'api',
+        title: 'API Guide',
+        file: 'owner/repo/main/docs/api.md'
+      }
+    ]
+  }
 }
 ```
 
@@ -57,27 +92,53 @@ Provide markdown content directly:
 
 ```typescript
 {
-  type: 'content',
-  content: '# Welcome\n\nThis is inline markdown content.',
-  metadata: {
-    id: 'welcome',
-    title: 'Welcome Page',
-    path: 'welcome.md'
+  source: {
+    type: 'content',
+    documents: [
+      {
+        id: 'welcome',
+        title: 'Welcome',
+        content: '# Welcome\n\nThis is inline markdown content.',
+        category: 'Getting Started'
+      },
+      {
+        id: 'guide',
+        title: 'User Guide',
+        content: '# User Guide\n\n## Getting Started...',
+        category: 'Guides'
+      }
+    ]
   }
 }
 ```
 
-### Multiple Sources
+### Documents Organization
 
-Combine different source types:
+Organize documents with categories and tags:
 
 ```typescript
 {
-  sources: [
-    { type: 'local', path: './docs/' },
-    { type: 'github', owner: 'company', repo: 'api-docs' },
-    { type: 'url', url: 'https://external.com/integration.md' },
-  ];
+  source: {
+    type: 'content',
+    documents: [
+      {
+        id: 'intro',
+        title: 'Introduction',
+        content: '# Introduction...',
+        category: 'Getting Started',
+        tags: ['beginner', 'overview'],
+        order: 1
+      },
+      {
+        id: 'advanced',
+        title: 'Advanced Topics',
+        content: '# Advanced...',
+        category: 'Guides',
+        tags: ['advanced', 'technical'],
+        order: 10
+      }
+    ]
+  }
 }
 ```
 
@@ -88,21 +149,44 @@ Combine different source types:
 **NPM Usage:**
 
 ```typescript
-import { createViewer, darkTheme } from '@austinorphan/markdown-docs-viewer';
+import { createViewer, themes } from './dist/index.es.js';
 
-{
-  theme: darkTheme,      // Use theme object (recommended)
-}
+const viewer = createViewer({
+  container: '#docs',
+  theme: themes.github.dark, // Use built-in theme
+  // ... other config
+});
 ```
 
 **CDN Usage:**
 
 ```javascript
-const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
+const { createViewer, themes } = window.MarkdownDocsViewer;
 
-{
-  theme: darkTheme,      // Must use theme object in CDN context
-}
+const viewer = createViewer({
+  container: '#docs',
+  theme: themes.github.dark, // Use built-in theme
+  // ... other config
+});
+```
+
+**Available Built-in Themes:**
+
+```javascript
+// Light themes
+themes.github.light;
+themes.material.light;
+themes.nord.light;
+themes.solarized.light;
+themes.atomOne.light;
+
+// Dark themes
+themes.github.dark;
+themes.material.dark;
+themes.nord.dark;
+themes.solarized.dark;
+themes.dracula.dark;
+themes.monokai.dark;
 ```
 
 ### Custom Themes
@@ -110,7 +194,7 @@ const { MarkdownDocsViewer, darkTheme } = window.MarkdownDocsViewer;
 Define custom themes using the theme builder:
 
 ```typescript
-import { createCustomTheme } from '@austinorphan/markdown-docs-viewer';
+import { createCustomTheme } from './dist/index.es.js';
 
 const corporateTheme = createCustomTheme({
   name: 'corporate',
@@ -176,52 +260,40 @@ Create a branded theme:
 ```typescript
 {
   navigation: {
-    enabled: true,
-    showSearch: true,
-    showThemeToggle: true,
-    position: 'left'  // 'left', 'right', or 'top'
+    showCategories: true,
+    showTags: true,
+    collapsible: true,
+    showDescription: true,
+    sortBy: 'title'  // 'title', 'order', or 'date'
   }
 }
 ```
 
-### Custom Navigation Items
-
-Add custom links and sections:
+### Navigation Display Options
 
 ```typescript
 {
   navigation: {
-    enabled: true,
-    customItems: [
-      {
-        type: 'link',
-        title: 'API Reference',
-        url: 'https://api.mysite.com'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        type: 'section',
-        title: 'External Resources',
-        items: [
-          { title: 'GitHub', url: 'https://github.com/user/repo' },
-          { title: 'Issues', url: 'https://github.com/user/repo/issues' }
-        ]
-      }
-    ]
+    showCategories: true,    // Group documents by category
+    showTags: false,         // Show document tags
+    collapsible: true,       // Allow collapsing categories
+    showDescription: true,   // Show document descriptions
+    sortBy: 'order'          // Sort by order property
   }
 }
 ```
 
-### Hide Navigation
+### Minimal Navigation
 
-For embedded use cases:
+For simple documentation:
 
 ```typescript
 {
   navigation: {
-    enabled: false;
+    showCategories: false,   // Flat document list
+    showTags: false,
+    collapsible: false,
+    showDescription: false
   }
 }
 ```
@@ -235,7 +307,9 @@ For embedded use cases:
   search: {
     enabled: true,
     placeholder: 'Search documentation...',
-    minQueryLength: 2,
+    caseSensitive: false,
+    fuzzySearch: true,
+    searchInTags: true,
     maxResults: 50
   }
 }
@@ -248,11 +322,10 @@ For embedded use cases:
   search: {
     enabled: true,
     placeholder: 'Search docs...',
-    minQueryLength: 3,
-    maxResults: 25,
-    highlightResults: true,
-    fuzzySearch: true,  // Enable fuzzy matching
-    searchFields: ['title', 'content', 'tags']  // Fields to search
+    caseSensitive: true,      // Case-sensitive search
+    fuzzySearch: false,       // Exact matching only
+    searchInTags: true,       // Include tags in search
+    maxResults: 25
   }
 }
 ```
@@ -267,72 +340,54 @@ For embedded use cases:
 }
 ```
 
-## Feature Configuration
+## Render Options
 
-### Enable/Disable Features
+### Basic Render Configuration
 
 ```typescript
 {
-  features: {
-    codeHighlighting: true,     // Syntax highlighting
-    mathRendering: true,        // LaTeX math support
-    mermaidDiagrams: true,      // Mermaid diagram support
-    tableOfContents: true,      // Auto-generated TOC
-    printMode: true,            // Print-friendly styling
-    responsiveDesign: true      // Mobile-responsive layout
+  render: {
+    syntaxHighlighting: true,     // Enable code highlighting
+    highlightTheme: 'github',     // Highlight.js theme
+    copyCodeButton: true,         // Show copy button on code blocks
+    linkTarget: '_blank',         // Open links in new tab
+    sanitizeHtml: true            // Sanitize HTML content
   }
 }
 ```
 
-### Code Highlighting
+### Table of Contents
 
 ```typescript
 {
-  features: {
-    codeHighlighting: {
+  tableOfContents: {
+    enabled: true,
+    container: '#toc',           // Container for TOC
+    minHeadingLevel: 2,          // Minimum heading level
+    maxHeadingLevel: 4,          // Maximum heading level
+    scrollSmooth: true,          // Smooth scrolling
+    scrollOffset: 80,            // Offset for fixed header
+    highlightOnScroll: true      // Highlight current section
+  }
+}
+```
+
+## Performance Options
+
+### Performance Configuration
+
+```typescript
+{
+  performance: {
+    cacheSize: 50,                     // LRU cache size
+    enablePersistentCache: true,       // Use localStorage cache
+    enablePerformanceMonitoring: false, // Performance metrics
+    enableMemoryManagement: true,       // Memory optimization
+    preloadStrategy: 'adjacent',        // 'none', 'visible', 'adjacent', 'all'
+    lazyLoading: {
       enabled: true,
-      theme: 'github',  // highlight.js theme
-      languages: ['javascript', 'typescript', 'python', 'bash']
-    }
-  }
-}
-```
-
-## Callback Configuration
-
-### Event Handlers
-
-```typescript
-{
-  callbacks: {
-    onDocumentLoad: (document) => {
-      console.log(`Loaded: ${document.title}`);
-      // Update page title
-      document.title = `${document.title} - My Docs`;
-    },
-
-    onThemeChange: (theme) => {
-      console.log(`Theme changed to: ${theme}`);
-      // Store user preference
-      localStorage.setItem('docs-theme', theme);
-    },
-
-    onSearchQuery: (query, results) => {
-      console.log(`Search: "${query}" (${results.length} results)`);
-      // Analytics tracking
-      analytics.track('documentation_search', { query, resultCount: results.length });
-    },
-
-    onError: (error, context) => {
-      console.error(`Error in ${context}:`, error);
-      // Error reporting
-      errorReporting.captureException(error, { context });
-    },
-
-    onNavigationChange: (path) => {
-      console.log(`Navigated to: ${path}`);
-      // Update URL without page reload
-      history.pushState(null, '', `#${path}`);
+      threshold: 0.1,                  // Intersection threshold
+      rootMargin: '50px'               // Root margin
     }
   }
 }
@@ -341,175 +396,212 @@ For embedded use cases:
 ## Complete Configuration Example
 
 ```typescript
-const config = {
+import { createViewer, themes, createCustomTheme } from './dist/index.es.js';
+
+// Create a custom theme
+const corporateTheme = createCustomTheme({
+  name: 'corporate',
+  colors: {
+    primary: '#1e40af',
+    secondary: '#64748b',
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: '#1e293b',
+    textSecondary: '#64748b',
+    border: '#e2e8f0',
+    accent: '#3b82f6',
+  },
+  fonts: {
+    body: 'Inter, system-ui, sans-serif',
+    heading: 'Inter, system-ui, sans-serif',
+    code: 'JetBrains Mono, monospace',
+  },
+});
+
+// Create the viewer
+const viewer = createViewer({
+  container: '#docs',
   title: 'Acme Corp Documentation',
 
-  sources: [
-    { type: 'local', path: './docs/' },
-    {
-      type: 'github',
-      owner: 'acmecorp',
-      repo: 'api-docs',
-      branch: 'main',
-    },
-  ],
-
-  theme: {
-    default: 'corporate',
-    allowUserToggle: true,
-    custom: {
-      corporate: {
-        colors: {
-          primary: '#1e40af',
-          secondary: '#64748b',
-          background: '#ffffff',
-          surface: '#f8fafc',
-          text: '#1e293b',
-          textSecondary: '#64748b',
-          border: '#e2e8f0',
-          accent: '#3b82f6',
-        },
-        fonts: {
-          body: 'Inter, system-ui, sans-serif',
-          heading: 'Inter, system-ui, sans-serif',
-          code: 'JetBrains Mono, monospace',
-        },
-      },
-    },
-  },
-
-  navigation: {
-    enabled: true,
-    showSearch: true,
-    showThemeToggle: true,
-    position: 'left',
-    customItems: [
+  source: {
+    type: 'content',
+    documents: [
       {
-        type: 'link',
+        id: 'intro',
+        title: 'Introduction',
+        content: '# Welcome to Acme Corp...',
+        category: 'Getting Started',
+        tags: ['overview', 'beginner'],
+        order: 1,
+      },
+      {
+        id: 'api',
         title: 'API Reference',
-        url: 'https://api.acmecorp.com',
-      },
-      {
-        type: 'separator',
-      },
-      {
-        type: 'section',
-        title: 'Support',
-        items: [
-          { title: 'Help Center', url: 'https://help.acmecorp.com' },
-          { title: 'Contact Us', url: 'mailto:support@acmecorp.com' },
-        ],
+        content: '# API Documentation...',
+        category: 'Reference',
+        tags: ['api', 'technical'],
+        order: 10,
       },
     ],
+  },
+
+  theme: corporateTheme,
+
+  navigation: {
+    showCategories: true,
+    showTags: true,
+    collapsible: true,
+    showDescription: true,
+    sortBy: 'order',
   },
 
   search: {
     enabled: true,
     placeholder: 'Search Acme documentation...',
-    minQueryLength: 2,
-    maxResults: 30,
-    highlightResults: true,
     fuzzySearch: true,
+    caseSensitive: false,
+    searchInTags: true,
+    maxResults: 30,
   },
 
-  features: {
-    codeHighlighting: true,
-    mathRendering: false,
-    mermaidDiagrams: true,
-    tableOfContents: true,
-    printMode: true,
-    responsiveDesign: true,
+  render: {
+    syntaxHighlighting: true,
+    highlightTheme: 'github',
+    copyCodeButton: true,
+    linkTarget: '_blank',
+    sanitizeHtml: true,
   },
 
-  callbacks: {
-    onDocumentLoad: document => {
-      document.title = `${document.title} - Acme Docs`;
-      // Google Analytics page view
-      gtag('config', 'GA_MEASUREMENT_ID', {
-        page_title: document.title,
-        page_location: window.location.href,
-      });
-    },
+  tableOfContents: {
+    enabled: true,
+    minHeadingLevel: 2,
+    maxHeadingLevel: 4,
+    scrollSmooth: true,
+    highlightOnScroll: true,
+  },
 
-    onThemeChange: theme => {
-      localStorage.setItem('acme-docs-theme', theme);
-    },
-
-    onSearchQuery: (query, results) => {
-      // Track search analytics
-      gtag('event', 'search', {
-        search_term: query,
-        number_of_results: results.length,
-      });
-    },
-
-    onError: (error, context) => {
-      console.error(`Docs error in ${context}:`, error);
-      // Send to error tracking service
-      Sentry.captureException(error, {
-        tags: { context },
-        extra: { timestamp: new Date().toISOString() },
-      });
+  performance: {
+    cacheSize: 100,
+    enablePersistentCache: true,
+    preloadStrategy: 'adjacent',
+    lazyLoading: {
+      enabled: true,
     },
   },
-};
+});
 ```
 
-## Environment-Specific Configurations
+## Zero Configuration Setup
 
-### Development
+For the simplest possible setup, use the zero-config bundle:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Documentation</title>
+  </head>
+  <body>
+    <div id="docs"></div>
+
+    <!-- Load dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.2.2/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+
+    <!-- Load zero-config viewer -->
+    <script src="zero-config.umd.cjs"></script>
+
+    <script>
+      // Auto-discovers markdown files in ./docs/ folder
+      MarkdownDocsViewer.init();
+    </script>
+  </body>
+</html>
+```
+
+### Zero-Config Options
+
+```javascript
+MarkdownDocsViewer.init({
+  title: 'My Docs', // Optional: Override title
+  theme: 'github-dark', // Optional: Set theme
+  docsPath: './documentation', // Optional: Change docs folder
+  configPath: './docs-config.json', // Optional: Use config file
+});
+```
+
+### Configuration File
+
+Create a `docs-config.json` file for persistent configuration:
+
+```json
+{
+  "title": "My Documentation",
+  "theme": "material-light",
+  "source": {
+    "path": "./docs",
+    "exclude": ["**/drafts/**", "**/_*"]
+  },
+  "navigation": {
+    "autoSort": true,
+    "showCategories": true,
+    "collapsible": true
+  },
+  "search": {
+    "enabled": true,
+    "placeholder": "Search docs...",
+    "fuzzySearch": true
+  },
+  "features": {
+    "tableOfContents": true,
+    "codeHighlighting": true,
+    "darkMode": true
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with comprehensive type definitions:
 
 ```typescript
-const devConfig = {
-  ...baseConfig,
-  features: {
-    ...baseConfig.features,
-    debugMode: true,
-  },
-  callbacks: {
-    ...baseConfig.callbacks,
-    onError: (error, context) => {
-      console.error(`DEV ERROR in ${context}:`, error);
-      // Show detailed error in development
-      throw error;
-    },
-  },
-};
-```
+import {
+  createViewer,
+  DocumentationConfig,
+  Document,
+  Theme,
+  SearchOptions,
+  NavigationOptions,
+} from './dist/index.es.js';
 
-### Production
-
-```typescript
-const prodConfig = {
-  ...baseConfig,
-  features: {
-    ...baseConfig.features,
-    debugMode: false,
-  },
-  callbacks: {
-    ...baseConfig.callbacks,
-    onError: (error, context) => {
-      // Silent error handling in production
-      errorReporting.captureException(error, { context });
-    },
-  },
-};
-```
-
-## Validation and Defaults
-
-The library validates all configuration options and provides sensible defaults:
-
-```typescript
-// Minimal valid configuration
-const minConfig = {
-  title: 'Documentation',
-  sources: [{ type: 'local', path: './docs/' }],
+const config: DocumentationConfig = {
+  container: '#docs',
+  title: 'My Documentation',
+  // TypeScript will provide autocomplete for all options
 };
 
-// All other options will use defaults:
-// - theme: { default: 'light', allowUserToggle: true }
-// - navigation: { enabled: true, showSearch: true, showThemeToggle: true }
-// - search: { enabled: true, minQueryLength: 2, maxResults: 50 }
-// - features: all enabled
+const viewer = createViewer(config);
 ```
+
+## Minimal Configuration
+
+The simplest possible configuration:
+
+```javascript
+const viewer = createViewer({
+  container: '#docs',
+  source: {
+    type: 'content',
+    documents: [
+      {
+        id: 'home',
+        title: 'Home',
+        content: '# Welcome',
+      },
+    ],
+  },
+});
+```
+
+All other options will use sensible defaults.

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zero-Config Markdown Docs Viewer</title>
+    <style>
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #f8f9fa;
+      }
+
+      .header {
+        background: white;
+        padding: 1rem 2rem;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        min-height: calc(100vh - 80px);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      #docs {
+        height: calc(100vh - 80px);
+      }
+
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>📚 My Documentation</h1>
+    </div>
+
+    <div class="container">
+      <div id="docs">
+        <div class="loading">
+          <div>🔄 Loading documentation...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load dependencies from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@14.1.2/lib/marked.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.1.4/lib/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+
+    <!-- Load the zero-config viewer -->
+    <script src="../dist/zero-config.umd.cjs"></script>
+
+    <script>
+      // That's it! The viewer will auto-initialize and discover docs in ./docs/
+      // You can optionally configure it:
+
+      MarkdownDocsViewer.init({
+        title: 'My Documentation',
+        theme: 'github-light',
+        // docsPath: './docs', // Optional: override docs path
+        // configPath: './docs-config.json', // Optional: use config file
+      })
+        .then(viewer => {
+          console.log('📚 Documentation loaded successfully!');
+
+          // Optional: Add custom behaviors
+          document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === '/') {
+              // Focus search on Ctrl+/
+              const searchInput = document.querySelector('.mdv-search-input');
+              if (searchInput) {
+                searchInput.focus();
+                e.preventDefault();
+              }
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Failed to load documentation:', error);
+        });
+    </script>
+  </body>
+</html>

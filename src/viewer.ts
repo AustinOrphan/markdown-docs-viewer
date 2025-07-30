@@ -112,7 +112,6 @@ export class MarkdownDocsViewer {
       this.darkModeToggle = new DarkModeToggle(this.themeManager, {
         position: this.config.theme?.darkTogglePosition || 'header',
         showLabel: this.config.theme?.showDarkModeLabel !== false,
-        compact: this.config.theme?.compactDarkToggle === true,
         onToggle: (isDark, theme) => {
           if (this.config.onThemeChange) {
             this.config.onThemeChange(theme);
