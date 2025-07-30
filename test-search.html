@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Test</title>
+</head>
+<body>
+    <div id="docs"></div>
+    
+    <script src="./dist/index.umd.cjs"></script>
+    <script>
+        // Test documents
+        const documents = [
+            {
+                id: 'doc1',
+                title: 'Getting Started',
+                content: 'This is a guide to help you get started with the documentation viewer.',
+                description: 'A comprehensive guide for beginners',
+                tags: ['tutorial', 'beginner']
+            },
+            {
+                id: 'doc2', 
+                title: 'Advanced Features',
+                content: 'Learn about advanced features like theming, search, and navigation.',
+                description: 'Deep dive into advanced functionality',
+                tags: ['advanced', 'features']
+            },
+            {
+                id: 'doc3',
+                title: 'API Reference',
+                content: 'Complete API documentation with examples and code samples.',
+                description: 'Technical reference for developers',
+                tags: ['api', 'reference', 'development']
+            }
+        ];
+
+        // Create viewer with search enabled
+        const viewer = window.MarkdownDocsViewer.createViewer({
+            container: '#docs',
+            title: 'Search Test Documentation',
+            documents: {
+                source: 'content',
+                documents: documents
+            },
+            search: {
+                enabled: true,
+                placeholder: 'Search documentation...',
+                maxResults: 10,
+                searchInTags: true,
+                fuzzySearch: true
+            },
+            navigation: {
+                showCategories: false
+            }
+        });
+
+        // Log search functionality for debugging
+        console.log('Search test page loaded');
+        console.log('Documents:', documents);
+        
+        // Test search after a short delay to ensure initialization
+        setTimeout(() => {
+            const searchInput = document.querySelector('.mdv-search-input');
+            if (searchInput) {
+                console.log('Search input found:', searchInput);
+                
+                // Simulate typing "getting"
+                searchInput.value = 'getting';
+                searchInput.dispatchEvent(new Event('input'));
+                
+                setTimeout(() => {
+                    const results = document.querySelector('.mdv-search-results');
+                    console.log('Search results element:', results);
+                    console.log('Search results content:', results?.innerHTML);
+                }, 500);
+            } else {
+                console.error('Search input not found!');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
