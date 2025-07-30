@@ -20,7 +20,7 @@ npm install
 npm run build
 
 # The built files will be in dist/
-# Copy dist/index.umd.cjs to your project
+# Copy dist/markdown-docs-viewer.umd.cjs to your project
 ```
 
 ## Method 2: Git Submodule (Recommended for Projects)
@@ -50,7 +50,7 @@ Add as a git submodule for project integration:
   <script src="<!-- JavaScript is included in the main highlight.js bundle -->"></script>
 
   <!-- Markdown Docs Viewer -->
-  <script src="path/to/your/built/index.umd.cjs"></script>
+  <script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 
   <script>
     const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -115,11 +115,11 @@ After building, use the generated files from the `dist/` directory:
 
 \`\`\`html
 <!-- For browser usage -->
-<script src="path/to/dist/index.umd.cjs"></script>
+<script src="path/to/dist/markdown-docs-viewer.umd.cjs"></script>
 
 <!-- For ES modules -->
 <script type="module">
-  import { createViewer, themes } from './path/to/dist/index.es.js';
+  import { createViewer, themes } from './path/to/dist/markdown-docs-viewer.js';
 </script>
 \`\`\`
 
@@ -140,7 +140,7 @@ After building, use the generated files from the `dist/` directory:
 ## Creating a Viewer
 
 \`\`\`javascript
-import { createViewer } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { createViewer } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -241,7 +241,7 @@ Choose from 11 beautiful themes, each with light and dark variants:
 ## Using Themes
 
 \`\`\`javascript
-import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 // Light theme
 const viewer = createViewer({
@@ -285,7 +285,7 @@ viewer.setTheme(customTheme);
 Add runtime theme switching:
 
 \`\`\`javascript
-import { ThemeSwitcher } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { ThemeSwitcher } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const switcher = new ThemeSwitcher(viewer.themeManager, {
   position: 'top-right',
@@ -364,7 +364,7 @@ switcher.attachTo('#theme-switcher');
 ## Export Features
 
 \`\`\`javascript
-import { ExportManager } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { ExportManager } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const exporter = new ExportManager(viewer);
 
@@ -444,7 +444,7 @@ npm install marked marked-highlight highlight.js
 
 ```javascript
 // main.js
-import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```html
 <!-- Use the UMD build -->
-<script src="path/to/dist/index.umd.cjs"></script>
+<script src="path/to/dist/markdown-docs-viewer.umd.cjs"></script>
 ```
 
 **Syntax highlighting not working**
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```javascript
 // For initial configuration, use theme objects:
-import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/index.es.js';
+import { createViewer, themes } from '../path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 createViewer({
   theme: themes.github.dark, // ✅ Theme object required
 });

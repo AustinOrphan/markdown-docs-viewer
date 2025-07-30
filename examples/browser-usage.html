@@ -103,7 +103,7 @@
 
 &lt;!-- Load and use the viewer --&gt;
 &lt;script type="module"&gt;
-import { createViewer, themes } from '../dist/index.es.js';
+import { createViewer, themes } from '../dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
     container: '#docs-container',
@@ -148,7 +148,7 @@ ${TRIPLE_BACKTICK}
 &lt;script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/javascript.min.js"&gt;&lt;/script&gt;
 
 &lt;!-- Load the viewer UMD build --&gt;
-&lt;script src="../dist/index.umd.cjs"&gt;&lt;/script&gt;
+&lt;script src="../dist/markdown-docs-viewer.umd.cjs"&gt;&lt;/script&gt;
 
 &lt;div id="docs-container"&gt;&lt;/div&gt;
 
@@ -186,7 +186,7 @@ npm install
 npm run build
 
 # In your JavaScript/TypeScript file:
-import { createViewer, themes } from './dist/index.es.js';
+import { createViewer, themes } from './dist/markdown-docs-viewer.js';
 import 'highlight.js/styles/github.css'; // Optional: add syntax highlighting styles
 
 const viewer = createViewer({
@@ -339,7 +339,7 @@ const advancedConfig = {
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/typescript.min.js"></script>
 
     <!-- Load the UMD build for examples -->
-    <script src="../dist/index.umd.cjs"></script>
+    <script src="../dist/markdown-docs-viewer.umd.cjs"></script>
 
     <script>
       // Create triple backticks constant to avoid template literal parsing issues
@@ -379,7 +379,7 @@ This viewer was loaded using ES modules approach.
 - Better for bundlers
 
 ${TRIPLE_BACKTICK}javascript
-import { createViewer, themes } from './dist/index.es.js';
+import { createViewer, themes } from './dist/markdown-docs-viewer.js';
 ${TRIPLE_BACKTICK}
                                 `,
                 },
@@ -419,7 +419,7 @@ This viewer was loaded using the UMD build.
 - Global variable access
 
 ${TRIPLE_BACKTICK}html
-<script src="path/to/index.umd.cjs"><\/script>
+<script src="path/to/markdown-docs-viewer.umd.cjs"><\/script>
 <script>
   const { createViewer, themes } = window.MarkdownDocsViewer;
   const viewer = createViewer(config);

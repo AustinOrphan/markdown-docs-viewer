@@ -20,7 +20,7 @@ For initial configuration, **only theme objects are supported** regardless of wh
 ```html
 <!-- Not yet available on CDN -->
 <!-- This library is distributed via Git, not CDN -->
-<script src="path/to/your/built/index.umd.cjs"></script>
+<script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 
 <script>
   const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -52,7 +52,7 @@ For initial configuration, **only theme objects are supported** regardless of wh
 // Import from local build:
 
 // Import from your local build:
-import { createViewer, themes } from './path/to/built/index.es.js';
+import { createViewer, themes } from './path/to/built/markdown-docs-viewer.js';
 
 // ✅ CORRECT: Use theme objects
 const viewer = createViewer({
@@ -125,7 +125,7 @@ Custom themes should always be created as objects:
 // Import from local build:
 
 // Import from your local build:
-import { createCustomTheme } from './path/to/built/index.es.js';
+import { createCustomTheme } from './path/to/built/markdown-docs-viewer.js';
 
 const myTheme = createCustomTheme({
   name: 'my-custom-theme',

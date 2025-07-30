@@ -229,8 +229,8 @@ sequenceDiagram
 
 ```
 dist/
-├── index.es.js       # ES Module build
-├── index.umd.cjs     # UMD build for legacy support
+├── markdown-docs-viewer.js       # ES Module build
+├── markdown-docs-viewer.umd.cjs     # UMD build for legacy support
 ├── index.d.ts        # TypeScript declarations
 └── *.js              # Individual component modules
 ```
@@ -240,14 +240,14 @@ dist/
 1. **ES Modules** (Recommended)
 
    ```javascript
-   import { createViewer } from '../../dist/index.es.js';
+   import { createViewer } from '../../dist/markdown-docs-viewer.js';
    ```
 
 2. **CommonJS** (Node.js/Legacy)
 
    ```javascript
    // CommonJS: Build the library and require the built file
-   const { createViewer } = require('../../dist/index.umd.cjs');
+   const { createViewer } = require('../../dist/markdown-docs-viewer.umd.cjs');
    ```
 
 3. **Script Tag** (CDN - Not Yet Available)
@@ -255,7 +255,7 @@ dist/
    <!-- Not yet available on CDN -->
    <!-- This library is distributed via Git, not CDN -->
    <!-- Use your locally built file -->
-   <script src="path/to/your/built/index.umd.cjs"></script>
+   <script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
    ```
 
 ## Cross-Cutting Concepts

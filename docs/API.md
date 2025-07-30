@@ -19,7 +19,7 @@ function createViewer(config: DocumentationConfig): MarkdownDocsViewer;
 **Example:**
 
 ```typescript
-import { createViewer, themes } from './dist/index.es.js';
+import { createViewer, themes } from './dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -54,7 +54,7 @@ function quickStart(container: string | HTMLElement, documents: Document[]): Mar
 **Example:**
 
 ```typescript
-import { quickStart } from './dist/index.es.js';
+import { quickStart } from './dist/markdown-docs-viewer.js';
 
 const viewer = quickStart('#docs', [
   {
@@ -230,7 +230,7 @@ Creates a custom theme.
 **Example:**
 
 ```typescript
-import { createCustomTheme } from './dist/index.es.js';
+import { createCustomTheme } from './dist/markdown-docs-viewer.js';
 
 const myTheme = createCustomTheme({
   name: 'my-theme',
@@ -378,7 +378,7 @@ interface RenderOptions {
 The library includes several built-in themes, each with light and dark variants:
 
 ```typescript
-import { themes } from './dist/index.es.js';
+import { themes } from './dist/markdown-docs-viewer.js';
 
 // Available themes:
 themes.github.light;
@@ -437,7 +437,7 @@ enum ErrorCode {
 ### Error Handling Example
 
 ```typescript
-import { createViewer, MarkdownDocsError, ErrorCode } from './dist/index.es.js';
+import { createViewer, MarkdownDocsError, ErrorCode } from './dist/markdown-docs-viewer.js';
 
 try {
   const viewer = createViewer(config);
@@ -476,5 +476,5 @@ import {
   Theme,
   createViewer,
   themes,
-} from './dist/index.es.js';
+} from './dist/markdown-docs-viewer.js';
 ```

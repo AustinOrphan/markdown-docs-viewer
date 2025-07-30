@@ -19,7 +19,7 @@ This guide provides visual examples and detailed instructions for using the them
 ### Basic Setup with Theme Controls
 
 ```javascript
-import { MarkdownDocsViewer } from './dist/index.es.js';
+import { MarkdownDocsViewer } from './dist/markdown-docs-viewer.js';
 
 const viewer = new MarkdownDocsViewer({
   container: '#docs',
@@ -142,7 +142,7 @@ Creates a smaller toggle without labels, perfect for tight spaces.
 #### Default Theme
 
 ```javascript
-import { defaultTheme } from './dist/index.es.js';
+import { defaultTheme } from './dist/markdown-docs-viewer.js';
 viewer.setTheme('default');
 ```
 
@@ -175,7 +175,7 @@ viewer.setTheme('material');
 #### Dark Theme
 
 ```javascript
-import { darkTheme } from './dist/index.es.js';
+import { darkTheme } from './dist/markdown-docs-viewer.js';
 viewer.setTheme('dark');
 ```
 

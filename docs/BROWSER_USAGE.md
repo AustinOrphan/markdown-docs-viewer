@@ -18,14 +18,14 @@ npm install
 npm run build
 
 # The built files will be in dist/
-# - dist/index.umd.cjs for browser usage
-# - dist/index.es.js for ES modules
+# - dist/markdown-docs-viewer.umd.cjs for browser usage
+# - dist/markdown-docs-viewer.js for ES modules
 ```
 
 Then reference the built file in your HTML:
 
 ```html
-<script src="path/to/your/built/index.umd.cjs"></script>
+<script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 ```
 
 ## Usage Methods
@@ -53,7 +53,7 @@ Then reference the built file in your HTML:
     <script src="<!-- Language files not needed - included in main bundle -->"></script>
 
     <!-- Load your built viewer -->
-    <script src="path/to/your/built/index.umd.cjs"></script>
+    <script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 
     <script>
       const { createViewer, themes } = window.MarkdownDocsViewer;
@@ -83,7 +83,7 @@ Then reference the built file in your HTML:
 ```html
 <script type="module">
   // Import from your built ES module
-  import { createViewer, themes } from './path/to/your/built/index.es.js';
+  import { createViewer, themes } from './path/to/your/built/markdown-docs-viewer.js';
 
   const viewer = createViewer({
     container: '#docs',
@@ -107,7 +107,7 @@ npm install marked marked-highlight highlight.js
 
 ```javascript
 // Import from your local build
-import { createViewer, themes } from './path/to/markdown-docs-viewer/dist/index.es.js';
+import { createViewer, themes } from './path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 import 'highlight.js/styles/github.css'; // Optional styles
 
 const viewer = createViewer({
@@ -194,7 +194,7 @@ try {
 
 ```html
 <!-- Instead of require(), use UMD -->
-<script src="path/to/index.umd.cjs"></script>
+<script src="path/to/markdown-docs-viewer.umd.cjs"></script>
 <script>
   const { createViewer } = window.MarkdownDocsViewer;
   const viewer = createViewer(config);
@@ -202,7 +202,7 @@ try {
 
 <!-- Or use ES modules -->
 <script type="module">
-  import { MarkdownDocsViewer } from 'path/to/index.es.js';
+  import { MarkdownDocsViewer } from 'path/to/markdown-docs-viewer.js';
 </script>
 ```
 
@@ -272,7 +272,7 @@ Here's a complete, working example:
     <script src="<!-- Language files not needed - included in main bundle -->"></script>
 
     <!-- Your built viewer -->
-    <script src="path/to/your/built/index.umd.cjs"></script>
+    <script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 
     <script>
       function showError(message) {
@@ -354,7 +354,7 @@ Main class for creating documentation viewers.
 ### Constructor
 
 \`\`\`typescript
-import { createViewer } from './dist/index.es.js';
+import { createViewer } from './dist/markdown-docs-viewer.js';
 createViewer(config: DocumentationConfig)
 \`\`\`
 

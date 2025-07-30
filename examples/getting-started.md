@@ -33,7 +33,7 @@ cd ..
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
 
 <!-- Load your built viewer -->
-<script src="path/to/your/built/dist/index.umd.cjs"></script>
+<script src="path/to/your/built/dist/markdown-docs-viewer.umd.cjs"></script>
 ```
 
 ## Basic Setup
@@ -41,7 +41,7 @@ cd ..
 Here's a minimal example to get you started:
 
 ```javascript
-import { MarkdownDocsViewer } from './path/to/markdown-docs-viewer/dist/index.es.js';
+import { MarkdownDocsViewer } from './path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const viewer = new MarkdownDocsViewer({
   container: '#documentation',

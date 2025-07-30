@@ -101,7 +101,7 @@
     <script src="https://unpkg.com/highlight.js@11.9.0/lib/languages/bash.min.js"></script>
 
     <!-- Load the markdown docs viewer -->
-    <script src="../dist/index.umd.cjs"></script>
+    <script src="../dist/markdown-docs-viewer.umd.cjs"></script>
 
     <script>
       // Create triple backticks constant to avoid template literal parsing issues
@@ -209,7 +209,7 @@ ${TRIPLE_BACKTICK}html
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"><\/script>
 
 <!-- Load your built viewer -->
-<script src="path/to/your/built/dist/index.umd.cjs"><\/script>
+<script src="path/to/your/built/dist/markdown-docs-viewer.umd.cjs"><\/script>
 ${TRIPLE_BACKTICK}
 
 ## Via Git Submodule
@@ -222,7 +222,7 @@ ${TRIPLE_BACKTICK}
 
 ${TRIPLE_BACKTICK}javascript
 // Import from your local build
-import { MarkdownDocsViewer } from './viewer/dist/index.es.js';
+import { MarkdownDocsViewer } from './viewer/dist/markdown-docs-viewer.js';
 ${TRIPLE_BACKTICK}
 `,
                 },
@@ -497,7 +497,7 @@ This page demonstrates a custom theme!
 ## Creating Custom Themes
 
 ${TRIPLE_BACKTICK}javascript
-import { createCustomTheme } from './path/to/markdown-docs-viewer/dist/index.es.js';
+import { createCustomTheme } from './path/to/markdown-docs-viewer/dist/markdown-docs-viewer.js';
 
 const myTheme = createCustomTheme({
     colors: {

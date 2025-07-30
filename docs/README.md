@@ -44,7 +44,7 @@ npm run build
 ### Basic Usage
 
 ```javascript
-import { createViewer } from './dist/index.es.js';
+import { createViewer } from './dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -62,7 +62,7 @@ const viewer = createViewer({
 <!-- This library is distributed via Git, not CDN -->
 
 <!-- Use your locally built file instead -->
-<script src="path/to/your/built/index.umd.cjs"></script>
+<script src="path/to/your/built/markdown-docs-viewer.umd.cjs"></script>
 <script>
   const { createViewer } = window.MarkdownDocsViewer;
   // ... use createViewer
@@ -170,7 +170,7 @@ npm install
 // Import from local build:
 
 // Currently - import from local build:
-import { createViewer, themes } from './path/to/built/index.es.js';
+import { createViewer, themes } from './path/to/built/markdown-docs-viewer.js';
 createViewer({
   theme: themes.github.light, // ✅ Theme object required
 });

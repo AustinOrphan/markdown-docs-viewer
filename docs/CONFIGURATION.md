@@ -7,7 +7,7 @@ Comprehensive guide to configuring the Markdown Documentation Viewer.
 The simplest configuration requires only a container and document source:
 
 ```typescript
-import { createViewer, themes } from './dist/index.es.js';
+import { createViewer, themes } from './dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -149,7 +149,7 @@ Organize documents with categories and tags:
 **NPM Usage:**
 
 ```typescript
-import { createViewer, themes } from './dist/index.es.js';
+import { createViewer, themes } from './dist/markdown-docs-viewer.js';
 
 const viewer = createViewer({
   container: '#docs',
@@ -194,7 +194,7 @@ themes.monokai.dark;
 Define custom themes using the theme builder:
 
 ```typescript
-import { createCustomTheme } from './dist/index.es.js';
+import { createCustomTheme } from './dist/markdown-docs-viewer.js';
 
 const corporateTheme = createCustomTheme({
   name: 'corporate',
@@ -396,7 +396,7 @@ For simple documentation:
 ## Complete Configuration Example
 
 ```typescript
-import { createViewer, themes, createCustomTheme } from './dist/index.es.js';
+import { createViewer, themes, createCustomTheme } from './dist/markdown-docs-viewer.js';
 
 // Create a custom theme
 const corporateTheme = createCustomTheme({
@@ -573,7 +573,7 @@ import {
   Theme,
   SearchOptions,
   NavigationOptions,
-} from './dist/index.es.js';
+} from './dist/markdown-docs-viewer.js';
 
 const config: DocumentationConfig = {
   container: '#docs',
