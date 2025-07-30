@@ -23,6 +23,7 @@ describe('Zero Config API', () => {
   let mockAutoDiscovery: any;
   let mockViewer: any;
   let mockContainer: HTMLElement;
+  let mockCreateViewer: any;
 
   beforeEach(() => {
     // Setup DOM
@@ -61,9 +62,9 @@ describe('Zero Config API', () => {
     };
 
     // Mock createViewer
-    const createViewer = vi.fn().mockReturnValue(mockViewer);
+    mockCreateViewer = vi.fn().mockReturnValue(mockViewer);
     vi.doMock('../src/factory', () => ({
-      createViewer,
+      createViewer: mockCreateViewer,
     }));
 
     // Mock console methods
@@ -152,7 +153,7 @@ describe('Zero Config API', () => {
       await init();
 
       // Should parse theme name and mode  
-      expect(createViewer).toHaveBeenCalledWith(
+      expect(mockCreateViewer).toHaveBeenCalledWith(
         expect.objectContaining({
           theme: themes.github.dark,
         })
@@ -197,7 +198,7 @@ describe('Zero Config API', () => {
 
       try {
         await init();
-      } catch (e) {
+      } catch {
         // Expected to throw
       }
 
@@ -218,7 +219,7 @@ describe('Zero Config API', () => {
 
       try {
         await init(options);
-      } catch (e) {
+      } catch {
         // Expected to throw
       }
 
