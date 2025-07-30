@@ -400,7 +400,14 @@ export function validateConfig(config: DocumentationConfig): void {
   }
 
   if (config.source.type === 'github') {
-    if (!config.source.baseUrl || !config.source.baseUrl.includes('github.com')) {
+    let hostname: string | undefined;
+    try {
+      hostname = new URL(config.source.baseUrl!).hostname;
+    } catch (e) {
+      hostname = undefined;
+    }
+    const allowedHosts = ['github.com', 'www.github.com'];
+    if (!config.source.baseUrl || !hostname || !allowedHosts.includes(hostname)) {
       throw new Error(
         'Configuration Error: GitHub source type requires baseUrl property pointing to a GitHub repository.'
       );
