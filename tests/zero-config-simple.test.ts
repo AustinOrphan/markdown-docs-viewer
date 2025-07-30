@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import {
-  getAvailableThemes,
-  generateConfig,
-} from '../src/zero-config';
+import { getAvailableThemes, generateConfig } from '../src/zero-config';
 
 // Mock dependencies
 vi.mock('../src/config-loader');

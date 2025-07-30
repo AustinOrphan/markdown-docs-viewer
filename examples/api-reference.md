@@ -499,7 +499,12 @@ try {
 The library is written in TypeScript and provides full type definitions:
 
 ```typescript
-import { MarkdownDocsViewer, DocumentationConfig, Document, Theme } from '../dist/markdown-docs-viewer.js';
+import {
+  MarkdownDocsViewer,
+  DocumentationConfig,
+  Document,
+  Theme,
+} from '../dist/markdown-docs-viewer.js';
 
 const config: DocumentationConfig = {
   container: '#docs',
