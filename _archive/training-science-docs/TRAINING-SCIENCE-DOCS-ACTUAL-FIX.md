@@ -159,7 +159,7 @@ const viewer = createViewer({
   <body>
     <div id="docs"></div>
 
-    <script src="./viewer/dist/index.umd.cjs"></script>
+    <script src="./viewer/dist/markdown-docs-viewer.umd.cjs"></script>
     <script>
       // Ensure hljs is available globally
       if (typeof hljs !== 'undefined') {

@@ -35,7 +35,7 @@ First, build the latest version:
 
    ```bash
    # Copy the UMD build file
-   cp dist/index.umd.cjs /path/to/training-science-docs/docs/markdown-docs-viewer.umd.js
+   cp dist/markdown-docs-viewer.umd.cjs /path/to/training-science-docs/docs/markdown-docs-viewer.umd.js
 
    # Copy type definitions if needed
    cp dist/*.d.ts /path/to/training-science-docs/docs/
@@ -216,7 +216,7 @@ Once we publish to a CDN, the setup would be:
 
 ```html
 <!-- This library is distributed via Git, not CDN -->
-<script src="path/to/dist/index.umd.cjs"></script>
+<script src="path/to/dist/markdown-docs-viewer.umd.cjs"></script>
 ```
 
 ### Method 3: Git Submodule (Current but Not Recommended)
