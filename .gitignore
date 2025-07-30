@@ -25,3 +25,6 @@ theming-options/
 
 # Distribution build artifacts
 distribution/
+
+# Specific files
+scripts/sync-task-progress.js
