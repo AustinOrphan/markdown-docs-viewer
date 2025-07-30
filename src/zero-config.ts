@@ -125,25 +125,14 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       });
     } catch (viewerError) {
       console.error('Failed to create viewer:', viewerError);
-      // Create a minimal error viewer that still provides the expected interface
-      // This prevents init() from returning undefined while still showing the error
-      viewer = {
-        destroy: () => Promise.resolve(),
-        setTheme: () => {},
-        getTheme: () => ({}),
-        reload: () => Promise.resolve(),
-        addDocument: () => {},
-        removeDocument: () => {},
-        search: () => [],
-        getDocument: () => null,
-        getCurrentDocument: () => null,
-        navigateToDocument: () => {},
-        exportToPdf: () => Promise.resolve(),
-        exportToHtml: () => '',
-        on: () => {},
-        off: () => {},
-        emit: () => {},
-      } as MarkdownDocsViewer;
+      // Fallback: dynamic no-op proxy that still matches MarkdownDocsViewer
+      const handler: ProxyHandler<any> = {
+        get(target, prop) {
+          if (prop === 'container') return container; // real container for error UI
+          return () => {}; // no-op for everything else
+        },
+      };
+      viewer = new Proxy({}, handler) as MarkdownDocsViewer;
 
       // Display error in container but don't throw - let init() continue and return the viewer
       if (container) {
@@ -226,25 +215,14 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       `;
     }
 
-    // Instead of throwing, return a minimal error viewer that provides the expected interface
-    // This ensures init() always returns a viewer object, never throws
-    const errorViewer = {
-      destroy: () => Promise.resolve(),
-      setTheme: () => {},
-      getTheme: () => ({}),
-      reload: () => Promise.resolve(),
-      addDocument: () => {},
-      removeDocument: () => {},
-      search: () => [],
-      getDocument: () => null,
-      getCurrentDocument: () => null,
-      navigateToDocument: () => {},
-      exportToPdf: () => Promise.resolve(),
-      exportToHtml: () => '',
-      on: () => {},
-      off: () => {},
-      emit: () => {},
-    } as MarkdownDocsViewer;
+    // Fallback: dynamic no-op proxy that still satisfies MarkdownDocsViewer
+    const errorHandler: ProxyHandler<any> = {
+      get(_target, prop) {
+        if (prop === 'container') return container; // let error UI render
+        return () => {}; // noop for everything else
+      },
+    };
+    const errorViewer = new Proxy({}, errorHandler) as MarkdownDocsViewer;
 
     // Store global reference to the error viewer
     globalViewer = errorViewer;
