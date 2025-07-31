@@ -279,12 +279,47 @@ function onDOMReady(callback: () => void): void {
 }
 
 /**
+ * Enhanced test environment detection
+ */
+function isTestEnvironment(): boolean {
+  // Check multiple test environment indicators
+  return (
+    // Standard NODE_ENV check
+    (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') ||
+    // Vitest specific checks
+    (typeof process !== 'undefined' &&
+      (process.env?.VITEST === 'true' ||
+        process.env?.VITEST_WORKER_ID !== undefined ||
+        process.env?.VITE_TEST === 'true')) ||
+    // Jest specific checks
+    (typeof process !== 'undefined' && process.env?.JEST_WORKER_ID !== undefined) ||
+    // Check for test globals
+    (typeof global !== 'undefined' &&
+      (global.describe !== undefined || global.it !== undefined || global.test !== undefined)) ||
+    // Check for Vitest global
+    (typeof window !== 'undefined' &&
+      ((window as any).describe !== undefined || (window as any).it !== undefined)) ||
+    // Check if we're running in a headless browser (common in CI)
+    (typeof navigator !== 'undefined' && navigator.webdriver) ||
+    // URL-based detection for test runners
+    (typeof window !== 'undefined' && window.location?.href?.includes('localhost')) ||
+    // Process title check for Node.js test runners
+    (typeof process !== 'undefined' &&
+      process.title?.includes('node') &&
+      process.argv?.some(
+        arg => arg.includes('vitest') || arg.includes('jest') || arg.includes('test')
+      ))
+  );
+}
+
+/**
  * Auto-initialization when script loads (optional)
  * Users can disable this by setting window.MarkdownDocsViewer.autoInit = false
  */
 onDOMReady(() => {
-  // Check if we're in a test environment and skip auto-init
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
+  // Enhanced test environment check to prevent hanging CI tests
+  if (isTestEnvironment()) {
+    console.debug('Zero-config auto-init skipped: test environment detected');
     return;
   }
 

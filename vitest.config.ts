@@ -11,6 +11,12 @@ export default defineConfig({
     // Global test configuration
     globals: true,
 
+    // Environment variables for test detection
+    env: {
+      NODE_ENV: 'test',
+      VITEST: 'true',
+    },
+
     // Coverage configuration
     coverage: {
       provider: 'v8',
