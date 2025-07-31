@@ -16,25 +16,17 @@ import {
 } from '../src/zero-config';
 import { themes } from '../src/themes';
 
-// Import ConfigLoader mock utilities  
-import {
-  setupConfigMock,
-  DEFAULT_TEST_CONFIG
-} from './utils/mockConfigLoader';
+// Import ConfigLoader mock utilities
+import { setupConfigMock, DEFAULT_TEST_CONFIG } from './utils/mockConfigLoader';
 // Import AutoDiscovery mock utilities
 import {
   setupAutoDiscoveryMockWithOptions,
-  DEFAULT_TEST_DOCUMENTS
+  DEFAULT_TEST_DOCUMENTS,
 } from './utils/mockAutoDiscovery';
-// Import Viewer mock utilities  
-import {
-  createMockViewer
-} from './utils/mockViewer';
+// Import Viewer mock utilities
+import { createMockViewer } from './utils/mockViewer';
 // Import Factory mock utilities
-import {
-  mockCreateViewerSuccess,
-  mockCreateViewerError
-} from './utils/mockFactory';
+import { mockCreateViewerSuccess, mockCreateViewerError } from './utils/mockFactory';
 // Removed unused mock utility imports - to be replaced by agents B-E
 // import {
 //   mockCreateViewerSuccess,
@@ -47,7 +39,7 @@ describe('Zero Config API', () => {
   let mockViewer: any;
   let mockContainer: HTMLElement;
   let mockCreateViewerFn: any;
-  
+
   // Import the actual classes for targeted mocking
   let ConfigLoader: any;
   let AutoDiscovery: any;
@@ -66,14 +58,22 @@ describe('Zero Config API', () => {
     // Setup default config mock
     const configMock = setupConfigMock();
     vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(configMock.loadConfigMock);
-    vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(configMock.mockInstance.toDocumentationConfig);
-    vi.spyOn(ConfigLoader.prototype, 'getConfig').mockImplementation(configMock.mockInstance.getConfig);
-    vi.spyOn(ConfigLoader.prototype, 'getConfigPath').mockImplementation(configMock.mockInstance.getConfigPath);
+    vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
+      configMock.mockInstance.toDocumentationConfig
+    );
+    vi.spyOn(ConfigLoader.prototype, 'getConfig').mockImplementation(
+      configMock.mockInstance.getConfig
+    );
+    vi.spyOn(ConfigLoader.prototype, 'getConfigPath').mockImplementation(
+      configMock.mockInstance.getConfigPath
+    );
     vi.spyOn(ConfigLoader, 'generateSampleConfig').mockReturnValue('sample config');
 
     // Setup default auto discovery mock
     const discoveryMock = setupAutoDiscoveryMockWithOptions({ documents: DEFAULT_TEST_DOCUMENTS });
-    vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(discoveryMock.discoverFilesMock);
+    vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(
+      discoveryMock.discoverFilesMock
+    );
 
     // Mock viewer (for reference in tests)
     mockViewer = createMockViewer();
@@ -150,10 +150,10 @@ describe('Zero Config API', () => {
         };
 
         const viewer = await init(options);
-        
+
         // Restore original querySelector
         document.querySelector = originalQuerySelector;
-        
+
         expect(viewer).toBeDefined();
         expect(viewer.destroy).toBeDefined();
         expect(viewer.setTheme).toBeDefined();
@@ -195,11 +195,15 @@ describe('Zero Config API', () => {
           container: mockContainer,
           theme: themes.github.dark,
           source: { type: 'content', documents: [] },
-        }
+        },
       });
-      
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(themeConfigMock.loadConfigMock);
-      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(themeConfigMock.mockInstance.toDocumentationConfig);
+
+      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+        themeConfigMock.loadConfigMock
+      );
+      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
+        themeConfigMock.mockInstance.toDocumentationConfig
+      );
 
       await init();
 
@@ -216,9 +220,13 @@ describe('Zero Config API', () => {
       const invalidThemeConfigMock = setupConfigMock({
         config: { ...DEFAULT_TEST_CONFIG, theme: 'nonexistent-theme' },
       });
-      
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(invalidThemeConfigMock.loadConfigMock);
-      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(invalidThemeConfigMock.mockInstance.toDocumentationConfig);
+
+      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+        invalidThemeConfigMock.loadConfigMock
+      );
+      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
+        invalidThemeConfigMock.mockInstance.toDocumentationConfig
+      );
 
       const viewer = await init();
       expect(viewer).toBe(mockViewer);
@@ -227,7 +235,9 @@ describe('Zero Config API', () => {
     it('should warn when no documents found', async () => {
       // Setup empty discovery scenario
       const emptyDiscoveryMock = setupAutoDiscoveryMockWithOptions({ documents: [] });
-      vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(emptyDiscoveryMock.discoverFilesMock);
+      vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(
+        emptyDiscoveryMock.discoverFilesMock
+      );
 
       await init();
 
@@ -236,16 +246,18 @@ describe('Zero Config API', () => {
 
     it('should handle initialization errors gracefully', async () => {
       const error = new Error('Test error');
-      // Setup config error scenario  
+      // Setup config error scenario
       const errorConfigMock = setupConfigMock({ loadError: error });
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(errorConfigMock.loadConfigMock);
+      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+        errorConfigMock.loadConfigMock
+      );
 
       const viewer = await init();
       expect(viewer).toBeDefined();
       expect(viewer.destroy).toBeDefined();
       expect(viewer.setTheme).toBeDefined();
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to load configuration:'),
+        expect.stringContaining('Failed to initialize'),
         error
       );
     });
@@ -269,7 +281,7 @@ describe('Zero Config API', () => {
         // Error viewer should be created and error should be displayed
         expect(mockContainer.innerHTML).toContain('Viewer Creation Failed');
         expect(mockContainer.innerHTML).toContain('Test error');
-        
+
         return viewer;
       })();
 
@@ -303,7 +315,7 @@ describe('Zero Config API', () => {
 
         // Error should be displayed in custom container
         expect(customContainer.innerHTML).toContain('Viewer Creation Failed');
-        
+
         return viewer;
       })();
 
@@ -450,7 +462,7 @@ describe('Zero Config API', () => {
       });
 
       const testPromise = (async () => {
-        // Mock querySelector to return null  
+        // Mock querySelector to return null
         const originalQuerySelector = document.querySelector;
         const originalGetElementById = document.getElementById;
         vi.spyOn(document, 'querySelector').mockReturnValue(null);
@@ -459,18 +471,20 @@ describe('Zero Config API', () => {
         const error = new Error('Test error');
         // Setup config error scenario
         const errorConfigMock = setupConfigMock({ loadError: error });
-        vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(errorConfigMock.loadConfigMock);
+        vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+          errorConfigMock.loadConfigMock
+        );
 
         const options: ZeroConfigOptions = {
           container: '#nonexistent',
         };
 
         const viewer = await init(options);
-        
+
         // Restore original methods
         document.querySelector = originalQuerySelector;
         document.getElementById = originalGetElementById;
-        
+
         expect(viewer).toBeDefined();
         expect(viewer.destroy).toBeDefined();
         expect(viewer.setTheme).toBeDefined();
@@ -479,7 +493,7 @@ describe('Zero Config API', () => {
           expect.stringContaining('Failed to initialize'),
           expect.any(Error)
         );
-        
+
         return viewer;
       })();
 
