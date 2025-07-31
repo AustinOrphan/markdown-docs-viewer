@@ -104,8 +104,6 @@ Uses Vitest with jsdom environment and comprehensive mocking:
 
 Tests are organized by feature module with `tests/setup.ts` providing global configuration.
 
-<<<<<<< Updated upstream
-=======
 ### Zero-Config Testing Architecture ✅ RESOLVED
 
 **Previous Issue**: [GitHub Issue #49](https://github.com/AustinOrphan/markdown-docs-viewer/issues/49) - Four zero-config tests were hanging indefinitely due to circular dependencies in vi.mock() setup.
@@ -121,7 +119,7 @@ The project now implements a **dual testing approach** for zero-config functiona
    - All previously hanging tests now passing consistently
    - Uses specialized mock utilities from `tests/utils/`
 
-2. **Integration Tests** (`tests/integration/`) - 22 tests, ~805ms execution  
+2. **Integration Tests** (`tests/integration/`) - 22 tests, ~805ms execution
    - Real-world scenario validation with minimal mocking
    - End-to-end functionality testing with actual DOM manipulation
    - Performance and memory leak detection
@@ -131,7 +129,7 @@ The project now implements a **dual testing approach** for zero-config functiona
 Replaced problematic global `vi.mock()` with targeted function mocking:
 
 - **`tests/utils/mockFactory.ts`** - Factory function mocking utilities
-- **`tests/utils/mockConfigLoader.ts`** - Configuration loading mocks  
+- **`tests/utils/mockConfigLoader.ts`** - Configuration loading mocks
 - **`tests/utils/mockAutoDiscovery.ts`** - Document discovery mocks
 - **`tests/utils/mockViewer.ts`** - Viewer instance creation utilities
 - **`tests/utils/index.ts`** - Central export hub preventing circular dependencies
@@ -150,7 +148,7 @@ const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 't
 # Unit tests (fast feedback)
 npm test -- tests/zero-config.test.ts
 
-# Integration tests (comprehensive validation)  
+# Integration tests (comprehensive validation)
 npx vitest run --config vitest.integration.config.ts tests/integration/zero-config-essential.integration.test.ts
 
 # All integration tests
@@ -160,8 +158,9 @@ npx vitest run --config vitest.integration.config.ts tests/integration/
 #### Documentation
 
 Complete documentation available:
+
 - **`solution-summary.md`** - Executive summary of the complete fix
-- **`testing-strategy.md`** - Comprehensive testing strategy documentation  
+- **`testing-strategy.md`** - Comprehensive testing strategy documentation
 - **`mock-utilities-guide.md`** - Developer guide for using mock utilities
 
 ## TypeScript Development Patterns
@@ -180,7 +179,6 @@ viewer = proxyObject as unknown as MarkdownDocsViewer;
 
 This pattern is used in `src/zero-config.ts` for error viewer fallbacks where Proxy objects need to satisfy the `MarkdownDocsViewer` interface.
 
->>>>>>> Stashed changes
 ## Key Dependencies
 
 - **marked** - Markdown parsing

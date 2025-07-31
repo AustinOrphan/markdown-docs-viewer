@@ -164,7 +164,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
         container: container || document.createElement('div'),
 
         // Core methods that tests expect
-        destroy: () => Promise.resolve(),
+        destroy: () => {},
         reload: () => Promise.resolve(),
         setTheme: () => {},
         getTheme: () => ({}),
@@ -192,7 +192,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       const handler: ProxyHandler<any> = {
         get(target: any, prop: string | symbol) {
           if (prop === 'container') return container;
-          if (prop === 'destroy') return () => Promise.resolve();
+          if (prop === 'destroy') return () => {};
           if (prop === 'reload') return () => Promise.resolve();
           if (prop === 'setTheme') return () => {};
 

@@ -13,7 +13,7 @@ import * as factory from '../../src/factory';
 export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): MarkdownDocsViewer {
   const defaultMock = {
     container: document.createElement('div'),
-    destroy: vi.fn().mockResolvedValue(undefined),
+    destroy: vi.fn().mockReturnValue(undefined),
     reload: vi.fn().mockResolvedValue(undefined),
     setTheme: vi.fn(),
     getTheme: vi.fn().mockReturnValue({}),
@@ -44,7 +44,9 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
 /**
  * Mocks createViewer to return a successful viewer instance
  */
-export function mockCreateViewerSuccess(viewer?: MarkdownDocsViewer): MockedFunction<typeof factory.createViewer> {
+export function mockCreateViewerSuccess(
+  viewer?: MarkdownDocsViewer
+): MockedFunction<typeof factory.createViewer> {
   const mockViewer = viewer || createMockViewer();
   return vi.spyOn(factory, 'createViewer').mockReturnValue(mockViewer);
 }
@@ -64,7 +66,7 @@ export function mockCreateViewerError(error: Error): MockedFunction<typeof facto
 export function createErrorViewer(container?: HTMLElement): MarkdownDocsViewer {
   return createMockViewer({
     container: container || document.createElement('div'),
-    destroy: vi.fn().mockResolvedValue(undefined),
+    destroy: vi.fn().mockReturnValue(undefined),
     reload: vi.fn().mockResolvedValue(undefined),
     setTheme: vi.fn(),
   });
@@ -73,11 +75,13 @@ export function createErrorViewer(container?: HTMLElement): MarkdownDocsViewer {
 /**
  * Sets up factory mock with custom behavior
  */
-export function setupFactoryMock(config: {
-  shouldSucceed?: boolean;
-  viewer?: MarkdownDocsViewer;
-  error?: Error;
-} = {}): MockedFunction<typeof factory.createViewer> {
+export function setupFactoryMock(
+  config: {
+    shouldSucceed?: boolean;
+    viewer?: MarkdownDocsViewer;
+    error?: Error;
+  } = {}
+): MockedFunction<typeof factory.createViewer> {
   const { shouldSucceed = true, viewer, error } = config;
 
   if (shouldSucceed) {
@@ -90,7 +94,9 @@ export function setupFactoryMock(config: {
 /**
  * Creates a spy on quickStart function
  */
-export function mockQuickStart(viewer?: MarkdownDocsViewer): MockedFunction<typeof factory.quickStart> {
+export function mockQuickStart(
+  viewer?: MarkdownDocsViewer
+): MockedFunction<typeof factory.quickStart> {
   const mockViewer = viewer || createMockViewer();
   return vi.spyOn(factory, 'quickStart').mockReturnValue(mockViewer);
 }
