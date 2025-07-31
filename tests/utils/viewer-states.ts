@@ -3,8 +3,7 @@
  * Provides common viewer states and state transition helpers
  */
 
-import type { ViewerState, Document, Theme } from '../../src/types';
-import { themes } from '../../src/themes';
+import type { ViewerState, Document } from '../../src/types';
 
 /**
  * Common viewer states for testing

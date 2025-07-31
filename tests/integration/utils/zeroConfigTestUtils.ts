@@ -7,7 +7,7 @@
 import { vi } from 'vitest';
 import { ZeroConfigOptions } from '../../../src/zero-config';
 import { MarkdownDocsViewer } from '../../../src/viewer';
-import { createRealContainer, waitForElement, TestContainer } from './realDOMSetup';
+import { createRealContainer, TestContainer } from './realDOMSetup';
 
 export interface ZeroConfigTestResult {
   viewer: MarkdownDocsViewer;
@@ -118,7 +118,7 @@ export class ZeroConfigTestRunner {
  */
 export async function validateErrorUI(
   container: HTMLElement,
-  timeout: number = 5000
+  _timeout: number = 5000
 ): Promise<ErrorUIValidationResult> {
   try {
     // Wait for any error UI to appear
@@ -161,7 +161,7 @@ export async function validateErrorUI(
       hasQuickSetup,
       hasTechnicalDetails
     };
-  } catch (err) {
+  } catch {
     return { hasErrorUI: false, errorType: 'none' };
   }
 }

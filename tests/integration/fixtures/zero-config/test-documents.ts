@@ -344,7 +344,7 @@ This document tests various special characters and Unicode:
 \`\`\`javascript
 const special = "Test with quotes: 'single' and \\"double\\"";
 const unicode = "Unicode: café, naïve, résumé";
-const symbols = "Symbols: <>&'\"";
+const symbols = "Symbols: <>&'\\"";
 \`\`\`
 `,
     size: 742

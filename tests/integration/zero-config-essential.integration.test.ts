@@ -12,7 +12,6 @@ import {
   setupRealDOM,
   createRealContainer,
   createContainerWithAttributes,
-  waitForContainerContent,
   DOMTestEnvironment,
   TestContainer,
 } from './utils/realDOMSetup';
@@ -214,7 +213,7 @@ describe('Zero-Config Essential Integration Tests', () => {
     });
 
     it('should handle reload functionality', async () => {
-      const viewer1 = await init({ container: testContainer.element });
+      await init({ container: testContainer.element });
       
       const viewer2 = await reload({ container: testContainer.element });
       

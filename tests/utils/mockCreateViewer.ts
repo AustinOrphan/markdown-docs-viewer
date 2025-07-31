@@ -4,7 +4,7 @@
  * This replaces the global factory mocks that were causing hanging tests
  */
 
-import { vi, type MockedFunction } from 'vitest';
+import { vi } from 'vitest';
 import type { DocumentationConfig, Document, ViewerState, Theme } from '../../src/types';
 import type { MarkdownDocsViewer } from '../../src/viewer';
 import * as factory from '../../src/factory';
@@ -185,7 +185,7 @@ export function setupFactoryMock(config: {
     const testError = error || new Error('Mock viewer creation error');
     // For error scenarios, we still need to create an error viewer that displays the error
     if (container) {
-      const errorViewer = createErrorViewer(testError, container);
+      createErrorViewer(testError, container);
       // Mock createViewer to throw error, but zero-config will create fallback viewer
       const spy = mockCreateViewerError(testError);
       return spy;

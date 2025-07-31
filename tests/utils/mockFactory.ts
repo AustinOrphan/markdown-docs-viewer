@@ -5,7 +5,6 @@
 
 import { vi, type MockedFunction } from 'vitest';
 import type { MarkdownDocsViewer } from '../../src/viewer';
-import type { DocumentationConfig } from '../../src/types';
 import * as factory from '../../src/factory';
 
 /**

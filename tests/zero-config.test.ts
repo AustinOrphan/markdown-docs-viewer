@@ -16,31 +16,24 @@ import {
 } from '../src/zero-config';
 import { themes } from '../src/themes';
 
-// Import real factory functions and our mock utility
-import * as factory from '../src/factory';
 // Import ConfigLoader mock utilities  
 import {
   setupConfigMock,
-  DEFAULT_TEST_CONFIG,
-  createMockConfigLoaderWithError
+  DEFAULT_TEST_CONFIG
 } from './utils/mockConfigLoader';
 // Import AutoDiscovery mock utilities
 import {
   setupAutoDiscoveryMockWithOptions,
-  DEFAULT_TEST_DOCUMENTS,
-  mockDiscoveryScenarios
+  DEFAULT_TEST_DOCUMENTS
 } from './utils/mockAutoDiscovery';
 // Import Viewer mock utilities  
 import {
-  createMockViewer,
-  createErrorViewer,
-  mockViewerScenarios
+  createMockViewer
 } from './utils/mockViewer';
 // Import Factory mock utilities
 import {
   mockCreateViewerSuccess,
-  mockCreateViewerError,
-  createMockViewer as createFactoryMockViewer
+  mockCreateViewerError
 } from './utils/mockFactory';
 // Removed unused mock utility imports - to be replaced by agents B-E
 // import {

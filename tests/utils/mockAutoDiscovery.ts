@@ -4,7 +4,6 @@
  */
 
 import { vi, type MockedFunction } from 'vitest';
-import { AutoDiscovery, type AutoDiscoveryOptions } from '../../src/auto-discovery';
 import type { Document } from '../../src/types';
 
 /**

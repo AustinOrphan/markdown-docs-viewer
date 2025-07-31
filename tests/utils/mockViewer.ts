@@ -3,7 +3,7 @@
  * Provides targeted mocking without global vi.mock() to prevent circular dependencies
  */
 
-import { vi, type MockedFunction } from 'vitest';
+import { vi } from 'vitest';
 import type { MarkdownDocsViewer } from '../../src/viewer';
 import type { DocumentationConfig, Document, ViewerState, Theme } from '../../src/types';
 import { themes } from '../../src/themes';

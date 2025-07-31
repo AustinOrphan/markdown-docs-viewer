@@ -4,8 +4,8 @@
  * Supports async operations and various config scenarios (success, error, empty)
  */
 
-import { vi, type MockedFunction } from 'vitest';
-import { ConfigLoader, type DocsConfig } from '../../src/config-loader';
+import { vi } from 'vitest';
+import type { DocsConfig } from '../../src/config-loader';
 import type { DocumentationConfig } from '../../src/types';
 import { themes } from '../../src/themes';
 
