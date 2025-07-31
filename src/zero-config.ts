@@ -132,7 +132,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
           return () => {}; // no-op for everything else
         },
       };
-      viewer = new Proxy({}, handler) as MarkdownDocsViewer;
+      viewer = new Proxy({}, handler) as unknown as MarkdownDocsViewer;
 
       // Display error in container but don't throw - let init() continue and return the viewer
       if (container) {
@@ -222,7 +222,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
         return () => {}; // noop for everything else
       },
     };
-    const errorViewer = new Proxy({}, errorHandler) as MarkdownDocsViewer;
+    const errorViewer = new Proxy({}, errorHandler) as unknown as MarkdownDocsViewer;
 
     // Store global reference to the error viewer
     globalViewer = errorViewer;
