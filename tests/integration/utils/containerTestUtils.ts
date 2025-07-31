@@ -23,21 +23,16 @@ export class ContainerTester {
   public id: string;
 
   constructor(options: ContainerTestOptions = {}) {
-    const {
-      id = `test-container-${Date.now()}`,
-      className,
-      innerHTML = '',
-      styles = {}
-    } = options;
+    const { id = `test-container-${Date.now()}`, className, innerHTML = '', styles = {} } = options;
 
     this.id = id;
     this.element = document.createElement('div');
     this.element.id = id;
-    
+
     if (className) {
       this.element.className = className;
     }
-    
+
     if (innerHTML) {
       this.element.innerHTML = innerHTML;
     }
@@ -99,22 +94,22 @@ export class ContainerTester {
   async waitForContent(selector: string, timeout = 5000): Promise<HTMLElement> {
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
-      
+
       const check = () => {
         const element = this.element.querySelector(selector) as HTMLElement;
         if (element) {
           resolve(element);
           return;
         }
-        
+
         if (Date.now() - startTime > timeout) {
           reject(new Error(`Element with selector "${selector}" not found within ${timeout}ms`));
           return;
         }
-        
+
         setTimeout(check, 50);
       };
-      
+
       check();
     });
   }
@@ -136,18 +131,21 @@ export class ContainerTester {
       innerHTML: this.element.innerHTML,
       dimensions: {
         width: rect.width,
-        height: rect.height
+        height: rect.height,
       },
       styles: {
         display: this.element.style.display,
         visibility: this.element.style.visibility,
-        position: this.element.style.position
+        position: this.element.style.position,
       },
       inDOM: document.contains(this.element),
-      attributes: Array.from(this.element.attributes).reduce((acc, attr) => {
-        acc[attr.name] = attr.value;
-        return acc;
-      }, {} as Record<string, string>)
+      attributes: Array.from(this.element.attributes).reduce(
+        (acc, attr) => {
+          acc[attr.name] = attr.value;
+          return acc;
+        },
+        {} as Record<string, string>
+      ),
     };
   }
 
@@ -174,7 +172,9 @@ export function validateContainer(element: HTMLElement): ContainerValidation {
   // Check for unsuitable tag names
   const unsuitableTags = ['script', 'style', 'meta', 'link', 'title', 'head'];
   if (unsuitableTags.includes(element.tagName.toLowerCase())) {
-    errors.push(`Container element "${element.tagName.toLowerCase()}" is not suitable for content display`);
+    errors.push(
+      `Container element "${element.tagName.toLowerCase()}" is not suitable for content display`
+    );
   }
 
   // Check visibility
@@ -196,6 +196,21 @@ export function validateContainer(element: HTMLElement): ContainerValidation {
     element,
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
+}
+
+/**
+ * Creates a test container with the specified options
+ * This is a convenience function that creates a ContainerTester instance
+ */
+export function createTestContainer(options: ContainerTestOptions = {}): ContainerTester {
+  return new ContainerTester(options);
+}
+
+/**
+ * Creates multiple test containers with the specified options array
+ */
+export function createMultipleContainers(optionsArray: ContainerTestOptions[]): ContainerTester[] {
+  return optionsArray.map(options => new ContainerTester(options));
 }
