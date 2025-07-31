@@ -1384,6 +1384,10 @@ export class MarkdownDocsViewer {
     );
   }
 
+  public async reload(): Promise<void> {
+    return this.refresh();
+  }
+
   public setTheme(theme: Theme | string): void {
     if (typeof theme === 'string') {
       const themeObj = this.themeManager.setTheme(theme);
