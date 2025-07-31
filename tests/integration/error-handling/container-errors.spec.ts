@@ -1,25 +1,19 @@
 /**
  * Container Error Integration Tests
- * 
+ *
  * Tests real container error scenarios without mocking.
  * Validates error UI rendering and container handling.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { init } from '../../../src/zero-config';
-import { 
-  ContainerTester, 
-  createTestContainer, 
+import {
+  ContainerTester,
+  createTestContainer,
   validateContainer,
   createMultipleContainers,
-  type ContainerTestOptions 
 } from '../utils/containerTestUtils';
-import { 
-  waitForErrorUI, 
-  validateErrorUI, 
-  inspectErrorHTML,
-  type ErrorUIExpectations 
-} from '../utils/errorScenarioHelper';
+import { waitForErrorUI, validateErrorUI, inspectErrorHTML } from '../utils/errorScenarioHelper';
 import { cleanupRealDOM } from '../utils/realDOMSetup';
 
 describe('Container Error Integration Tests', () => {
@@ -79,7 +73,7 @@ describe('Container Error Integration Tests', () => {
 
       // Should handle gracefully
       expect(viewer).toBeDefined();
-      
+
       // Error UI should appear in fallback container
       const errorElement = await waitForErrorUI(document.body, 3000);
       validateErrorUI(errorElement, {
@@ -100,13 +94,13 @@ describe('Container Error Integration Tests', () => {
 
       for (const selector of invalidSelectors) {
         const viewer = await init({ container: selector });
-        
+
         expect(viewer).toBeDefined();
-        
+
         // Should display error UI in fallback
         const errorElement = await waitForErrorUI(document.body, 2000);
         expect(errorElement.textContent).toContain('Setup Required');
-        
+
         // Clean up for next iteration
         document.body.innerHTML = '';
       }
@@ -122,9 +116,9 @@ describe('Container Error Integration Tests', () => {
       document.body.appendChild(script);
 
       const viewer = await init({ container: '#script-container' });
-      
+
       expect(viewer).toBeDefined();
-      
+
       // Should display error UI in the script element (or fallback)
       const errorElement = await waitForErrorUI(document.body, 3000);
       validateErrorUI(errorElement, {
@@ -144,9 +138,9 @@ describe('Container Error Integration Tests', () => {
       document.head.appendChild(meta);
 
       const viewer = await init({ container: '#meta-container' });
-      
+
       expect(viewer).toBeDefined();
-      
+
       // Should display error UI in fallback container
       const errorElement = await waitForErrorUI(document.body, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -161,9 +155,9 @@ describe('Container Error Integration Tests', () => {
       document.head.appendChild(style);
 
       const viewer = await init({ container: '#style-container' });
-      
+
       expect(viewer).toBeDefined();
-      
+
       const errorElement = await waitForErrorUI(document.body, 3000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
@@ -179,7 +173,7 @@ describe('Container Error Integration Tests', () => {
     it('should handle hidden container (display: none)', async () => {
       const container = createTestContainer({
         id: 'hidden-container',
-        styles: { display: 'none' }
+        styles: { display: 'none' },
       });
       testContainers.push(container);
 
@@ -187,10 +181,10 @@ describe('Container Error Integration Tests', () => {
       expect(validation.warnings).toContain('Container element has display: none');
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
-      
+
       // Should still work but with warnings
       // Error UI might be displayed due to setup issues
       try {
@@ -204,7 +198,7 @@ describe('Container Error Integration Tests', () => {
     it('should handle invisible container (visibility: hidden)', async () => {
       const container = createTestContainer({
         id: 'invisible-container',
-        styles: { visibility: 'hidden' }
+        styles: { visibility: 'hidden' },
       });
       testContainers.push(container);
 
@@ -212,7 +206,7 @@ describe('Container Error Integration Tests', () => {
       expect(validation.warnings).toContain('Container element has visibility: hidden');
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
     });
@@ -220,7 +214,7 @@ describe('Container Error Integration Tests', () => {
     it('should handle zero-dimension container', async () => {
       const container = createTestContainer({
         id: 'zero-dim-container',
-        styles: { width: '0px', height: '0px' }
+        styles: { width: '0px', height: '0px' },
       });
       testContainers.push(container);
 
@@ -228,7 +222,7 @@ describe('Container Error Integration Tests', () => {
       expect(validation.warnings).toContain('Container element has zero dimensions');
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
     });
@@ -240,12 +234,12 @@ describe('Container Error Integration Tests', () => {
       const containers = createMultipleContainers([
         { className: 'multi-container' },
         { className: 'multi-container' },
-        { className: 'multi-container' }
+        { className: 'multi-container' },
       ]);
       testContainers.push(...containers);
 
       const viewer = await init({ container: '.multi-container' });
-      
+
       expect(viewer).toBeDefined();
       // Should use the first matching element
       expect(viewer.container).toBe(containers[0].element);
@@ -254,19 +248,19 @@ describe('Container Error Integration Tests', () => {
     it('should handle container with existing content', async () => {
       const container = createTestContainer({
         id: 'existing-content-container',
-        innerHTML: '<h1>Existing Content</h1><p>This should be replaced</p>'
+        innerHTML: '<h1>Existing Content</h1><p>This should be replaced</p>',
       });
       testContainers.push(container);
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
-      
+
       // Content should be replaced with error UI
       const errorElement = await waitForErrorUI(container.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
-      
+
       // Original content should be gone
       expect(container.element.textContent).not.toContain('Existing Content');
     });
@@ -278,13 +272,13 @@ describe('Container Error Integration Tests', () => {
       testContainers.push(container);
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
 
       // Remove container from DOM
       container.removeFromDOM();
-      
+
       // Viewer should still have reference but container is detached
       expect(viewer.container).toBe(container.element);
       expect(document.contains(viewer.container)).toBe(false);
@@ -313,18 +307,18 @@ describe('Container Error Integration Tests', () => {
 
   describe('Error UI Validation', () => {
     it('should display comprehensive error information', async () => {
-      const viewer = await init({ container: '#missing-container-12345' });
-      
+      await init({ container: '#missing-container-12345' });
+
       const errorElement = await waitForErrorUI(document.body, 3000);
       const inspection = inspectErrorHTML(errorElement);
-      
+
       // Validate error structure
       expect(inspection.textContent).toContain('Setup Required');
       expect(inspection.textContent).toContain('Quick Setup');
       expect(inspection.textContent).toContain('docs/');
       expect(inspection.textContent).toContain('README.md');
       expect(inspection.outerHTML).toContain('style='); // Should have inline styles
-      
+
       // Should have expandable technical details
       expect(inspection.outerHTML).toContain('<details');
       expect(inspection.outerHTML).toContain('Technical Details');
@@ -344,27 +338,27 @@ describe('Container Error Integration Tests', () => {
         document.body.appendChild(element);
 
         const viewer = await init({ container: `#${id}` });
-        
+
         expect(viewer).toBeDefined();
         expect(viewer.container).toBe(element);
-        
+
         // Should display error UI in the specific container
         const errorElement = await waitForErrorUI(element, 3000);
         expect(errorElement.textContent).toContain('Setup Required');
-        
+
         element.remove();
       }
     });
 
     it('should maintain accessibility in error UI', async () => {
-      const viewer = await init({ container: '#missing-container' });
-      
+      await init({ container: '#missing-container' });
+
       const errorElement = await waitForErrorUI(document.body, 3000);
-      
+
       // Should have proper heading structure
       const headings = errorElement.querySelectorAll('h2, h3');
       expect(headings.length).toBeGreaterThan(0);
-      
+
       // Should have links with proper attributes
       const links = errorElement.querySelectorAll('a[href]');
       links.forEach(link => {
@@ -374,7 +368,7 @@ describe('Container Error Integration Tests', () => {
           expect(link.textContent).toBeTruthy();
         }
       });
-      
+
       // Code blocks should be properly formatted
       const codeBlocks = errorElement.querySelectorAll('code, pre');
       expect(codeBlocks.length).toBeGreaterThan(0);
@@ -385,22 +379,22 @@ describe('Container Error Integration Tests', () => {
     it('should handle rapid container creation and destruction', async () => {
       const testRounds = 5;
       const timings: number[] = [];
-      
+
       for (let i = 0; i < testRounds; i++) {
         const start = performance.now();
-        
+
         const container = createTestContainer({ id: `rapid-${i}` });
         const viewer = await init({ container: `#${container.id}` });
-        
+
         expect(viewer).toBeDefined();
-        
+
         await viewer.destroy();
         container.cleanup();
-        
+
         const end = performance.now();
         timings.push(end - start);
       }
-      
+
       // Should complete each cycle within reasonable time
       const avgTime = timings.reduce((a, b) => a + b, 0) / timings.length;
       expect(avgTime).toBeLessThan(1000); // Less than 1 second on average
@@ -408,7 +402,7 @@ describe('Container Error Integration Tests', () => {
 
     it('should handle container with deeply nested structure', async () => {
       const container = createTestContainer({ id: 'nested-container' });
-      
+
       // Create deeply nested structure
       let current = container.element;
       for (let i = 0; i < 10; i++) {
@@ -417,18 +411,18 @@ describe('Container Error Integration Tests', () => {
         current.appendChild(div);
         current = div;
       }
-      
+
       testContainers.push(container);
 
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
       expect(viewer.container).toBe(container.element);
-      
+
       // Error UI should replace nested content
       const errorElement = await waitForErrorUI(container.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
-      
+
       // Nested structure should be gone
       expect(container.element.querySelector('.level-0')).toBeNull();
     });
@@ -436,20 +430,20 @@ describe('Container Error Integration Tests', () => {
     it('should handle container with event listeners', async () => {
       const container = createTestContainer({ id: 'event-container' });
       testContainers.push(container);
-      
+
       let clickCount = 0;
       const clickHandler = () => clickCount++;
-      
+
       container.element.addEventListener('click', clickHandler);
-      
+
       const viewer = await init({ container: `#${container.id}` });
-      
+
       expect(viewer).toBeDefined();
-      
+
       // Event listeners should still work after initialization
       container.element.click();
       expect(clickCount).toBe(1);
-      
+
       // Clean up
       container.element.removeEventListener('click', clickHandler);
     });

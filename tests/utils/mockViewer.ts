@@ -38,7 +38,7 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
     // Core lifecycle methods (matching actual interface)
     destroy: vi.fn().mockReturnValue(undefined), // destroy() returns void, not Promise<void>
     refresh: vi.fn().mockResolvedValue(undefined), // refresh() is async
-    
+
     // Theme methods
     setTheme: vi.fn(),
     getTheme: vi.fn().mockReturnValue(DEFAULT_TEST_THEME),
@@ -46,16 +46,16 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
     registerTheme: vi.fn(),
     createCustomTheme: vi.fn().mockReturnValue(DEFAULT_TEST_THEME),
     getThemeStyles: vi.fn().mockReturnValue('/* mock styles */'),
-    
+
     // Document methods (matching actual interface)
     getDocument: vi.fn().mockReturnValue(null),
     getAllDocuments: vi.fn().mockReturnValue([]),
     getDocuments: vi.fn().mockReturnValue([]), // Duplicate method in actual interface
     getDocumentContent: vi.fn().mockResolvedValue(''),
-    
+
     // Search methods
     search: vi.fn().mockResolvedValue([]), // search() returns Promise<Document[]>
-    
+
     // Configuration and state methods
     getConfig: vi.fn().mockReturnValue({
       container: mockContainer,
@@ -63,7 +63,7 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
       theme: DEFAULT_TEST_THEME,
     } as DocumentationConfig),
     getState: vi.fn().mockReturnValue(DEFAULT_VIEWER_STATE),
-    
+
     ...overrides,
   };
 
@@ -76,7 +76,7 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
 export function createErrorViewer(container?: HTMLElement, error?: Error): MarkdownDocsViewer {
   const errorContainer = container || document.createElement('div');
   const errorMessage = error?.message || 'Viewer initialization failed';
-  
+
   // Display error in container
   errorContainer.innerHTML = `
     <div style="padding: 2rem; max-width: 600px; margin: 0 auto; font-family: system-ui, sans-serif;">
@@ -121,19 +121,22 @@ export function createFailingViewer(options: MockViewerFailureOptions = {}): Mar
     shouldRefreshFail = false,
     shouldThemeChangeFail = false,
     shouldSearchFail = false,
-    container = document.createElement('div'),
     error = new Error('Mock failure'),
   } = options;
 
   return createMockViewer({
     destroy: shouldDestroyFail
-      ? vi.fn().mockImplementation(() => { throw error; }) // destroy() is sync and can throw
+      ? vi.fn().mockImplementation(() => {
+          throw error;
+        }) // destroy() is sync and can throw
       : vi.fn().mockReturnValue(undefined),
     refresh: shouldRefreshFail
       ? vi.fn().mockRejectedValue(error) // refresh() is async
       : vi.fn().mockResolvedValue(undefined),
     setTheme: shouldThemeChangeFail
-      ? vi.fn().mockImplementation(() => { throw error; })
+      ? vi.fn().mockImplementation(() => {
+          throw error;
+        })
       : vi.fn(),
     search: shouldSearchFail
       ? vi.fn().mockRejectedValue(error) // search() is async
@@ -175,9 +178,9 @@ export function createViewerWithDocuments(documents: Document[]): MarkdownDocsVi
   return createMockViewer({
     getDocuments: vi.fn().mockReturnValue(documents),
     getAllDocuments: vi.fn().mockReturnValue(documents),
-    getDocument: vi.fn().mockImplementation((id: string) => 
-      documents.find(doc => doc.id === id) || null
-    ),
+    getDocument: vi
+      .fn()
+      .mockImplementation((id: string) => documents.find(doc => doc.id === id) || null),
     getState: vi.fn().mockReturnValue({
       ...DEFAULT_VIEWER_STATE,
       documents,
@@ -215,7 +218,10 @@ export function createLoadingViewer(): MarkdownDocsViewer {
 /**
  * Creates a mock viewer with search results
  */
-export function createViewerWithSearchResults(searchResults: Document[], query: string = 'test'): MarkdownDocsViewer {
+export function createViewerWithSearchResults(
+  searchResults: Document[],
+  query: string = 'test'
+): MarkdownDocsViewer {
   return createMockViewer({
     search: vi.fn().mockReturnValue(searchResults),
     getState: vi.fn().mockReturnValue({
@@ -256,7 +262,7 @@ export const mockViewerScenarios = {
   /**
    * Viewer with documents loaded
    */
-  withDocuments: (documents?: Document[]) => 
+  withDocuments: (documents?: Document[]) =>
     createViewerWithDocuments(documents || createTestDocuments()),
 
   /**
@@ -267,7 +273,7 @@ export const mockViewerScenarios = {
   /**
    * Viewer with search results
    */
-  withSearch: (results?: Document[], query?: string) => 
+  withSearch: (results?: Document[], query?: string) =>
     createViewerWithSearchResults(results || createTestDocuments(2), query),
 
   /**
@@ -300,7 +306,9 @@ export function mockViewerWithTheme(theme: Theme): MarkdownDocsViewer {
 /**
  * Utility for testing viewer configuration updates
  */
-export function createConfigurableViewer(initialConfig?: Partial<DocumentationConfig>): MarkdownDocsViewer {
+export function createConfigurableViewer(
+  initialConfig?: Partial<DocumentationConfig>
+): MarkdownDocsViewer {
   let currentConfig = {
     container: document.createElement('div'),
     source: { type: 'content' as const, documents: [] },

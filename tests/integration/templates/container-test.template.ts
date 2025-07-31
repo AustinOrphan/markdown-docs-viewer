@@ -6,25 +6,13 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { 
-  setupRealDOM, 
-  createRealContainer, 
-  waitForElement,
-  DOMTestEnvironment,
-  TestContainer 
-} from '../utils/realDOMSetup';
-import { 
-  createErrorScenarios, 
-  waitForErrorUI, 
+import { setupRealDOM, DOMTestEnvironment } from '../utils/realDOMSetup';
+import {
+  createErrorScenarios,
+  waitForErrorUI,
   validateErrorUI,
-  ErrorUIExpectations,
-  triggerErrorScenario 
 } from '../utils/errorScenarioHelper';
-import { 
-  ContainerTester, 
-  validateContainer,
-  ContainerTestOptions 
-} from '../utils/containerTestUtils';
+import { ContainerTester, validateContainer } from '../utils/containerTestUtils';
 
 /**
  * Template for container integration tests
@@ -35,7 +23,7 @@ describe('Container Integration Tests Template', () => {
   let containerTester: ContainerTester;
 
   beforeEach(() => {
-    // Setup real DOM environment with proper cleanup tracking  
+    // Setup real DOM environment with proper cleanup tracking
     domEnv = setupRealDOM();
   });
 
@@ -51,24 +39,22 @@ describe('Container Integration Tests Template', () => {
     it('should handle missing container element', async () => {
       // Create error scenario for container not found
       const scenario = createErrorScenarios.containerNotFound();
-      
+
       // Setup scenario
       await scenario.setup();
-      
-      // Expected error UI characteristics
-      const expectations: ErrorUIExpectations = {
-        hasErrorMessage: true,
-        errorMessageContains: 'not found',
-        hasErrorClass: true,
-        errorClassName: 'error-container'
-      };
+
+      // Expected error UI characteristics for this scenario:
+      // - hasErrorMessage: true
+      // - errorMessageContains: 'not found'
+      // - hasErrorClass: true
+      // - errorClassName: 'error-container'
 
       // This is a template - actual implementation should:
       // 1. Try to initialize viewer with non-existent container
       // 2. Wait for error UI to appear
       // 3. Validate error message and UI structure
       // 4. Test error recovery if applicable
-      
+
       expect(scenario.type).toBe('container-not-found');
       expect(scenario.description).toContain('not exist');
     });
@@ -77,11 +63,11 @@ describe('Container Integration Tests Template', () => {
       // Create container with problematic selector characters
       containerTester = new ContainerTester({
         id: 'container-with-special:chars@invalid',
-        className: 'test-container'
+        className: 'test-container',
       });
 
       const validation = containerTester.validate();
-      
+
       // Validate container state
       expect(validation.element).toBeDefined();
       expect(validation.isValid).toBe(true); // ID is set correctly despite special chars
@@ -92,19 +78,19 @@ describe('Container Integration Tests Template', () => {
     it('should reject unsuitable container elements', async () => {
       // Create unsuitable container elements
       const unsuitableElements = ['script', 'style', 'meta', 'link'];
-      
+
       for (const tagName of unsuitableElements) {
         const element = document.createElement(tagName);
         element.id = `${tagName}-container`;
         document.body.appendChild(element);
-        
+
         const validation = validateContainer(element);
-        
+
         expect(validation.isValid).toBe(false);
         expect(validation.errors).toContain(
           expect.stringContaining(`"${tagName}" is not suitable`)
         );
-        
+
         // Cleanup
         element.remove();
       }
@@ -112,17 +98,17 @@ describe('Container Integration Tests Template', () => {
 
     it('should validate suitable container elements', async () => {
       const suitableElements = ['div', 'section', 'article', 'main'];
-      
+
       for (const tagName of suitableElements) {
         const element = document.createElement(tagName);
         element.id = `${tagName}-container`;
         document.body.appendChild(element);
-        
+
         const validation = validateContainer(element);
-        
+
         expect(validation.isValid).toBe(true);
         expect(validation.errors).toHaveLength(0);
-        
+
         // Cleanup
         element.remove();
       }
@@ -133,7 +119,7 @@ describe('Container Integration Tests Template', () => {
     it('should handle container visibility changes', async () => {
       containerTester = new ContainerTester({
         id: 'visibility-test-container',
-        styles: { width: '100px', height: '100px' }
+        styles: { width: '100px', height: '100px' },
       });
 
       // Test initial visible state
@@ -143,9 +129,7 @@ describe('Container Integration Tests Template', () => {
       // Hide container
       containerTester.hide();
       validation = containerTester.validate();
-      expect(validation.warnings).toContain(
-        expect.stringContaining('display: none')
-      );
+      expect(validation.warnings).toContain(expect.stringContaining('display: none'));
 
       // Show container again
       containerTester.show();
@@ -156,7 +140,7 @@ describe('Container Integration Tests Template', () => {
 
     it('should handle container DOM removal and restoration', async () => {
       containerTester = new ContainerTester({
-        id: 'removal-test-container'
+        id: 'removal-test-container',
       });
 
       // Verify container is in DOM
@@ -179,7 +163,7 @@ describe('Container Integration Tests Template', () => {
   describe('Container Content Validation', () => {
     it('should wait for and validate container content', async () => {
       containerTester = new ContainerTester({
-        id: 'content-test-container'
+        id: 'content-test-container',
       });
 
       // Add content asynchronously (simulating viewer initialization)
@@ -189,20 +173,20 @@ describe('Container Integration Tests Template', () => {
 
       // Wait for content to appear
       const contentElement = await containerTester.waitForContent('.viewer-content', 2000);
-      
+
       expect(contentElement).toBeDefined();
       expect(contentElement.textContent).toBe('Loaded content');
     });
 
     it('should handle content loading timeout', async () => {
       containerTester = new ContainerTester({
-        id: 'timeout-test-container'
+        id: 'timeout-test-container',
       });
 
       // Don't add any content - should timeout
-      await expect(
-        containerTester.waitForContent('.non-existent-content', 500)
-      ).rejects.toThrow('not found within 500ms');
+      await expect(containerTester.waitForContent('.non-existent-content', 500)).rejects.toThrow(
+        'not found within 500ms'
+      );
     });
   });
 
@@ -210,7 +194,7 @@ describe('Container Integration Tests Template', () => {
     it('should simulate user interactions with container content', async () => {
       containerTester = new ContainerTester({
         id: 'interaction-test-container',
-        innerHTML: '<button class="test-button" data-clicked="false">Click me</button>'
+        innerHTML: '<button class="test-button" data-clicked="false">Click me</button>',
       });
 
       const button = containerTester.element.querySelector('.test-button') as HTMLElement;
@@ -231,7 +215,7 @@ describe('Container Integration Tests Template', () => {
       const containers = [
         new ContainerTester({ id: 'container-1', className: 'test-group' }),
         new ContainerTester({ id: 'container-2', className: 'test-group' }),
-        new ContainerTester({ id: 'container-3', className: 'test-group' })
+        new ContainerTester({ id: 'container-3', className: 'test-group' }),
       ];
 
       // Verify all containers are created and have correct classes
@@ -249,7 +233,7 @@ describe('Container Integration Tests Template', () => {
   describe('Error UI Integration', () => {
     it('should detect and validate error UI appearance', async () => {
       containerTester = new ContainerTester({
-        id: 'error-ui-test-container'
+        id: 'error-ui-test-container',
       });
 
       // Simulate error condition by adding error content
@@ -266,15 +250,20 @@ describe('Container Integration Tests Template', () => {
       const errorElement = await waitForErrorUI(containerTester.element, 2000);
 
       // Validate error UI structure
-      const expectations: ErrorUIExpectations = {
+      // Expected characteristics:
+      // - hasErrorMessage: true
+      // - errorMessageContains: 'Failed to load'
+      // - hasRetryButton: true
+      // - hasErrorClass: true
+      // - errorClassName: 'error-container'
+
+      validateErrorUI(errorElement, {
         hasErrorMessage: true,
         errorMessageContains: 'Failed to load',
         hasRetryButton: true,
         hasErrorClass: true,
-        errorClassName: 'error-container'
-      };
-
-      validateErrorUI(errorElement, expectations);
+        errorClassName: 'error-container',
+      });
     });
   });
 
@@ -283,12 +272,12 @@ describe('Container Integration Tests Template', () => {
       containerTester = new ContainerTester({
         id: 'snapshot-test-container',
         className: 'initial-state',
-        styles: { width: '200px', height: '100px' }
+        styles: { width: '200px', height: '100px' },
       });
 
-      // Take initial snapshot  
+      // Take initial snapshot
       const initialSnapshot = containerTester.snapshot();
-      
+
       expect(initialSnapshot.classList).toContain('initial-state');
       expect(initialSnapshot.dimensions.width).toBe(200);
       expect(initialSnapshot.dimensions.height).toBe(100);
@@ -300,7 +289,7 @@ describe('Container Integration Tests Template', () => {
 
       // Take second snapshot
       const modifiedSnapshot = containerTester.snapshot();
-      
+
       expect(modifiedSnapshot.classList).toContain('modified-state');
       expect(modifiedSnapshot.innerHTML).toContain('Modified content');
       expect(modifiedSnapshot.dimensions.width).toBe(300);

@@ -1,6 +1,6 @@
 /**
  * Configuration Error Integration Tests
- * 
+ *
  * Tests real configuration error scenarios without mocking.
  * Validates error handling for malformed configs, missing files, and invalid settings.
  */
@@ -8,15 +8,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { init } from '../../../src/zero-config';
 import { ConfigLoader } from '../../../src/config-loader';
-import { createTestContainer, ContainerTester } from '../utils/containerTestUtils';
-import { 
-  waitForErrorUI, 
-  validateErrorUI, 
-  inspectErrorHTML,
-  type ErrorUIExpectations 
-} from '../utils/errorScenarioHelper';
+import { ContainerTester } from '../utils/containerTestUtils';
+import { waitForErrorUI, validateErrorUI, inspectErrorHTML } from '../utils/errorScenarioHelper';
 import { cleanupRealDOM } from '../utils/realDOMSetup';
-import { createRealFile, createRealDirectory, pathExists, deleteRealPath } from '../utils/configTestUtils';
+import { createRealFile, createRealDirectory, deleteRealPath } from '../utils/configTestUtils';
 
 describe('Configuration Error Integration Tests', () => {
   let testContainer: ContainerTester;
@@ -31,7 +26,7 @@ describe('Configuration Error Integration Tests', () => {
   afterEach(async () => {
     testContainer.cleanup();
     cleanupRealDOM();
-    
+
     // Clean up any temporary files/directories
     for (const path of tempPaths) {
       try {
@@ -46,10 +41,10 @@ describe('Configuration Error Integration Tests', () => {
   describe('Missing Configuration File Scenarios', () => {
     it('should handle completely missing config file', async () => {
       const nonExistentPath = './config-that-does-not-exist.json';
-      
-      const viewer = await init({ 
+
+      const viewer = await init({
         container: testContainer.element,
-        configPath: nonExistentPath 
+        configPath: nonExistentPath,
       });
 
       expect(viewer).toBeDefined();
@@ -70,13 +65,13 @@ describe('Configuration Error Integration Tests', () => {
       await createRealDirectory(docsDir);
       tempPaths.push(docsDir);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        docsPath: docsDir 
+        docsPath: docsDir,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should work with default configuration
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -85,14 +80,14 @@ describe('Configuration Error Integration Tests', () => {
     it('should handle inaccessible config file (permission denied simulation)', async () => {
       // Create a config file in a deeply nested structure that might cause issues
       const deepPath = './very/deep/nested/path/that/might/not/exist/config.json';
-      
-      const viewer = await init({ 
+
+      const viewer = await init({
         container: testContainer.element,
-        configPath: deepPath 
+        configPath: deepPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should fall back to default config
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
@@ -116,17 +111,17 @@ describe('Configuration Error Integration Tests', () => {
         // This comment makes it invalid JSON
         "invalid": true,
       }`;
-      
+
       await createRealFile(configPath, malformedJson);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should display error UI due to parsing failure
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -146,17 +141,17 @@ describe('Configuration Error Integration Tests', () => {
           }
         }
       }`;
-      
+
       await createRealFile(configPath, invalidStructure);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should handle invalid structure gracefully
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
@@ -171,13 +166,13 @@ describe('Configuration Error Integration Tests', () => {
       await createRealFile(configPath, '');
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should handle empty file gracefully
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -192,17 +187,17 @@ describe('Configuration Error Integration Tests', () => {
         theme: default-light
         source: ./docs
       `;
-      
+
       await createRealFile(configPath, notJson);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
@@ -215,25 +210,29 @@ describe('Configuration Error Integration Tests', () => {
   describe('Invalid Theme Configuration Scenarios', () => {
     it('should handle non-existent theme specification', async () => {
       const configPath = './test-invalid-theme.json';
-      const invalidThemeConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: 'theme-that-does-not-exist',
-        source: {
-          type: 'auto',
-          path: './docs'
-        }
-      }, null, 2);
-      
+      const invalidThemeConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: 'theme-that-does-not-exist',
+          source: {
+            type: 'auto',
+            path: './docs',
+          },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, invalidThemeConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should fall back to default theme and show setup error
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -241,29 +240,33 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should handle malformed theme object', async () => {
       const configPath = './test-malformed-theme.json';
-      const malformedThemeConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: {
-          colors: 'not an object',
-          typography: null,
-          spacing: ['wrong', 'type']
+      const malformedThemeConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: {
+            colors: 'not an object',
+            typography: null,
+            spacing: ['wrong', 'type'],
+          },
+          source: {
+            type: 'auto',
+            path: './docs',
+          },
         },
-        source: {
-          type: 'auto',
-          path: './docs'
-        }
-      }, null, 2);
-      
+        null,
+        2
+      );
+
       await createRealFile(configPath, malformedThemeConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
@@ -274,31 +277,35 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should handle theme with missing required properties', async () => {
       const configPath = './test-incomplete-theme.json';
-      const incompleteThemeConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: {
-          colors: {
-            primary: '#007acc'
-            // Missing other required color properties
-          }
-          // Missing typography, spacing, etc.
+      const incompleteThemeConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: {
+            colors: {
+              primary: '#007acc',
+              // Missing other required color properties
+            },
+            // Missing typography, spacing, etc.
+          },
+          source: {
+            type: 'auto',
+            path: './docs',
+          },
         },
-        source: {
-          type: 'auto',
-          path: './docs'
-        }
-      }, null, 2);
-      
+        null,
+        2
+      );
+
       await createRealFile(configPath, incompleteThemeConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
     });
@@ -307,25 +314,29 @@ describe('Configuration Error Integration Tests', () => {
   describe('Invalid Source Configuration Scenarios', () => {
     it('should handle invalid source type', async () => {
       const configPath = './test-invalid-source-type.json';
-      const invalidSourceConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: 'default-light',
-        source: {
-          type: 'invalid-source-type',
-          path: './docs'
-        }
-      }, null, 2);
-      
+      const invalidSourceConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: 'default-light',
+          source: {
+            type: 'invalid-source-type',
+            path: './docs',
+          },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, invalidSourceConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should fall back to auto discovery
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
@@ -337,25 +348,29 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should handle missing source path', async () => {
       const configPath = './test-missing-source-path.json';
-      const missingPathConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: 'default-light',
-        source: {
-          type: 'auto'
-          // Missing path property
-        }
-      }, null, 2);
-      
+      const missingPathConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: 'default-light',
+          source: {
+            type: 'auto',
+            // Missing path property
+          },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, missingPathConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should use default path
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -363,25 +378,29 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should handle non-existent source path', async () => {
       const configPath = './test-nonexistent-source.json';
-      const nonExistentSourceConfig = JSON.stringify({
-        title: 'Test Documentation',
-        theme: 'default-light',
-        source: {
-          type: 'auto',
-          path: './docs-that-do-not-exist-anywhere'
-        }
-      }, null, 2);
-      
+      const nonExistentSourceConfig = JSON.stringify(
+        {
+          title: 'Test Documentation',
+          theme: 'default-light',
+          source: {
+            type: 'auto',
+            path: './docs-that-do-not-exist-anywhere',
+          },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, nonExistentSourceConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should handle missing docs directory
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
@@ -395,54 +414,62 @@ describe('Configuration Error Integration Tests', () => {
   describe('Configuration Precedence and Override Scenarios', () => {
     it('should handle conflicts between config file and options', async () => {
       const configPath = './test-precedence-config.json';
-      const configFileContent = JSON.stringify({
-        title: 'Config File Title',
-        theme: 'default-light',
-        source: {
-          type: 'auto',
-          path: './config-docs'
-        }
-      }, null, 2);
-      
+      const configFileContent = JSON.stringify(
+        {
+          title: 'Config File Title',
+          theme: 'default-light',
+          source: {
+            type: 'auto',
+            path: './config-docs',
+          },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, configFileContent);
       tempPaths.push(configPath);
 
       // Options should override config file
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
         configPath: configPath,
         title: 'Options Title',
         theme: 'default-dark',
-        docsPath: './options-docs'
+        docsPath: './options-docs',
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should use options values over config file
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      const inspection = inspectErrorHTML(errorElement);
-      
+      inspectErrorHTML(errorElement);
+
       // The error UI won't show the title directly, but we can verify the viewer was created
       expect(viewer.container).toBe(testContainer.element);
     });
 
     it('should handle partial configuration with missing required fields', async () => {
       const configPath = './test-partial-config.json';
-      const partialConfig = JSON.stringify({
-        // Only theme specified, missing title and source
-        theme: 'default-light'
-      }, null, 2);
-      
+      const partialConfig = JSON.stringify(
+        {
+          // Only theme specified, missing title and source
+          theme: 'default-light',
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, partialConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should use defaults for missing fields
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
@@ -470,7 +497,7 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should validate ConfigLoader.toDocumentationConfig', () => {
       const configLoader = new ConfigLoader();
-      
+
       // Should provide valid default configuration
       const docConfig = configLoader.toDocumentationConfig();
       expect(docConfig).toBeDefined();
@@ -480,13 +507,13 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should test ConfigLoader.generateSampleConfig', () => {
       const sampleConfig = ConfigLoader.generateSampleConfig();
-      
+
       expect(sampleConfig).toBeTruthy();
       expect(typeof sampleConfig).toBe('string');
-      
+
       // Should be valid JSON
       expect(() => JSON.parse(sampleConfig)).not.toThrow();
-      
+
       const parsed = JSON.parse(sampleConfig);
       expect(parsed.title).toBeTruthy();
       expect(parsed.theme).toBeTruthy();
@@ -511,17 +538,17 @@ describe('Configuration Error Integration Tests', () => {
           "placeholder": 123
         }
       }`;
-      
+
       await createRealFile(configPath, cascadingErrorConfig);
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       // Should handle all errors gracefully and show setup UI
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
@@ -533,7 +560,7 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should maintain stability with rapid config changes', async () => {
       const configPath = './test-rapid-changes.json';
-      
+
       // Test multiple rapid initializations with different configs
       const configs = [
         { title: 'Config 1', theme: 'default-light' },
@@ -544,25 +571,25 @@ describe('Configuration Error Integration Tests', () => {
 
       for (let i = 0; i < configs.length; i++) {
         await createRealFile(configPath, JSON.stringify(configs[i], null, 2));
-        
-        const viewer = await init({ 
+
+        const viewer = await init({
           container: testContainer.element,
-          configPath: configPath 
+          configPath: configPath,
         });
 
         expect(viewer).toBeDefined();
         expect(viewer.container).toBe(testContainer.element);
-        
+
         // Should handle each config gracefully
         try {
           await waitForErrorUI(testContainer.element, 1000);
         } catch {
           // It's okay if no error UI appears for some configs
         }
-        
+
         await viewer.destroy();
       }
-      
+
       tempPaths.push(configPath);
     });
   });
@@ -570,43 +597,43 @@ describe('Configuration Error Integration Tests', () => {
   describe('Edge Cases and Performance', () => {
     it('should handle extremely large configuration files', async () => {
       const configPath = './test-large-config.json';
-      
+
       // Create a large config with many nested properties
       const largeConfig = {
         title: 'Large Configuration Test',
         theme: 'default-light',
         source: { type: 'auto', path: './docs' },
         // Add many properties to make it large
-        metadata: {}
+        metadata: {},
       };
-      
+
       // Add 1000 metadata entries
       for (let i = 0; i < 1000; i++) {
         largeConfig.metadata[`key_${i}`] = `value_${i}`.repeat(100);
       }
-      
+
       await createRealFile(configPath, JSON.stringify(largeConfig, null, 2));
       tempPaths.push(configPath);
 
       const start = performance.now();
-      
-      const viewer = await init({ 
+
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       const end = performance.now();
-      
+
       expect(viewer).toBeDefined();
       expect(end - start).toBeLessThan(5000); // Should complete within 5 seconds
-      
+
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       expect(errorElement.textContent).toContain('Setup Required');
     });
 
     it('should handle configuration with circular references (if JSON allows)', async () => {
       const configPath = './test-self-reference.json';
-      
+
       // JSON doesn't allow circular refs, but test a deep self-similar structure
       const deepConfig = {
         title: 'Self Reference Test',
@@ -617,24 +644,24 @@ describe('Configuration Error Integration Tests', () => {
             level2: {
               level3: {
                 level4: {
-                  level5: 'deep value'
-                }
-              }
-            }
-          }
-        }
+                  level5: 'deep value',
+                },
+              },
+            },
+          },
+        },
       };
-      
+
       await createRealFile(configPath, JSON.stringify(deepConfig, null, 2));
       tempPaths.push(configPath);
 
-      const viewer = await init({ 
+      const viewer = await init({
         container: testContainer.element,
-        configPath: configPath 
+        configPath: configPath,
       });
 
       expect(viewer).toBeDefined();
-      
+
       const errorElement = await waitForErrorUI(testContainer.element, 3000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
@@ -645,31 +672,35 @@ describe('Configuration Error Integration Tests', () => {
 
     it('should handle simultaneous config loading attempts', async () => {
       const configPath = './test-simultaneous.json';
-      const config = JSON.stringify({
-        title: 'Simultaneous Test',
-        theme: 'default-light',
-        source: { type: 'auto', path: './docs' }
-      }, null, 2);
-      
+      const config = JSON.stringify(
+        {
+          title: 'Simultaneous Test',
+          theme: 'default-light',
+          source: { type: 'auto', path: './docs' },
+        },
+        null,
+        2
+      );
+
       await createRealFile(configPath, config);
       tempPaths.push(configPath);
 
       // Start multiple initialization attempts simultaneously
-      const promises = Array.from({ length: 5 }, (_, i) => 
-        init({ 
+      const promises = Array.from({ length: 5 }, _ =>
+        init({
           container: testContainer.element,
-          configPath: configPath 
+          configPath: configPath,
         })
       );
 
       const viewers = await Promise.all(promises);
-      
+
       // All should complete successfully
       viewers.forEach(viewer => {
         expect(viewer).toBeDefined();
         expect(viewer.container).toBe(testContainer.element);
       });
-      
+
       // Clean up all viewers
       await Promise.all(viewers.map(viewer => viewer.destroy()));
     });
