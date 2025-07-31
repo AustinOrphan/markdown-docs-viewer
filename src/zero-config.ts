@@ -129,6 +129,10 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       const handler: ProxyHandler<any> = {
         get(target, prop) {
           if (prop === 'container') return container; // real container for error UI
+          // Return resolved promises for async methods
+          if (prop === 'destroy' || prop === 'reload') {
+            return () => Promise.resolve();
+          }
           return () => {}; // no-op for everything else
         },
       };
@@ -219,6 +223,10 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
     const errorHandler: ProxyHandler<any> = {
       get(_target, prop) {
         if (prop === 'container') return container; // let error UI render
+        // Return resolved promises for async methods
+        if (prop === 'destroy' || prop === 'reload') {
+          return () => Promise.resolve();
+        }
         return () => {}; // noop for everything else
       },
     };

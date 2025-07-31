@@ -1,4 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import type { ZeroConfigOptions } from '../src/zero-config';
+
+// Mock dependencies BEFORE any imports from zero-config
+vi.mock('../src/factory');
+vi.mock('../src/config-loader');
+vi.mock('../src/auto-discovery');
+vi.mock('../src/viewer');
+
+// Import the things we need after mocking
 import {
   init,
   getViewer,
@@ -6,19 +15,10 @@ import {
   setTheme,
   getAvailableThemes,
   generateConfig,
-  ZeroConfigOptions,
 } from '../src/zero-config';
 import { ConfigLoader } from '../src/config-loader';
 import { AutoDiscovery } from '../src/auto-discovery';
 import { themes } from '../src/themes';
-
-// Mock dependencies
-vi.mock('../src/factory');
-vi.mock('../src/config-loader');
-vi.mock('../src/auto-discovery');
-vi.mock('../src/viewer');
-
-// Import the mocked createViewer after mocking
 import { createViewer } from '../src/factory';
 
 describe('Zero Config API', () => {
@@ -74,16 +74,8 @@ describe('Zero Config API', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
-  afterEach(async () => {
-    // Reset global viewer by calling getViewer and destroying if present
-    const viewer = getViewer();
-    if (viewer) {
-      await viewer.destroy();
-    }
-
-    // Reset the module to clear global state
-    vi.resetModules();
-
+  afterEach(() => {
+    // Clear DOM and mocks
     document.body.innerHTML = '';
     vi.clearAllMocks();
   });
@@ -130,6 +122,7 @@ describe('Zero Config API', () => {
     });
 
     it('should return error viewer for invalid container string', async () => {
+      // TODO: This test hangs due to module mocking issues - see GitHub issue #49
       const options: ZeroConfigOptions = {
         container: '#nonexistent',
       };
@@ -215,6 +208,7 @@ describe('Zero Config API', () => {
     });
 
     it('should display error message in container on failure', async () => {
+      // TODO: This test hangs due to module mocking issues - see GitHub issue #49
       const error = new Error('Test error');
       // Mock createViewer to throw an error to trigger viewer creation error display
       mockCreateViewer.mockImplementation(() => {
@@ -232,6 +226,7 @@ describe('Zero Config API', () => {
     });
 
     it('should handle error with custom container', async () => {
+      // TODO: This test hangs due to module mocking issues - see GitHub issue #49
       const customContainer = document.createElement('div');
       document.body.appendChild(customContainer);
 
@@ -384,6 +379,7 @@ describe('Zero Config API', () => {
 
   describe('Error handling edge cases', () => {
     it('should handle container query failure in error state', async () => {
+      // TODO: This test hangs due to module mocking issues - see GitHub issue #49
       // Mock querySelector to return null
       vi.spyOn(document, 'querySelector').mockReturnValue(null);
       vi.spyOn(document, 'getElementById').mockReturnValue(null);
