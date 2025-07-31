@@ -128,7 +128,7 @@ export class ConfigLoader {
     for (const filename of CONFIG_FILES) {
       try {
         const response = await fetch(filename, { method: 'HEAD' });
-        if (response.ok) {
+        if (response && response.ok) {
           await this.loadConfigFile(filename);
           this.configPath = filename;
           console.log(`📋 Loaded config from: ${filename}`);
@@ -148,8 +148,10 @@ export class ConfigLoader {
   private async loadConfigFile(path: string): Promise<void> {
     try {
       const response = await fetch(path);
-      if (!response.ok) {
-        throw new Error(`Failed to load config: ${response.status} ${response.statusText}`);
+      if (!response || !response.ok) {
+        throw new Error(
+          `Failed to load config: ${response?.status || 'Network error'} ${response?.statusText || 'No response'}`
+        );
       }
 
       const userConfig = await response.json();
