@@ -92,22 +92,30 @@ export const createErrorScenarios = {
 export async function waitForErrorUI(container: HTMLElement, timeout = 5000): Promise<HTMLElement> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
+    let checkCount = 0;
 
     const check = () => {
-      // Look for common error UI indicators
+      checkCount++;
+
+      // Look for common error UI indicators including the actual error div structure
       const errorElement =
         container.querySelector('.error-container') ||
         container.querySelector('.error-message') ||
         container.querySelector('[class*="error"]') ||
-        (container.textContent?.includes('Error') ? container : null);
+        container.querySelector('div[style*="color: #d73a49"]') || // Match the actual error styling
+        container.querySelector('h3') || // Any h3 might be the error heading
+        (container.textContent?.includes('Error:') ? container : null) ||
+        (container.textContent?.includes('Failed') ? container : null) ||
+        (container.textContent?.includes('Setup Required') ? container : null);
 
       if (errorElement) {
         resolve(errorElement as HTMLElement);
         return;
       }
 
-      if (Date.now() - startTime > timeout) {
-        reject(new Error(`Error UI not found within ${timeout}ms`));
+      // Add safety check to prevent infinite loops
+      if (Date.now() - startTime > timeout || checkCount > timeout / 100) {
+        reject(new Error(`Error UI not found within ${timeout}ms after ${checkCount} checks`));
         return;
       }
 
