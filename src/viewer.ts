@@ -1159,7 +1159,7 @@ export class MarkdownDocsViewer {
     ) as HTMLElement[];
     const currentIndex = allNavLinks.indexOf(currentLink);
 
-    let targetIndex: number = currentIndex; // Initialize with current index
+    let targetIndex: number;
 
     switch (e.key) {
       case 'ArrowDown':
