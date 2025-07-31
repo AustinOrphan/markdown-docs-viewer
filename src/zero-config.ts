@@ -295,7 +295,9 @@ function isTestEnvironment(): boolean {
     (typeof process !== 'undefined' && process.env?.JEST_WORKER_ID !== undefined) ||
     // Check for test globals
     (typeof global !== 'undefined' &&
-      (global.describe !== undefined || global.it !== undefined || global.test !== undefined)) ||
+      ((global as any).describe !== undefined ||
+        (global as any).it !== undefined ||
+        (global as any).test !== undefined)) ||
     // Check for Vitest global
     (typeof window !== 'undefined' &&
       ((window as any).describe !== undefined || (window as any).it !== undefined)) ||
