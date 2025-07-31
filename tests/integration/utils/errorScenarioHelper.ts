@@ -34,7 +34,7 @@ export const createErrorScenarios = {
       }
     },
     expectedError: 'Container element "#nonexistent-container" not found',
-    expectedRecovery: false
+    expectedRecovery: false,
   }),
 
   containerInvalid: (): ErrorScenario => ({
@@ -51,7 +51,7 @@ export const createErrorScenarios = {
       if (script) script.remove();
     },
     expectedError: 'Container element is not suitable',
-    expectedRecovery: false
+    expectedRecovery: false,
   }),
 
   configurationError: (): ErrorScenario => ({
@@ -74,7 +74,7 @@ export const createErrorScenarios = {
       }
     },
     expectedError: 'Failed to load configuration',
-    expectedRecovery: true
+    expectedRecovery: true,
   }),
 
   documentLoadError: (): ErrorScenario => ({
@@ -85,38 +85,35 @@ export const createErrorScenarios = {
       console.log('Setting up document load error scenario');
     },
     expectedError: 'Failed to load documents',
-    expectedRecovery: true
-  })
+    expectedRecovery: true,
+  }),
 };
 
-export async function waitForErrorUI(
-  container: HTMLElement,
-  timeout = 5000
-): Promise<HTMLElement> {
+export async function waitForErrorUI(container: HTMLElement, timeout = 5000): Promise<HTMLElement> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const check = () => {
       // Look for common error UI indicators
-      const errorElement = 
+      const errorElement =
         container.querySelector('.error-container') ||
         container.querySelector('.error-message') ||
         container.querySelector('[class*="error"]') ||
         (container.textContent?.includes('Error') ? container : null);
-      
+
       if (errorElement) {
         resolve(errorElement as HTMLElement);
         return;
       }
-      
+
       if (Date.now() - startTime > timeout) {
         reject(new Error(`Error UI not found within ${timeout}ms`));
         return;
       }
-      
+
       setTimeout(check, 100);
     };
-    
+
     check();
   });
 }
@@ -130,17 +127,21 @@ export function validateErrorUI(
     if (!hasMessage) {
       throw new Error('Expected error message but none found');
     }
-    
+
     if (expectations.errorMessageContains) {
       const containsExpected = errorElement.textContent.includes(expectations.errorMessageContains);
       if (!containsExpected) {
-        throw new Error(`Expected error message to contain "${expectations.errorMessageContains}" but got: ${errorElement.textContent}`);
+        throw new Error(
+          `Expected error message to contain "${expectations.errorMessageContains}" but got: ${errorElement.textContent}`
+        );
       }
     }
   }
 
   if (expectations.hasRetryButton) {
-    const retryButton = errorElement.querySelector('button[data-retry], .retry-button, button[class*="retry"]');
+    const retryButton = errorElement.querySelector(
+      'button[data-retry], .retry-button, button[class*="retry"]'
+    );
     if (!retryButton) {
       throw new Error('Expected retry button but none found');
     }
@@ -148,7 +149,9 @@ export function validateErrorUI(
 
   if (expectations.hasErrorClass && expectations.errorClassName) {
     if (!errorElement.classList.contains(expectations.errorClassName)) {
-      throw new Error(`Expected element to have class "${expectations.errorClassName}" but classes are: ${Array.from(errorElement.classList).join(', ')}`);
+      throw new Error(
+        `Expected element to have class "${expectations.errorClassName}" but classes are: ${Array.from(errorElement.classList).join(', ')}`
+      );
     }
   }
 }
@@ -171,7 +174,7 @@ export function createContainerErrorScenario(containerId: string): ErrorScenario
       }
     },
     expectedError: `Container element "#${containerId}" not found`,
-    expectedRecovery: false
+    expectedRecovery: false,
   };
 }
 
@@ -184,6 +187,55 @@ export function createConfigErrorScenario(configError: string): ErrorScenario {
       console.log(`Setting up config error scenario: ${configError}`);
     },
     expectedError: configError,
-    expectedRecovery: true
+    expectedRecovery: true,
+  };
+}
+
+/**
+ * Inspects error HTML and returns detailed information about the error element
+ * Used for debugging and validation in integration tests
+ */
+export function inspectErrorHTML(errorElement: HTMLElement): {
+  textContent: string;
+  outerHTML: string;
+  classList: string[];
+  styles: Record<string, string>;
+  childCount: number;
+  hasLinks: boolean;
+  hasCodeBlocks: boolean;
+  hasHeadings: boolean;
+} {
+  if (!errorElement) {
+    throw new Error('inspectErrorHTML: errorElement is required');
+  }
+
+  // Get computed styles
+  const computedStyles = window.getComputedStyle(errorElement);
+  const styles: Record<string, string> = {};
+
+  // Extract key style properties
+  const styleProps = [
+    'display',
+    'visibility',
+    'opacity',
+    'color',
+    'background-color',
+    'border',
+    'padding',
+    'margin',
+  ];
+  for (const prop of styleProps) {
+    styles[prop] = computedStyles.getPropertyValue(prop);
+  }
+
+  return {
+    textContent: errorElement.textContent || '',
+    outerHTML: errorElement.outerHTML,
+    classList: Array.from(errorElement.classList),
+    styles,
+    childCount: errorElement.children.length,
+    hasLinks: errorElement.querySelectorAll('a[href]').length > 0,
+    hasCodeBlocks: errorElement.querySelectorAll('code, pre').length > 0,
+    hasHeadings: errorElement.querySelectorAll('h1, h2, h3, h4, h5, h6').length > 0,
   };
 }

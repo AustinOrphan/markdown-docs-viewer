@@ -165,7 +165,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
 
         // Core methods that tests expect
         destroy: () => {},
-        reload: () => Promise.resolve(),
+        refresh: () => Promise.resolve(),
         setTheme: () => {},
         getTheme: () => ({}),
         getState: () => ({
@@ -193,7 +193,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
         get(target: any, prop: string | symbol) {
           if (prop === 'container') return container;
           if (prop === 'destroy') return () => {};
-          if (prop === 'reload') return () => Promise.resolve();
+          if (prop === 'refresh') return () => Promise.resolve();
           if (prop === 'setTheme') return () => {};
 
           // Return empty functions for other methods
