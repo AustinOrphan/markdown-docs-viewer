@@ -1,5 +1,5 @@
 // Demo Controller for Markdown Documentation Viewer
-import { MarkdownDocsViewer, ThemeSwitcher, ThemeManager } from '../dist/index.es.js';
+import { MarkdownDocsViewer, ThemeSwitcher, ThemeManager } from '../dist/markdown-docs-viewer.js';
 
 class DemoController {
   constructor() {
