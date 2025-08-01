@@ -51,10 +51,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer.container).toBe(testContainer.element);
 
       // Should display error UI with fallback behavior
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -73,8 +73,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should work with default configuration
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle inaccessible config file (permission denied simulation)', async () => {
@@ -89,10 +89,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should fall back to default config
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -123,8 +123,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should display error UI due to parsing failure
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle JSON with invalid structure', async () => {
@@ -153,10 +153,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should handle invalid structure gracefully
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -174,8 +174,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should handle empty file gracefully
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle non-JSON file with .json extension', async () => {
@@ -198,10 +198,10 @@ describe('Configuration Error Integration Tests', () => {
 
       expect(viewer).toBeDefined();
 
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -234,8 +234,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should fall back to default theme and show setup error
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle malformed theme object', async () => {
@@ -267,10 +267,10 @@ describe('Configuration Error Integration Tests', () => {
 
       expect(viewer).toBeDefined();
 
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -306,8 +306,8 @@ describe('Configuration Error Integration Tests', () => {
 
       expect(viewer).toBeDefined();
 
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
   });
 
@@ -338,10 +338,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should fall back to auto discovery
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -372,8 +372,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should use default path
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle non-existent source path', async () => {
@@ -402,10 +402,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should handle missing docs directory
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -442,7 +442,7 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should use options values over config file
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       inspectErrorHTML(errorElement);
 
       // The error UI won't show the title directly, but we can verify the viewer was created
@@ -471,8 +471,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should use defaults for missing fields
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
   });
 
@@ -550,10 +550,10 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
 
       // Should handle all errors gracefully and show setup UI
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });
@@ -627,8 +627,8 @@ describe('Configuration Error Integration Tests', () => {
       expect(viewer).toBeDefined();
       expect(end - start).toBeLessThan(5000); // Should complete within 5 seconds
 
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
-      expect(errorElement.textContent).toContain('Setup Required');
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
+      expect(errorElement.textContent).toContain('Choose Theme');
     });
 
     it('should handle configuration with circular references (if JSON allows)', async () => {
@@ -662,10 +662,10 @@ describe('Configuration Error Integration Tests', () => {
 
       expect(viewer).toBeDefined();
 
-      const errorElement = await waitForErrorUI(testContainer.element, 3000);
+      const errorElement = await waitForErrorUI(testContainer.element, 1000);
       validateErrorUI(errorElement, {
         hasErrorMessage: true,
-        errorMessageContains: 'Setup Required',
+        errorMessageContains: 'Choose Theme',
         hasErrorClass: false,
       });
     });

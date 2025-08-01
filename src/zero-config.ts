@@ -133,11 +133,20 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
     let container: HTMLElement | null = null;
 
     try {
-      container = options.container
-        ? typeof options.container === 'string'
-          ? document.querySelector(options.container)
-          : options.container
-        : document.getElementById('docs') || document.body;
+      if (options.container) {
+        if (typeof options.container === 'string') {
+          container = document.querySelector(options.container);
+          // If container selector doesn't match anything, fall back to body
+          if (!container) {
+            container = document.body;
+          }
+        } else {
+          container = options.container;
+        }
+      } else {
+        // No container specified, use defaults
+        container = document.getElementById('docs') || document.body;
+      }
     } catch {
       // If container resolution fails, fall back to body
       container = document.body;
@@ -155,6 +164,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
     }
 
     // Check if we're in a test environment and return a simple fallback
+    // Note: DOM injection above still happens in test environment for integration tests
     const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
 
     if (isTestEnv) {
@@ -164,7 +174,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
         container: container || document.createElement('div'),
 
         // Core methods that tests expect
-        destroy: () => {},
+        destroy: () => Promise.resolve(),
         refresh: () => Promise.resolve(),
         setTheme: () => {},
         getTheme: () => ({}),
@@ -192,7 +202,7 @@ export async function init(options: ZeroConfigOptions = {}): Promise<MarkdownDoc
       const handler: ProxyHandler<any> = {
         get(target: any, prop: string | symbol) {
           if (prop === 'container') return container;
-          if (prop === 'destroy') return () => {};
+          if (prop === 'destroy') return () => Promise.resolve();
           if (prop === 'refresh') return () => Promise.resolve();
           if (prop === 'setTheme') return () => {};
 

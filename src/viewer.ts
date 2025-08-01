@@ -1435,7 +1435,7 @@ export class MarkdownDocsViewer {
     });
   }
 
-  public destroy(): void {
+  public async destroy(): Promise<void> {
     try {
       if (this.styles) {
         this.styles.remove();
