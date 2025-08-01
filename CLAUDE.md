@@ -207,3 +207,262 @@ if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
   "types": "dist/index.d.ts"
 }
 ```
+
+## Core Files & Utility Functions
+
+### High-Impact Files (Handle with care)
+
+- `src/viewer.ts` - Main orchestration class, affects all users
+- `src/factory.ts` - Public API entry points (`createViewer`, `quickStart`)
+- `src/types.ts` - TypeScript interfaces, changes may require version bumps
+- `src/zero-config.ts` - Auto-initialization logic, many users depend on this
+
+### Key Utility Functions
+
+- `escapeHtml()` in `src/utils.ts` - **Always use for HTML sanitization**
+- Mock utilities in `tests/utils/` - Use these instead of global `vi.mock()`
+- `createViewer()` and `quickStart()` in `src/factory.ts` - Preferred over direct instantiation
+
+### Build Output Files (Must stay consistent)
+
+- ES Module: `dist/markdown-docs-viewer.js`
+- UMD: `dist/markdown-docs-viewer.umd.cjs`
+- Types: `dist/index.d.ts`
+
+## Code Style Guidelines
+
+### Security Patterns - CRITICAL
+
+```typescript
+// ✅ Safe HTML injection
+element.innerHTML = `Error: ${escapeHtml(error.stack)}`;
+
+// ✅ Even safer - plain text
+element.textContent = `Error: ${error.message}`;
+
+// ❌ NEVER do this - XSS vulnerability
+element.innerHTML = `Error: ${error.message}`;
+```
+
+### Component Patterns
+
+```typescript
+// ✅ Proper cleanup pattern
+class Component {
+  private clickHandler = (e: Event) => {
+    /* ... */
+  };
+
+  destroy() {
+    this.container?.removeEventListener('click', this.clickHandler);
+    this.container?.remove();
+    this.container = null;
+  }
+}
+
+// ✅ Factory pattern (preferred)
+const viewer = createViewer(config);
+
+// ❌ Avoid direct instantiation
+const viewer = new MarkdownDocsViewer(config);
+```
+
+### Import Structure (Avoid circular dependencies)
+
+```
+types.ts ← utils.ts ← [feature modules] ← viewer.ts ← factory.ts
+```
+
+## Testing Instructions
+
+### Dual Testing Strategy
+
+- **Unit Tests**: Fast feedback (~767ms for 28 tests) - Heavy mocking, focus on logic
+- **Integration Tests**: Real-world validation (~805ms for 22 tests) - Minimal mocking, end-to-end
+
+### Critical Testing Patterns
+
+```bash
+# Unit tests
+npm test
+
+# Integration tests
+npx vitest run --config vitest.integration.config.ts tests/integration/
+
+# Coverage (80% threshold enforced)
+npm run test:coverage
+
+# Specific test file
+npm test -- tests/zero-config.test.ts
+```
+
+### Mock Utilities (Essential)
+
+```typescript
+// ✅ Use targeted mocks from tests/utils/
+import { mockCreateViewer } from '../utils/mockFactory';
+mockCreateViewer.mockReturnValue(mockViewer);
+
+// ❌ NEVER use global mocks in zero-config tests (causes hanging)
+vi.mock('../src/factory'); // Circular dependency issues
+```
+
+### Test Environment Detection
+
+```typescript
+// ✅ Always check for auto-initialization features
+const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
+if (!isTestEnv) {
+  // Auto-init code here
+}
+```
+
+## Unexpected Behaviors & Warnings
+
+### Zero-Config Auto-Initialization
+
+- `src/zero-config.ts` auto-initializes on import in browser environments
+- **Must include test environment detection** to prevent issues during testing
+- Auto-init can cause infinite loops in test environments if not properly guarded
+
+### Build System Quirks
+
+- **Dual build setup**: `vite.config.ts` (main) + `vite.zero-config.ts` (zero-config)
+- Zero-config build uses `emptyOutDir: false` to prevent overwriting main build
+- Import path changes require updates in multiple locations (examples, README, package.json)
+
+### Testing Gotchas
+
+- **Global `vi.mock()` causes hanging** in zero-config tests due to circular dependencies
+- Memory leaks common if event listeners not properly cleaned up in tests
+- Integration tests require real DOM and minimal mocking for accurate validation
+
+### CI/GitHub Actions Issues
+
+- Jobs can get stuck in "pending" state for hours due to GitHub infrastructure
+- Git repository corruption can occur (missing .git/config, .git/HEAD files)
+- Use `gh run cancel` and empty commits to force fresh CI runs
+
+## Common Bash Commands
+
+### Development
+
+```bash
+# Start development server
+npm run dev
+
+# Build library
+npm run build
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run integration tests
+npx vitest run --config vitest.integration.config.ts tests/integration/
+
+# Lint and fix
+npm run lint
+```
+
+### Debugging & Troubleshooting
+
+```bash
+# Find all references to a filename (after build changes)
+grep -r "old-filename" . --exclude-dir=node_modules --exclude-dir=dist
+
+# Find XSS vulnerabilities
+grep -r "innerHTML" src/
+
+# Cancel stuck CI runs
+gh run cancel $(gh run list --limit 5 --json databaseId --jq '.[].databaseId')
+
+# Check recent changes to understand context
+git log --oneline -10
+git status
+git diff
+
+# Fix git repository corruption
+rm -rf .git && git init && git remote add origin <url> && git fetch
+```
+
+### Repository Navigation
+
+```bash
+# Find all usages of a function/class
+grep -r "functionName" src/ --include="*.ts"
+
+# Find test files for a component
+find tests/ -name "*component-name*"
+
+# See what imports a file
+grep -r "from './filename'" src/
+```
+
+### Repository Etiquette
+
+**Branch Naming**:
+
+- Feature branches: `feature/description-of-feature`
+- Bug fixes: `fix/description-of-bug`
+- Chores: `chore/description-of-task`
+
+**Merge vs Rebase Strategy**:
+
+- **Prefer focused PRs** over complex rebases
+- Use `git cherry-pick` to extract specific commits from mixed branches
+- **Avoid** accumulating unrelated fixes in feature branches
+- Close problematic PRs and create new focused ones rather than complex rebasing
+
+**Commit Messages**:
+
+- Follow conventional commits format
+- Include specific file references when relevant (e.g., `src/viewer.ts:681`)
+- Reference GitHub issues when applicable
+
+### Repository Navigation Shortcuts
+
+**Finding Related Code**:
+
+```bash
+# Find all usages of a function/class
+grep -r "functionName" src/ --include="*.ts"
+
+# Find test files for a component
+find tests/ -name "*component-name*"
+
+# Find recent changes to a file
+git log --oneline -5 -- src/filename.ts
+```
+
+**Understanding File Relationships**:
+
+```bash
+# See what imports a file
+grep -r "from './filename'" src/
+
+# See what a file imports
+head -20 src/filename.ts | grep "import"
+
+# Find circular dependencies
+npm run lint | grep "Circular"
+```
+
+### Quick Wins for Performance
+
+**Immediate Impact** (< 30 minutes):
+
+- Add missing null checks in DOM operations
+- Fix memory leaks in event listeners
+- Add lazy loading to expensive operations
+
+**Medium Impact** (1-2 hours):
+
+- Optimize search algorithms
+- Improve theme switching performance
+- Add caching to document loading
+
+**Long-term Impact** (Half day):
+
+- Redesign component lifecycle
+- Implement virtual scrolling for large docs
+- Add service worker for offline functionality
