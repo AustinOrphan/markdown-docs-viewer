@@ -705,7 +705,8 @@ export class ThemeSwitcher {
       backdrop.remove();
     }
 
-    // Clear container reference
+    // Remove container from DOM and clear reference
+    this.container?.remove();
     this.container = null;
     this.isOpen = false;
   }
