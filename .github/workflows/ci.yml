@@ -60,16 +60,6 @@ jobs:
       - name: Run tests
         run: npm run test:ci
 
-      - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.17.0'
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-
   build:
     name: Build
     runs-on: ubuntu-latest
