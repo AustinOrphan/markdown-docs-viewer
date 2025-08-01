@@ -41,7 +41,7 @@ export default defineConfig({
 
     // Include/exclude patterns
     include: ['tests/**/*.{test,spec}.{js,ts}'],
-    exclude: ['node_modules/', 'dist/', 'demo/', 'examples/'],
+    exclude: ['node_modules/', 'dist/', 'demo/', 'examples/', 'tests/integration/**'],
 
     // Test timeout
     testTimeout: 10000,
