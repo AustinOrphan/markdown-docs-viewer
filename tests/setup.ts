@@ -1,5 +1,10 @@
 import { vi, beforeEach, afterEach } from 'vitest';
 
+// CI Environment Detection
+export const IS_CI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+export const DEFAULT_TEST_TIMEOUT = IS_CI ? 1000 : 5000; // Shorter timeouts in CI
+export const MAX_POLL_ATTEMPTS = IS_CI ? 20 : 100; // Fewer attempts in CI
+
 // Mock global objects that may not be available in test environment
 Object.defineProperty(global, 'ResizeObserver', {
   value: vi.fn().mockImplementation(() => ({

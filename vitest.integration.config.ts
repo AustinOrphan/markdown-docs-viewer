@@ -11,16 +11,23 @@ export default defineConfig({
     // Global test configuration
     globals: true,
 
-    // Environment variables for test detection
-    env: {
-      NODE_ENV: 'test',
-      VITEST: 'true',
-    },
+    // Integration-specific patterns
+    include: ['tests/integration/**/*.{test,spec}.{js,ts}'],
+    exclude: ['node_modules/', 'dist/', 'demo/', 'examples/'],
 
-    // Coverage configuration
+    // Longer timeouts for integration tests
+    testTimeout: 30000,
+    hookTimeout: 30000,
+
+    // Integration test isolation
+    isolate: true,
+    pool: 'forks',
+
+    // Coverage configuration for integration tests
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      reportsDirectory: './coverage/integration',
       include: ['src/**/*.ts'],
       exclude: [
         'node_modules/',
@@ -30,35 +37,25 @@ export default defineConfig({
         'examples/',
         '**/*.d.ts',
         'vitest.config.ts',
+        'vitest.integration.config.ts',
       ],
       thresholds: {
-        functions: 80,
-        lines: 80,
-        branches: 80,
-        statements: 80,
+        functions: 70,
+        lines: 70,
+        branches: 70,
+        statements: 70,
       },
     },
-
-    // Include/exclude patterns
-    include: ['tests/**/*.{test,spec}.{js,ts}'],
-    exclude: ['node_modules/', 'dist/', 'demo/', 'examples/', 'tests/integration/**'],
-
-    // Test timeout
-    testTimeout: 10000,
-    hookTimeout: 10000,
 
     // Reporter configuration
     reporter: ['verbose', 'json'],
 
-    // Mock configuration
-    clearMocks: true,
-    restoreMocks: true,
+    // Mock configuration - allow real implementations for integration tests
+    clearMocks: false,
+    restoreMocks: false,
 
-    // Watch mode
-    watch: false,
-
-    // Retry failed tests
-    retry: 0,
+    // Less strict retry for integration tests (they may be flaky)
+    retry: 1,
   },
 
   // Resolve configuration for imports

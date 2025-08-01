@@ -1,0 +1,32 @@
+{
+  "title": "Integration Test Documentation",
+  "theme": "github-light",
+  "source": {
+    "type": "auto",
+    "path": "./docs",
+    "exclude": ["**/drafts/**", "**/_*"],
+    "include": ["**/*.md", "**/*.markdown"]
+  },
+  "navigation": {
+    "autoSort": true,
+    "showCategories": true,
+    "collapsible": true
+  },
+  "search": {
+    "enabled": true,
+    "placeholder": "Search integration tests...",
+    "fuzzySearch": true
+  },
+  "features": {
+    "tableOfContents": true,
+    "codeHighlighting": true,
+    "darkMode": true,
+    "print": false,
+    "export": false
+  },
+  "performance": {
+    "lazyLoading": true,
+    "cacheSize": 50,
+    "prefetchNext": false
+  }
+}

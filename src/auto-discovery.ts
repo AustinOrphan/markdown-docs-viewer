@@ -95,7 +95,7 @@ export class AutoDiscovery {
         const fullPath = `${basePath}/${dir}${file}`.replace(/\/+/g, '/');
         try {
           const response = await fetch(fullPath, { method: 'HEAD' });
-          if (response.ok) {
+          if (response && response.ok) {
             files.push({
               path: fullPath,
               name: file,
@@ -117,7 +117,7 @@ export class AutoDiscovery {
   private async processFile(file: FileInfo): Promise<Document | null> {
     try {
       const response = await fetch(file.path);
-      if (!response.ok) return null;
+      if (!response || !response.ok) return null;
 
       const content = await response.text();
       const title = this.extractTitle(content, file.name);

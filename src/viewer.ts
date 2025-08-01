@@ -1159,7 +1159,7 @@ export class MarkdownDocsViewer {
     ) as HTMLElement[];
     const currentIndex = allNavLinks.indexOf(currentLink);
 
-    let targetIndex: number = currentIndex; // Initialize with current index
+    let targetIndex: number;
 
     switch (e.key) {
       case 'ArrowDown':
@@ -1384,6 +1384,10 @@ export class MarkdownDocsViewer {
     );
   }
 
+  public async reload(): Promise<void> {
+    return this.refresh();
+  }
+
   public setTheme(theme: Theme | string): void {
     if (typeof theme === 'string') {
       const themeObj = this.themeManager.setTheme(theme);
@@ -1431,7 +1435,7 @@ export class MarkdownDocsViewer {
     });
   }
 
-  public destroy(): void {
+  public async destroy(): Promise<void> {
     try {
       if (this.styles) {
         this.styles.remove();
