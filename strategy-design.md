@@ -16,21 +16,25 @@ This document provides the detailed technical specification for implementing a r
 ## Core Design Principles
 
 ### 1. **Targeted Function Mocking**
+
 - Mock specific functions, not entire modules
-- Use `vi.spyOn()` instead of `vi.mock()`  
+- Use `vi.spyOn()` instead of `vi.mock()`
 - Maintain clear boundaries between real and mocked code
 
 ### 2. **Utility Independence**
+
 - Each mock utility operates independently
 - No shared state between utilities
 - No circular dependencies within utilities
 
 ### 3. **Predictable Execution**
+
 - Clear, linear execution paths
 - No proxy module interference
 - Deterministic test outcomes
 
 ### 4. **Maintainable Patterns**
+
 - Consistent interfaces across utilities
 - Clear documentation and examples
 - Easy debugging and troubleshooting
@@ -40,10 +44,11 @@ This document provides the detailed technical specification for implementing a r
 ## Mock Utility Architecture
 
 ### Directory Structure
+
 ```
 tests/utils/
 ├── mockConfigLoader.ts      ✅ (Complete - Agent B reference)
-├── mockAutoDiscovery.ts     ✅ (Complete - Agent C reference)  
+├── mockAutoDiscovery.ts     ✅ (Complete - Agent C reference)
 ├── mockViewer.ts           ✅ (Complete - Agent D reference)
 ├── mockFactory.ts          ✅ (Complete - Agent E reference)
 ├── mockCreateViewer.ts     ❌ (To be completed by Agent E)
@@ -59,13 +64,13 @@ Each utility must implement this consistent pattern:
 export interface MockUtilityPattern<TModule, TMock> {
   // Basic setup with default behavior
   setup(): MockedFunction<TModule>;
-  
+
   // Configurable setup with options
   setupWithOptions(options: SetupOptions): MockedFunction<TModule>;
-  
+
   // Create mock object/instance
   createMock(overrides?: Partial<TMock>): TMock;
-  
+
   // Common scenario shortcuts
   scenarios: {
     success: () => MockedFunction<TModule>;
@@ -87,23 +92,26 @@ export interface MockUtilityPattern<TModule, TMock> {
 **Agent**: B (Reference implementation ✅)
 
 #### Implementation Pattern
+
 ```typescript
 // Pattern: Prototype method spying
 export function setupConfigMock(options: ConfigMockOptions = {}) {
   const mockInstance = createMockConfigLoader(options);
-  
+
   return {
-    loadConfigMock: vi.spyOn(ConfigLoader.prototype, 'loadConfig')
+    loadConfigMock: vi
+      .spyOn(ConfigLoader.prototype, 'loadConfig')
       .mockImplementation(mockInstance.loadConfig),
     mockInstance,
-    teardown: () => vi.restoreAllMocks()
+    teardown: () => vi.restoreAllMocks(),
   };
 }
 ```
 
 #### Key Scenarios
+
 - **Success**: Valid configuration loading
-- **Error**: Configuration file not found  
+- **Error**: Configuration file not found
 - **Invalid**: Malformed configuration data
 - **Empty**: No configuration provided
 
@@ -114,20 +122,23 @@ export function setupConfigMock(options: ConfigMockOptions = {}) {
 **Agent**: C (Reference implementation ✅)
 
 #### Implementation Pattern
+
 ```typescript
 // Pattern: Instance method mocking with document arrays
 export function setupAutoDiscoveryMock(options: AutoDiscoveryOptions = {}) {
   const { documents = DEFAULT_TEST_DOCUMENTS } = options;
-  
+
   return {
-    discoverFilesMock: vi.spyOn(AutoDiscovery.prototype, 'discoverFiles')
+    discoverFilesMock: vi
+      .spyOn(AutoDiscovery.prototype, 'discoverFiles')
       .mockResolvedValue(documents),
-    cleanup: () => vi.clearAllMocks()
+    cleanup: () => vi.clearAllMocks(),
   };
 }
 ```
 
 #### Key Scenarios
+
 - **Standard**: Returns default test documents
 - **Empty**: No documents found
 - **Error**: File system access failure
@@ -140,6 +151,7 @@ export function setupAutoDiscoveryMock(options: AutoDiscoveryOptions = {}) {
 **Agent**: D (Reference implementation ✅)
 
 #### Implementation Pattern
+
 ```typescript
 // Pattern: Complete interface mock with method spies
 export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): MarkdownDocsViewer {
@@ -149,12 +161,13 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
     reload: vi.fn().mockResolvedValue(undefined),
     setTheme: vi.fn(),
     // ... all required interface methods
-    ...overrides
+    ...overrides,
   } as MarkdownDocsViewer;
 }
 ```
 
 #### Key Scenarios
+
 - **Standard**: Fully functional mock viewer
 - **Error**: Methods that throw errors
 - **Async**: Async method success/failure
@@ -167,9 +180,12 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
 **Agent**: E (Reference implementation ✅)
 
 #### Implementation Pattern
+
 ```typescript
 // Pattern: Direct function spying
-export function mockCreateViewerSuccess(viewer?: MarkdownDocsViewer): MockedFunction<typeof factory.createViewer> {
+export function mockCreateViewerSuccess(
+  viewer?: MarkdownDocsViewer
+): MockedFunction<typeof factory.createViewer> {
   const mockViewer = viewer || createMockViewer();
   return vi.spyOn(factory, 'createViewer').mockReturnValue(mockViewer);
 }
@@ -182,6 +198,7 @@ export function mockCreateViewerError(error: Error): MockedFunction<typeof facto
 ```
 
 #### Key Scenarios
+
 - **Success**: Returns working viewer instance
 - **Error**: Throws during viewer creation
 - **Async**: Promise-based creation patterns
@@ -194,6 +211,7 @@ export function mockCreateViewerError(error: Error): MockedFunction<typeof facto
 ### From Global Mocks to Targeted Mocking
 
 #### ❌ Anti-Pattern: Global Module Mocking
+
 ```typescript
 // DON'T: Global module mocking
 vi.mock('../src/viewer');
@@ -204,6 +222,7 @@ import { init } from '../src/zero-config';
 ```
 
 #### ✅ Recommended Pattern: Targeted Function Mocking
+
 ```typescript
 // DO: Import real modules, mock specific functions
 import * as factory from '../src/factory';
@@ -219,28 +238,30 @@ beforeEach(() => {
 ### Test Structure Migration
 
 #### Before: Complex Mock Setup
+
 ```typescript
 beforeEach(async () => {
   // Complex dynamic imports to work around mocks
   const configLoaderModule = await import('../src/config-loader');
   ConfigLoader = configLoaderModule.ConfigLoader;
-  
+
   // Complex spy setup
   vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(/*...*/);
 });
 ```
 
 #### After: Simplified Utility Usage
+
 ```typescript
 beforeEach(() => {
   // Clean utility-based setup
-  const configMock = setupConfigMock({ 
-    config: DEFAULT_TEST_CONFIG 
+  const configMock = setupConfigMock({
+    config: DEFAULT_TEST_CONFIG,
   });
-  const discoveryMock = setupAutoDiscoveryMock({ 
-    documents: DEFAULT_TEST_DOCUMENTS 
+  const discoveryMock = setupAutoDiscoveryMock({
+    documents: DEFAULT_TEST_DOCUMENTS,
   });
-  
+
   mockViewer = createMockViewer();
   mockCreateViewerSuccess(mockViewer);
 });
@@ -253,15 +274,16 @@ beforeEach(() => {
 ### Consistent Error Testing Structure
 
 #### Standard Error Test Pattern
+
 ```typescript
 it('should handle [specific error condition]', async () => {
   // 1. Setup error condition
   const error = new Error('Specific test error');
   mockUtilityWithError(error);
-  
+
   // 2. Execute function under test
   const result = await functionUnderTest();
-  
+
   // 3. Verify error handling
   expect(result).toBeDefined();
   expect(result.destroy).toBeDefined();
@@ -269,7 +291,7 @@ it('should handle [specific error condition]', async () => {
     expect.stringContaining('Expected error message'),
     error
   );
-  
+
   // 4. Verify fallback behavior
   expect(result).toMatchExpectedFallbackBehavior();
 });
@@ -278,14 +300,15 @@ it('should handle [specific error condition]', async () => {
 ### Specific Error Scenarios
 
 #### Container Not Found Error
+
 ```typescript
 it('should handle invalid container', async () => {
   // Mock DOM query to return null
   vi.spyOn(document, 'querySelector').mockReturnValue(null);
-  
+
   const options = { container: '#nonexistent' };
   const viewer = await init(options);
-  
+
   expect(viewer).toBeDefined();
   expect(console.error).toHaveBeenCalledWith(
     expect.stringContaining('Container element'),
@@ -295,13 +318,14 @@ it('should handle invalid container', async () => {
 ```
 
 #### Configuration Loading Error
+
 ```typescript
 it('should handle config loading failure', async () => {
   const error = new Error('Config file not found');
   setupConfigMock({ loadError: error });
-  
+
   const viewer = await init();
-  
+
   expect(viewer).toBeDefined();
   expect(console.error).toHaveBeenCalledWith(
     expect.stringContaining('Failed to load configuration'),
@@ -311,13 +335,14 @@ it('should handle config loading failure', async () => {
 ```
 
 #### Viewer Creation Error
-```typescript  
+
+```typescript
 it('should handle viewer creation failure', async () => {
   const error = new Error('Viewer construction failed');
   mockCreateViewerError(error);
-  
+
   const viewer = await init();
-  
+
   expect(viewer).toBeDefined();
   expect(viewer.container).toBeDefined();
   expect(console.error).toHaveBeenCalledWith(
@@ -334,24 +359,34 @@ it('should handle viewer creation failure', async () => {
 ### Mock Utility Design
 
 #### 1. **Single Responsibility**
+
 Each utility should focus on one module or closely related set of functions.
 
 ```typescript
 // Good: Focused on single module
 export const mockConfigLoader = {
-  setup: () => { /* ConfigLoader-specific setup */ },
+  setup: () => {
+    /* ConfigLoader-specific setup */
+  },
   // ...
 };
 
-// Bad: Mixed responsibilities  
+// Bad: Mixed responsibilities
 export const mockEverything = {
-  setupConfig: () => { /* ... */ },
-  setupViewer: () => { /* ... */ },
-  setupDiscovery: () => { /* ... */ }
+  setupConfig: () => {
+    /* ... */
+  },
+  setupViewer: () => {
+    /* ... */
+  },
+  setupDiscovery: () => {
+    /* ... */
+  },
 };
 ```
 
 #### 2. **Clear Interface Contracts**
+
 Mock objects must fully satisfy TypeScript interfaces.
 
 ```typescript
@@ -368,22 +403,24 @@ export function createMockViewer(): MarkdownDocsViewer {
 // Bad: Incomplete interface
 export function createMockViewer() {
   return {
-    destroy: vi.fn()
+    destroy: vi.fn(),
     // Missing required methods
   };
 }
 ```
 
 #### 3. **Predictable State Management**
+
 Utilities should not maintain internal state between tests.
 
 ```typescript
 // Good: Stateless utility functions
 export function setupConfigMock(options) {
   return {
-    loadConfigMock: vi.spyOn(ConfigLoader.prototype, 'loadConfig')
+    loadConfigMock: vi
+      .spyOn(ConfigLoader.prototype, 'loadConfig')
       .mockImplementation(() => options.config),
-    cleanup: () => vi.restoreAllMocks()
+    cleanup: () => vi.restoreAllMocks(),
   };
 }
 
@@ -398,27 +435,28 @@ export function setupConfigMock(options) {
 ### Test Organization
 
 #### 1. **Consistent Setup Patterns**
+
 ```typescript
 describe('Feature tests', () => {
   let mockViewer: MarkdownDocsViewer;
   let mockCreateViewerFn: MockedFunction<typeof createViewer>;
-  
+
   beforeEach(() => {
     // 1. Setup DOM
     document.body.innerHTML = '<div id="docs"></div>';
-    
+
     // 2. Setup mocks
     mockViewer = createMockViewer();
     mockCreateViewerFn = mockCreateViewerSuccess(mockViewer);
-    
+
     // 3. Setup console mocks
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
-  
+
   afterEach(() => {
     // 1. Clean DOM
     document.body.innerHTML = '';
-    
+
     // 2. Clear mocks
     vi.clearAllMocks();
   });
@@ -426,6 +464,7 @@ describe('Feature tests', () => {
 ```
 
 #### 2. **Isolated Test Cases**
+
 Each test should be completely independent.
 
 ```typescript
@@ -433,10 +472,10 @@ Each test should be completely independent.
 it('should handle specific scenario', async () => {
   // Setup specific to this test
   const specificMock = setupSpecificMock();
-  
+
   // Test execution
   const result = await functionUnderTest();
-  
+
   // Verification
   expect(result).toMatchExpectedOutcome();
 });
@@ -455,14 +494,16 @@ it('should handle scenario B after scenario A', async () => {
 ### For Each Mock Utility
 
 #### Core Requirements
+
 - [ ] Implements standard interface pattern
 - [ ] Provides setup/setupWithOptions methods
-- [ ] Includes createMock function  
+- [ ] Includes createMock function
 - [ ] Defines common scenarios object
 - [ ] Has proper TypeScript types
 - [ ] Includes cleanup mechanisms
 
 #### Quality Requirements
+
 - [ ] Complete JSDoc documentation
 - [ ] Code examples for each scenario
 - [ ] Error handling demonstrations
@@ -470,6 +511,7 @@ it('should handle scenario B after scenario A', async () => {
 - [ ] Independent operation (no shared state)
 
 #### Testing Requirements
+
 - [ ] Unit tests for utility itself
 - [ ] Integration tests with real code
 - [ ] Error scenario validation
@@ -479,18 +521,21 @@ it('should handle scenario B after scenario A', async () => {
 ### For Test Migration
 
 #### Structural Changes
+
 - [ ] Remove global `vi.mock()` calls
 - [ ] Replace with utility-based setup
 - [ ] Implement consistent beforeEach/afterEach
 - [ ] Add proper cleanup procedures
 
 #### Functional Changes
+
 - [ ] Convert hanging tests to new patterns
 - [ ] Remove timeout protections (temporary fixes)
 - [ ] Verify all error scenarios work
 - [ ] Maintain or improve test coverage
 
 #### Validation Requirements
+
 - [ ] All tests pass consistently (10+ runs)
 - [ ] Test execution time <2 seconds per test
 - [ ] No hanging or timeout issues
@@ -501,12 +546,14 @@ it('should handle scenario B after scenario A', async () => {
 ## Success Metrics
 
 ### Immediate Success Criteria
+
 - **Test Stability**: 100% pass rate over 10 consecutive runs
 - **Performance**: <2 seconds execution time per test
 - **Reliability**: No hanging or timeout issues
 - **Maintainability**: Clear, understandable test patterns
 
 ### Long-term Quality Metrics
+
 - **Coverage**: Maintained or improved test coverage
 - **Documentation**: Clear examples and patterns
 - **Consistency**: Uniform approach across all tests

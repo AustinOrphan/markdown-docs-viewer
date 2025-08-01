@@ -30,6 +30,7 @@
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:integration:essential": "vitest run --config vitest.integration.config.ts tests/integration/zero-config-essential.integration.test.ts",
+    "test:integration:fast": "vitest run --config vitest.integration.config.ts tests/integration/zero-config-essential.integration.test.ts tests/integration/zero-config.integration.test.ts",
     "test:integration:watch": "vitest watch --config vitest.integration.config.ts",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",

@@ -26,9 +26,11 @@ This document summarizes the comprehensive integration test implementation for t
 ### ✅ Core Integration Tests
 
 #### Essential Integration Tests (`zero-config-essential.integration.test.ts`)
+
 **Status: 22/22 tests passing ✅**
 
 **Test Categories:**
+
 1. **Core Functionality** (4 tests)
    - Viewer initialization and API validation
    - DOM modification verification
@@ -63,6 +65,7 @@ This document summarizes the comprehensive integration test implementation for t
    - Visibility change handling
 
 #### Framework Validation Tests (`framework-validation.spec.ts`)
+
 **Status: 4/4 tests passing ✅**
 
 - Real DOM container creation and cleanup
@@ -81,7 +84,7 @@ This document summarizes the comprehensive integration test implementation for t
    - Error handling for missing/invalid configurations
    - Runtime option override functionality
 
-3. **Error Boundary Testing**  
+3. **Error Boundary Testing**
    - Real error scenarios with actual DOM manipulation
    - Error UI display without mocking
    - Graceful degradation patterns
@@ -117,6 +120,7 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ```
 
 ### Test Performance
+
 - **Essential Tests**: 22 tests complete in ~1 second
 - **Framework Tests**: 4 tests complete in ~600ms
 - **Memory Impact**: < 10MB growth over multiple cycles
@@ -125,21 +129,25 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Test Design Principles
 
 ### 1. Real-World Focus
+
 - **No Heavy Mocking**: Tests use actual DOM, real browser APIs, and real module behavior
 - **Actual Integration Points**: Tests verify real communication between zero-config module and viewer
 - **Real Error Scenarios**: Tests actual error conditions without artificial mocking
 
 ### 2. Error-First Approach
+
 - **Graceful Degradation**: Tests verify that errors don't crash the application
 - **User Experience**: Tests ensure error states provide helpful information
 - **Recovery Mechanisms**: Tests verify the system can recover from errors
 
 ### 3. Performance Aware
+
 - **Memory Leak Detection**: Tests monitor memory usage over multiple cycles
 - **Timing Validation**: Tests ensure reasonable initialization times
 - **Resource Cleanup**: Tests verify proper cleanup of resources
 
 ### 4. DOM Integration
+
 - **Real DOM Manipulation**: Tests actual DOM element creation, styling, and behavior
 - **Container Selection**: Tests real CSS selector logic and fallback behavior
 - **Event Handling**: Tests real browser event dispatch and handling
@@ -147,16 +155,19 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Test Fixtures and Utilities
 
 ### Test Configurations
+
 - **Valid Configs**: Basic, complete, and minimal configurations
 - **Invalid Configs**: Malformed JSON, empty files, wrong structure
 - **Test Scenarios**: Container selection, theme application, error conditions
 
-### Test Documents  
+### Test Documents
+
 - **Basic Documents**: README, API reference, examples, configuration
 - **Special Cases**: Empty documents, large documents, special characters, malformed markdown
 - **Directory Structures**: Flat, nested, mixed, and empty directory scenarios
 
 ### Specialized Utilities
+
 - **ZeroConfigTestRunner**: Automated initialization and cleanup tracking
 - **ContainerSelectionTester**: Container selection logic testing
 - **ThemeTester**: Theme application and validation
@@ -166,11 +177,13 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Integration with Existing Tests
 
 ### Relationship to Unit Tests
+
 - **Complementary Coverage**: Integration tests cover real-world scenarios while unit tests cover isolated functionality
 - **Error Handling**: Integration tests verify actual error UI display while unit tests verify error object creation
 - **Performance**: Integration tests measure real performance while unit tests verify algorithmic correctness
 
 ### CI/CD Integration
+
 - **Separate Configuration**: Integration tests use dedicated config to avoid conflicts
 - **Isolated Runs**: Can be run independently of unit tests
 - **Coverage Reporting**: Separate coverage reports for integration vs unit test coverage
@@ -178,6 +191,7 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Success Metrics
 
 ### ✅ Achieved Goals
+
 1. **End-to-End Functionality**: Complete initialization flow tested from start to finish
 2. **Real DOM Integration**: Actual container manipulation and styling preservation verified
 3. **Error Handling**: Comprehensive error scenarios tested without crashing
@@ -186,6 +200,7 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 6. **Configuration Loading**: Real configuration scenarios and fallbacks tested
 
 ### Test Coverage
+
 - **Core API Functions**: 100% of zero-config API functions tested
 - **Error Scenarios**: All major error conditions covered
 - **Container Selection**: All selection modes and fallbacks tested
@@ -194,16 +209,19 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Recommendations
 
 ### For Development
+
 1. **Run Essential Tests**: Use `zero-config-essential.integration.test.ts` for regular validation
 2. **Performance Monitoring**: Use `PerformanceTester` and `MemoryLeakDetector` for performance-critical changes
 3. **Error Testing**: Use error scenario utilities when modifying error handling logic
 
 ### For CI/CD
+
 1. **Integration Test Stage**: Run integration tests as separate CI stage after unit tests
 2. **Performance Thresholds**: Set up alerts for initialization time > 5s or memory growth > 10MB
 3. **Browser Testing**: Consider running integration tests in real browsers for production validation
 
 ### For Future Development
+
 1. **Document Loading**: Add integration tests for real markdown file loading when implemented
 2. **Search Integration**: Add search functionality integration tests
 3. **Mobile Testing**: Add mobile-specific integration test scenarios
@@ -212,6 +230,7 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 ## Files Created/Modified
 
 ### New Files
+
 - `tests/integration/zero-config-essential.integration.test.ts` - Main integration tests (22 tests)
 - `tests/integration/zero-config.integration.test.ts` - Comprehensive tests (mixed results)
 - `tests/integration/utils/zeroConfigTestUtils.ts` - Specialized testing utilities
@@ -219,6 +238,7 @@ npx vitest run --config vitest.integration.config.ts tests/integration/framework
 - `vitest.integration.config.ts` - Dedicated integration test configuration
 
 ### Modified Files
+
 - `tests/integration/utils/realDOMSetup.ts` - Added `waitForContainerContent` utility
 - `tests/integration/utils/index.ts` - Added zero-config utilities export
 - `tests/integration/fixtures/index.ts` - Added zero-config fixtures export

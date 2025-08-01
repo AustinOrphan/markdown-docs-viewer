@@ -22,7 +22,7 @@ export {
   testScenarios,
   errorScenarios,
   containerConfigs,
-  themeTestConfigs
+  themeTestConfigs,
 } from './test-configs';
 
 export {
@@ -31,5 +31,5 @@ export {
   allTestDocuments,
   testDirectoryStructures,
   searchTestData,
-  createVirtualFileSystem
+  createVirtualFileSystem,
 } from './test-documents';

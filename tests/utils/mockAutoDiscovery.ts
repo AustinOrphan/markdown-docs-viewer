@@ -56,7 +56,9 @@ export function createMockAutoDiscoveryEmpty() {
 /**
  * Mocks the discoverFiles method to return successful results
  */
-export function mockDiscoverFiles(documents: Document[] = DEFAULT_TEST_DOCUMENTS): MockedFunction<() => Promise<Document[]>> {
+export function mockDiscoverFiles(
+  documents: Document[] = DEFAULT_TEST_DOCUMENTS
+): MockedFunction<() => Promise<Document[]>> {
   return vi.fn().mockResolvedValue(documents);
 }
 
@@ -159,12 +161,7 @@ export interface AutoDiscoveryMockOptions {
  * Sets up comprehensive AutoDiscovery mock with options
  */
 export function setupAutoDiscoveryMockWithOptions(options: AutoDiscoveryMockOptions = {}) {
-  const {
-    documents = DEFAULT_TEST_DOCUMENTS,
-    error,
-    delay = 0,
-    shouldTimeout = false,
-  } = options;
+  const { documents = DEFAULT_TEST_DOCUMENTS, error, delay = 0, shouldTimeout = false } = options;
 
   let discoverFilesMock: MockedFunction<() => Promise<Document[]>>;
 
@@ -239,7 +236,9 @@ export function createDocumentsWithExtensions(extensions: string[]): Document[] 
 /**
  * Mock successful discovery with custom documents
  */
-export function mockDiscoverSuccess(documents: Document[] = DEFAULT_TEST_DOCUMENTS): MockedFunction<() => Promise<Document[]>> {
+export function mockDiscoverSuccess(
+  documents: Document[] = DEFAULT_TEST_DOCUMENTS
+): MockedFunction<() => Promise<Document[]>> {
   return vi.fn().mockResolvedValue(documents);
 }
 
@@ -253,14 +252,18 @@ export function mockDiscoverEmpty(): MockedFunction<() => Promise<Document[]>> {
 /**
  * Mock discovery that throws an error
  */
-export function mockDiscoverError(error: Error = new Error('Discovery failed')): MockedFunction<() => Promise<Document[]>> {
+export function mockDiscoverError(
+  error: Error = new Error('Discovery failed')
+): MockedFunction<() => Promise<Document[]>> {
   return vi.fn().mockRejectedValue(error);
 }
 
 /**
  * Mock discovery that simulates timeout
  */
-export function mockDiscoverTimeout(timeoutMs: number = 30000): MockedFunction<() => Promise<Document[]>> {
+export function mockDiscoverTimeout(
+  timeoutMs: number = 30000
+): MockedFunction<() => Promise<Document[]>> {
   return vi.fn().mockImplementation(() => {
     return new Promise<Document[]>((_, reject) => {
       setTimeout(() => reject(new Error('File discovery timeout')), timeoutMs);
@@ -292,9 +295,14 @@ export function createMockAutoDiscoveryFactory(options: AutoDiscoveryMockFactory
 
   switch (scenario) {
     case 'success':
-      discoverFiles = delay > 0 
-        ? vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(documents), delay)))
-        : mockDiscoverSuccess(documents);
+      discoverFiles =
+        delay > 0
+          ? vi
+              .fn()
+              .mockImplementation(
+                () => new Promise(resolve => setTimeout(() => resolve(documents), delay))
+              )
+          : mockDiscoverSuccess(documents);
       break;
     case 'error':
       discoverFiles = mockDiscoverError(error);
@@ -331,8 +339,10 @@ export function createRealisticTestDocuments(): Document[] {
       id: 'readme',
       title: 'Overview',
       file: './docs/README.md',
-      content: '# Project Overview\n\nWelcome to our documentation. This project provides a comprehensive markdown documentation viewer.\n\n## Features\n\n- Zero-configuration setup\n- Auto-discovery\n- Theme switching\n- Search functionality',
-      description: 'Welcome to our documentation. This project provides a comprehensive markdown documentation viewer.',
+      content:
+        '# Project Overview\n\nWelcome to our documentation. This project provides a comprehensive markdown documentation viewer.\n\n## Features\n\n- Zero-configuration setup\n- Auto-discovery\n- Theme switching\n- Search functionality',
+      description:
+        'Welcome to our documentation. This project provides a comprehensive markdown documentation viewer.',
       order: 1,
       category: 'getting-started',
       tags: ['overview', 'introduction'],
@@ -341,7 +351,8 @@ export function createRealisticTestDocuments(): Document[] {
       id: 'getting-started',
       title: 'Getting Started',
       file: './docs/getting-started.md',
-      content: '# Getting Started\n\n## Installation\n\n```bash\nnpm install markdown-docs-viewer\n```\n\n## Basic Usage\n\n```javascript\nimport { init } from "markdown-docs-viewer/zero-config";\nawait init();\n```',
+      content:
+        '# Getting Started\n\n## Installation\n\n```bash\nnpm install markdown-docs-viewer\n```\n\n## Basic Usage\n\n```javascript\nimport { init } from "markdown-docs-viewer/zero-config";\nawait init();\n```',
       description: 'Learn how to install and set up the markdown documentation viewer.',
       order: 2,
       category: 'getting-started',
@@ -351,8 +362,10 @@ export function createRealisticTestDocuments(): Document[] {
       id: 'api-reference',
       title: 'API Reference',
       file: './docs/api/reference.md',
-      content: '# API Reference\n\n## Core Functions\n\n### init(options?)\n\nInitializes the documentation viewer.\n\n**Parameters:**\n\n- `options` (optional): Configuration options\n\n**Returns:** Promise<MarkdownDocsViewer>',
-      description: 'Complete API reference documentation for all available functions and interfaces.',
+      content:
+        '# API Reference\n\n## Core Functions\n\n### init(options?)\n\nInitializes the documentation viewer.\n\n**Parameters:**\n\n- `options` (optional): Configuration options\n\n**Returns:** Promise<MarkdownDocsViewer>',
+      description:
+        'Complete API reference documentation for all available functions and interfaces.',
       order: 10,
       category: 'reference',
       tags: ['api', 'reference', 'functions'],
@@ -361,7 +374,8 @@ export function createRealisticTestDocuments(): Document[] {
       id: 'configuration',
       title: 'Configuration',
       file: './docs/configuration.md',
-      content: '# Configuration\n\n## Zero-Config Options\n\n```typescript\ninterface ZeroConfigOptions {\n  container?: string | HTMLElement;\n  configPath?: string;\n  docsPath?: string;\n  theme?: string;\n  title?: string;\n}\n```',
+      content:
+        '# Configuration\n\n## Zero-Config Options\n\n```typescript\ninterface ZeroConfigOptions {\n  container?: string | HTMLElement;\n  configPath?: string;\n  docsPath?: string;\n  theme?: string;\n  title?: string;\n}\n```',
       description: 'Detailed configuration options and customization guide.',
       order: 5,
       category: 'guides',
@@ -376,7 +390,7 @@ export function createRealisticTestDocuments(): Document[] {
 export function createLargeDocumentSet(count: number = 100): Document[] {
   const documents: Document[] = [];
   const categories = ['guides', 'reference', 'tutorials', 'examples', 'api'];
-  
+
   for (let i = 1; i <= count; i++) {
     const category = categories[i % categories.length];
     documents.push({
@@ -390,7 +404,7 @@ export function createLargeDocumentSet(count: number = 100): Document[] {
       tags: [category, 'test', `doc${i}`],
     });
   }
-  
+
   return documents;
 }
 
@@ -418,13 +432,15 @@ export function createEdgeCaseDocuments(): Document[] {
       id: 'special-chars',
       title: 'Special Characters: @#$%^&*()',
       file: './docs/special-chars.md',
-      content: '# Special Characters: @#$%^&*()\n\nThis document has special characters in its title.',
+      content:
+        '# Special Characters: @#$%^&*()\n\nThis document has special characters in its title.',
       category: 'edge-cases',
       tags: ['special', 'characters', 'encoding'],
     },
     {
       id: 'very-long-title',
-      title: 'This is a very long title that might cause layout issues in some scenarios and should be handled gracefully by the viewer',
+      title:
+        'This is a very long title that might cause layout issues in some scenarios and should be handled gracefully by the viewer',
       file: './docs/long-title.md',
       content: '# This is a very long title that might cause layout issues\n\nTesting long titles.',
       category: 'edge-cases',
@@ -433,7 +449,8 @@ export function createEdgeCaseDocuments(): Document[] {
       id: 'unicode-content',
       title: 'Unicode & Emoji Content 🚀',
       file: './docs/unicode.md',
-      content: '# Unicode & Emoji Content 🚀\n\n## Testing Unicode\n\n- Japanese: こんにちは\n- German: Müller\n- Emoji: 🎉🔥💻\n- Math: ∑ ∆ ∞',
+      content:
+        '# Unicode & Emoji Content 🚀\n\n## Testing Unicode\n\n- Japanese: こんにちは\n- German: Müller\n- Emoji: 🎉🔥💻\n- Math: ∑ ∆ ∞',
       category: 'edge-cases',
       tags: ['unicode', 'emoji', 'internationalization'],
     },

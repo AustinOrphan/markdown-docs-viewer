@@ -17,7 +17,7 @@ Complete TypeScript API reference for the markdown documentation viewer.
 Initializes the documentation viewer with zero-configuration setup.
 
 ```typescript
-function init(options?: ZeroConfigOptions): Promise<MarkdownDocsViewer>
+function init(options?: ZeroConfigOptions): Promise<MarkdownDocsViewer>;
 ```
 
 **Parameters:**
@@ -38,7 +38,7 @@ const viewer = await init();
 const viewer = await init({
   container: '#docs',
   theme: 'github-dark',
-  title: 'My Docs'
+  title: 'My Docs',
 });
 ```
 
@@ -47,7 +47,7 @@ const viewer = await init({
 Returns the current viewer instance if one exists.
 
 ```typescript
-function getViewer(): MarkdownDocsViewer | null
+function getViewer(): MarkdownDocsViewer | null;
 ```
 
 **Returns:** The current viewer instance or null if not initialized
@@ -57,7 +57,7 @@ function getViewer(): MarkdownDocsViewer | null
 Destroys the current viewer and reinitializes with new options.
 
 ```typescript
-function reload(options?: ZeroConfigOptions): Promise<MarkdownDocsViewer>
+function reload(options?: ZeroConfigOptions): Promise<MarkdownDocsViewer>;
 ```
 
 **Parameters:**
@@ -71,7 +71,7 @@ function reload(options?: ZeroConfigOptions): Promise<MarkdownDocsViewer>
 Sets the theme on the current viewer instance.
 
 ```typescript
-function setTheme(themeName: string): void
+function setTheme(themeName: string): void;
 ```
 
 **Parameters:**
@@ -83,7 +83,7 @@ function setTheme(themeName: string): void
 Returns all available theme names.
 
 ```typescript
-function getAvailableThemes(): string[]
+function getAvailableThemes(): string[];
 ```
 
 **Returns:** Array of available theme names
@@ -93,7 +93,7 @@ function getAvailableThemes(): string[]
 Generates a sample configuration file content.
 
 ```typescript
-function generateConfig(): string
+function generateConfig(): string;
 ```
 
 **Returns:** JSON string with sample configuration
@@ -105,7 +105,7 @@ function generateConfig(): string
 Creates a new documentation viewer instance.
 
 ```typescript
-function createViewer(config: DocumentationConfig): MarkdownDocsViewer
+function createViewer(config: DocumentationConfig): MarkdownDocsViewer;
 ```
 
 **Parameters:**
@@ -119,7 +119,7 @@ function createViewer(config: DocumentationConfig): MarkdownDocsViewer
 Quick initialization with simplified options.
 
 ```typescript
-function quickStart(options?: QuickStartOptions): Promise<MarkdownDocsViewer>
+function quickStart(options?: QuickStartOptions): Promise<MarkdownDocsViewer>;
 ```
 
 ## Types and Interfaces
@@ -401,22 +401,22 @@ Updates the viewer configuration.
 The viewer emits custom events that you can listen to:
 
 ```typescript
-viewer.addEventListener('documentLoaded', (event) => {
+viewer.addEventListener('documentLoaded', event => {
   const document = event.detail.document;
   console.log('Document loaded:', document.title);
 });
 
-viewer.addEventListener('themeChanged', (event) => {
+viewer.addEventListener('themeChanged', event => {
   const theme = event.detail.theme;
   console.log('Theme changed to:', theme.name);
 });
 
-viewer.addEventListener('searchCompleted', (event) => {
+viewer.addEventListener('searchCompleted', event => {
   const results = event.detail.results;
   console.log('Search found', results.length, 'results');
 });
 
-viewer.addEventListener('error', (event) => {
+viewer.addEventListener('error', event => {
   const error = event.detail.error;
   console.error('Viewer error:', error);
 });
@@ -429,13 +429,13 @@ viewer.addEventListener('error', (event) => {
 Object containing all built-in themes:
 
 ```typescript
-const themes: Record<string, { light: Theme; dark: Theme }>
+const themes: Record<string, { light: Theme; dark: Theme }>;
 ```
 
 ### parseThemeName(themeName)
 
 ```typescript
-function parseThemeName(themeName: string): { name: string; mode: 'light' | 'dark' }
+function parseThemeName(themeName: string): { name: string; mode: 'light' | 'dark' };
 ```
 
 Parses a theme name string (e.g., 'github-dark') into name and mode.
@@ -443,7 +443,7 @@ Parses a theme name string (e.g., 'github-dark') into name and mode.
 ### validateConfig(config)
 
 ```typescript
-function validateConfig(config: DocumentationConfig): ValidationResult
+function validateConfig(config: DocumentationConfig): ValidationResult;
 ```
 
 Validates a configuration object and returns any errors.
@@ -451,7 +451,7 @@ Validates a configuration object and returns any errors.
 ### autoDiscoverDocs(basePath?)
 
 ```typescript
-function autoDiscoverDocs(basePath?: string): Promise<Document[]>
+function autoDiscoverDocs(basePath?: string): Promise<Document[]>;
 ```
 
 Automatically discovers markdown files in a directory.
@@ -478,6 +478,6 @@ import type {
   ZeroConfigOptions,
   Document,
   Theme,
-  SearchOptions
+  SearchOptions,
 } from 'markdown-docs-viewer';
 ```

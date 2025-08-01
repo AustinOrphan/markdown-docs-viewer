@@ -53,9 +53,9 @@ init();
     frontmatter: {
       title: 'Getting Started',
       description: 'Quick start guide for new users',
-      tags: ['getting-started', 'installation', 'basics']
+      tags: ['getting-started', 'installation', 'basics'],
     },
-    size: 456
+    size: 456,
   },
   {
     title: 'API Reference',
@@ -126,9 +126,9 @@ Returns array of available theme names.
     frontmatter: {
       title: 'API Reference',
       description: 'Complete API documentation',
-      tags: ['api', 'reference', 'functions']
+      tags: ['api', 'reference', 'functions'],
     },
-    size: 1234
+    size: 1234,
   },
   {
     title: 'Examples',
@@ -206,9 +206,9 @@ try {
     frontmatter: {
       title: 'Examples',
       description: 'Code examples and usage patterns',
-      tags: ['examples', 'code', 'usage']
+      tags: ['examples', 'code', 'usage'],
     },
-    size: 987
+    size: 987,
   },
   {
     title: 'Configuration',
@@ -280,10 +280,10 @@ The viewer automatically discovers markdown files in your docs directory:
     frontmatter: {
       title: 'Configuration',
       description: 'Configuration options and setup',
-      tags: ['configuration', 'setup', 'options']
+      tags: ['configuration', 'setup', 'options'],
     },
-    size: 856
-  }
+    size: 856,
+  },
 ];
 
 /**
@@ -295,14 +295,14 @@ export const specialTestDocuments: TestDocument[] = [
     filename: 'empty.md',
     path: 'empty.md',
     content: '',
-    size: 0
+    size: 0,
   },
   {
     title: 'Large Document',
     filename: 'large.md',
     path: 'large.md',
     content: `# Large Document\n\n${Array(1000).fill('This is a test paragraph with some content to make the document large. ').join('')}`,
-    size: 50000
+    size: 50000,
   },
   {
     title: 'Special Characters',
@@ -347,7 +347,7 @@ const unicode = "Unicode: café, naïve, résumé";
 const symbols = "Symbols: <>&'\\"";
 \`\`\`
 `,
-    size: 742
+    size: 742,
   },
   {
     title: 'Malformed Markdown',
@@ -394,8 +394,8 @@ Text without proper spacing
 
 ##### Skipped header levels (h5 after h2)
 `,
-    size: 845
-  }
+    size: 845,
+  },
 ];
 
 /**
@@ -405,7 +405,7 @@ export const testDirectoryStructures = {
   basic: {
     name: 'basic',
     description: 'Basic flat structure',
-    files: basicTestDocuments
+    files: basicTestDocuments,
   },
   nested: {
     name: 'nested',
@@ -414,8 +414,8 @@ export const testDirectoryStructures = {
       { ...basicTestDocuments[0], path: 'getting-started/index.md' },
       { ...basicTestDocuments[1], path: 'api/reference.md' },
       { ...basicTestDocuments[2], path: 'api/examples.md' },
-      { ...basicTestDocuments[3], path: 'guides/configuration.md' }
-    ]
+      { ...basicTestDocuments[3], path: 'guides/configuration.md' },
+    ],
   },
   mixed: {
     name: 'mixed',
@@ -425,14 +425,14 @@ export const testDirectoryStructures = {
       { ...basicTestDocuments[1], path: 'api/reference.md' }, // Nested
       basicTestDocuments[2], // Root level
       { ...basicTestDocuments[3], path: 'guides/configuration.md' }, // Nested
-      ...specialTestDocuments // Root level specials
-    ]
+      ...specialTestDocuments, // Root level specials
+    ],
   },
   empty: {
     name: 'empty',
     description: 'Empty directory',
-    files: []
-  }
+    files: [],
+  },
 };
 
 /**
@@ -446,9 +446,7 @@ export function getTotalSize(documents: TestDocument[]): number {
  * Helper to filter documents by tag
  */
 export function getDocumentsByTag(documents: TestDocument[], tag: string): TestDocument[] {
-  return documents.filter(doc => 
-    doc.frontmatter?.tags && doc.frontmatter.tags.includes(tag)
-  );
+  return documents.filter(doc => doc.frontmatter?.tags && doc.frontmatter.tags.includes(tag));
 }
 
 /**
@@ -456,11 +454,11 @@ export function getDocumentsByTag(documents: TestDocument[], tag: string): TestD
  */
 export function createVirtualFileSystem(structure: typeof testDirectoryStructures.basic) {
   const fileMap = new Map<string, TestDocument>();
-  
+
   structure.files.forEach(doc => {
     fileMap.set(doc.path, doc);
   });
-  
+
   return {
     name: structure.name,
     description: structure.description,
@@ -468,7 +466,7 @@ export function createVirtualFileSystem(structure: typeof testDirectoryStructure
     getFile: (path: string) => fileMap.get(path),
     getAllFiles: () => Array.from(fileMap.values()),
     getFilePaths: () => Array.from(fileMap.keys()),
-    size: getTotalSize(structure.files)
+    size: getTotalSize(structure.files),
   };
 }
 
@@ -487,13 +485,13 @@ export const searchTestData = {
     { term: 'configuration', expectedResults: ['configuration.md', 'api-reference.md'] },
     { term: 'theme', expectedResults: ['api-reference.md', 'configuration.md'] },
     { term: 'example', expectedResults: ['examples.md', 'api-reference.md'] },
-    { term: 'nonexistent', expectedResults: [] }
+    { term: 'nonexistent', expectedResults: [] },
   ],
   tags: [
     { tag: 'getting-started', expectedDocs: 1 },
     { tag: 'api', expectedDocs: 1 },
     { tag: 'examples', expectedDocs: 1 },
     { tag: 'configuration', expectedDocs: 1 },
-    { tag: 'nonexistent', expectedDocs: 0 }
-  ]
+    { tag: 'nonexistent', expectedDocs: 0 },
+  ],
 };

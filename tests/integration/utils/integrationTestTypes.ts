@@ -337,17 +337,20 @@ export interface TestTemplate<TOptions = any, TResult = any> {
   validate: (result: TResult) => boolean | Promise<boolean>;
 }
 
-export interface ContainerTestTemplate extends TestTemplate<ContainerTestOptions, ContainerValidationResult> {
+export interface ContainerTestTemplate
+  extends TestTemplate<ContainerTestOptions, ContainerValidationResult> {
   containerTypes: string[];
   errorScenarios: ErrorType[];
 }
 
-export interface ConfigTestTemplate extends TestTemplate<ConfigTestScenario, ConfigValidationResult> {
+export interface ConfigTestTemplate
+  extends TestTemplate<ConfigTestScenario, ConfigValidationResult> {
   configTypes: string[];
   validationRules: string[];
 }
 
-export interface DocumentTestTemplate extends TestTemplate<DocumentTestScenario, DocumentValidationResult> {
+export interface DocumentTestTemplate
+  extends TestTemplate<DocumentTestScenario, DocumentValidationResult> {
   documentTypes: string[];
   securityChecks: boolean;
 }
@@ -428,13 +431,13 @@ export interface StressTestScenario {
 // Union Types for Common Patterns
 export type TestResultStatus = 'pending' | 'running' | 'passed' | 'failed' | 'skipped' | 'timeout';
 
-export type TestCategory = 
-  | 'container' 
-  | 'config' 
-  | 'document' 
-  | 'theme' 
-  | 'performance' 
-  | 'security' 
+export type TestCategory =
+  | 'container'
+  | 'config'
+  | 'document'
+  | 'theme'
+  | 'performance'
+  | 'security'
   | 'accessibility'
   | 'integration';
 

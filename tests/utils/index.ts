@@ -3,7 +3,7 @@
  * Centralized exports for all mock utilities to prevent circular dependencies
  */
 
-// ConfigLoader mock utilities  
+// ConfigLoader mock utilities
 export * from './mockConfigLoader';
 
 // AutoDiscovery mock utilities
@@ -24,12 +24,12 @@ export {
   mockCreateViewerConfigError,
   setupFactoryMock,
   cleanupFactoryMocks,
-  
+
   // Enhanced viewer creation
   createMockViewer as createEnhancedMockViewer,
   createErrorViewer as createFactoryErrorViewer,
   createAdvancedMockViewer,
-  
+
   // Types
   type MockViewerOptions,
   type AdvancedMockViewerOptions,

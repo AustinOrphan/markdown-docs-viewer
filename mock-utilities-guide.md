@@ -44,7 +44,7 @@ tests/utils/
 // Factory mock utilities
 export * from './mockFactory';
 
-// ConfigLoader mock utilities  
+// ConfigLoader mock utilities
 export * from './mockConfigLoader';
 
 // AutoDiscovery mock utilities
@@ -58,13 +58,14 @@ export * from './mockCreateViewer';
 ```
 
 **Usage**:
+
 ```typescript
 // ✅ Import from central hub
-import { 
+import {
   mockCreateViewerSuccess,
   setupConfigMock,
   setupAutoDiscoveryMockWithOptions,
-  createMockViewer
+  createMockViewer,
 } from './utils';
 
 // ❌ Don't import directly from individual files (can cause circular deps)
@@ -78,6 +79,7 @@ import { mockCreateViewerSuccess } from './utils/mockFactory';
 #### Key Functions
 
 ##### `mockCreateViewerSuccess(mockViewer)`
+
 Mock successful viewer creation:
 
 ```typescript
@@ -90,17 +92,19 @@ export function mockCreateViewerSuccess(mockViewer: MarkdownDocsViewer): void {
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should initialize successfully', async () => {
   const mockViewer = createMockViewer();
   mockCreateViewerSuccess(mockViewer);
-  
+
   const result = await init();
   expect(result).toBe(mockViewer);
 });
 ```
 
 ##### `mockCreateViewerError(error)`
+
 Mock viewer creation failure:
 
 ```typescript
@@ -111,10 +115,11 @@ export function mockCreateViewerError(error: Error): void {
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should handle creation errors gracefully', async () => {
   mockCreateViewerError(new Error('Creation failed'));
-  
+
   const result = await init();
   expect(result).toBeTruthy(); // Should return error viewer
   expect(result.container).toBeTruthy();
@@ -122,6 +127,7 @@ it('should handle creation errors gracefully', async () => {
 ```
 
 ##### `createMockViewer(overrides?)`
+
 Create mock viewer instance with customizable properties:
 
 ```typescript
@@ -144,8 +150,8 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
       currentDocument: null,
       searchTerm: '',
       isLoading: false,
-      error: null
-    })
+      error: null,
+    }),
   };
 
   return { ...defaultMock, ...overrides } as MarkdownDocsViewer;
@@ -153,15 +159,16 @@ export function createMockViewer(overrides: Partial<MarkdownDocsViewer> = {}): M
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should handle theme switching', async () => {
   const mockSetTheme = vi.fn();
   const mockViewer = createMockViewer({ setTheme: mockSetTheme });
   mockCreateViewerSuccess(mockViewer);
-  
+
   const viewer = await init();
   await setTheme('dark');
-  
+
   expect(mockSetTheme).toHaveBeenCalledWith('dark');
 });
 ```
@@ -173,6 +180,7 @@ it('should handle theme switching', async () => {
 #### Key Functions
 
 ##### `setupConfigMock(config)`
+
 Mock successful configuration loading:
 
 ```typescript
@@ -185,16 +193,18 @@ export function setupConfigMock(config: Partial<DocumentationConfig>): void {
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should apply theme from config', async () => {
   setupConfigMock({ theme: 'github-dark' });
-  
+
   const viewer = await init();
   expect(viewer.getTheme()).toMatchObject({ name: 'github-dark' });
 });
 ```
 
 ##### `createMockConfigLoaderWithError(error)`
+
 Mock configuration loading failure:
 
 ```typescript
@@ -205,10 +215,11 @@ export function createMockConfigLoaderWithError(error: Error): void {
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should handle config loading errors', async () => {
   createMockConfigLoaderWithError(new Error('Config not found'));
-  
+
   const viewer = await init();
   expect(viewer).toBeTruthy(); // Should fall back to defaults
 });
@@ -221,18 +232,18 @@ export const DEFAULT_TEST_CONFIG = {
   title: 'Test Documentation',
   theme: 'default-light',
   search: { enabled: true },
-  navigation: { enabled: true }
+  navigation: { enabled: true },
 };
 
 export const MINIMAL_TEST_CONFIG = {
-  title: 'Minimal Test'
+  title: 'Minimal Test',
 };
 
 export const THEME_TEST_CONFIGS = {
   light: { theme: 'default-light' },
   dark: { theme: 'default-dark' },
   github: { theme: 'github-light' },
-  invalid: { theme: 'nonexistent-theme' }
+  invalid: { theme: 'nonexistent-theme' },
 };
 ```
 
@@ -243,6 +254,7 @@ export const THEME_TEST_CONFIGS = {
 #### Key Functions
 
 ##### `setupAutoDiscoveryMockWithOptions(options)`
+
 Flexible auto-discovery mocking:
 
 ```typescript
@@ -255,15 +267,14 @@ export function setupAutoDiscoveryMockWithOptions(options: {
   timeout?: boolean;
 }): void {
   const discoverSpy = vi.spyOn(autoDiscovery, 'discoverDocuments');
-  
+
   if (options.error) {
     discoverSpy.mockRejectedValue(options.error);
   } else if (options.timeout) {
     // Simulate timeout scenario
-    discoverSpy.mockImplementation(() => 
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Discovery timeout')), 100)
-      )
+    discoverSpy.mockImplementation(
+      () =>
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Discovery timeout')), 100))
     );
   } else {
     discoverSpy.mockResolvedValue(options.documents || []);
@@ -272,13 +283,14 @@ export function setupAutoDiscoveryMockWithOptions(options: {
 ```
 
 **Usage Examples**:
+
 ```typescript
 // Test with documents
 it('should load discovered documents', async () => {
-  setupAutoDiscoveryMockWithOptions({ 
-    documents: DEFAULT_TEST_DOCUMENTS 
+  setupAutoDiscoveryMockWithOptions({
+    documents: DEFAULT_TEST_DOCUMENTS,
   });
-  
+
   const viewer = await init();
   expect(viewer.getDocuments()).toHaveLength(2);
 });
@@ -286,17 +298,17 @@ it('should load discovered documents', async () => {
 // Test with no documents
 it('should handle empty document set', async () => {
   setupAutoDiscoveryMockWithOptions({ documents: [] });
-  
+
   const viewer = await init();
   expect(viewer.getDocuments()).toHaveLength(0);
 });
 
 // Test with discovery error
 it('should handle discovery errors', async () => {
-  setupAutoDiscoveryMockWithOptions({ 
-    error: new Error('Directory not accessible') 
+  setupAutoDiscoveryMockWithOptions({
+    error: new Error('Directory not accessible'),
   });
-  
+
   const viewer = await init();
   expect(viewer).toBeTruthy(); // Should handle gracefully
 });
@@ -310,14 +322,14 @@ export const DEFAULT_TEST_DOCUMENTS = [
     id: 'readme',
     title: 'README',
     content: '# Test Documentation\n\nThis is a test document.',
-    path: 'README.md'
+    path: 'README.md',
   },
   {
     id: 'api',
-    title: 'API Reference', 
+    title: 'API Reference',
     content: '# API\n\n## Functions\n\n### init()',
-    path: 'api/README.md'
-  }
+    path: 'api/README.md',
+  },
 ];
 
 export const EMPTY_DOCUMENTS = [];
@@ -326,7 +338,7 @@ export const LARGE_DOCUMENT_SET = Array.from({ length: 50 }, (_, i) => ({
   id: `doc-${i}`,
   title: `Document ${i}`,
   content: `# Document ${i}\n\nContent for document ${i}`,
-  path: `docs/doc-${i}.md`
+  path: `docs/doc-${i}.md`,
 }));
 ```
 
@@ -334,17 +346,13 @@ export const LARGE_DOCUMENT_SET = Array.from({ length: 50 }, (_, i) => ({
 
 ```typescript
 export const mockDiscoveryScenarios = {
-  success: (docs: Document[]) => 
-    setupAutoDiscoveryMockWithOptions({ documents: docs }),
-    
-  empty: () => 
-    setupAutoDiscoveryMockWithOptions({ documents: [] }),
-    
-  error: (error: Error) => 
-    setupAutoDiscoveryMockWithOptions({ error }),
-    
-  timeout: () => 
-    setupAutoDiscoveryMockWithOptions({ timeout: true })
+  success: (docs: Document[]) => setupAutoDiscoveryMockWithOptions({ documents: docs }),
+
+  empty: () => setupAutoDiscoveryMockWithOptions({ documents: [] }),
+
+  error: (error: Error) => setupAutoDiscoveryMockWithOptions({ error }),
+
+  timeout: () => setupAutoDiscoveryMockWithOptions({ timeout: true }),
 };
 ```
 
@@ -355,16 +363,15 @@ export const mockDiscoveryScenarios = {
 #### Key Functions
 
 ##### `createMockViewer(overrides?)`
+
 Create comprehensive mock viewer (detailed implementation shown in Factory section above)
 
 ##### `createErrorViewer(error, container?)`
+
 Create viewer that simulates error state:
 
 ```typescript
-export function createErrorViewer(
-  error: Error, 
-  container?: HTMLElement
-): MarkdownDocsViewer {
+export function createErrorViewer(error: Error, container?: HTMLElement): MarkdownDocsViewer {
   const errorContainer = container || document.createElement('div');
   errorContainer.innerHTML = `
     <div class="error-message">
@@ -372,28 +379,29 @@ export function createErrorViewer(
       <p>Unable to initialize documentation viewer.</p>
     </div>
   `;
-  
+
   return createMockViewer({
     container: errorContainer,
     getState: vi.fn().mockReturnValue({
       currentDocument: null,
       searchTerm: '',
       isLoading: false,
-      error: error.message
-    })
+      error: error.message,
+    }),
   });
 }
 ```
 
 **Usage Example**:
+
 ```typescript
 it('should display error in container', async () => {
   const error = new Error('Initialization failed');
   const container = document.createElement('div');
   const errorViewer = createErrorViewer(error, container);
-  
+
   mockCreateViewerSuccess(errorViewer);
-  
+
   const viewer = await init({ container });
   expect(container.textContent).toContain('Initialization failed');
 });
@@ -406,39 +414,34 @@ export const mockViewerScenarios = {
   /**
    * Successful viewer with standard functionality
    */
-  success: (overrides?: Partial<MarkdownDocsViewer>) => 
-    createMockViewer(overrides),
-  
+  success: (overrides?: Partial<MarkdownDocsViewer>) => createMockViewer(overrides),
+
   /**
    * Viewer with theme switching capability
    */
-  withThemeSupport: (initialTheme: string = 'default-light') => 
+  withThemeSupport: (initialTheme: string = 'default-light') =>
     createMockViewer({
       getTheme: vi.fn().mockReturnValue({ name: initialTheme }),
-      setTheme: vi.fn()
+      setTheme: vi.fn(),
     }),
-  
+
   /**
    * Viewer with document navigation
    */
-  withDocuments: (documents: Document[]) => 
+  withDocuments: (documents: Document[]) =>
     createMockViewer({
       getDocuments: vi.fn().mockReturnValue(documents),
-      getCurrentDocument: vi.fn().mockReturnValue(documents[0] || null)
+      getCurrentDocument: vi.fn().mockReturnValue(documents[0] || null),
     }),
-  
+
   /**
    * Viewer that simulates slow operations
    */
-  slow: (delay: number = 1000) => 
+  slow: (delay: number = 1000) =>
     createMockViewer({
-      destroy: vi.fn().mockImplementation(() => 
-        new Promise(resolve => setTimeout(resolve, delay))
-      ),
-      reload: vi.fn().mockImplementation(() => 
-        new Promise(resolve => setTimeout(resolve, delay))
-      )
-    })
+      destroy: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, delay))),
+      reload: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, delay))),
+    }),
 };
 ```
 
@@ -455,25 +458,25 @@ import {
   setupAutoDiscoveryMockWithOptions,
   createMockViewer,
   DEFAULT_TEST_CONFIG,
-  DEFAULT_TEST_DOCUMENTS
+  DEFAULT_TEST_DOCUMENTS,
 } from './utils';
 
 describe('Zero Config Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks();
-    
+
     // Setup default mocks
     setupConfigMock(DEFAULT_TEST_CONFIG);
     setupAutoDiscoveryMockWithOptions({ documents: DEFAULT_TEST_DOCUMENTS });
     mockCreateViewerSuccess(createMockViewer());
   });
-  
+
   afterEach(() => {
     // Cleanup
     vi.restoreAllMocks();
   });
-  
+
   // Tests go here...
 });
 ```
@@ -485,22 +488,22 @@ describe('Error Handling', () => {
   it('should handle configuration errors', async () => {
     // Setup error scenario
     createMockConfigLoaderWithError(new Error('Config not found'));
-    
+
     // Test should not throw
     const viewer = await init();
-    
+
     // Verify graceful handling
     expect(viewer).toBeTruthy();
     expect(viewer.container).toBeTruthy();
   });
-  
+
   it('should handle viewer creation errors', async () => {
     // Setup factory error
     mockCreateViewerError(new Error('Creation failed'));
-    
+
     // Should return error viewer
     const viewer = await init();
-    
+
     // Verify error viewer functionality
     expect(viewer).toBeTruthy();
     await expect(viewer.destroy()).resolves.toBeUndefined();
@@ -516,12 +519,12 @@ describe('Container Handling', () => {
     const container = document.createElement('div');
     container.id = 'test-container';
     document.body.appendChild(container);
-    
+
     const mockViewer = createMockViewer({ container });
     mockCreateViewerSuccess(mockViewer);
-    
+
     const viewer = await init({ container });
-    
+
     expect(viewer.container).toBe(container);
   });
 });
@@ -534,13 +537,13 @@ describe('Theme System', () => {
   it('should apply theme from configuration', async () => {
     // Setup theme configuration
     setupConfigMock({ theme: 'github-dark' });
-    
+
     // Create viewer with theme support
     const mockViewer = mockViewerScenarios.withThemeSupport('github-dark');
     mockCreateViewerSuccess(mockViewer);
-    
+
     const viewer = await init();
-    
+
     expect(viewer.getTheme()).toMatchObject({ name: 'github-dark' });
   });
 });
@@ -599,20 +602,21 @@ afterEach(() => {
 // Create specialized mock for specific test needs
 const createSlowConfigLoader = (delay: number) => {
   const loadConfigSpy = vi.spyOn(configLoader, 'loadConfig');
-  loadConfigSpy.mockImplementation(() => 
-    new Promise(resolve => 
-      setTimeout(() => resolve({ success: true, config: DEFAULT_TEST_CONFIG }), delay)
-    )
+  loadConfigSpy.mockImplementation(
+    () =>
+      new Promise(resolve =>
+        setTimeout(() => resolve({ success: true, config: DEFAULT_TEST_CONFIG }), delay)
+      )
   );
 };
 
 it('should handle slow config loading', async () => {
   createSlowConfigLoader(500);
-  
+
   const start = performance.now();
   await init();
   const duration = performance.now() - start;
-  
+
   expect(duration).toBeGreaterThan(500);
 });
 ```
@@ -622,16 +626,16 @@ it('should handle slow config loading', async () => {
 ```typescript
 it('should handle complex initialization scenario', async () => {
   // Chain multiple mock setups
-  setupConfigMock({ theme: 'custom-theme' })
-  setupAutoDiscoveryMockWithOptions({ 
-    documents: LARGE_DOCUMENT_SET 
-  })
-  
+  setupConfigMock({ theme: 'custom-theme' });
+  setupAutoDiscoveryMockWithOptions({
+    documents: LARGE_DOCUMENT_SET,
+  });
+
   const mockViewer = mockViewerScenarios.withDocuments(LARGE_DOCUMENT_SET);
   mockCreateViewerSuccess(mockViewer);
-  
+
   const viewer = await init();
-  
+
   expect(viewer.getDocuments()).toHaveLength(50);
   expect(viewer.getTheme().name).toBe('custom-theme');
 });
@@ -647,12 +651,12 @@ const setupMockByScenario = (scenario: 'success' | 'error' | 'empty') => {
       setupAutoDiscoveryMockWithOptions({ documents: DEFAULT_TEST_DOCUMENTS });
       mockCreateViewerSuccess(createMockViewer());
       break;
-      
+
     case 'error':
       createMockConfigLoaderWithError(new Error('Config error'));
       mockCreateViewerError(new Error('Viewer error'));
       break;
-      
+
     case 'empty':
       setupConfigMock(DEFAULT_TEST_CONFIG);
       setupAutoDiscoveryMockWithOptions({ documents: [] });
@@ -664,7 +668,7 @@ const setupMockByScenario = (scenario: 'success' | 'error' | 'empty') => {
 ['success', 'error', 'empty'].forEach(scenario => {
   it(`should handle ${scenario} scenario`, async () => {
     setupMockByScenario(scenario as any);
-    
+
     const viewer = await init();
     expect(viewer).toBeTruthy();
   });
@@ -676,47 +680,50 @@ const setupMockByScenario = (scenario: 'success' | 'error' | 'empty') => {
 ### Common Problems and Solutions
 
 #### Problem: Mock not being called
+
 ```typescript
 // Check if spy is properly set up
 it('debug mock calls', async () => {
   const spy = vi.spyOn(factory, 'createViewer');
   mockCreateViewerSuccess(createMockViewer());
-  
+
   await init();
-  
+
   // Debug: Check if spy was called
   console.log('Spy call count:', spy.mock.calls.length);
   console.log('Spy calls:', spy.mock.calls);
-  
+
   expect(spy).toHaveBeenCalled();
 });
 ```
 
 #### Problem: Mock interference between tests
+
 ```typescript
 // Ensure proper cleanup
 afterEach(() => {
-  vi.clearAllMocks();   // Clear call history
+  vi.clearAllMocks(); // Clear call history
   vi.restoreAllMocks(); // Restore original implementations
 });
 ```
 
 #### Problem: Mock not returning expected value
+
 ```typescript
 // Verify mock implementation
 it('debug mock return value', async () => {
   const mockViewer = createMockViewer();
   mockCreateViewerSuccess(mockViewer);
-  
+
   const spy = vi.spyOn(factory, 'createViewer');
-  
+
   const result = await init();
-  
+
   // Debug: Check mock implementation
   console.log('Mock implementation:', spy.getMockImplementation());
   console.log('Expected:', mockViewer);
   console.log('Actual:', result);
-  
+
   expect(result).toBe(mockViewer);
 });
 ```
@@ -732,17 +739,17 @@ The mock utilities themselves should be tested to ensure reliability:
 describe('mockFactory utilities', () => {
   it('should create valid mock viewer', () => {
     const mockViewer = createMockViewer();
-    
+
     expect(mockViewer.container).toBeInstanceOf(HTMLElement);
     expect(typeof mockViewer.destroy).toBe('function');
     expect(typeof mockViewer.reload).toBe('function');
     // ... test all required methods
   });
-  
+
   it('should apply overrides correctly', () => {
     const customContainer = document.createElement('section');
     const mockViewer = createMockViewer({ container: customContainer });
-    
+
     expect(mockViewer.container).toBe(customContainer);
   });
 });
@@ -753,7 +760,7 @@ describe('mockFactory utilities', () => {
 When migrating existing tests to use the new mock utilities:
 
 - [ ] Remove all `vi.mock()` statements at module level
-- [ ] Import utilities from `./utils` instead of individual files  
+- [ ] Import utilities from `./utils` instead of individual files
 - [ ] Replace manual mock setup with utility function calls
 - [ ] Add proper mock cleanup in `afterEach` hooks
 - [ ] Update test assertions to work with new mock structure
@@ -766,7 +773,7 @@ When migrating existing tests to use the new mock utilities:
 The mock utilities system provides a robust, maintainable foundation for testing zero-config functionality. By following the patterns and guidelines in this document, developers can:
 
 - ✅ **Avoid circular dependencies** that caused test hangs
-- ✅ **Write reliable tests** that execute quickly and predictably  
+- ✅ **Write reliable tests** that execute quickly and predictably
 - ✅ **Maintain clear test code** with reusable utility patterns
 - ✅ **Debug issues easily** with targeted mocking approaches
 - ✅ **Scale testing efforts** with modular, extensible utilities

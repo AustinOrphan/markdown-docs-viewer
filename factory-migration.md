@@ -9,11 +9,13 @@ This document outlines the changes made to factory mocking utilities to resolve 
 ### 1. Enhanced `tests/utils/mockCreateViewer.ts`
 
 **Previous Issues:**
+
 - Basic mock utilities that didn't provide comprehensive factory mocking
 - Missing critical methods needed for zero-config tests
 - No direct factory module mocking capabilities
 
 **New Implementation:**
+
 - Complete factory mock utilities with targeted spying instead of global mocks
 - Enhanced mock viewer creation with all required MarkdownDocsViewer methods
 - Specialized error handling utilities for container error display
@@ -66,7 +68,7 @@ cleanupFactoryMocks(): void
 The following tests in `tests/zero-config.test.ts` are experiencing hanging issues:
 
 1. **"should return error viewer for invalid container string"** (line 144)
-2. **"should display error message in container on failure"** (line 260) 
+2. **"should display error message in container on failure"** (line 260)
 3. **"should handle error with custom container"** (line 288)
 4. **"should handle container query failure in error state"** (line 453)
 
@@ -81,6 +83,7 @@ The following tests in `tests/zero-config.test.ts` are experiencing hanging issu
 #### 1. Replace Global Factory Mock Imports
 
 **Before:**
+
 ```typescript
 // Remove these problematic imports
 vi.mock('../src/factory'); // Global mock causing issues
@@ -90,6 +93,7 @@ import { mockCreateViewerSuccess } from './utils/mockFactory';
 ```
 
 **After:**
+
 ```typescript
 // Use enhanced utilities - import from main index or specific file
 import {
@@ -97,7 +101,7 @@ import {
   mockCreateViewerError,
   createFactoryErrorViewer,
   setupFactoryMock,
-  cleanupFactoryMocks
+  cleanupFactoryMocks,
 } from './utils/mockCreateViewer';
 
 // OR use the centralized index (recommended)
@@ -106,13 +110,14 @@ import {
   mockCreateViewerError,
   createFactoryErrorViewer,
   setupFactoryMock,
-  cleanupFactoryMocks
+  cleanupFactoryMocks,
 } from './utils';
 ```
 
 #### 2. Update Test Setup
 
 **Before:**
+
 ```typescript
 beforeEach(() => {
   // Global mock setup
@@ -121,6 +126,7 @@ beforeEach(() => {
 ```
 
 **After:**
+
 ```typescript
 beforeEach(() => {
   // Targeted spying setup
@@ -141,13 +147,13 @@ afterEach(() => {
 ```typescript
 it('should display error message in container on failure', async () => {
   const error = new Error('Test error');
-  
+
   // Set up error scenario - createViewer will throw
   mockCreateViewerError(error);
-  
+
   // The zero-config init() will catch the error and create a fallback error viewer
   const viewer = await init();
-  
+
   // Verify error display in container (zero-config handles this internally)
   expect(mockContainer.innerHTML).toContain('Viewer Creation Failed');
   expect(mockContainer.innerHTML).toContain('Test error');
@@ -166,13 +172,13 @@ it('should display error message in container on failure', async () => {
 it('should return error viewer for invalid container string', async () => {
   // Mock querySelector to return null
   vi.spyOn(document, 'querySelector').mockReturnValue(null);
-  
+
   const options: ZeroConfigOptions = {
     container: '#nonexistent',
   };
-  
+
   const viewer = await init(options);
-  
+
   expect(viewer).toBeDefined();
   expect(console.error).toHaveBeenCalledWith(
     expect.stringContaining('Failed to initialize'),
@@ -193,7 +199,7 @@ interface MockViewerOptions {
   theme?: Theme;
   state?: Partial<ViewerState>;
   config?: Partial<DocumentationConfig>;
-  container?: HTMLElement;  // NEW: Container element support
+  container?: HTMLElement; // NEW: Container element support
 }
 ```
 
@@ -214,22 +220,24 @@ interface AdvancedMockViewerOptions extends MockViewerOptions {
 The existing `mockFactory.ts` and new `mockCreateViewer.ts` had naming conflicts. The solution:
 
 **Enhanced exports (recommended):**
+
 ```typescript
 import {
-  mockCreateViewerSuccess,      // Primary factory mock utilities
+  mockCreateViewerSuccess, // Primary factory mock utilities
   mockCreateViewerError,
-  createFactoryErrorViewer,     // Renamed from createErrorViewer
-  createEnhancedMockViewer,     // Renamed from createMockViewer
+  createFactoryErrorViewer, // Renamed from createErrorViewer
+  createEnhancedMockViewer, // Renamed from createMockViewer
   setupFactoryMock,
   cleanupFactoryMocks,
 } from './utils';
 ```
 
 **Legacy exports (deprecated):**
+
 ```typescript
 import {
-  createLegacyMockViewer,       // Old mockFactory.createMockViewer
-  createLegacyErrorViewer,      // Old mockFactory.createErrorViewer
+  createLegacyMockViewer, // Old mockFactory.createMockViewer
+  createLegacyErrorViewer, // Old mockFactory.createErrorViewer
   createTestViewer,
   mockQuickStart,
 } from './utils';
@@ -256,12 +264,14 @@ import {
 After Agent F applies these changes:
 
 1. **Run Specific Tests:**
+
    ```bash
    npm test -- --testNamePattern="should display error message in container on failure"
    npm test -- --testNamePattern="should return error viewer for invalid container string"
    ```
 
 2. **Run Full Zero-Config Suite:**
+
    ```bash
    npm test tests/zero-config.test.ts
    ```
@@ -282,7 +292,7 @@ After Agent F applies these changes:
 ## Notes for Future Development
 
 1. **Always use targeted spying** instead of global `vi.mock()` for factory functions
-2. **Use `cleanupFactoryMocks()`** in `afterEach` to prevent test interference  
+2. **Use `cleanupFactoryMocks()`** in `afterEach` to prevent test interference
 3. **Test error scenarios** with proper container error display
 4. **Avoid circular imports** between test utilities and source modules
 

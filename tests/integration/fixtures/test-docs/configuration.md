@@ -35,7 +35,7 @@ Override configuration at runtime:
 await init({
   title: 'Runtime Title',
   theme: 'github-dark',
-  docsPath: './custom-docs'
+  docsPath: './custom-docs',
 });
 ```
 

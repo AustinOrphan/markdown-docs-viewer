@@ -27,7 +27,7 @@ await init();
 await init({
   container: '#docs',
   theme: 'github-dark',
-  title: 'My Documentation'
+  title: 'My Documentation',
 });
 ```
 

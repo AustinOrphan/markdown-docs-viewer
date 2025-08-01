@@ -42,7 +42,7 @@ export function pathExists(path: string): boolean {
 export async function deleteRealPath(path: string): Promise<void> {
   testFileSystem.delete(path);
   testFileSystem.delete(path + '/__directory__');
-  
+
   // Delete any files within directory
   const prefix = path + '/';
   for (const key of testFileSystem.keys()) {

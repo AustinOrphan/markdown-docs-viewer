@@ -14,27 +14,27 @@ export const testDocuments: TestDocument[] = [
     id: 'readme',
     title: 'Getting Started',
     path: 'README.md',
-    content: '# Getting Started\n\nThis is the getting started guide.'
+    content: '# Getting Started\n\nThis is the getting started guide.',
   },
   {
     id: 'api',
-    title: 'API Reference', 
+    title: 'API Reference',
     path: 'api/reference.md',
-    content: '# API Reference\n\nThis is the API documentation.'
+    content: '# API Reference\n\nThis is the API documentation.',
   },
   {
     id: 'guide',
     title: 'User Guide',
     path: 'guide.md',
-    content: '# User Guide\n\nThis is the user guide.'
-  }
+    content: '# User Guide\n\nThis is the user guide.',
+  },
 ];
 
 export const emptyDocument: TestDocument = {
   id: 'empty',
   title: 'Empty Document',
   path: 'empty.md',
-  content: ''
+  content: '',
 };
 
 export const markdownDocument: TestDocument = {
@@ -64,5 +64,5 @@ function hello() {
 ## Links
 
 [Example Link](https://example.com)
-`
+`,
 };

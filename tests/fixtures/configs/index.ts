@@ -20,8 +20,8 @@ export const validBasicConfig: TestConfig = {
   title: 'Test Documentation',
   documents: [
     { path: 'README.md', title: 'Getting Started', id: 'readme' },
-    { path: 'api.md', title: 'API Reference', id: 'api' }
-  ]
+    { path: 'api.md', title: 'API Reference', id: 'api' },
+  ],
 };
 
 export const validComplexConfig: TestConfig = {
@@ -29,12 +29,12 @@ export const validComplexConfig: TestConfig = {
   documents: [
     { path: 'README.md', title: 'Getting Started', id: 'readme' },
     { path: 'api.md', title: 'API Reference', id: 'api' },
-    { path: 'guide.md', title: 'User Guide', id: 'guide' }
+    { path: 'guide.md', title: 'User Guide', id: 'guide' },
   ],
   theme: 'github-dark',
   search: { enabled: true, placeholder: 'Search docs...' },
   navigation: { showBreadcrumbs: true },
-  container: '#docs-container'
+  container: '#docs-container',
 };
 
 export const emptyConfig: TestConfig = {};

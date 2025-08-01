@@ -110,7 +110,8 @@ export async function waitForErrorUI(container: HTMLElement, timeout = 5000): Pr
       container.querySelector('h3') || // Any h3 might be the error heading
       (container.textContent?.includes('Error:') ? container : null) ||
       (container.textContent?.includes('Failed') ? container : null) ||
-      (container.textContent?.includes('Setup Required') ? container : null);
+      (container.textContent?.includes('Viewer Creation Failed') ? container : null) ||
+      (container.textContent?.includes('Choose Theme') ? container : null);
 
     if (errorElement) {
       return errorElement as HTMLElement;

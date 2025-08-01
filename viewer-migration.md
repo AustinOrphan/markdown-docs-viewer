@@ -11,6 +11,7 @@ The viewer mocking system has been updated to provide comprehensive utilities fo
 ### 1. Updated `tests/utils/mockViewer.ts`
 
 #### Interface Alignment
+
 - **Fixed `destroy()` method**: Now returns `void` instead of `Promise<void>` to match actual interface
 - **Replaced `reload()` with `refresh()`**: The actual interface has `refresh()`, not `reload()`
 - **Updated `search()` method**: Now returns `Promise<Document[]>` instead of synchronous array
@@ -18,6 +19,7 @@ The viewer mocking system has been updated to provide comprehensive utilities fo
 - **Removed non-existent methods**: `getCurrentDocument()`, `navigateToDocument()`, export methods
 
 #### Method Signatures Fixed
+
 ```typescript
 // Before (incorrect)
 destroy: vi.fn().mockResolvedValue(undefined),
@@ -31,14 +33,17 @@ search: vi.fn().mockResolvedValue([]),            // async Promise<Document[]>
 ```
 
 #### New Export Functions
+
 - `mockViewerWithError(error?: Error)`: Creates error state viewer
-- `mockViewerLoading()`: Creates loading state viewer  
+- `mockViewerLoading()`: Creates loading state viewer
 - `mockViewerWithTheme(theme: Theme)`: Creates viewer with specific theme
 
 ### 2. Created `tests/utils/viewer-states.ts`
 
 #### State Constants
+
 Predefined common viewer states:
+
 - `VIEWER_STATES.INITIAL`: Empty initial state
 - `VIEWER_STATES.LOADING`: Loading state
 - `VIEWER_STATES.ERROR`: Error state
@@ -49,38 +54,46 @@ Predefined common viewer states:
 - `VIEWER_STATES.DESKTOP_SIDEBAR_COLLAPSED`: Desktop sidebar collapsed
 
 #### State Factories
+
 Factory functions for creating states:
+
 ```typescript
-stateFactories.createInitialState()
-stateFactories.createLoadingState()
-stateFactories.createErrorState(error)
-stateFactories.createReadyState(documents)
-stateFactories.createStateWithDocument(document, documents)
-stateFactories.createStateWithSearch(query, results, allDocuments)
+stateFactories.createInitialState();
+stateFactories.createLoadingState();
+stateFactories.createErrorState(error);
+stateFactories.createReadyState(documents);
+stateFactories.createStateWithDocument(document, documents);
+stateFactories.createStateWithSearch(query, results, allDocuments);
 ```
 
 #### State Transitions
+
 Helper functions for state transitions:
+
 ```typescript
-stateTransitions.toLoading(currentState)
-stateTransitions.toError(currentState, error)
-stateTransitions.toReady(currentState, documents)
-stateTransitions.toDocumentLoaded(currentState, document)
-stateTransitions.toSearch(currentState, query, results)
+stateTransitions.toLoading(currentState);
+stateTransitions.toError(currentState, error);
+stateTransitions.toReady(currentState, documents);
+stateTransitions.toDocumentLoaded(currentState, document);
+stateTransitions.toSearch(currentState, query, results);
 ```
 
 #### State Utilities
+
 Utility functions for state inspection:
+
 ```typescript
-stateUtils.isLoading(state)
-stateUtils.hasError(state)
-stateUtils.isReady(state)
-stateUtils.hasActiveDocument(state)
-stateUtils.hasActiveSearch(state)
+stateUtils.isLoading(state);
+stateUtils.hasError(state);
+stateUtils.isReady(state);
+stateUtils.hasActiveDocument(state);
+stateUtils.hasActiveSearch(state);
 ```
 
 #### Test Documents
+
 Predefined test document fixtures:
+
 - `TEST_DOCUMENTS.GETTING_STARTED`
 - `TEST_DOCUMENTS.API_REFERENCE`
 - `TEST_DOCUMENTS.EXAMPLES`
@@ -89,26 +102,28 @@ Predefined test document fixtures:
 ## Migration Examples
 
 ### Before: Incorrect Method Mocking
+
 ```typescript
 // Old approach with incorrect interface
 const mockViewer = {
   destroy: vi.fn().mockResolvedValue(undefined), // Wrong: destroy is sync
-  reload: vi.fn().mockResolvedValue(undefined),  // Wrong: method doesn't exist
-  search: vi.fn().mockReturnValue([]),           // Wrong: search is async
-  getCurrentDocument: vi.fn(),                   // Wrong: method doesn't exist
+  reload: vi.fn().mockResolvedValue(undefined), // Wrong: method doesn't exist
+  search: vi.fn().mockReturnValue([]), // Wrong: search is async
+  getCurrentDocument: vi.fn(), // Wrong: method doesn't exist
 };
 ```
 
 ### After: Correct Interface Mocking
+
 ```typescript
 import { createMockViewer, mockViewerWithError } from './utils/mockViewer';
 
 // Correct approach with proper interface
 const mockViewer = createMockViewer({
-  destroy: vi.fn().mockReturnValue(undefined),    // Correct: sync void
-  refresh: vi.fn().mockResolvedValue(undefined),  // Correct: async
-  search: vi.fn().mockResolvedValue([]),          // Correct: async Promise<Document[]>
-  getDocument: vi.fn().mockReturnValue(null),     // Correct: actual method name
+  destroy: vi.fn().mockReturnValue(undefined), // Correct: sync void
+  refresh: vi.fn().mockResolvedValue(undefined), // Correct: async
+  search: vi.fn().mockResolvedValue([]), // Correct: async Promise<Document[]>
+  getDocument: vi.fn().mockReturnValue(null), // Correct: actual method name
 });
 
 // Or use convenience functions
@@ -116,6 +131,7 @@ const errorViewer = mockViewerWithError(new Error('Test error'));
 ```
 
 ### Before: Manual State Creation
+
 ```typescript
 // Old manual state creation
 const mockState = {
@@ -131,6 +147,7 @@ const mockState = {
 ```
 
 ### After: Using State Factories
+
 ```typescript
 import { stateFactories, stateTransitions } from './utils/viewer-states';
 
@@ -143,6 +160,7 @@ const newState = stateTransitions.toError(currentState, error);
 ```
 
 ### Before: Hard-coded Test Documents
+
 ```typescript
 // Old manual document creation
 const testDocs = [
@@ -152,6 +170,7 @@ const testDocs = [
 ```
 
 ### After: Using Document Fixtures
+
 ```typescript
 import { TEST_DOCUMENTS, createTestDocumentCollection } from './utils/viewer-states';
 
@@ -171,11 +190,13 @@ const customDoc = createTestDocument('my-doc', 'My Document', {
 The following test files were affected by these changes:
 
 ### `tests/zero-config.test.ts`
+
 - Updated viewer mock creation to use new interface-compliant methods
 - Fixed async/sync method call expectations
 - Replaced `reload` with `refresh` references
 
 ### Migration Required For:
+
 - Any tests that directly mock the `MarkdownDocsViewer` class
 - Tests that rely on `destroy()` returning a Promise
 - Tests that use the non-existent `reload()` method
@@ -201,26 +222,31 @@ The following test files were affected by these changes:
 ## Testing Lifecycle Patterns
 
 ### Common Test Pattern
+
 ```typescript
 import { createMockViewer, stateFactories, TEST_DOCUMENTS } from './utils';
 
 describe('Feature Tests', () => {
   let mockViewer: MarkdownDocsViewer;
-  
+
   beforeEach(() => {
     mockViewer = createMockViewer({
-      getState: vi.fn().mockReturnValue(stateFactories.createReadyState([
-        TEST_DOCUMENTS.GETTING_STARTED,
-        TEST_DOCUMENTS.API_REFERENCE,
-      ])),
+      getState: vi
+        .fn()
+        .mockReturnValue(
+          stateFactories.createReadyState([
+            TEST_DOCUMENTS.GETTING_STARTED,
+            TEST_DOCUMENTS.API_REFERENCE,
+          ])
+        ),
     });
   });
-  
+
   it('should handle document loading', async () => {
     await mockViewer.refresh();
     expect(mockViewer.refresh).toHaveBeenCalled();
   });
-  
+
   it('should handle destruction', () => {
     mockViewer.destroy(); // No await needed - sync method
     expect(mockViewer.destroy).toHaveBeenCalled();

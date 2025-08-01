@@ -9,16 +9,18 @@ Complete API documentation for the markdown documentation viewer.
 Initializes the documentation viewer.
 
 **Parameters:**
+
 - `options` (object, optional): Configuration options
 
 **Returns:** `Promise<MarkdownDocsViewer>`
 
 **Example:**
+
 ```javascript
 const viewer = await init({
   container: '#docs',
   theme: 'github-light',
-  title: 'API Documentation'
+  title: 'API Documentation',
 });
 ```
 
@@ -33,6 +35,7 @@ Returns the current global viewer instance.
 Reloads the documentation with new options.
 
 **Parameters:**
+
 - `options` (object, optional): New configuration options
 
 **Returns:** `Promise<MarkdownDocsViewer>`
@@ -42,6 +45,7 @@ Reloads the documentation with new options.
 Changes the current theme.
 
 **Parameters:**
+
 - `themeName` (string): Theme name
 
 ### `getAvailableThemes()`
@@ -69,4 +73,5 @@ Reloads the viewer content.
 Sets the viewer theme.
 
 **Parameters:**
+
 - `theme` (object): Theme configuration object

@@ -55,7 +55,7 @@ import { setupRealDOM, createRealContainer, ContainerTester } from '../utils';
 const domEnv = setupRealDOM();
 const container = new ContainerTester({
   id: 'test-container',
-  styles: { width: '100px', height: '100px' }
+  styles: { width: '100px', height: '100px' },
 });
 
 // Real DOM operations
@@ -79,7 +79,7 @@ const error = await scenario.trigger();
 const errorElement = await waitForErrorUI(container.element);
 validateErrorUI(errorElement, {
   hasErrorMessage: true,
-  errorMessageContains: 'not found'
+  errorMessageContains: 'not found',
 });
 ```
 
@@ -93,10 +93,12 @@ import { ConfigTester, createConfigScenarios } from '../utils';
 const configTester = new ConfigTester();
 
 // Test configuration from file
-const configPath = await configTester.createConfigFile(JSON.stringify({
-  title: 'Test Docs',
-  documents: [{ path: 'README.md', title: 'Test' }]
-}));
+const configPath = await configTester.createConfigFile(
+  JSON.stringify({
+    title: 'Test Docs',
+    documents: [{ path: 'README.md', title: 'Test' }],
+  })
+);
 
 const result = await configTester.testConfigFromFile(configPath);
 expect(result.isValid).toBe(true);
@@ -121,7 +123,7 @@ const { result, metrics } = await measurer.measure(async () => {
 const leakAnalysis = await leakDetector.detectLeaksInFunction(
   async () => await createAndDestroyViewer(),
   10, // iterations
-  5   // threshold MB
+  5 // threshold MB
 );
 ```
 
@@ -136,7 +138,7 @@ const runner = new ZeroConfigTestRunner();
 
 // Test zero-config initialization
 const result = await runner.initWithTracking({
-  container: '#test-container'
+  container: '#test-container',
 });
 
 if (!result.success) {
@@ -160,14 +162,14 @@ workspace: [
       environment: 'jsdom',
       include: ['tests/integration/**/*.{test,spec}.{js,ts}'],
       testTimeout: 30000, // Longer timeout for integration tests
-      isolate: true,      // Test isolation
-      pool: 'forks',      // Separate processes
+      isolate: true, // Test isolation
+      pool: 'forks', // Separate processes
       coverage: {
-        reportsDirectory: './coverage/integration'
-      }
-    }
-  }
-]
+        reportsDirectory: './coverage/integration',
+      },
+    },
+  },
+];
 ```
 
 ### Running Integration Tests
@@ -192,12 +194,7 @@ npm test -- --project integration --watch
 
 ```typescript
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { 
-  setupRealDOM, 
-  ContainerTester, 
-  createErrorScenarios,
-  waitForErrorUI 
-} from '../utils';
+import { setupRealDOM, ContainerTester, createErrorScenarios, waitForErrorUI } from '../utils';
 
 describe('Container Error Integration Tests', () => {
   let domEnv;
@@ -215,7 +212,7 @@ describe('Container Error Integration Tests', () => {
   it('should handle container not found error', async () => {
     const scenario = createErrorScenarios.containerNotFound();
     await scenario.setup();
-    
+
     // Test actual error handling
     const error = await scenario.trigger();
     expect(error.message).toContain('not found');
@@ -240,11 +237,13 @@ describe('Config Integration Tests', () => {
   });
 
   it('should validate configuration structure', () => {
-    const result = parseAndValidateConfig(JSON.stringify({
-      title: 'Test Docs',
-      documents: [{ path: 'test.md', title: 'Test' }]
-    }));
-    
+    const result = parseAndValidateConfig(
+      JSON.stringify({
+        title: 'Test Docs',
+        documents: [{ path: 'test.md', title: 'Test' }],
+      })
+    );
+
     expect(result.isValid).toBe(true);
     expect(result.parsedConfig?.title).toBe('Test Docs');
   });
@@ -270,7 +269,7 @@ describe('Performance Integration Tests', () => {
       // Initialize viewer
       return await createViewer();
     });
-    
+
     expect(metrics.duration).toBeLessThan(5000); // Should init within 5s
   });
 
@@ -282,7 +281,7 @@ describe('Performance Integration Tests', () => {
       },
       5 // iterations
     );
-    
+
     expect(analysis.hasLeak).toBe(false);
   });
 });
@@ -338,10 +337,10 @@ afterEach(async () => {
   if (containerTester) {
     containerTester.cleanup();
   }
-  
+
   // Clean up DOM environment
   domEnv.cleanup();
-  
+
   // Clean up config tester
   configTester.cleanup();
 });
@@ -378,10 +377,10 @@ const element = await waitForElement('.target-class', 5000);
 expect(element).toBeDefined();
 
 // Use retry mechanisms for flaky operations
-const finalResult = await withRetry(
-  async () => await flakyOperation(),
-  { maxAttempts: 3, delay: 1000 }
-);
+const finalResult = await withRetry(async () => await flakyOperation(), {
+  maxAttempts: 3,
+  delay: 1000,
+});
 ```
 
 ## Debugging Integration Tests

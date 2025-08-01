@@ -25,7 +25,7 @@ You can customize the viewer with options:
 await init({
   container: '#my-docs',
   theme: 'github-dark',
-  title: 'My Documentation'
+  title: 'My Documentation',
 });
 ```
 

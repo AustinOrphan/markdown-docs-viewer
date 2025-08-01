@@ -40,7 +40,9 @@ export function mockConfigLoaderSuccess(config: DocsConfig = validConfig as Docs
 export function mockConfigLoaderError(error: Error = new Error('Failed to load config')): any {
   return {
     loadConfig: vi.fn().mockRejectedValue(error),
-    toDocumentationConfig: vi.fn().mockReturnValue(createDocumentationConfigFromDocsConfig(DEFAULT_TEST_CONFIG)),
+    toDocumentationConfig: vi
+      .fn()
+      .mockReturnValue(createDocumentationConfigFromDocsConfig(DEFAULT_TEST_CONFIG)),
     getConfig: vi.fn().mockReturnValue(DEFAULT_TEST_CONFIG),
     getConfigPath: vi.fn().mockReturnValue(undefined),
   };
@@ -53,7 +55,9 @@ export function mockConfigLoaderEmpty(): any {
   const emptyConfigData = emptyConfig as DocsConfig;
   return {
     loadConfig: vi.fn().mockResolvedValue(emptyConfigData),
-    toDocumentationConfig: vi.fn().mockReturnValue(createDocumentationConfigFromDocsConfig(emptyConfigData)),
+    toDocumentationConfig: vi
+      .fn()
+      .mockReturnValue(createDocumentationConfigFromDocsConfig(emptyConfigData)),
     getConfig: vi.fn().mockReturnValue(emptyConfigData),
     getConfigPath: vi.fn().mockReturnValue(undefined),
   };
@@ -81,7 +85,7 @@ export function createMockConfigLoader(options: MockConfigLoaderOptions = {}): a
     ? vi.fn().mockRejectedValue(loadError)
     : vi.fn().mockResolvedValue(config);
 
-  const docConfig = documentationConfig 
+  const docConfig = documentationConfig
     ? { ...createDocumentationConfigFromDocsConfig(config), ...documentationConfig }
     : createDocumentationConfigFromDocsConfig(config);
 
@@ -142,7 +146,7 @@ function parseThemeString(themeString: string): any {
 
   const [themeName, mode] = themeString.split('-');
   const themeFamily = themes[themeName as keyof typeof themes];
-  
+
   if (!themeFamily) {
     return themes.default?.light || themes.default;
   }
@@ -191,8 +195,6 @@ export const DEFAULT_TEST_CONFIG: DocsConfig = {
     prefetchNext: true,
   },
 };
-
-
 
 /**
  * Helper to mock ConfigLoader methods on the prototype
@@ -262,7 +264,9 @@ export function createTestConfig(overrides: Partial<DocsConfig> = {}): DocsConfi
 /**
  * Creates a default documentation config for testing
  */
-export function createTestDocumentationConfig(overrides: Partial<DocumentationConfig> = {}): DocumentationConfig {
+export function createTestDocumentationConfig(
+  overrides: Partial<DocumentationConfig> = {}
+): DocumentationConfig {
   return {
     container: document.createElement('div'),
     title: 'Test Documentation',
@@ -281,7 +285,7 @@ export function createTestDocumentationConfig(overrides: Partial<DocumentationCo
  */
 export function setupConfigLoaderMock(overrides: Partial<DocsConfig> = {}) {
   const mockInstance = createMockConfigLoader(overrides);
-  
+
   return mockInstance;
 }
 
@@ -360,22 +364,27 @@ export const configMockScenarios = {
   success: () => mockConfigLoaderSuccess(),
   error: (error?: Error) => mockConfigLoaderError(error),
   empty: () => mockConfigLoaderEmpty(),
-  
+
   // Fixture-based scenarios
   validConfig: () => createMockConfigLoaderFromFixture('valid'),
   invalidConfig: () => createMockConfigLoaderFromFixture('invalid'),
   minimalConfig: () => createMockConfigLoaderFromFixture('minimal'),
   emptyConfig: () => createMockConfigLoaderFromFixture('empty'),
   themeVariantsConfig: () => createMockConfigLoaderFromFixture('themeVariants'),
-  
+
   // Error scenarios with specific fixtures
-  validConfigLoadError: (error?: Error) => createMockConfigLoaderFromFixture('valid', { loadError: error }),
-  minimalConfigLoadError: (error?: Error) => createMockConfigLoaderFromFixture('minimal', { loadError: error }),
-  
+  validConfigLoadError: (error?: Error) =>
+    createMockConfigLoaderFromFixture('valid', { loadError: error }),
+  minimalConfigLoadError: (error?: Error) =>
+    createMockConfigLoaderFromFixture('minimal', { loadError: error }),
+
   // Theme-specific scenarios
-  githubDarkTheme: () => mockConfigLoaderSuccess({ ...validConfig, theme: 'github-dark' } as DocsConfig),
-  materialLightTheme: () => mockConfigLoaderSuccess({ ...validConfig, theme: 'material-light' } as DocsConfig),
-  invalidTheme: () => mockConfigLoaderSuccess({ ...validConfig, theme: 'nonexistent-theme' } as DocsConfig),
+  githubDarkTheme: () =>
+    mockConfigLoaderSuccess({ ...validConfig, theme: 'github-dark' } as DocsConfig),
+  materialLightTheme: () =>
+    mockConfigLoaderSuccess({ ...validConfig, theme: 'material-light' } as DocsConfig),
+  invalidTheme: () =>
+    mockConfigLoaderSuccess({ ...validConfig, theme: 'nonexistent-theme' } as DocsConfig),
 };
 
 // ==========================================
@@ -387,6 +396,8 @@ export const configMockScenarios = {
  * @deprecated Use the new core utilities instead
  */
 export function createMockConfigLoaderWithError(error: Error): any {
-  console.warn('createMockConfigLoaderWithError is deprecated. Use mockConfigLoaderError() instead.');
+  console.warn(
+    'createMockConfigLoaderWithError is deprecated. Use mockConfigLoaderError() instead.'
+  );
   return mockConfigLoaderError(error);
 }

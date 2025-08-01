@@ -54,11 +54,11 @@ For more control, you can provide options:
 import { init } from 'markdown-docs-viewer/zero-config';
 
 await init({
-  container: '#my-docs',           // CSS selector or HTML element
+  container: '#my-docs', // CSS selector or HTML element
   configPath: './my-config.json', // Custom config file path
-  docsPath: './documentation',    // Custom docs directory
-  theme: 'github-dark',           // Theme selection
-  title: 'My Project Docs'        // Documentation title
+  docsPath: './documentation', // Custom docs directory
+  theme: 'github-dark', // Theme selection
+  title: 'My Project Docs', // Documentation title
 });
 ```
 
@@ -78,20 +78,20 @@ const viewer = createViewer({
       {
         id: 'readme',
         title: 'Overview',
-        file: 'README.md'
+        file: 'README.md',
       },
       {
         id: 'guide',
         title: 'User Guide',
-        file: 'guide.md'
-      }
-    ]
+        file: 'guide.md',
+      },
+    ],
   },
   theme: 'material-light',
   search: {
     enabled: true,
-    placeholder: 'Search documentation...'
-  }
+    placeholder: 'Search documentation...',
+  },
 });
 ```
 
@@ -207,18 +207,18 @@ Create a simple HTML page:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentation</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="docs"></div>
     <script type="module">
-        import { init } from './node_modules/markdown-docs-viewer/dist/zero-config.es.js';
-        init();
+      import { init } from './node_modules/markdown-docs-viewer/dist/zero-config.es.js';
+      init();
     </script>
-</body>
+  </body>
 </html>
 ```
 

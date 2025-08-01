@@ -47,7 +47,7 @@ export function createMockViewer(options: MockViewerOptions = {}): MarkdownDocsV
   const mockViewer = {
     // Core properties
     container,
-    
+
     // Core lifecycle methods
     destroy: vi.fn().mockImplementation(() => {
       if (destroySucceeds) {
@@ -82,7 +82,7 @@ export function createMockViewer(options: MockViewerOptions = {}): MarkdownDocsV
       return Promise.resolve(doc.content || '');
     }),
 
-    // Search methods  
+    // Search methods
     search: vi.fn().mockResolvedValue([]),
 
     // State methods
@@ -167,16 +167,18 @@ export function createErrorViewer(error: Error, container?: HTMLElement): Markdo
  * Comprehensive factory mock setup with different scenarios
  * This provides a one-stop utility for different test scenarios
  */
-export function setupFactoryMock(config: {
-  /** Whether createViewer should succeed */
-  shouldSucceed?: boolean;
-  /** Custom viewer to return on success */
-  viewer?: MarkdownDocsViewer;
-  /** Error to throw on failure */
-  error?: Error;
-  /** Container for error display */
-  container?: HTMLElement;
-} = {}) {
+export function setupFactoryMock(
+  config: {
+    /** Whether createViewer should succeed */
+    shouldSucceed?: boolean;
+    /** Custom viewer to return on success */
+    viewer?: MarkdownDocsViewer;
+    /** Error to throw on failure */
+    error?: Error;
+    /** Container for error display */
+    container?: HTMLElement;
+  } = {}
+) {
   const { shouldSucceed = true, viewer, error, container } = config;
 
   if (shouldSucceed) {
@@ -207,7 +209,9 @@ export interface AdvancedMockViewerOptions extends MockViewerOptions {
 /**
  * Creates a mock viewer with configurable failure modes for comprehensive testing
  */
-export function createAdvancedMockViewer(options: AdvancedMockViewerOptions = {}): MarkdownDocsViewer {
+export function createAdvancedMockViewer(
+  options: AdvancedMockViewerOptions = {}
+): MarkdownDocsViewer {
   const {
     shouldDestroyFail = false,
     shouldRefreshFail = false,
@@ -223,11 +227,11 @@ export function createAdvancedMockViewer(options: AdvancedMockViewerOptions = {}
       throw new Error('Destroy failed');
     });
   }
-  
+
   if (shouldRefreshFail) {
     baseViewer.refresh = vi.fn().mockRejectedValue(new Error('Refresh failed'));
   }
-  
+
   if (shouldSearchFail) {
     baseViewer.search = vi.fn().mockRejectedValue(new Error('Search failed'));
   }
