@@ -92,26 +92,29 @@ export class ContainerTester {
   }
 
   async waitForContent(selector: string, timeout = 5000): Promise<HTMLElement> {
-    return new Promise((resolve, reject) => {
-      const startTime = Date.now();
+    const startTime = Date.now();
+    const pollInterval = 50;
+    const maxAttempts = Math.ceil(timeout / pollInterval);
+    let attempts = 0;
 
-      const check = () => {
-        const element = this.element.querySelector(selector) as HTMLElement;
-        if (element) {
-          resolve(element);
-          return;
-        }
+    while (attempts < maxAttempts) {
+      const element = this.element.querySelector(selector) as HTMLElement;
+      if (element) {
+        return element;
+      }
 
-        if (Date.now() - startTime > timeout) {
-          reject(new Error(`Element with selector "${selector}" not found within ${timeout}ms`));
-          return;
-        }
+      // Double-check timeout to prevent infinite loops
+      if (Date.now() - startTime > timeout) {
+        break;
+      }
 
-        setTimeout(check, 50);
-      };
+      attempts++;
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
 
-      check();
-    });
+    throw new Error(
+      `Element with selector "${selector}" not found within ${timeout}ms after ${attempts} attempts`
+    );
   }
 
   simulateUserInteraction(selector: string, eventType: string): void {

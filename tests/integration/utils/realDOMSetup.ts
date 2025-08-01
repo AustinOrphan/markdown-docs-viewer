@@ -219,40 +219,40 @@ export function isElementVisible(element: Element): boolean {
 /**
  * Waits for container to have specific content
  */
-export function waitForContainerContent(
+export async function waitForContainerContent(
   container: HTMLElement,
   expectedContent?: string,
   timeout: number = 5000
 ): Promise<boolean> {
   const startTime = Date.now();
-  
-  return new Promise((resolve) => {
-    const checkContent = () => {
-      const innerHTML = container.innerHTML;
-      
-      if (expectedContent) {
-        if (innerHTML.includes(expectedContent)) {
-          resolve(true);
-          return;
-        }
-      } else {
-        // Just check if container has any content
-        if (innerHTML && innerHTML.trim() !== '') {
-          resolve(true);
-          return;
-        }
+  const pollInterval = 50;
+  const maxAttempts = Math.ceil(timeout / pollInterval);
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    const innerHTML = container.innerHTML;
+
+    if (expectedContent) {
+      if (innerHTML.includes(expectedContent)) {
+        return true;
       }
-      
-      if (Date.now() - startTime > timeout) {
-        resolve(false);
-        return;
+    } else {
+      // Just check if container has any content
+      if (innerHTML && innerHTML.trim() !== '') {
+        return true;
       }
-      
-      setTimeout(checkContent, 50);
-    };
-    
-    checkContent();
-  });
+    }
+
+    // Double-check timeout to prevent infinite loops
+    if (Date.now() - startTime > timeout) {
+      break;
+    }
+
+    attempts++;
+    await new Promise(resolve => setTimeout(resolve, pollInterval));
+  }
+
+  return false;
 }
 
 /**
@@ -271,16 +271,20 @@ export function cleanupRealDOM(): void {
   const children = Array.from(document.body.children);
   children.forEach(child => {
     // Only remove elements that look like test elements
-    if (child.hasAttribute('data-test-container') || 
-        child.id?.startsWith('test-') ||
-        child.className?.includes('test-')) {
+    if (
+      child.hasAttribute('data-test-container') ||
+      child.id?.startsWith('test-') ||
+      child.className?.includes('test-')
+    ) {
       child.remove();
     }
   });
 
   // Clear any remaining innerHTML that might contain error messages
-  if (document.body.innerHTML.includes('Setup Required') || 
-      document.body.innerHTML.includes('Viewer Creation Failed')) {
+  if (
+    document.body.innerHTML.includes('Setup Required') ||
+    document.body.innerHTML.includes('Viewer Creation Failed')
+  ) {
     document.body.innerHTML = '';
   }
 }

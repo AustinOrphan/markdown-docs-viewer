@@ -46,17 +46,17 @@ export class ZeroConfigTestRunner {
     try {
       // Import here to avoid issues with module mocking
       const { init } = await import('../../../src/zero-config');
-      
+
       viewer = await init(options);
       container = viewer.container;
       success = true;
-      
+
       // Track for cleanup
       this.viewers.push(viewer);
     } catch (err) {
       error = err as Error;
       // Create fallback container for error testing
-      container = options.container as HTMLElement || document.body;
+      container = (options.container as HTMLElement) || document.body;
       viewer = {} as MarkdownDocsViewer; // Placeholder
     }
 
@@ -68,7 +68,7 @@ export class ZeroConfigTestRunner {
       container,
       initTime,
       success,
-      error
+      error,
     };
   }
 
@@ -125,7 +125,7 @@ export async function validateErrorUI(
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const innerHTML = container.innerHTML;
-    
+
     if (!innerHTML || innerHTML.trim() === '') {
       return { hasErrorUI: false, errorType: 'none' };
     }
@@ -141,7 +141,10 @@ export async function validateErrorUI(
       hasQuickSetup = innerHTML.includes('Quick Setup');
     }
     // Check for viewer creation failure
-    else if (innerHTML.includes('Viewer Creation Failed') || innerHTML.includes('Failed to create')) {
+    else if (
+      innerHTML.includes('Viewer Creation Failed') ||
+      innerHTML.includes('Failed to create')
+    ) {
       errorType = 'viewer-creation-failed';
     }
 
@@ -152,14 +155,15 @@ export async function validateErrorUI(
     }
 
     // Check for technical details
-    hasTechnicalDetails = innerHTML.includes('Technical Details') || innerHTML.includes('Error Details');
+    hasTechnicalDetails =
+      innerHTML.includes('Technical Details') || innerHTML.includes('Error Details');
 
     return {
       hasErrorUI: true,
       errorType,
       errorMessage,
       hasQuickSetup,
-      hasTechnicalDetails
+      hasTechnicalDetails,
     };
   } catch {
     return { hasErrorUI: false, errorType: 'none' };
@@ -175,34 +179,34 @@ export async function waitForContainerContent(
   timeout: number = 5000
 ): Promise<boolean> {
   const startTime = Date.now();
-  
-  return new Promise((resolve) => {
-    const checkContent = () => {
-      const innerHTML = container.innerHTML;
-      
-      if (expectedContent) {
-        if (innerHTML.includes(expectedContent)) {
-          resolve(true);
-          return;
-        }
-      } else {
-        // Just check if container has any content
-        if (innerHTML && innerHTML.trim() !== '') {
-          resolve(true);
-          return;
-        }
+  const pollInterval = 50;
+  const maxAttempts = Math.ceil(timeout / pollInterval);
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    const innerHTML = container.innerHTML;
+
+    if (expectedContent) {
+      if (innerHTML.includes(expectedContent)) {
+        return true;
       }
-      
-      if (Date.now() - startTime > timeout) {
-        resolve(false);
-        return;
+    } else {
+      // Just check if container has any content
+      if (innerHTML && innerHTML.trim() !== '') {
+        return true;
       }
-      
-      setTimeout(checkContent, 50);
-    };
-    
-    checkContent();
-  });
+    }
+
+    // Double-check timeout to prevent infinite loops
+    if (Date.now() - startTime > timeout) {
+      break;
+    }
+
+    attempts++;
+    await new Promise(resolve => setTimeout(resolve, pollInterval));
+  }
+
+  return false;
 }
 
 /**
@@ -224,12 +228,12 @@ export class ContainerSelectionTester {
     documentationClass.element.className = 'documentation';
 
     this.testContainers = [docs, documentation, docsClass, documentationClass];
-    
+
     return {
       docs: docs.element,
       documentation: documentation.element,
       docsClass: docsClass.element,
-      documentationClass: documentationClass.element
+      documentationClass: documentationClass.element,
     };
   }
 
@@ -238,7 +242,7 @@ export class ContainerSelectionTester {
    */
   async testContainerSelection(selector: string): Promise<HTMLElement | null> {
     const { init } = await import('../../../src/zero-config');
-    
+
     try {
       const viewer = await init({ container: selector });
       return viewer.container;
@@ -275,15 +279,15 @@ export class ConfigFileTester {
         if (content === null) {
           return Promise.reject(new Error(`Failed to fetch ${filename}`));
         }
-        
+
         return Promise.resolve({
           ok: status === 200,
           status,
           text: () => Promise.resolve(content),
-          json: () => Promise.resolve(content ? JSON.parse(content) : null)
+          json: () => Promise.resolve(content ? JSON.parse(content) : null),
         } as Response);
       }
-      
+
       return Promise.reject(new Error(`Unexpected fetch: ${url}`));
     });
   }
@@ -291,37 +295,40 @@ export class ConfigFileTester {
   /**
    * Test config loading with different scenarios
    */
-  async testConfigLoading(configPath: string, configContent: string): Promise<{
+  async testConfigLoading(
+    configPath: string,
+    configContent: string
+  ): Promise<{
     success: boolean;
     error?: Error;
     loadTime: number;
   }> {
     const startTime = performance.now();
-    
+
     try {
       this.mockConfigFile(configPath, configContent);
-      
+
       const { init } = await import('../../../src/zero-config');
       const container = createRealContainer('config-test');
-      
-      await init({ 
+
+      await init({
         container: container.element,
-        configPath 
+        configPath,
       });
-      
+
       const endTime = performance.now();
       container.cleanup();
-      
+
       return {
         success: true,
-        loadTime: endTime - startTime
+        loadTime: endTime - startTime,
       };
     } catch (error) {
       const endTime = performance.now();
       return {
         success: false,
         error: error as Error,
-        loadTime: endTime - startTime
+        loadTime: endTime - startTime,
       };
     }
   }
@@ -350,13 +357,13 @@ export class ThemeTester {
   }> {
     try {
       const { init, setTheme } = await import('../../../src/zero-config');
-      
+
       // Initialize with theme
       await init({ container, theme: themeName });
-      
+
       // Test theme switching
       setTheme(themeName);
-      
+
       return { applied: true };
     } catch (error) {
       return { applied: false, error: error as Error };
@@ -372,14 +379,14 @@ export class ThemeTester {
     themeCount: number;
   }> {
     const { getAvailableThemes } = await import('../../../src/zero-config');
-    
+
     const themes = getAvailableThemes();
     const hasBasicThemes = themes.includes('github-light') && themes.includes('github-dark');
-    
+
     return {
       themes,
       hasBasicThemes,
-      themeCount: themes.length
+      themeCount: themes.length,
     };
   }
 }
@@ -403,46 +410,46 @@ export class PerformanceTester {
     measurements: number[];
   }> {
     const times: number[] = [];
-    
+
     for (let i = 0; i < iterations; i++) {
       const container = createRealContainer(`perf-test-${i}`);
       const startTime = performance.now();
-      
+
       try {
         const { init } = await import('../../../src/zero-config');
-        const viewer = await init({ 
+        const viewer = await init({
           container: container.element,
-          ...options 
+          ...options,
         });
-        
+
         if (viewer && typeof viewer.destroy === 'function') {
           await viewer.destroy();
         }
       } catch {
         // Ignore errors for performance testing
       }
-      
+
       const endTime = performance.now();
       const duration = endTime - startTime;
       times.push(duration);
-      
+
       this.measurements.push({
         name: `init-${i}`,
         duration,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       container.cleanup();
-      
+
       // Small delay between iterations
       await new Promise(resolve => setTimeout(resolve, 10));
     }
-    
+
     return {
       averageTime: times.reduce((a, b) => a + b, 0) / times.length,
       minTime: Math.min(...times),
       maxTime: Math.max(...times),
-      measurements: times
+      measurements: times,
     };
   }
 
@@ -476,7 +483,7 @@ export class MemoryLeakDetector {
     this.measurements.push({
       stage: 'initial',
       memory: this.initialMemory,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -488,7 +495,7 @@ export class MemoryLeakDetector {
     this.measurements.push({
       stage,
       memory,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -504,12 +511,12 @@ export class MemoryLeakDetector {
     const currentMemory = this.getCurrentMemoryUsage();
     const memoryGrowth = currentMemory - this.initialMemory;
     const leakThreshold = 10 * 1024 * 1024; // 10MB threshold
-    
+
     return {
       hasLeak: memoryGrowth > leakThreshold,
       memoryGrowth,
       leakThreshold,
-      measurements: [...this.measurements]
+      measurements: [...this.measurements],
     };
   }
 

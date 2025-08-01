@@ -90,40 +90,44 @@ export const createErrorScenarios = {
 };
 
 export async function waitForErrorUI(container: HTMLElement, timeout = 5000): Promise<HTMLElement> {
-  return new Promise((resolve, reject) => {
-    const startTime = Date.now();
-    let checkCount = 0;
+  const startTime = Date.now();
+  const pollInterval = 100;
+  const maxAttempts = Math.ceil(timeout / pollInterval);
+  let attempts = 0;
 
-    const check = () => {
-      checkCount++;
+  // Use shorter timeout in CI
+  const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+  const effectiveTimeout = isCI ? Math.min(timeout, 1500) : timeout;
+  const effectiveMaxAttempts = isCI ? Math.min(maxAttempts, 15) : maxAttempts;
 
-      // Look for common error UI indicators including the actual error div structure
-      const errorElement =
-        container.querySelector('.error-container') ||
-        container.querySelector('.error-message') ||
-        container.querySelector('[class*="error"]') ||
-        container.querySelector('div[style*="color: #d73a49"]') || // Match the actual error styling
-        container.querySelector('h3') || // Any h3 might be the error heading
-        (container.textContent?.includes('Error:') ? container : null) ||
-        (container.textContent?.includes('Failed') ? container : null) ||
-        (container.textContent?.includes('Setup Required') ? container : null);
+  while (attempts < effectiveMaxAttempts) {
+    // Look for common error UI indicators including the actual error div structure
+    const errorElement =
+      container.querySelector('.error-container') ||
+      container.querySelector('.error-message') ||
+      container.querySelector('[class*="error"]') ||
+      container.querySelector('div[style*="color: #d73a49"]') || // Match the actual error styling
+      container.querySelector('h3') || // Any h3 might be the error heading
+      (container.textContent?.includes('Error:') ? container : null) ||
+      (container.textContent?.includes('Failed') ? container : null) ||
+      (container.textContent?.includes('Setup Required') ? container : null);
 
-      if (errorElement) {
-        resolve(errorElement as HTMLElement);
-        return;
-      }
+    if (errorElement) {
+      return errorElement as HTMLElement;
+    }
 
-      // Add safety check to prevent infinite loops
-      if (Date.now() - startTime > timeout || checkCount > timeout / 100) {
-        reject(new Error(`Error UI not found within ${timeout}ms after ${checkCount} checks`));
-        return;
-      }
+    // Double-check timeout to prevent infinite loops
+    if (Date.now() - startTime > effectiveTimeout) {
+      break;
+    }
 
-      setTimeout(check, 100);
-    };
+    attempts++;
+    await new Promise(resolve => setTimeout(resolve, pollInterval));
+  }
 
-    check();
-  });
+  throw new Error(
+    `Error UI not found within ${effectiveTimeout}ms after ${attempts} attempts (CI: ${isCI})`
+  );
 }
 
 export function validateErrorUI(
