@@ -572,9 +572,19 @@ ${TRIPLE_BACKTICK}
         console.error('Failed to create viewer:', error);
         document.getElementById('docs-container').innerHTML = `
                 <div style="padding: 20px; background: #fee; color: #c00;">
-                    <strong>Error:</strong> ${error.message}
+                    <strong>Error:</strong> ${escapeHtml(error.message)}
                 </div>
             `;
+      }
+
+      function escapeHtml(text) {
+        if (text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
       }
 
       function showThemeInfo(message) {
