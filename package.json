@@ -17,6 +17,9 @@
     "dist",
     "themes"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run build:zero-config",

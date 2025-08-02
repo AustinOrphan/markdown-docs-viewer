@@ -179,6 +179,41 @@ viewer = proxyObject as unknown as MarkdownDocsViewer;
 
 This pattern is used in `src/zero-config.ts` for error viewer fallbacks where Proxy objects need to satisfy the `MarkdownDocsViewer` interface.
 
+## Security Guidelines
+
+### XSS Prevention Patterns
+
+**Critical**: Always sanitize user input before inserting into HTML to prevent cross-site scripting (XSS) attacks.
+
+```typescript
+// ✅ Safe HTML injection with escaping
+function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+element.innerHTML = `Error: ${escapeHtml(error.stack)}`;
+
+// ✅ Safe text insertion (preferred for simple text)
+element.textContent = error.message;
+
+// ❌ NEVER do this - XSS vulnerability
+element.innerHTML = `Error: ${error.message}`;
+element.innerHTML = `<pre><code>${error.stack}</code></pre>`;
+```
+
+**Vulnerable patterns to avoid:**
+
+- Direct template literal injection: `${error.message}` or `${error.stack}` in HTML
+- `innerHTML` assignment with unsanitized user data
+- `document.write()` with unescaped content
+
+**Safe implementation**: The `src/zero-config.ts` file already uses proper `escapeHtml()` utility for error display - follow this pattern throughout the codebase.
+
 ## Key Dependencies
 
 - **marked** - Markdown parsing
