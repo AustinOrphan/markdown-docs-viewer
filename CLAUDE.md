@@ -198,12 +198,15 @@ function escapeHtml(unsafe: string): string {
 }
 element.innerHTML = `Error: ${escapeHtml(error.stack)}`;
 
+// ✅ Safe HTML with formatting - escape content inside tags
+element.innerHTML = `<pre><code>${escapeHtml(error.stack)}</code></pre>`;
+
 // ✅ Safe text insertion (preferred for simple text)
 element.textContent = error.message;
 
 // ❌ NEVER do this - XSS vulnerability
-element.innerHTML = `Error: ${error.message}`;
-element.innerHTML = `<pre><code>${error.stack}</code></pre>`;
+element.innerHTML = `Error: ${error.message}`; // Unescaped user input can execute scripts
+element.innerHTML = `<pre><code>${error.stack}</code></pre>`; // Stack trace injected without escaping
 ```
 
 **Vulnerable patterns to avoid:**

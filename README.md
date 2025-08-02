@@ -288,7 +288,7 @@ The project uses a **dual testing approach** for comprehensive coverage:
 npm test
 
 # Run integration tests
-npx vitest run --config vitest.integration.config.ts tests/integration/
+npm run test:integration
 
 # Run with coverage
 npm run test:coverage
