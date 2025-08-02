@@ -102,10 +102,12 @@
 
     <!-- Load the markdown docs viewer -->
     <script src="../dist/index.umd.cjs"></script>
+    <!-- Load shared utilities -->
+    <script src="utils.js"></script>
 
     <script>
-      // Create triple backticks constant to avoid template literal parsing issues
-      const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
+      // Use shared utilities
+      const { escapeHtml, TRIPLE_BACKTICK } = window.ExampleUtils;
 
       // Get the viewer classes from global
       const { MarkdownDocsViewer, defaultTheme, darkTheme } = window.MarkdownDocsViewer;
@@ -117,16 +119,6 @@
         const statusEl = document.getElementById('status');
         statusEl.className = `status ${type}`;
         statusEl.textContent = message;
-      }
-
-      function escapeHtml(text) {
-        if (text == null) return '';
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
       }
 
       function destroyCurrentViewer() {
