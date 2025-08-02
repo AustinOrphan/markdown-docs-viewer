@@ -340,27 +340,12 @@ const advancedConfig = {
 
     <!-- Load the UMD build for examples -->
     <script src="../dist/index.umd.cjs"></script>
+    <!-- Load shared utilities -->
+    <script src="utils.js"></script>
 
     <script>
-      // Create triple backticks constant to avoid template literal parsing issues
-      const TRIPLE_BACKTICK = String.fromCharCode(96, 96, 96);
-
-      function showStatus(elementId, type, message) {
-        const statusEl = document.getElementById(elementId);
-        statusEl.className = `status ${type}`;
-        statusEl.textContent = message;
-        statusEl.style.display = 'block';
-      }
-
-      function escapeHtml(text) {
-        if (text == null) return '';
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
+      // Use shared utilities
+      const { escapeHtml, showStatus, TRIPLE_BACKTICK } = window.ExampleUtils;
 
       function loadESModuleExample() {
         try {
