@@ -259,6 +259,14 @@ themes.catppuccin.light; // Pastel color palette
 
 ## 🛠️ Development
 
+### Node.js Requirements
+
+- **Minimum**: Node.js 18.0.0 or higher (for ES modules, import.meta.url, fs/promises APIs)
+- **Recommended**: Node.js 20.17.0 (standard development version)
+- **Tested versions**: 20.17.0 and 22.x in CI across Linux, Windows, and macOS
+
+This project uses modern JavaScript features requiring Node.js 18.0.0+. CI testing runs on Node.js 20.17.0 and 22.x to ensure compatibility. For development, use Node.js 20.17.0 for consistency with the CI environment.
+
 ### Development Commands
 
 - `npm run dev` - Start Vite development server on port 5000
@@ -267,6 +275,24 @@ themes.catppuccin.light; // Pastel color palette
 - `npm test` - Run all tests once
 - `npm run test:watch` - Run tests in watch mode
 - `npm run lint` - Lint TypeScript files with ESLint
+
+### Testing Strategy
+
+The project uses a **dual testing approach** for comprehensive coverage:
+
+- **Unit Tests** - Fast, isolated testing with mocking (28 zero-config tests ~767ms)
+- **Integration Tests** - End-to-end testing with minimal mocking (22 tests ~805ms)
+
+```bash
+# Run unit tests
+npm test
+
+# Run integration tests
+npm run test:integration
+
+# Run with coverage
+npm run test:coverage
+```
 
 ### Project Structure
 
