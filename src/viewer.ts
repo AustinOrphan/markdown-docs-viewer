@@ -18,6 +18,7 @@ import {
   ConsoleErrorLogger,
   DEFAULT_RETRY_CONFIG,
 } from './errors';
+import { escapeHtml } from './utils';
 import { announceToScreenReader } from './utils';
 import {
   generateMobileCSS,
@@ -678,7 +679,7 @@ export class MarkdownDocsViewer {
         errorDetails = `
           <details class="mdv-error-details">
             <summary>Error Details</summary>
-            <pre><code>${error.stack || error.message}</code></pre>
+            <pre><code>${escapeHtml(error.stack || error.message)}</code></pre>
           </details>
         `;
       }

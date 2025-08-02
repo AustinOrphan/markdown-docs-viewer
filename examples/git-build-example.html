@@ -119,6 +119,16 @@
         statusEl.textContent = message;
       }
 
+      function escapeHtml(text) {
+        if (text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
       function destroyCurrentViewer() {
         if (currentViewer) {
           currentViewer.destroy();
@@ -623,7 +633,7 @@ Resize your browser window to see the responsive behavior in action!
                     <div style="padding: 40px; text-align: center;">
                         <h2 style="color: #721c24; margin-bottom: 16px;">⚠️ Error Demonstration</h2>
                         <p style="color: #721c24; background: #f8d7da; padding: 16px; border-radius: 6px; margin: 0;">
-                            <strong>Error:</strong> ${error.message}
+                            <strong>Error:</strong> ${escapeHtml(error.message)}
                         </p>
                         <p style="margin-top: 16px; color: #6a737d; font-size: 14px;">
                             This demonstrates how the viewer handles configuration errors gracefully.

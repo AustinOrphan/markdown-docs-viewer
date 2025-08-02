@@ -352,6 +352,16 @@ const advancedConfig = {
         statusEl.style.display = 'block';
       }
 
+      function escapeHtml(text) {
+        if (text == null) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
       function loadESModuleExample() {
         try {
           showStatus('esm-status', 'warning', 'Loading ES Module example...');
@@ -469,7 +479,7 @@ ${TRIPLE_BACKTICK}
           const container = document.getElementById('error-container');
           container.innerHTML = `
                     <div style="padding: 20px; background: #f8d7da; color: #721c24; border-radius: 4px;">
-                        <strong>Initialization Error:</strong> ${error.message}
+                        <strong>Initialization Error:</strong> ${escapeHtml(error.message)}
                     </div>
                 `;
         }
