@@ -219,12 +219,17 @@ export function isElementVisible(element: Element): boolean {
 /**
  * Waits for container to have specific content
  */
+<<<<<<< Updated upstream
 export async function waitForContainerContent(
+=======
+export function waitForContainerContent(
+>>>>>>> Stashed changes
   container: HTMLElement,
   expectedContent?: string,
   timeout: number = 5000
 ): Promise<boolean> {
   const startTime = Date.now();
+<<<<<<< Updated upstream
   const pollInterval = 50;
   const maxAttempts = Math.ceil(timeout / pollInterval);
   let attempts = 0;
@@ -253,6 +258,36 @@ export async function waitForContainerContent(
   }
 
   return false;
+=======
+  
+  return new Promise((resolve) => {
+    const checkContent = () => {
+      const innerHTML = container.innerHTML;
+      
+      if (expectedContent) {
+        if (innerHTML.includes(expectedContent)) {
+          resolve(true);
+          return;
+        }
+      } else {
+        // Just check if container has any content
+        if (innerHTML && innerHTML.trim() !== '') {
+          resolve(true);
+          return;
+        }
+      }
+      
+      if (Date.now() - startTime > timeout) {
+        resolve(false);
+        return;
+      }
+      
+      setTimeout(checkContent, 50);
+    };
+    
+    checkContent();
+  });
+>>>>>>> Stashed changes
 }
 
 /**
@@ -271,20 +306,31 @@ export function cleanupRealDOM(): void {
   const children = Array.from(document.body.children);
   children.forEach(child => {
     // Only remove elements that look like test elements
+<<<<<<< Updated upstream
     if (
       child.hasAttribute('data-test-container') ||
       child.id?.startsWith('test-') ||
       child.className?.includes('test-')
     ) {
+=======
+    if (child.hasAttribute('data-test-container') || 
+        child.id?.startsWith('test-') ||
+        child.className?.includes('test-')) {
+>>>>>>> Stashed changes
       child.remove();
     }
   });
 
   // Clear any remaining innerHTML that might contain error messages
+<<<<<<< Updated upstream
   if (
     document.body.innerHTML.includes('Setup Required') ||
     document.body.innerHTML.includes('Viewer Creation Failed')
   ) {
+=======
+  if (document.body.innerHTML.includes('Setup Required') || 
+      document.body.innerHTML.includes('Viewer Creation Failed')) {
+>>>>>>> Stashed changes
     document.body.innerHTML = '';
   }
 }

@@ -119,7 +119,11 @@ The project now implements a **dual testing approach** for zero-config functiona
    - All previously hanging tests now passing consistently
    - Uses specialized mock utilities from `tests/utils/`
 
+<<<<<<< Updated upstream
 2. **Integration Tests** (`tests/integration/`) - 22 tests, ~805ms execution
+=======
+2. **Integration Tests** (`tests/integration/`) - 22 tests, ~805ms execution  
+>>>>>>> Stashed changes
    - Real-world scenario validation with minimal mocking
    - End-to-end functionality testing with actual DOM manipulation
    - Performance and memory leak detection
@@ -129,7 +133,11 @@ The project now implements a **dual testing approach** for zero-config functiona
 Replaced problematic global `vi.mock()` with targeted function mocking:
 
 - **`tests/utils/mockFactory.ts`** - Factory function mocking utilities
+<<<<<<< Updated upstream
 - **`tests/utils/mockConfigLoader.ts`** - Configuration loading mocks
+=======
+- **`tests/utils/mockConfigLoader.ts`** - Configuration loading mocks  
+>>>>>>> Stashed changes
 - **`tests/utils/mockAutoDiscovery.ts`** - Document discovery mocks
 - **`tests/utils/mockViewer.ts`** - Viewer instance creation utilities
 - **`tests/utils/index.ts`** - Central export hub preventing circular dependencies
@@ -148,7 +156,11 @@ const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 't
 # Unit tests (fast feedback)
 npm test -- tests/zero-config.test.ts
 
+<<<<<<< Updated upstream
 # Integration tests (comprehensive validation)
+=======
+# Integration tests (comprehensive validation)  
+>>>>>>> Stashed changes
 npx vitest run --config vitest.integration.config.ts tests/integration/zero-config-essential.integration.test.ts
 
 # All integration tests
@@ -158,9 +170,14 @@ npx vitest run --config vitest.integration.config.ts tests/integration/
 #### Documentation
 
 Complete documentation available:
+<<<<<<< Updated upstream
 
 - **`solution-summary.md`** - Executive summary of the complete fix
 - **`testing-strategy.md`** - Comprehensive testing strategy documentation
+=======
+- **`solution-summary.md`** - Executive summary of the complete fix
+- **`testing-strategy.md`** - Comprehensive testing strategy documentation  
+>>>>>>> Stashed changes
 - **`mock-utilities-guide.md`** - Developer guide for using mock utilities
 
 ## TypeScript Development Patterns

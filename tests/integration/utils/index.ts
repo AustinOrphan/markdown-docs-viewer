@@ -27,7 +27,11 @@ export {
   simulateUserInteraction,
   getComputedStyles,
   isElementVisible,
+<<<<<<< Updated upstream
   waitForContainerContent,
+=======
+  waitForContainerContent
+>>>>>>> Stashed changes
 } from './realDOMSetup';
 
 export {
@@ -37,7 +41,11 @@ export {
   waitForErrorUI,
   validateErrorUI,
   simulateErrorRecovery,
+<<<<<<< Updated upstream
   createErrorTestSuite,
+=======
+  createErrorTestSuite
+>>>>>>> Stashed changes
 } from './errorScenarioHelper';
 
 export {
@@ -46,7 +54,11 @@ export {
   validateContainer,
   createTestContainer,
   createMultipleContainers,
+<<<<<<< Updated upstream
   testContainerWithViewerStates,
+=======
+  testContainerWithViewerStates
+>>>>>>> Stashed changes
 } from './containerTestUtils';
 
 export {
@@ -55,7 +67,11 @@ export {
   createConfigScenarios,
   validateConfig,
   parseAndValidateConfig,
+<<<<<<< Updated upstream
   createTempConfigFile,
+=======
+  createTempConfigFile
+>>>>>>> Stashed changes
 } from './configTestUtils';
 
 export {
@@ -65,7 +81,11 @@ export {
   MemoryLeakDetector,
   TestDataGenerator,
   AsyncTestHelpers,
+<<<<<<< Updated upstream
   TestEnvironmentUtils,
+=======
+  TestEnvironmentUtils
+>>>>>>> Stashed changes
 } from './advancedTestUtils';
 
 export {
@@ -77,5 +97,9 @@ export {
   ConfigFileTester,
   ThemeTester,
   PerformanceTester,
+<<<<<<< Updated upstream
   MemoryLeakDetector as ZeroConfigMemoryLeakDetector,
+=======
+  MemoryLeakDetector as ZeroConfigMemoryLeakDetector
+>>>>>>> Stashed changes
 } from './zeroConfigTestUtils';

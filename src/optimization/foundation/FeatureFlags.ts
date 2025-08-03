@@ -10,6 +10,8 @@ export enum OptimizationFlags {
   PROGRESSIVE_DOCUMENT_DISCOVERY = 'progressiveDocumentDiscovery',
   REQUEST_POOLING = 'requestPooling',
   ENHANCED_ERROR_HANDLING = 'enhancedErrorHandling',
+  MANIFEST_DISCOVERY = 'manifestDiscovery',
+  MANIFEST_GENERATION = 'manifestGeneration',
 }
 
 export interface IFeatureFlags {

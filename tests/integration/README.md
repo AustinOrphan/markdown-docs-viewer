@@ -55,7 +55,11 @@ import { setupRealDOM, createRealContainer, ContainerTester } from '../utils';
 const domEnv = setupRealDOM();
 const container = new ContainerTester({
   id: 'test-container',
+<<<<<<< Updated upstream
   styles: { width: '100px', height: '100px' },
+=======
+  styles: { width: '100px', height: '100px' }
+>>>>>>> Stashed changes
 });
 
 // Real DOM operations
@@ -79,7 +83,11 @@ const error = await scenario.trigger();
 const errorElement = await waitForErrorUI(container.element);
 validateErrorUI(errorElement, {
   hasErrorMessage: true,
+<<<<<<< Updated upstream
   errorMessageContains: 'not found',
+=======
+  errorMessageContains: 'not found'
+>>>>>>> Stashed changes
 });
 ```
 
@@ -93,12 +101,19 @@ import { ConfigTester, createConfigScenarios } from '../utils';
 const configTester = new ConfigTester();
 
 // Test configuration from file
+<<<<<<< Updated upstream
 const configPath = await configTester.createConfigFile(
   JSON.stringify({
     title: 'Test Docs',
     documents: [{ path: 'README.md', title: 'Test' }],
   })
 );
+=======
+const configPath = await configTester.createConfigFile(JSON.stringify({
+  title: 'Test Docs',
+  documents: [{ path: 'README.md', title: 'Test' }]
+}));
+>>>>>>> Stashed changes
 
 const result = await configTester.testConfigFromFile(configPath);
 expect(result.isValid).toBe(true);
@@ -123,7 +138,11 @@ const { result, metrics } = await measurer.measure(async () => {
 const leakAnalysis = await leakDetector.detectLeaksInFunction(
   async () => await createAndDestroyViewer(),
   10, // iterations
+<<<<<<< Updated upstream
   5 // threshold MB
+=======
+  5   // threshold MB
+>>>>>>> Stashed changes
 );
 ```
 
@@ -138,7 +157,11 @@ const runner = new ZeroConfigTestRunner();
 
 // Test zero-config initialization
 const result = await runner.initWithTracking({
+<<<<<<< Updated upstream
   container: '#test-container',
+=======
+  container: '#test-container'
+>>>>>>> Stashed changes
 });
 
 if (!result.success) {
@@ -162,6 +185,7 @@ workspace: [
       environment: 'jsdom',
       include: ['tests/integration/**/*.{test,spec}.{js,ts}'],
       testTimeout: 30000, // Longer timeout for integration tests
+<<<<<<< Updated upstream
       isolate: true, // Test isolation
       pool: 'forks', // Separate processes
       coverage: {
@@ -170,6 +194,16 @@ workspace: [
     },
   },
 ];
+=======
+      isolate: true,      // Test isolation
+      pool: 'forks',      // Separate processes
+      coverage: {
+        reportsDirectory: './coverage/integration'
+      }
+    }
+  }
+]
+>>>>>>> Stashed changes
 ```
 
 ### Running Integration Tests
@@ -194,7 +228,16 @@ npm test -- --project integration --watch
 
 ```typescript
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+<<<<<<< Updated upstream
 import { setupRealDOM, ContainerTester, createErrorScenarios, waitForErrorUI } from '../utils';
+=======
+import { 
+  setupRealDOM, 
+  ContainerTester, 
+  createErrorScenarios,
+  waitForErrorUI 
+} from '../utils';
+>>>>>>> Stashed changes
 
 describe('Container Error Integration Tests', () => {
   let domEnv;
@@ -212,7 +255,11 @@ describe('Container Error Integration Tests', () => {
   it('should handle container not found error', async () => {
     const scenario = createErrorScenarios.containerNotFound();
     await scenario.setup();
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     // Test actual error handling
     const error = await scenario.trigger();
     expect(error.message).toContain('not found');
@@ -237,6 +284,7 @@ describe('Config Integration Tests', () => {
   });
 
   it('should validate configuration structure', () => {
+<<<<<<< Updated upstream
     const result = parseAndValidateConfig(
       JSON.stringify({
         title: 'Test Docs',
@@ -244,6 +292,13 @@ describe('Config Integration Tests', () => {
       })
     );
 
+=======
+    const result = parseAndValidateConfig(JSON.stringify({
+      title: 'Test Docs',
+      documents: [{ path: 'test.md', title: 'Test' }]
+    }));
+    
+>>>>>>> Stashed changes
     expect(result.isValid).toBe(true);
     expect(result.parsedConfig?.title).toBe('Test Docs');
   });
@@ -269,7 +324,11 @@ describe('Performance Integration Tests', () => {
       // Initialize viewer
       return await createViewer();
     });
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     expect(metrics.duration).toBeLessThan(5000); // Should init within 5s
   });
 
@@ -281,7 +340,11 @@ describe('Performance Integration Tests', () => {
       },
       5 // iterations
     );
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     expect(analysis.hasLeak).toBe(false);
   });
 });
@@ -337,6 +400,7 @@ afterEach(async () => {
   if (containerTester) {
     containerTester.cleanup();
   }
+<<<<<<< Updated upstream
 
   // Clean up DOM environment
   domEnv.cleanup();
@@ -367,6 +431,38 @@ try {
 
 ### 5. Async Operations
 
+=======
+  
+  // Clean up DOM environment
+  domEnv.cleanup();
+  
+  // Clean up config tester
+  configTester.cleanup();
+});
+```
+
+### 3. Error Handling
+
+```typescript
+try {
+  const result = await testFunction();
+  expect(result.success).toBe(true);
+} catch (error) {
+  // Validate error is expected
+  expect(error.message).toContain('expected error pattern');
+}
+```
+
+### 4. Performance Considerations
+
+- Use appropriate timeouts for integration tests (30s default)
+- Measure performance when relevant
+- Monitor memory usage in long-running tests
+- Use test isolation to prevent interference
+
+### 5. Async Operations
+
+>>>>>>> Stashed changes
 ```typescript
 // Use proper async/await patterns
 const result = await asyncOperation();
@@ -377,10 +473,17 @@ const element = await waitForElement('.target-class', 5000);
 expect(element).toBeDefined();
 
 // Use retry mechanisms for flaky operations
+<<<<<<< Updated upstream
 const finalResult = await withRetry(async () => await flakyOperation(), {
   maxAttempts: 3,
   delay: 1000,
 });
+=======
+const finalResult = await withRetry(
+  async () => await flakyOperation(),
+  { maxAttempts: 3, delay: 1000 }
+);
+>>>>>>> Stashed changes
 ```
 
 ## Debugging Integration Tests
@@ -465,4 +568,8 @@ When adding new integration tests:
 - Check existing test files for usage patterns
 - Review type definitions in `integrationTestTypes.ts`
 - Look at template files for comprehensive examples
+<<<<<<< Updated upstream
 - Monitor console output for debugging information
+=======
+- Monitor console output for debugging information
+>>>>>>> Stashed changes

@@ -33,6 +33,29 @@ export class PerformanceBenchmark {
     this.measurements.push({ label, duration });
     return duration;
   }
+  
+  /**
+   * Start a labeled measurement (returns measurement object)
+   */
+  public startMeasure(label: string): { label: string; end: () => { label: string; duration: number } } {
+    const startTime = performance.now();
+    
+    return {
+      label,
+      end: () => {
+        const duration = performance.now() - startTime;
+        this.measurements.push({ label, duration });
+        return { label, duration };
+      }
+    };
+  }
+  
+  /**
+   * Reset all measurements (alias for clear)
+   */
+  public reset(): void {
+    this.measurements = [];
+  }
 
   /**
    * Get all measurements
@@ -82,6 +105,9 @@ export class RequestCounter {
     duration?: number;
     success?: boolean;
   }> = [];
+  
+  private pageRequests = 0;
+  private apiRequests = 0;
 
   private originalFetch: typeof fetch;
 
@@ -154,6 +180,13 @@ export class RequestCounter {
   public getCount(): number {
     return this.requests.length;
   }
+  
+  /**
+   * Get total request count (alias for getCount - used by integration suite)
+   */
+  public getTotalRequests(): number {
+    return this.pageRequests + this.apiRequests;
+  }
 
   /**
    * Get successful request count
@@ -174,6 +207,29 @@ export class RequestCounter {
    */
   public clear(): void {
     this.requests = [];
+  }
+  
+  /**
+   * Reset all counters (alias for clear - used by integration suite)
+   */
+  public reset(): void {
+    this.requests = [];
+    this.pageRequests = 0;
+    this.apiRequests = 0;
+  }
+  
+  /**
+   * Increment page request counter
+   */
+  public incrementPageRequest(): void {
+    this.pageRequests++;
+  }
+  
+  /**
+   * Increment API request counter
+   */
+  public incrementApiRequest(): void {
+    this.apiRequests++;
   }
 
   /**
