@@ -13,6 +13,7 @@ import { OptimizationErrors } from '../errors';
 export interface GitHubPagesConfig extends AdapterConfig {
   enableHeadToGetTransform?: boolean;
   enableRangeHeaders?: boolean;
+  enableGitHubApiOptimization?: boolean;
   maxContentLength?: number;
   customDomain?: string;
 }
@@ -42,7 +43,7 @@ export class GitHubPagesAdapter extends BaseAdapter {
     const transform: RequestTransform = {
       url,
       method,
-      headers: { ...options?.headers },
+      headers: this.safeHeadersExtract(options?.headers),
       options: { ...options }
     };
 
@@ -457,5 +458,32 @@ export class GitHubPagesAdapter extends BaseAdapter {
         // Not JSON, ignore
       }
     }
+  }
+
+  /**
+   * Safely extract headers ensuring proper typing
+   */
+  private safeHeadersExtract(headers?: HeadersInit): Record<string, string> {
+    const result: Record<string, string> = {};
+    
+    if (!headers) return result;
+    
+    if (headers instanceof Headers) {
+      headers.forEach((value, key) => {
+        result[key] = value;
+      });
+    } else if (Array.isArray(headers)) {
+      headers.forEach(([key, value]) => {
+        result[key] = value;
+      });
+    } else if (typeof headers === 'object') {
+      Object.entries(headers).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          result[key] = value;
+        }
+      });
+    }
+    
+    return result;
   }
 }

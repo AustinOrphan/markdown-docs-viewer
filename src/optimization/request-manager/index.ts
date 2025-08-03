@@ -1,8 +1,23 @@
 // Request Manager with pooling and circuit breaker
-// Week 2 deliverables - Agent A
+// Week 2 deliverables - Agent A - Points to actual implementations
 
-export * from './RequestManager';
-export * from './CircuitBreaker';
-export * from './RequestPool';
+// Export from the managers directory where implementations exist
+export {
+  RequestPoolManager as RequestManager,
+  createRequestPoolManager,
+  getGlobalRequestPoolManager,
+  resetGlobalRequestPoolManager,
+  CircuitBreakerState,
+  type RequestBatch,
+  type CircuitBreakerConfig,
+  type RateLimitConfig,
+  type PoolManagerConfig,
+  type RequestResult,
+  type CircuitBreakerStats
+} from '../managers/request-pool-manager';
 
-// TODO(Agent A): Implement during Week 2
+// Circuit breaker functionality is included in RequestPoolManager
+export { CircuitBreakerState as CircuitBreaker } from '../managers/request-pool-manager';
+
+// Request pool functionality is included in RequestPoolManager
+export { RequestPoolManager as RequestPool } from '../managers/request-pool-manager';

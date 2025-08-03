@@ -313,7 +313,7 @@ export class EnhancedGitHubPagesAdapter extends GitHubPagesAdapter {
     try {
       const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents`;
       const token = this.getGitHubToken();
-      const headers = token ? { 'Authorization': `token ${token}` } : {};
+      const headers: Record<string, string> = token ? { 'Authorization': `token ${token}` } : {};
 
       const response = await fetch(apiUrl, { headers });
       if (response.ok) {

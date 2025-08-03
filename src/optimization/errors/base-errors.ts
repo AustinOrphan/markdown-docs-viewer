@@ -33,6 +33,7 @@ export interface OptimizationErrorContext extends ErrorContext {
   httpStatus?: number;
   httpStatusText?: string;
   environment?: string;
+  adapterType?: string;
   cacheKey?: string;
   retryAttempt?: number;
   userAgent?: string;

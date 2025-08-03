@@ -23,7 +23,7 @@ export {
 
 // Adapter factory for creating appropriate adapter based on environment
 import { EnvironmentInfo, HostingEnvironment } from '../foundation/environment-utils';
-import { BaseAdapter } from './base-adapter';
+import { BaseAdapter, AdapterConfig, RequestTransform } from './base-adapter';
 import { GitHubPagesAdapter } from './github-pages-adapter';
 import { NetlifyAdapter } from './netlify-adapter';
 
@@ -59,8 +59,18 @@ export function createEnvironmentAdapter(environment: EnvironmentInfo): BaseAdap
       });
 
     case HostingEnvironment.LOCAL_DEV:
-      // Local dev usually doesn't need special handling
-      return new BaseAdapter(environment, {
+      // Local dev usually doesn't need special handling - use minimal concrete implementation
+      return new (class extends BaseAdapter {
+        async transformRequest(url: string, options?: RequestInit): Promise<RequestTransform> {
+          return { url, options };
+        }
+        async handleFailedRequest(): Promise<RequestTransform | null> {
+          return null;
+        }
+        getErrorSuggestions(error: Error, url: string): string[] {
+          return this.getCommonSuggestions(error, url);
+        }
+      })(environment, {
         maxRetries: 1,
         timeoutMs: 5000,
         fallbackBehavior: 'error'
@@ -68,8 +78,18 @@ export function createEnvironmentAdapter(environment: EnvironmentInfo): BaseAdap
 
     case HostingEnvironment.UNKNOWN:
     default:
-      // Use conservative settings for unknown environments
-      return new BaseAdapter(environment, {
+      // Use conservative settings for unknown environments - minimal concrete implementation
+      return new (class extends BaseAdapter {
+        async transformRequest(url: string, options?: RequestInit): Promise<RequestTransform> {
+          return { url, options };
+        }
+        async handleFailedRequest(): Promise<RequestTransform | null> {
+          return null;
+        }
+        getErrorSuggestions(error: Error, url: string): string[] {
+          return this.getCommonSuggestions(error, url);
+        }
+      })(environment, {
         maxRetries: 2,
         timeoutMs: 8000,
         fallbackBehavior: 'retry'

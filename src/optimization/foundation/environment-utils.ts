@@ -31,6 +31,7 @@ export interface EnvironmentCapabilities {
  */
 export interface EnvironmentInfo {
   type: HostingEnvironment;
+  platform: 'browser' | 'node' | 'edge' | 'unknown';
   confidence: number; // 0-1 scale
   indicators: string[];
   capabilities: EnvironmentCapabilities;
@@ -354,6 +355,7 @@ export class EnvironmentUtils {
 
     return {
       type: environmentType,
+      platform: typeof window !== 'undefined' ? 'browser' : typeof process !== 'undefined' ? 'node' : 'unknown',
       confidence: bestMatch.confidence,
       indicators: bestMatch.indicators,
       capabilities,

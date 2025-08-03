@@ -14,6 +14,7 @@ export interface NetlifyConfig extends AdapterConfig {
   enableFunctionDetection?: boolean;
   enableRedirectHandling?: boolean;
   enableEdgeCaching?: boolean;
+  enableBuildOptimization?: boolean;
 }
 
 /**
@@ -39,7 +40,7 @@ export class NetlifyAdapter extends BaseAdapter {
     const transform: RequestTransform = {
       url,
       method: options?.method || 'GET',
-      headers: { ...options?.headers },
+      headers: this.safeHeadersExtract(options?.headers),
       options: { ...options }
     };
 
@@ -330,5 +331,32 @@ export class NetlifyAdapter extends BaseAdapter {
         );
       }
     }
+  }
+
+  /**
+   * Safely extract headers ensuring proper typing
+   */
+  private safeHeadersExtract(headers?: HeadersInit): Record<string, string> {
+    const result: Record<string, string> = {};
+    
+    if (!headers) return result;
+    
+    if (headers instanceof Headers) {
+      headers.forEach((value, key) => {
+        result[key] = value;
+      });
+    } else if (Array.isArray(headers)) {
+      headers.forEach(([key, value]) => {
+        result[key] = value;
+      });
+    } else if (typeof headers === 'object') {
+      Object.entries(headers).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          result[key] = value;
+        }
+      });
+    }
+    
+    return result;
   }
 }

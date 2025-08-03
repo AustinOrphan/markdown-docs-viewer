@@ -4,9 +4,9 @@
  * Implements batching, rate limiting, and circuit breaker patterns
  */
 
-import { PerformanceMonitor } from '../foundation/PerformanceMonitor';
-import { RequestMonitor } from '../foundation/RequestMonitor';
-import { DiscoveryCache } from '../foundation/DiscoveryCache';
+import { PerformanceMonitor, getGlobalPerformanceMonitor } from '../foundation/PerformanceMonitor';
+import { RequestMonitor, getGlobalRequestMonitor } from '../foundation/RequestMonitor';
+import { DiscoveryCache, createDiscoveryCache } from '../foundation/DiscoveryCache';
 import { BaseAdapter } from '../adapters/base-adapter';
 import { EnvironmentUtils, EnvironmentInfo } from '../foundation/environment-utils';
 import { FeatureFlags } from '../foundation/FeatureFlags';
@@ -196,9 +196,11 @@ export class RequestPoolManager {
    * Execute a single operation with circuit breaker protection
    */
   async executeWithCircuitBreaker<T>(operation: () => Promise<T>): Promise<T> {
-    const measure = this.performanceMonitor.startMeasure('circuit-breaker-execute');
+    const measureLabel = `circuit-breaker-execute-${Date.now()}-${Math.random()}`; // Use unique label
     
     try {
+      this.performanceMonitor.startMeasure(measureLabel);
+      
       // Check circuit breaker state
       if (this.config.enableCircuitBreaker) {
         await this.checkCircuitBreaker();
@@ -212,7 +214,12 @@ export class RequestPoolManager {
         this.recordSuccess();
       }
 
-      this.performanceMonitor.endMeasure('circuit-breaker-execute');
+      try {
+        this.performanceMonitor.endMeasure(measureLabel);
+      } catch (endMeasureError) {
+        // Ignore endMeasure errors but don't let them break the flow
+      }
+      
       return result;
 
     } catch (error) {
@@ -221,7 +228,11 @@ export class RequestPoolManager {
         this.recordFailure();
       }
 
-      this.performanceMonitor.endMeasure('circuit-breaker-execute');
+      try {
+        this.performanceMonitor.endMeasure(measureLabel);
+      } catch (endMeasureError) {
+        // Ignore endMeasure errors to prevent masking the original error
+      }
       throw error;
     }
   }
@@ -230,25 +241,163 @@ export class RequestPoolManager {
    * Execute rate-limited request
    */
   async rateLimitedRequest(url: string, options?: RequestInit): Promise<Response> {
-    const batch: RequestBatch = {
-      id: `rate-limited-${Date.now()}-${Math.random()}`,
-      url,
-      options,
-      priority: 'normal'
-    };
+    // Add timeout protection
+    const timeoutMs = 5000; // 5 second timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    
+    try {
+      const batch: RequestBatch = {
+        id: `rate-limited-${Date.now()}-${Math.random()}`,
+        url,
+        options: {
+          ...options,
+          signal: options?.signal || controller.signal
+        },
+        priority: 'normal',
+        timeout: timeoutMs
+      };
 
-    const results = await this.batchRequests([batch]);
-    const result = results[0];
+      const results = await this.batchRequests([batch]);
+      const result = results[0];
 
-    if (result.error) {
-      throw result.error;
+      clearTimeout(timeoutId);
+
+      if (result.error) {
+        throw result.error;
+      }
+
+      if (!result.response) {
+        throw new Error('No response received from rate-limited request');
+      }
+
+      return result.response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
     }
+  }
 
-    if (!result.response) {
-      throw new Error('No response received from rate-limited request');
+  /**
+   * Batch existence check for multiple URLs
+   * Used by progressive document discovery
+   */
+  async batchExistenceCheck(
+    urls: string[],
+    options?: { batchSize?: number; maxConcurrency?: number; timeout?: number }
+  ): Promise<{ path: string; exists: boolean; error?: Error }[]> {
+    const measure = this.performanceMonitor.startMeasure('batch-existence-check');
+    
+    try {
+      const { batchSize = 15, maxConcurrency = 3, timeout = 5000 } = options || {};
+      
+      // Create HEAD request batches
+      const batches: RequestBatch[] = urls.map(url => ({
+        id: `existence-check-${Date.now()}-${Math.random()}`,
+        url,
+        options: { method: 'HEAD' },
+        priority: 'normal',
+        timeout
+      }));
+
+      // Process in chunks to respect concurrency limits
+      const results: { path: string; exists: boolean; error?: Error }[] = [];
+      
+      for (let i = 0; i < batches.length; i += batchSize) {
+        const chunk = batches.slice(i, i + batchSize);
+        const chunkResults = await this.batchRequests(chunk);
+        
+        for (const result of chunkResults) {
+          results.push({
+            path: result.batch.url,
+            exists: result.response?.ok || false,
+            error: result.error
+          });
+        }
+        
+        // Respect concurrency by adding delay between chunks
+        if (i + batchSize < batches.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      this.performanceMonitor.endMeasure('batch-existence-check');
+      return results;
+      
+    } catch (error) {
+      this.performanceMonitor.endMeasure('batch-existence-check');
+      throw error;
     }
+  }
 
-    return result.response;
+  /**
+   * Batch content loading for multiple URLs
+   * Used by progressive document discovery
+   */
+  async batchContentLoad(
+    items: Array<{ path: string; processor?: (content: string) => any }>,
+    options?: { batchSize?: number; maxConcurrency?: number; timeout?: number }
+  ): Promise<any[]> {
+    const measure = this.performanceMonitor.startMeasure('batch-content-load');
+    
+    try {
+      const { batchSize = 8, maxConcurrency = 2, timeout = 10000 } = options || {};
+      
+      // Create GET request batches
+      const batches: RequestBatch[] = items.map(item => ({
+        id: `content-load-${Date.now()}-${Math.random()}`,
+        url: item.path,
+        options: { method: 'GET' },
+        priority: 'normal',
+        timeout
+      }));
+
+      // Process in chunks to respect concurrency limits
+      const results: any[] = [];
+      
+      for (let i = 0; i < batches.length; i += batchSize) {
+        const chunk = batches.slice(i, i + batchSize);
+        const chunkResults = await this.batchRequests(chunk);
+        
+        for (let j = 0; j < chunkResults.length; j++) {
+          const result = chunkResults[j];
+          const item = items[i + j];
+          
+          if (result.error || !result.response?.ok) {
+            results.push(null);
+            continue;
+          }
+          
+          try {
+            const content = await result.response.text();
+            
+            // Apply processor if provided
+            if (item.processor) {
+              const processed = item.processor(content);
+              results.push(processed);
+            } else {
+              results.push({ path: item.path, content });
+            }
+            
+          } catch (error) {
+            console.warn(`Failed to process content for ${item.path}:`, error);
+            results.push(null);
+          }
+        }
+        
+        // Respect concurrency by adding delay between chunks
+        if (i + batchSize < batches.length) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+      }
+
+      this.performanceMonitor.endMeasure('batch-content-load');
+      return results;
+      
+    } catch (error) {
+      this.performanceMonitor.endMeasure('batch-content-load');
+      throw error;
+    }
   }
 
   /**
@@ -373,6 +522,7 @@ export class RequestPoolManager {
    */
   private async executeSingleRequest(batch: RequestBatch): Promise<RequestResult> {
     const startTime = performance.now();
+    let timeoutId: NodeJS.Timeout | undefined;
     
     try {
       // Wait for rate limit compliance
@@ -395,10 +545,18 @@ export class RequestPoolManager {
       // Execute request
       this.activeRequests++;
       
+      // Create timeout controller if timeout is specified
+      let timeoutController: AbortController | undefined;
+      
+      if (batch.timeout) {
+        timeoutController = new AbortController();
+        timeoutId = setTimeout(() => timeoutController!.abort(), batch.timeout);
+      }
+      
       const monitoredFetch = this.requestMonitor.monitoredFetch.bind(this.requestMonitor);
       const response = await monitoredFetch(batch.url, {
         ...batch.options,
-        signal: batch.timeout ? AbortSignal.timeout(batch.timeout) : undefined
+        signal: timeoutController?.signal || batch.options?.signal
       });
 
       // Cache successful responses
@@ -428,6 +586,10 @@ export class RequestPoolManager {
       };
 
     } finally {
+      // Always clear timeout and decrement counters
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       this.activeRequests--;
       this.releaseRateLimit();
     }
@@ -513,8 +675,17 @@ export class RequestPoolManager {
     // Refill tokens based on time passed
     this.refillTokens();
 
+    // Add timeout protection to prevent infinite loops
+    const startTime = Date.now();
+    const maxWaitTime = 30000; // 30 seconds max wait
+
     // Wait for available token
     while (this.requestTokens <= 0 || this.activeRequests >= this.config.rateLimit.maxConcurrentRequests) {
+      // Check for timeout
+      if (Date.now() - startTime > maxWaitTime) {
+        throw new Error('Rate limit acquisition timeout');
+      }
+
       await new Promise(resolve => setTimeout(resolve, 10));
       this.refillTokens();
     }
@@ -591,11 +762,6 @@ let globalPoolManager: RequestPoolManager | null = null;
  */
 export function getGlobalRequestPoolManager(): RequestPoolManager {
   if (!globalPoolManager) {
-    // Import foundation components
-    const { createDiscoveryCache } = require('../foundation/DiscoveryCache');
-    const { getGlobalPerformanceMonitor } = require('../foundation/PerformanceMonitor');
-    const { getGlobalRequestMonitor } = require('../foundation/RequestMonitor');
-
     globalPoolManager = new RequestPoolManager(
       getGlobalPerformanceMonitor(),
       getGlobalRequestMonitor(),
