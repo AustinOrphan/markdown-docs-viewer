@@ -426,7 +426,9 @@ export class ProductionMonitoring {
       }
       
       // Update initialization performance
-      const initReport = perfStats.reports?.find(r => r.label === 'zero-config-init');
+      const perfMonitor = getGlobalPerformanceMonitor();
+      const reports = perfMonitor.getReport();
+      const initReport = reports.find(r => r.label === 'zero-config-init');
       if (initReport) {
         this.metrics.initializationPerformance.totalTime = initReport.duration;
       }

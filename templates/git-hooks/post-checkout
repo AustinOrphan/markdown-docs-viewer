@@ -1,0 +1,248 @@
+#!/bin/bash
+# Git post-checkout hook for markdown-docs-viewer submodule
+# Automatically builds the viewer when submodule is updated
+
+set -euo pipefail
+
+# Hook configuration
+HOOK_VERSION="1.0.0"
+LOG_PREFIX="[markdown-docs-viewer]"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Print colored log message
+log() {
+    local level="$1"
+    local message="$2"
+    local timestamp
+    timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    
+    case "$level" in
+        error)
+            echo -e "${RED}${LOG_PREFIX} [$timestamp] ERROR: ${message}${NC}" >&2
+            ;;
+        warn)
+            echo -e "${YELLOW}${LOG_PREFIX} [$timestamp] WARN: ${message}${NC}" >&2
+            ;;
+        info)
+            echo -e "${BLUE}${LOG_PREFIX} [$timestamp] INFO: ${message}${NC}"
+            ;;
+        success)
+            echo -e "${GREEN}${LOG_PREFIX} [$timestamp] SUCCESS: ${message}${NC}"
+            ;;
+        *)
+            echo "${LOG_PREFIX} [$timestamp] ${message}"
+            ;;
+    esac
+}
+
+# Check if we're in a submodule
+is_submodule() {
+    [[ -f ".git" ]] && grep -q "gitdir:" ".git"
+}
+
+# Check if this is a submodule update
+is_submodule_update() {
+    local prev_head="$1"
+    local new_head="$2"
+    local branch_checkout="$3"
+    
+    # If branch_checkout is 1, this is a branch checkout, not a submodule update
+    [[ "$branch_checkout" -eq 0 ]] && [[ "$prev_head" != "$new_head" ]]
+}
+
+# Check if Node.js and npm are available
+check_build_dependencies() {
+    if ! command -v node >/dev/null 2>&1; then
+        log "error" "Node.js not found. Please install Node.js 18+ to build the viewer."
+        return 1
+    fi
+    
+    if ! command -v npm >/dev/null 2>&1; then
+        log "error" "npm not found. Please install npm to build the viewer."
+        return 1
+    fi
+    
+    # Check Node.js version
+    local node_version
+    node_version="$(node --version | sed 's/v//')"
+    local major_version
+    major_version="$(echo "$node_version" | cut -d. -f1)"
+    
+    if [[ "$major_version" -lt 18 ]]; then
+        log "warn" "Node.js $node_version detected. Version 18+ recommended for building."
+    else
+        log "info" "Node.js $node_version detected"
+    fi
+    
+    return 0
+}
+
+# Check if package.json exists and has build script
+check_build_script() {
+    if [[ ! -f "package.json" ]]; then
+        log "error" "package.json not found. This doesn't appear to be a markdown-docs-viewer repository."
+        return 1
+    fi
+    
+    # Check if build script exists
+    if ! grep -q '"build"' package.json; then
+        log "warn" "Build script not found in package.json"
+        return 1
+    fi
+    
+    log "info" "Build script found in package.json"
+    return 0
+}
+
+# Run the build process
+run_build() {
+    local build_timeout=300  # 5 minutes
+    
+    log "info" "Starting build process..."
+    
+    # Install dependencies if node_modules doesn't exist or is outdated
+    if [[ ! -d "node_modules" ]] || [[ "package.json" -nt "node_modules" ]]; then
+        log "info" "Installing dependencies..."
+        if timeout "$build_timeout" npm ci --no-audit --no-fund --prefer-offline; then
+            log "success" "Dependencies installed successfully"
+        elif timeout "$build_timeout" npm install --no-audit --no-fund; then
+            log "success" "Dependencies installed successfully (fallback to npm install)"
+        else
+            log "error" "Failed to install dependencies"
+            return 1
+        fi
+    else
+        log "info" "Dependencies up to date, skipping installation"
+    fi
+    
+    # Run build
+    log "info" "Building markdown-docs-viewer..."
+    if timeout "$build_timeout" npm run build; then
+        log "success" "Build completed successfully"
+        
+        # Validate build output
+        if [[ -f "dist/zero-config.umd.cjs" ]]; then
+            local file_size
+            file_size="$(stat -f%z "dist/zero-config.umd.cjs" 2>/dev/null || stat -c%s "dist/zero-config.umd.cjs" 2>/dev/null || echo "0")"
+            log "success" "Build output validated (zero-config.umd.cjs: ${file_size} bytes)"
+        else
+            log "warn" "Build completed but zero-config.umd.cjs not found"
+        fi
+        
+        return 0
+    else
+        log "error" "Build process failed or timed out"
+        return 1
+    fi
+}
+
+# Display recovery instructions
+show_recovery_instructions() {
+    cat << EOF
+
+${LOG_PREFIX} Build failed! Recovery options:
+
+1. Manual build:
+   cd $(pwd)
+   npm ci
+   npm run build
+
+2. Check build requirements:
+   - Node.js 18+ installed
+   - npm available  
+   - Internet connection for dependencies
+
+3. Skip automatic builds:
+   rm .git/hooks/post-checkout
+
+4. Get help:
+   - Check project README: https://github.com/AustinOrphan/markdown-docs-viewer
+   - Report issues: https://github.com/AustinOrphan/markdown-docs-viewer/issues
+
+EOF
+}
+
+# Main hook logic
+main() {
+    local prev_head="$1"
+    local new_head="$2"
+    local branch_checkout="$3"
+    
+    # Only run in submodules
+    if ! is_submodule; then
+        exit 0
+    fi
+    
+    # Only run on submodule updates, not branch checkouts
+    if ! is_submodule_update "$prev_head" "$new_head" "$branch_checkout"; then
+        exit 0
+    fi
+    
+    log "info" "Submodule update detected (${prev_head:0:7} -> ${new_head:0:7})"
+    
+    # Check if this appears to be markdown-docs-viewer
+    if [[ ! -f "package.json" ]] || ! grep -q "markdown-docs-viewer" package.json; then
+        log "info" "Not a markdown-docs-viewer submodule, skipping build"
+        exit 0
+    fi
+    
+    # Skip build in CI environments by default
+    if [[ -n "${CI:-}" ]] || [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+        log "info" "CI environment detected, skipping automatic build"
+        log "info" "Run 'npm run build' manually if needed"
+        exit 0
+    fi
+    
+    # Check for skip flag
+    if [[ -f ".skip-auto-build" ]]; then
+        log "info" "Auto-build disabled (.skip-auto-build file found)"
+        log "info" "Run 'npm run build' manually when ready"
+        exit 0
+    fi
+    
+    # Check build dependencies
+    if ! check_build_dependencies; then
+        show_recovery_instructions
+        exit 1
+    fi
+    
+    # Check build script
+    if ! check_build_script; then
+        show_recovery_instructions
+        exit 1
+    fi
+    
+    # Run the build
+    if run_build; then
+        log "success" "Markdown Docs Viewer built successfully!"
+        log "info" "Ready to use. Check dist/ directory for build output."
+    else
+        log "error" "Build failed. See recovery instructions below."
+        show_recovery_instructions
+        exit 1
+    fi
+}
+
+# Handle script interruption
+handle_interrupt() {
+    log "warn" "Build interrupted by user"
+    exit 1
+}
+
+# Trap interrupt signals
+trap handle_interrupt SIGINT SIGTERM
+
+# Validate hook arguments
+if [[ $# -ne 3 ]]; then
+    log "error" "Invalid hook arguments. Expected: post-checkout <prev-head> <new-head> <branch-checkout>"
+    exit 1
+fi
+
+# Execute main logic
+main "$@"

@@ -408,6 +408,14 @@ export class RequestMonitor {
   }
 
   /**
+   * Get monitored fetch function for compatibility
+   * Provides direct access to the monitored fetch functionality
+   */
+  get fetch() {
+    return this.monitoredFetch.bind(this);
+  }
+
+  /**
    * Utility function for delays (used in retry logic)
    */
   private delay(ms: number): Promise<void> {

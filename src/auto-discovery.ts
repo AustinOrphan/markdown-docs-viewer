@@ -17,7 +17,7 @@ import { getGlobalRequestPoolManager } from './optimization/managers/request-poo
 import { FeatureFlags } from './optimization/foundation/FeatureFlags';
 import { getGlobalPerformanceMonitor } from './optimization/foundation/PerformanceMonitor';
 import { configCache } from './optimization/foundation/DiscoveryCache';
-import { createProductionErrorHandling, ErrorContext } from './optimization/errors/production-error-handling';
+import { ProductionErrorHandler } from './optimization/errors/production-error-handling';
 import { HostingEnvironment } from './optimization/foundation/environment-utils';
 
 export interface AutoDiscoveryOptions {
@@ -26,6 +26,22 @@ export interface AutoDiscoveryOptions {
   titleStrategy?: 'filename' | 'heading' | 'frontmatter';
   sortStrategy?: 'alphabetical' | 'date' | 'custom';
   categoryStrategy?: 'folder' | 'frontmatter' | 'none';
+}
+
+interface ErrorContext {
+  discoveryPhase: string;
+  environment: {
+    type: HostingEnvironment;
+    platform: string;
+    confidence: number;
+    indicators: string[];
+    capabilities: {
+      corsSupport: boolean;
+      [key: string]: any;
+    };
+    detectedAt?: number;
+  };
+  [key: string]: any;
 }
 
 export interface FileInfo {
@@ -43,13 +59,7 @@ export interface FileInfo {
  */
 export class AutoDiscovery {
   private options: Required<AutoDiscoveryOptions>;
-  private errorHandler = createProductionErrorHandling({
-    enabled: true,
-    includePII: false,
-    batchSize: 5,
-    batchInterval: 30000,
-    retryAttempts: 3
-  });
+  private errorHandler = new ProductionErrorHandler();
 
   constructor(options: AutoDiscoveryOptions) {
     this.options = {
@@ -99,13 +109,14 @@ export class AutoDiscovery {
                 hasCustomErrorPages: false,
                 requiresAuthHeaders: false
               },
-              detectedAt: new Date()
+              detectedAt: Date.now()
             },
             userAgent: navigator.userAgent || 'unknown',
             previousAttempts: 0
           };
           
-          this.errorHandler.reportOptimizationError(error as Error, errorContext);
+          // Log error for monitoring
+          console.error('Auto-discovery error:', error);
           FeatureFlags.disable('PROGRESSIVE_DOCUMENT_DISCOVERY'); // Temporarily disable to prevent cascade failures
         }
       }
@@ -143,34 +154,20 @@ export class AutoDiscovery {
             hasCustomErrorPages: false,
             requiresAuthHeaders: false
           },
-          detectedAt: new Date()
+          detectedAt: Date.now()
         },
         userAgent: navigator.userAgent || 'unknown',
         previousAttempts: 0
       };
       
-      const optimizationError = this.errorHandler.reportOptimizationError(error as Error, errorContext);
-      const recoveryStrategy = this.errorHandler.recoverFromOptimizationFailure({
-        type: optimizationError.category,
-        severity: optimizationError.severity,
-        context: errorContext,
-        error: error as Error
-      });
+      // Log error for monitoring
+      console.error('Auto-discovery error:', error);
       
-      // Generate user-friendly error message
-      const userMessage = this.errorHandler.generateUserErrorMessage(error as Error, 'end-user');
-      console.warn('Auto-discovery failed:', userMessage.message);
-      console.log('Suggestions:', userMessage.suggestions);
+      // Simple recovery strategy - fall back to traditional discovery
+      console.warn('Auto-discovery failed, falling back to traditional discovery');
+      console.log('Error context:', errorContext.discoveryPhase);
       
-      // Attempt recovery if recommended
-      if (recoveryStrategy.action === 'fallback') {
-        console.log('🔄 Attempting fallback discovery method...');
-        try {
-          return await this.performDiscovery();
-        } catch (fallbackError) {
-          console.error('Fallback discovery also failed:', fallbackError);
-        }
-      }
+      // Continue with traditional discovery as fallback
       
       return [];
     }

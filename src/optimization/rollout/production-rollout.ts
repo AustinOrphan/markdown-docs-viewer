@@ -606,7 +606,7 @@ export class ProductionRollout {
     }
 
     // Check performance regression
-    const avgDuration = performanceReport.averageDuration;
+    const avgDuration = this.performanceMonitor.getStats().averageDuration;
     const baseline = 2000; // Baseline initialization time
     const regression = ((avgDuration - baseline) / baseline) * 100;
     if (regression > this.rollbackTriggers.performanceRegressionThreshold) {

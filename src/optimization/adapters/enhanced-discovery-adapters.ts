@@ -217,7 +217,8 @@ export class EnhancedGitHubPagesAdapter extends GitHubPagesAdapter {
       path.startsWith('/') ? path : `${basePath}/${path}`
     ));
 
-    return [...new Set(optimizedPaths)]; // Remove duplicates
+    // Remove duplicates using Array.from
+    return Array.from(new Set(optimizedPaths));
   }
 
   // Private helper methods for GitHub Pages optimization

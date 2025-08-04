@@ -110,6 +110,7 @@ export class EnvironmentDetector implements IEnvironmentDetector {
     if (bestMatch.confidence >= 0.7) {
       return {
         type: bestMatch.type,
+        platform: typeof window !== 'undefined' ? 'browser' : typeof process !== 'undefined' ? 'node' : 'unknown',
         confidence: bestMatch.confidence,
         indicators: bestMatch.indicators,
         capabilities: this.enhanceCapabilities(bestMatch.type, bestMatch.indicators),
@@ -122,6 +123,7 @@ export class EnvironmentDetector implements IEnvironmentDetector {
     
     return {
       type: scoredResult.type,
+      platform: typeof window !== 'undefined' ? 'browser' : typeof process !== 'undefined' ? 'node' : 'unknown',
       confidence: scoredResult.confidence,
       indicators: scoredResult.indicators,
       capabilities: this.enhanceCapabilities(scoredResult.type, scoredResult.indicators),

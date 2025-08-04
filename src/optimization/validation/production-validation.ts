@@ -219,8 +219,8 @@ export interface TestResults {
  * Production validation implementation
  */
 export class ProductionValidation {
-  private performanceBenchmark: PerformanceBenchmark;
-  private requestCounter: RequestCounter;
+  private performanceBenchmark: ProductionPerformanceBenchmark;
+  private requestCounter: ProductionRequestCounter;
   private productionAnalytics = getGlobalProductionAnalytics();
   
   // Predefined test sites for validation
@@ -473,7 +473,7 @@ export class ProductionValidation {
     
     // Set up environment mock based on site type
     const environmentMock = this.createEnvironmentInfo(site.type);
-    environmentMock.start();
+    // Environment info is ready to use (no start method needed)
     
     try {
       // Reset counters
@@ -484,7 +484,7 @@ export class ProductionValidation {
       this.enableOptimizations();
       
       // Simulate site discovery and initialization
-      const measurement = this.performanceBenchmark.startMeasure('site-validation');
+      const measurement = this.performanceBenchmark.measure('site-validation');
       
       // Simulate document discovery based on site characteristics
       const discoveredDocuments = await this.simulateDocumentDiscovery(site);
@@ -494,7 +494,7 @@ export class ProductionValidation {
       // Collect metrics
       const metrics = {
         requestCount: this.requestCounter.getTotalRequests(),
-        initializationTime: result.duration,
+        initializationTime: result,
         errorRate: this.calculateErrorRate(),
         cacheHitRate: this.calculateCacheHitRate(),
         userSatisfaction: this.estimateUserSatisfaction(site),
@@ -524,7 +524,7 @@ export class ProductionValidation {
       };
       
     } finally {
-      environmentMock.stop();
+      // Environment info cleanup (no stop method needed)
     }
   }
 
@@ -534,14 +534,14 @@ export class ProductionValidation {
   private createEnvironmentInfo(type: TestSite['type']): EnvironmentInfo {
     switch (type) {
       case 'github-pages':
-        return new EnvironmentInfo('github-pages' | 'netlify' | 'vercel' | 'custom'.GITHUB_PAGES);
+        return createGitHubPagesEnvironment();
       case 'netlify':
-        return new EnvironmentInfo('github-pages' | 'netlify' | 'vercel' | 'custom'.NETLIFY);
+        return createNetlifyEnvironment();
       case 'vercel':
-        return new EnvironmentInfo('github-pages' | 'netlify' | 'vercel' | 'custom'.VERCEL);
+        return createVercelEnvironment();
       case 'custom':
       default:
-        return new EnvironmentInfo('github-pages' | 'netlify' | 'vercel' | 'custom'.LOCAL_DEV);
+        return createProductionEnvironment();
     }
   }
 
@@ -581,7 +581,7 @@ export class ProductionValidation {
     
     // Track requests
     for (let i = 0; i < requestCount; i++) {
-      this.requestCounter.incrementPageRequest();
+      this.requestCounter.increment();
       // Simulate request delay
       await new Promise(resolve => setTimeout(resolve, 50));
     }
@@ -685,7 +685,7 @@ export class ProductionValidation {
   /**
    * Measure baseline performance
    */
-  private async measureBaselinePerformance(): Promise<PerformanceMetrics> {
+  private async measureBaselinePerformance(): Promise<ValidationPerformanceMetrics> {
     // Disable all optimizations
     FeatureFlags.reset();
     
@@ -703,7 +703,7 @@ export class ProductionValidation {
   /**
    * Measure current performance
    */
-  private async measureCurrentPerformance(): Promise<PerformanceMetrics> {
+  private async measureCurrentPerformance(): Promise<ValidationPerformanceMetrics> {
     // Enable optimizations
     this.enableOptimizations();
     

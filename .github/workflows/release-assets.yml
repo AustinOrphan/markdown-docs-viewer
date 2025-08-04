@@ -1,0 +1,294 @@
+name: Create Release Assets
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name (e.g. v1.2.3)'
+        required: true
+        type: string
+      upload_to_release:
+        description: 'Upload assets to existing release'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  build-release-assets:
+    name: Build and Upload Release Assets
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required to upload release assets
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full git history for proper version info
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          npm ci --no-audit --no-fund
+          # Install archiver for ZIP creation (required by build script)
+          npm install --no-save archiver
+          
+      - name: Run tests
+        run: npm test
+        
+      - name: Build library
+        run: npm run build
+        
+      - name: Validate build output
+        run: |
+          echo "Checking required build files..."
+          ls -la dist/
+          test -f dist/zero-config.umd.cjs || (echo "Missing zero-config.umd.cjs" && exit 1)
+          test -f dist/zero-config.es.js || (echo "Missing zero-config.es.js" && exit 1)
+          test -f dist/index.d.ts || (echo "Missing index.d.ts" && exit 1)
+          echo "✓ All required build files present"
+          
+      - name: Build release assets
+        run: |
+          echo "Building release assets..."
+          node scripts/build-release-assets.js
+          
+      - name: Validate release assets
+        run: |
+          echo "Validating release assets..."
+          ls -la distribution/
+          
+          # Check ZIP files exist
+          test -f distribution/markdown-docs-viewer-*.zip || (echo "Missing ZIP files" && exit 1)
+          
+          # Check individual assets
+          test -f distribution/zero-config.umd.cjs || (echo "Missing zero-config.umd.cjs" && exit 1)
+          test -f distribution/index.d.ts || (echo "Missing index.d.ts" && exit 1)
+          test -f distribution/release-manifest.json || (echo "Missing release manifest" && exit 1)
+          
+          # Check file sizes (basic validation)
+          SIZE=$(stat -c%s distribution/zero-config.umd.cjs)
+          if [ $SIZE -lt 1000 ]; then
+            echo "zero-config.umd.cjs appears too small ($SIZE bytes)"
+            exit 1
+          fi
+          
+          echo "✓ Release asset validation passed"
+          echo "Asset sizes:"
+          du -h distribution/*
+          
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          VERSION="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          
+          # Get commit info
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          COMMIT_DATE=$(git log -1 --format=%cI)
+          
+          # Read manifest for asset info
+          MANIFEST_INFO=""
+          if [ -f distribution/release-manifest.json ]; then
+            MANIFEST_INFO=$(node -e "
+              const manifest = require('./distribution/release-manifest.json');
+              console.log('**Assets:**');
+              Object.entries(manifest.assets).forEach(([name, info]) => {
+                const sizeMB = (info.size / 1024 / 1024).toFixed(2);
+                console.log(\`- \${name} (\${sizeMB}MB)\`);
+              });
+            ")
+          fi
+          
+          # Create release notes
+          cat << EOF > release-notes.md
+          ## 🚀 Markdown Docs Viewer ${VERSION}
+          
+          **Quick Start Options:**
+          
+          ### 📦 Pre-built Assets (Recommended)
+          Download the complete or minimal ZIP file below and extract to get started immediately.
+          
+          ### 🔧 One-Command Installation
+          \`\`\`bash
+          curl -fsSL https://raw.githubusercontent.com/AustinOrphan/markdown-docs-viewer/main/install.sh | bash
+          \`\`\`
+          
+          ### 📁 Individual Files
+          Download individual files below for custom integration.
+          
+          ---
+          
+          **Build Information:**
+          - Version: ${VERSION}
+          - Commit: ${COMMIT_HASH}
+          - Built: ${COMMIT_DATE}
+          - Node.js: ${{ env.NODE_VERSION }}
+          
+          ${MANIFEST_INFO}
+          
+          **Requirements:**
+          - Modern web browser (Chrome 88+, Firefox 85+, Safari 14+)
+          - Local web server for loading markdown files
+          - No Node.js or build tools required for end users
+          
+          **What's Included:**
+          - 📄 **Complete ZIP**: Everything needed including examples and documentation
+          - ⚡ **Minimal ZIP**: Just the viewer files for existing projects
+          - 🔧 **Installation Script**: One-command setup tool
+          - 📘 **Individual Files**: Core library files for custom integration
+          
+          For full documentation and examples, visit the [GitHub repository](https://github.com/AustinOrphan/markdown-docs-viewer).
+          EOF
+          
+          echo "release_notes_file=release-notes.md" >> $GITHUB_OUTPUT
+          
+      - name: Upload assets to release (automatic)
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.upload_to_release == 'true')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name || github.event.inputs.tag_name }}
+          body_path: release-notes.md
+          files: |
+            distribution/markdown-docs-viewer-*.zip
+            distribution/zero-config.umd.cjs
+            distribution/zero-config.es.js
+            distribution/index.d.ts
+            distribution/release-manifest.json
+            install.sh
+          fail_on_unmatched_files: true
+          
+      - name: Create artifact (manual workflow)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.upload_to_release != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-${{ github.event.inputs.tag_name }}
+          path: |
+            distribution/
+            install.sh
+            release-notes.md
+          retention-days: 30
+          
+      - name: Generate summary
+        run: |
+          echo "## 📦 Release Asset Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ github.event.release.tag_name || github.event.inputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Generated Assets:**" >> $GITHUB_STEP_SUMMARY
+          
+          cd distribution
+          for file in *.zip *.cjs *.js *.d.ts *.json; do
+            if [ -f "$file" ]; then
+              SIZE=$(du -h "$file" | cut -f1)
+              echo "- \`$file\` ($SIZE)" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Installation Methods:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Download ZIP files from release assets" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔧 One-command: \`curl -fsSL https://raw.githubusercontent.com/AustinOrphan/markdown-docs-viewer/main/install.sh | bash\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 📁 Individual files available in release assets" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Cleanup
+        if: always()
+        run: |
+          # Clean up temporary files but preserve distribution/ for potential debugging
+          rm -f release-notes.md
+          echo "Cleanup completed"
+
+  # Validation job to ensure release assets work correctly
+  validate-assets:
+    name: Validate Release Assets
+    runs-on: ubuntu-latest
+    needs: build-release-assets
+    if: always() && needs.build-release-assets.result == 'success'
+    
+    steps:
+      - name: Download release artifacts
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.upload_to_release != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets-${{ github.event.inputs.tag_name }}
+          path: ./validation
+          
+      - name: Download release assets (from release)
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.upload_to_release == 'true')
+        run: |
+          # Download assets from the release
+          TAG_NAME="${{ github.event.release.tag_name || github.event.inputs.tag_name }}"
+          
+          # Create validation directory
+          mkdir -p validation/distribution
+          
+          # Download key assets for validation
+          curl -L -o validation/distribution/release-manifest.json \
+            "https://github.com/AustinOrphan/markdown-docs-viewer/releases/download/${TAG_NAME}/release-manifest.json"
+            
+          curl -L -o validation/distribution/zero-config.umd.cjs \
+            "https://github.com/AustinOrphan/markdown-docs-viewer/releases/download/${TAG_NAME}/zero-config.umd.cjs"
+            
+      - name: Validate release manifest
+        run: |
+          echo "Validating release manifest..."
+          cd validation
+          
+          # Check manifest exists and is valid JSON
+          if [ ! -f distribution/release-manifest.json ]; then
+            echo "❌ Release manifest not found"
+            exit 1
+          fi
+          
+          # Basic JSON validation and structure check
+          node -e "
+            const manifest = require('./distribution/release-manifest.json');
+            
+            // Check required fields
+            const required = ['version', 'name', 'assets', 'checksums'];
+            for (const field of required) {
+              if (!manifest[field]) {
+                console.error(\`❌ Missing required field: \${field}\`);
+                process.exit(1);
+              }
+            }
+            
+            console.log('✅ Release manifest validation passed');
+            console.log(\`   Version: \${manifest.version}\`);
+            console.log(\`   Assets: \${Object.keys(manifest.assets).length}\`);
+            console.log(\`   Checksums: \${Object.keys(manifest.checksums).length}\`);
+          "
+          
+      - name: Basic functionality test
+        run: |
+          echo "Testing basic functionality..."
+          cd validation
+          
+          # Test that the UMD bundle is valid JavaScript
+          if [ -f distribution/zero-config.umd.cjs ]; then
+            node -c distribution/zero-config.umd.cjs
+            echo "✅ UMD bundle syntax validation passed"
+          else
+            echo "⚠️ UMD bundle not available for testing"
+          fi
+          
+      - name: Generate validation summary
+        run: |
+          echo "## 🔍 Asset Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ✅ Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "**Validated Components:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Release manifest structure" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ UMD bundle syntax" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Asset availability" >> $GITHUB_STEP_SUMMARY

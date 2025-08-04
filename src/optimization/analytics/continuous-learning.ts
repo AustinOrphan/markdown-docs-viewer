@@ -5,7 +5,18 @@
 
 import { Document } from '../../types';
 import { DiscoveryResult } from '../algorithms/progressive-document-discovery';
-import { OptimizationError } from '../errors/production-error-handling';
+// Local interface for optimization errors - avoiding import issues
+interface OptimizationError {
+  type: string;
+  message: string;
+  category: string;
+  timestamp: number;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  context: {
+    userAgent: string;
+    [key: string]: any;
+  };
+}
 import { ErrorAnalyticsData } from './error-analytics';
 
 /**

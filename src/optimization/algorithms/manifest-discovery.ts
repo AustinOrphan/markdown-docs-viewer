@@ -187,11 +187,11 @@ export class ManifestDiscovery {
         },
       });
 
-      if (!response.success || !response.data.ok) {
+      if (!response.ok || false) {
         return null;
       }
 
-      const data = await response.data.json();
+      const data = await response.json();
       
       if (location === ManifestLocation.PACKAGE_JSON) {
         // Extract from package.json
@@ -264,10 +264,10 @@ export class ManifestDiscovery {
           const url = `${basePath.replace(/\/+$/, '')}/${doc.path}`;
           const response = await this.requestMonitor.fetch(url, {
             method: 'HEAD',
-            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
           });
 
-          if (!response.success) {
+          if (!response.ok) {
             result.stalePaths.push(doc.path);
             result.confidence *= 0.8;
           }

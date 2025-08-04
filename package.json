@@ -25,7 +25,7 @@
     "build": "vite build && npm run build:zero-config",
     "build:zero-config": "vite build --config vite.zero-config.ts",
     "preview": "vite preview",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && npm run dist:release",
     "test": "vitest run",
     "test:unit": "vitest run --coverage",
     "test:ci": "npm run test:unit",
@@ -51,7 +51,10 @@
     "docs:watch": "nodemon --watch src --watch docs --ext ts,md --exec 'npm run docs:generate'",
     "docs:mermaid": "node scripts/convert-mermaid.js",
     "docs:mermaid:dry-run": "node scripts/convert-mermaid.js --dry-run",
-    "dist:create": "npm run build && node scripts/create-distribution.js"
+    "dist:create": "npm run build && node scripts/create-distribution.js",
+    "dist:release": "npm run build && node scripts/build-release-assets.js",
+    "dist:release:validate": "npm run dist:release && node -e \"console.log('Validating release assets...'); const fs = require('fs'); const path = 'distribution'; if (!fs.existsSync(path)) throw new Error('Distribution directory not found'); const files = fs.readdirSync(path); console.log('Assets created:', files.join(', ')); console.log('✓ Release assets validation passed');\"",
+    "release:prepare": "npm run test && npm run lint:check && npm run typecheck && npm run dist:release"
   },
   "keywords": [
     "markdown",

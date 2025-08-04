@@ -3,7 +3,37 @@
  * Comprehensive error tracking, analysis, and automatic reporting for production optimization
  */
 
-import { OptimizationError, ErrorContext, ErrorPattern } from '../errors/production-error-handling';
+// Local interfaces for error analytics - avoiding import issues
+interface OptimizationError {
+  type: string;
+  message: string;
+  category: string;
+  timestamp: number;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  retryable?: boolean;
+  sessionId?: string;
+  context: {
+    userAgent: string;
+    [key: string]: any;
+  };
+}
+
+interface ErrorContext {
+  userAgent: string;
+  requestUrl?: string;
+  [key: string]: any;
+}
+
+interface ErrorPattern {
+  type: string;
+  frequency: number;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  signature?: string;
+  category?: string;
+  commonCauses?: any[];
+  preventionStrategies?: any[];
+  affectedEnvironments?: any[];
+}
 
 /**
  * Error analytics configuration
@@ -394,7 +424,8 @@ export class ErrorAnalyticsSystem {
   private categorizeBySeverity(errors: OptimizationError[]): Record<string, number> {
     const severities: Record<string, number> = {};
     for (const error of errors) {
-      severities[error.severity] = (severities[error.severity] || 0) + 1;
+      const severity = error.severity || 'low';
+      severities[severity] = (severities[severity] || 0) + 1;
     }
     return severities;
   }
@@ -402,7 +433,7 @@ export class ErrorAnalyticsSystem {
   private categorizeByEnvironment(errors: OptimizationError[]): Record<string, number> {
     const environments: Record<string, number> = {};
     for (const error of errors) {
-      const env = `${error.context.environment.platform}_${error.context.environment.browser}`;
+      const env = `${error.context.environment?.platform || 'unknown'}_${error.context.environment?.browser || 'unknown'}`;
       environments[env] = (environments[env] || 0) + 1;
     }
     return environments;
@@ -426,8 +457,10 @@ export class ErrorAnalyticsSystem {
       .map(([key, frequency]) => {
         const [category, severity] = key.split('_');
         return {
+          type: category || 'unknown',
           signature: key,
           frequency,
+          severity: (severity as 'low' | 'medium' | 'high' | 'critical') || 'medium',
           category,
           commonCauses: [],
           preventionStrategies: [],
@@ -451,13 +484,15 @@ export class ErrorAnalyticsSystem {
     let impactScore = 10; // Start with perfect score
     
     for (const error of errors) {
-      const severityImpact = {
-        minor: 0.1,
-        major: 0.5,
+      const severityImpact: Record<string, number> = {
+        low: 0.1,
+        medium: 0.3,
+        high: 0.5,
         critical: 1.0
       };
       
-      impactScore -= severityImpact[error.severity];
+      const severity = error.severity || 'low';
+      impactScore -= severityImpact[severity] || 0.1;
     }
     
     return Math.max(0, impactScore);

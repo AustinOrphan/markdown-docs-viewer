@@ -373,6 +373,20 @@ export class EnvironmentUtils {
     
     return `env-${hostname}-${btoa(userAgent).slice(0, 10)}`;
   }
+
+  /**
+   * Detect environment using the comprehensive detection system
+   */
+  static detectEnvironment(): EnvironmentInfo {
+    // Use the comprehensive environment detector if available
+    try {
+      const { EnvironmentDetector } = require('../environment/EnvironmentDetector');
+      return EnvironmentDetector.detect();
+    } catch {
+      // Fallback to quick detection if modules not available
+      return this.quickDetect();
+    }
+  }
 }
 
 /**

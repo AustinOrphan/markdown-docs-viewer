@@ -435,7 +435,7 @@ export class ServerlessIntegration {
     const cachedDocuments: Document[] = [];
 
     for (const doc of documents) {
-      const cacheKey = this.generateCacheKey(doc.file);
+      const cacheKey = this.generateCacheKey(doc.file || doc.id);
       const cached = this.edgeCache.get(cacheKey);
 
       if (cached && Date.now() < cached.timestamp + cached.ttl) {
@@ -468,7 +468,7 @@ export class ServerlessIntegration {
       serverless: {
         platform: this.config.platform,
         optimized: true,
-        cached: this.edgeCache.has(this.generateCacheKey(doc.file)),
+        cached: this.edgeCache.has(this.generateCacheKey(doc.file || doc.id)),
         region: this.config.region
       },
       // Optimize content for serverless delivery

@@ -170,7 +170,7 @@ export function analyzeABTestResults(
   );
   
   const zScore = Math.abs(treatmentConversion - controlConversion) / standardError;
-  const pValue = 2 * (1 - this.normalCDF(Math.abs(zScore)));
+  const pValue = 2 * (1 - normalCDF(Math.abs(zScore)));
   
   const significanceLevel = 0.05;
   const confidence = (1 - pValue) * 100;

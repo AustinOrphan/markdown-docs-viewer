@@ -1,0 +1,100 @@
+{
+  "name": "markdown-docs-viewer-cli",
+  "version": "0.1.0",
+  "description": "Command-line interface for Markdown Docs Viewer - create beautiful documentation sites with zero configuration",
+  "main": "dist/cli.js",
+  "bin": {
+    "mdv": "dist/cli.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts --fix",
+    "lint:check": "eslint src --ext .ts",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "postinstall": "echo 'Thank you for installing markdown-docs-viewer-cli! Run \"mdv --help\" to get started.'"
+  },
+  "keywords": [
+    "markdown",
+    "documentation",
+    "docs",
+    "cli",
+    "static-site",
+    "zero-config",
+    "viewer"
+  ],
+  "author": "Austin Orphan <austin@austinorphan.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/AustinOrphan/markdown-docs-viewer#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/AustinOrphan/markdown-docs-viewer/issues"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.1.1",
+    "inquirer": "^12.0.0",
+    "semver": "^7.6.3",
+    "node-fetch": "^3.3.2",
+    "tar": "^7.4.3",
+    "which": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/semver": "^7.5.8",
+    "@types/tar": "^6.1.13",
+    "@types/which": "^3.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "preferGlobal": true,
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}

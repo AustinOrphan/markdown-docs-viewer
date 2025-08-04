@@ -108,7 +108,7 @@ export class PredictiveDocumentLoading {
     // Use ML pattern recognition for predictions
     const currentResults: DiscoveryResult[] = [{
       document: currentDoc,
-      path: currentDoc.file,
+      path: currentDoc.file || currentDoc.id,
       source: 'smart-start',
       confidence: 1.0,
       requestOrder: 0
@@ -145,10 +145,10 @@ export class PredictiveDocumentLoading {
 
     // Add to prefetch queue
     for (const doc of predictions) {
-      if (!this.prefetchQueue.has(doc.file) && !this.prefetchCache.has(doc.file)) {
+      if (!this.prefetchQueue.has(doc.file || doc.id) && !this.prefetchCache.has(doc.file || doc.id)) {
         const predictionResult = this.findPredictionForDocument(doc);
         
-        this.prefetchQueue.set(doc.file, {
+        this.prefetchQueue.set(doc.file || doc.id, {
           document: doc,
           priority,
           prediction: predictionResult,
@@ -186,7 +186,7 @@ export class PredictiveDocumentLoading {
    */
   recordNavigation(from: Document, to: Document, dwellTime: number): void {
     const history: NavigationHistory = {
-      path: [from.file, to.file],
+      path: [from.file || from.id, to.file || to.id],
       timestamps: [Date.now() - dwellTime, Date.now()],
       dwellTimes: [dwellTime],
       source: 'click' // Could be enhanced to detect actual source
@@ -412,7 +412,7 @@ export class PredictiveDocumentLoading {
   private findPredictionForDocument(doc: Document): PredictionResult {
     // Find the prediction that led to this document
     return {
-      path: doc.file,
+      path: doc.file || doc.id,
       probability: 0.8,
       reasoning: 'Navigation pattern prediction',
       source: 'ml_model',
@@ -427,8 +427,8 @@ export class PredictiveDocumentLoading {
 
   private predictNextSequential(currentDoc: Document): PredictionResult | null {
     // Predict next document in sequence
-    const match = currentDoc.file.match(/(\d+)/);
-    if (match) {
+    const match = currentDoc.file?.match(/(\d+)/);
+    if (match && currentDoc.file) {
       const nextNum = parseInt(match[1]) + 1;
       const nextPath = currentDoc.file.replace(match[1], String(nextNum).padStart(match[1].length, '0'));
       
@@ -468,7 +468,7 @@ export class PredictiveDocumentLoading {
   private async loadDocument(document: Document): Promise<Document | null> {
     // Would perform actual document loading
     try {
-      const response = await fetch(document.file);
+      const response = await fetch(document.file || document.id);
       if (response.ok) {
         const content = await response.text();
         return { ...document, content };

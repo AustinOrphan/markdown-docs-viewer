@@ -145,20 +145,20 @@ export class RequestPoolManager {
         recoveryTimeout: 5000,
         successThreshold: 2,
         timeWindow: 30000,
-        ...config.circuitBreaker
+        ...(config.circuitBreaker || {})
       },
       rateLimit: {
         maxRequestsPerSecond: 10,
         maxConcurrentRequests: 5,
         burstSize: 15,
         windowSize: 1000,
-        ...config.rateLimit
+        ...(config.rateLimit || {})
       },
       ...config
     };
 
     // Initialize rate limiting tokens
-    this.requestTokens = this.config.rateLimit.burstSize;
+    this.requestTokens = this.config.rateLimit?.burstSize || 15;
   }
 
   /**
@@ -447,7 +447,7 @@ export class RequestPoolManager {
     this.lastSuccessTime = 0;
     this.stateChangeCount = 0;
     this.failureWindow = [];
-    this.requestTokens = this.config.rateLimit.burstSize;
+    this.requestTokens = this.config.rateLimit?.burstSize || 15;
     this.activeRequests = 0;
     this.requestQueue = [];
     this.pendingBatches.clear();
@@ -608,7 +608,7 @@ export class RequestPoolManager {
 
       case CircuitBreakerState.OPEN:
         // Check if recovery timeout has passed
-        if (now - this.lastFailureTime >= this.config.circuitBreaker.recoveryTimeout) {
+        if (now - this.lastFailureTime >= (this.config.circuitBreaker?.recoveryTimeout || 5000)) {
           this.circuitState = CircuitBreakerState.HALF_OPEN;
           this.stateChangeCount++;
           console.log('Circuit breaker moving to HALF_OPEN state');
@@ -631,7 +631,7 @@ export class RequestPoolManager {
     this.lastSuccessTime = Date.now();
 
     if (this.circuitState === CircuitBreakerState.HALF_OPEN) {
-      if (this.successes >= this.config.circuitBreaker.successThreshold) {
+      if (this.successes >= (this.config.circuitBreaker?.successThreshold || 2)) {
         this.circuitState = CircuitBreakerState.CLOSED;
         this.failures = 0;
         this.failureWindow = [];
@@ -653,11 +653,11 @@ export class RequestPoolManager {
     this.failureWindow.push(now);
     
     // Remove old failures outside time window
-    const windowStart = now - this.config.circuitBreaker.timeWindow;
+    const windowStart = now - (this.config.circuitBreaker?.timeWindow || 30000);
     this.failureWindow = this.failureWindow.filter(time => time > windowStart);
 
     // Check if we should open the circuit
-    if (this.failureWindow.length >= this.config.circuitBreaker.failureThreshold) {
+    if (this.failureWindow.length >= (this.config.circuitBreaker?.failureThreshold || 3)) {
       this.circuitState = CircuitBreakerState.OPEN;
       this.stateChangeCount++;
       console.log(`Circuit breaker OPEN - ${this.failures} failures in time window`);
@@ -680,7 +680,7 @@ export class RequestPoolManager {
     const maxWaitTime = 30000; // 30 seconds max wait
 
     // Wait for available token
-    while (this.requestTokens <= 0 || this.activeRequests >= this.config.rateLimit.maxConcurrentRequests) {
+    while (this.requestTokens <= 0 || this.activeRequests >= (this.config.rateLimit?.maxConcurrentRequests || 5)) {
       // Check for timeout
       if (Date.now() - startTime > maxWaitTime) {
         throw new Error('Rate limit acquisition timeout');
@@ -706,11 +706,11 @@ export class RequestPoolManager {
   private refillTokens(): void {
     const now = Date.now();
     const timePassed = now - this.lastTokenRefill;
-    const tokensToAdd = Math.floor((timePassed / 1000) * this.config.rateLimit.maxRequestsPerSecond);
+    const tokensToAdd = Math.floor((timePassed / 1000) * (this.config.rateLimit?.maxRequestsPerSecond || 10));
 
     if (tokensToAdd > 0) {
       this.requestTokens = Math.min(
-        this.config.rateLimit.burstSize,
+        (this.config.rateLimit?.burstSize || 15),
         this.requestTokens + tokensToAdd
       );
       this.lastTokenRefill = now;
@@ -721,7 +721,7 @@ export class RequestPoolManager {
    * Wait for rate limit compliance
    */
   private async waitForRateLimit(): Promise<void> {
-    const delay = 1000 / this.config.rateLimit.maxRequestsPerSecond;
+    const delay = 1000 / (this.config.rateLimit?.maxRequestsPerSecond || 10);
     await new Promise(resolve => setTimeout(resolve, delay));
   }
 

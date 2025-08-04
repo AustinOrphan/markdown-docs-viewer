@@ -79,8 +79,8 @@ export class ContentAwareDiscovery {
   private analytics: ContentAwareAnalytics;
   private generatorCache = new Map<string, DocGeneratorInfo>();
   private contentTypeCache = new Map<string, ContentType>();
-  private binaryPatterns: RegExp[];
-  private textPatterns: RegExp[];
+  private binaryPatterns!: RegExp[];
+  private textPatterns!: RegExp[];
 
   constructor() {
     this.analytics = {
@@ -245,7 +245,7 @@ export class ContentAwareDiscovery {
    */
   filterDocuments(documents: Document[]): Document[] {
     return documents.filter(doc => {
-      const analysis = this.analyzeContentSync(doc.file);
+      const analysis = this.analyzeContentSync(doc.file || doc.id);
       return analysis.shouldInclude;
     });
   }
@@ -257,7 +257,7 @@ export class ContentAwareDiscovery {
     return documents
       .map(doc => ({
         document: doc,
-        analysis: this.analyzeContentSync(doc.file)
+        analysis: this.analyzeContentSync(doc.file || doc.id)
       }))
       .sort((a, b) => b.analysis.priority - a.analysis.priority)
       .map(item => item.document);

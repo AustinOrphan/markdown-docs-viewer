@@ -7,6 +7,13 @@ export interface Document {
   category?: string;
   tags?: string[];
   order?: number;
+  // Additional properties for GitHub Pages integration
+  frontmatter?: Record<string, any>;
+  date?: string;
+  author?: string;
+  permalink?: string;
+  layout?: string;
+  collection?: string;
 }
 
 export interface DocumentSource {

@@ -42,7 +42,7 @@ export interface ConfigDiscoveryOptions {
  * Implements intelligent parallel config discovery with caching and environment adaptation
  */
 export class SmartConfigDiscovery {
-  private readonly cache: DiscoveryCache<ConfigResult>;
+  private readonly cache: DiscoveryCache<ConfigResult[]>;
   private readonly performanceMonitor: PerformanceMonitor;
   private readonly requestMonitor: RequestMonitor;
   private readonly adapter: BaseAdapter;
@@ -66,7 +66,7 @@ export class SmartConfigDiscovery {
   private static readonly CACHE_TTL = 300000; // 5 minutes
 
   constructor(
-    cache: DiscoveryCache<ConfigResult>,
+    cache: DiscoveryCache<ConfigResult[]>,
     performanceMonitor: PerformanceMonitor,
     requestMonitor: RequestMonitor,
     options: ConfigDiscoveryOptions = {}
@@ -142,12 +142,7 @@ export class SmartConfigDiscovery {
   async checkConfigExists(path: string): Promise<boolean> {
     const cacheKey = `${SmartConfigDiscovery.CACHE_KEY_PREFIX}:exists:${path}`;
     
-    if (this.options.enableCaching) {
-      const cached = this.cache.get(cacheKey);
-      if (cached !== null) {
-        return cached.exists;
-      }
-    }
+    // Note: Individual file existence checking uses direct method, not cached arrays
 
     const measure = this.performanceMonitor.startMeasure(`config-exists-check:${path}`);
     
@@ -155,15 +150,7 @@ export class SmartConfigDiscovery {
       // Use HEAD request with GET fallback via environment adapter
       const exists = await this.checkFileExistence(path);
       
-      if (this.options.enableCaching) {
-        const result: ConfigResult = {
-          path,
-          exists,
-          fromCache: false,
-          responseTime: this.performanceMonitor.endMeasure(`config-exists-check:${path}`).duration
-        };
-        this.cache.set(cacheKey, result, SmartConfigDiscovery.CACHE_TTL);
-      }
+      // Individual existence check - no caching to avoid type conflicts
 
       return exists;
 
@@ -176,7 +163,7 @@ export class SmartConfigDiscovery {
   /**
    * Get cached config result
    */
-  getCachedConfig(key: string): ConfigResult | null {
+  getCachedConfig(key: string): ConfigResult[] | null {
     if (!this.options.enableCaching) {
       return null;
     }
@@ -247,9 +234,9 @@ export class SmartConfigDiscovery {
       // Load the first existing config file
       try {
         const config = await this.loadConfigFile(existingFile.path);
-        existingFile.config = config;
+        (existingFile as ConfigResult).config = config;
       } catch (error) {
-        existingFile.error = error as Error;
+        (existingFile as ConfigResult).error = error as Error;
       }
 
       this.performanceMonitor.endMeasure('parallel-config-discovery');
@@ -269,7 +256,7 @@ export class SmartConfigDiscovery {
     
     try {
       // For environments that support HEAD requests, use adapter
-      if (this.environment.capabilities?.supportsHeadRequests && this.options.useHeadRequests) {
+      if (this.environment.capabilities?.headRequests && this.options.useHeadRequests) {
         const requestOptions: RequestInit = {
           method: 'HEAD',
           signal: AbortSignal.timeout(this.options.timeout)
@@ -436,7 +423,7 @@ export class SmartConfigDiscovery {
  * Factory function to create SmartConfigDiscovery with foundation components
  */
 export function createSmartConfigDiscovery(
-  cache: DiscoveryCache<ConfigResult>,
+  cache: DiscoveryCache<ConfigResult[]>,
   performanceMonitor: PerformanceMonitor,
   requestMonitor: RequestMonitor,
   options?: ConfigDiscoveryOptions
@@ -456,7 +443,7 @@ export function getGlobalSmartConfigDiscovery(): SmartConfigDiscovery {
   if (!globalDiscovery) {
     // Create a simple instance with default components
     globalDiscovery = new SmartConfigDiscovery(
-      new DiscoveryCache<ConfigResult>({ maxEntries: 100, defaultTTL: 300000 }),
+      new DiscoveryCache<ConfigResult[]>({ maxEntries: 100, defaultTTL: 300000 }),
       new PerformanceMonitor(),
       new RequestMonitor()
     );

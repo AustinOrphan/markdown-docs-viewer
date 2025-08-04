@@ -193,7 +193,7 @@ export class ProductionAnalytics {
     const requestReduction = Math.max(0, ((baseline - current) / baseline) * 100);
 
     // Calculate initialization times using performance stats
-    const performanceStats = performanceMonitor.getStats();
+    const performanceStats = this.performanceMonitor.getStats();
     const avgDuration = performanceStats.averageDuration || 1200;
     
     // Estimate percentiles from average (simplified approach)
@@ -490,7 +490,7 @@ export class ProductionAnalytics {
     
     return {
       avgRequestCount: requestStats.totalRequests || 8,
-      avgInitializationTime: performanceReport.averageDuration || 1200,
+      avgInitializationTime: this.performanceMonitor.getStats().averageDuration || 1200,
       avgErrorRate: requestStats.totalRequests > 0 
         ? (requestStats.failedRequests / requestStats.totalRequests) * 100 
         : 0,

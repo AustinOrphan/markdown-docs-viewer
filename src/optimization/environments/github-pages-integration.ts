@@ -118,7 +118,6 @@ export class GitHubPagesIntegration {
   constructor(config: GitHubPagesConfig) {
     this.config = {
       branch: 'main',
-      apiVersion: '2022-11-28',
       ...config
     };
 
@@ -346,7 +345,7 @@ export class GitHubPagesIntegration {
       
       // Process Jekyll post naming convention and frontmatter
       for (const post of posts) {
-        const postDate = this.extractDateFromPostFilename(post.file);
+        const postDate = post.file ? this.extractDateFromPostFilename(post.file) : null;
         if (postDate) {
           post.date = postDate;
           post.category = post.category || 'posts';
