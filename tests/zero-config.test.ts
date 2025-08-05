@@ -16,45 +16,17 @@ import {
 } from '../src/zero-config';
 import { themes } from '../src/themes';
 
-<<<<<<< Updated upstream
 // Import ConfigLoader mock utilities
 import { setupConfigMock, DEFAULT_TEST_CONFIG } from './utils/mockConfigLoader';
-=======
-// Import real factory functions and our mock utility
-import * as factory from '../src/factory';
-// Import ConfigLoader mock utilities  
-import {
-  setupConfigMock,
-  DEFAULT_TEST_CONFIG,
-  createMockConfigLoaderWithError
-} from './utils/mockConfigLoader';
->>>>>>> Stashed changes
 // Import AutoDiscovery mock utilities
 import {
   setupAutoDiscoveryMockWithOptions,
   DEFAULT_TEST_DOCUMENTS,
-<<<<<<< Updated upstream
 } from './utils/mockAutoDiscovery';
 // Import Viewer mock utilities
 import { createMockViewer } from './utils/mockViewer';
 // Import Factory mock utilities
 import { mockCreateViewerSuccess, mockCreateViewerError } from './utils/mockFactory';
-=======
-  mockDiscoveryScenarios
-} from './utils/mockAutoDiscovery';
-// Import Viewer mock utilities  
-import {
-  createMockViewer,
-  createErrorViewer,
-  mockViewerScenarios
-} from './utils/mockViewer';
-// Import Factory mock utilities
-import {
-  mockCreateViewerSuccess,
-  mockCreateViewerError,
-  createMockViewer as createFactoryMockViewer
-} from './utils/mockFactory';
->>>>>>> Stashed changes
 // Removed unused mock utility imports - to be replaced by agents B-E
 // import {
 //   mockCreateViewerSuccess,
@@ -67,18 +39,11 @@ describe('Zero Config API', () => {
   let mockViewer: any;
   let mockContainer: HTMLElement;
   let mockCreateViewerFn: any;
-  
+
   // Import the actual classes for targeted mocking
   let ConfigLoader: any;
   let AutoDiscovery: any;
 
-<<<<<<< Updated upstream
-  // Import the actual classes for targeted mocking
-  let ConfigLoader: any;
-  let AutoDiscovery: any;
-
-=======
->>>>>>> Stashed changes
   beforeEach(async () => {
     // Setup DOM
     document.body.innerHTML = '<div id="docs"></div>';
@@ -93,7 +58,6 @@ describe('Zero Config API', () => {
     // Setup default config mock
     const configMock = setupConfigMock();
     vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(configMock.loadConfigMock);
-<<<<<<< Updated upstream
     vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
       configMock.mockInstance.toDocumentationConfig
     );
@@ -103,22 +67,13 @@ describe('Zero Config API', () => {
     vi.spyOn(ConfigLoader.prototype, 'getConfigPath').mockImplementation(
       configMock.mockInstance.getConfigPath
     );
-=======
-    vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(configMock.mockInstance.toDocumentationConfig);
-    vi.spyOn(ConfigLoader.prototype, 'getConfig').mockImplementation(configMock.mockInstance.getConfig);
-    vi.spyOn(ConfigLoader.prototype, 'getConfigPath').mockImplementation(configMock.mockInstance.getConfigPath);
->>>>>>> Stashed changes
     vi.spyOn(ConfigLoader, 'generateSampleConfig').mockReturnValue('sample config');
 
     // Setup default auto discovery mock
     const discoveryMock = setupAutoDiscoveryMockWithOptions({ documents: DEFAULT_TEST_DOCUMENTS });
-<<<<<<< Updated upstream
     vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(
       discoveryMock.discoverFilesMock
     );
-=======
-    vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(discoveryMock.discoverFilesMock);
->>>>>>> Stashed changes
 
     // Mock viewer (for reference in tests)
     mockViewer = createMockViewer();
@@ -195,17 +150,10 @@ describe('Zero Config API', () => {
         };
 
         const viewer = await init(options);
-<<<<<<< Updated upstream
 
         // Restore original querySelector
         document.querySelector = originalQuerySelector;
 
-=======
-        
-        // Restore original querySelector
-        document.querySelector = originalQuerySelector;
-        
->>>>>>> Stashed changes
         expect(viewer).toBeDefined();
         expect(viewer.destroy).toBeDefined();
         expect(viewer.setTheme).toBeDefined();
@@ -247,15 +195,15 @@ describe('Zero Config API', () => {
           container: mockContainer,
           theme: themes.github.dark,
           source: { type: 'content', documents: [] },
-<<<<<<< Updated upstream
         },
-=======
-        }
->>>>>>> Stashed changes
       });
-      
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(themeConfigMock.loadConfigMock);
-      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(themeConfigMock.mockInstance.toDocumentationConfig);
+
+      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+        themeConfigMock.loadConfigMock
+      );
+      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
+        themeConfigMock.mockInstance.toDocumentationConfig
+      );
 
       vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
         themeConfigMock.loadConfigMock
@@ -279,9 +227,13 @@ describe('Zero Config API', () => {
       const invalidThemeConfigMock = setupConfigMock({
         config: { ...DEFAULT_TEST_CONFIG, theme: 'nonexistent-theme' },
       });
-      
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(invalidThemeConfigMock.loadConfigMock);
-      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(invalidThemeConfigMock.mockInstance.toDocumentationConfig);
+
+      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
+        invalidThemeConfigMock.loadConfigMock
+      );
+      vi.spyOn(ConfigLoader.prototype, 'toDocumentationConfig').mockImplementation(
+        invalidThemeConfigMock.mockInstance.toDocumentationConfig
+      );
 
       vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
         invalidThemeConfigMock.loadConfigMock
@@ -297,13 +249,9 @@ describe('Zero Config API', () => {
     it('should warn when no documents found', async () => {
       // Setup empty discovery scenario
       const emptyDiscoveryMock = setupAutoDiscoveryMockWithOptions({ documents: [] });
-<<<<<<< Updated upstream
       vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(
         emptyDiscoveryMock.discoverFilesMock
       );
-=======
-      vi.spyOn(AutoDiscovery.prototype, 'discoverFiles').mockImplementation(emptyDiscoveryMock.discoverFilesMock);
->>>>>>> Stashed changes
 
       await init();
 
@@ -312,17 +260,11 @@ describe('Zero Config API', () => {
 
     it('should handle initialization errors gracefully', async () => {
       const error = new Error('Test error');
-<<<<<<< Updated upstream
       // Setup config error scenario
       const errorConfigMock = setupConfigMock({ loadError: error });
       vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
         errorConfigMock.loadConfigMock
       );
-=======
-      // Setup config error scenario  
-      const errorConfigMock = setupConfigMock({ loadError: error });
-      vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(errorConfigMock.loadConfigMock);
->>>>>>> Stashed changes
 
       const viewer = await init();
       expect(viewer).toBeDefined();
@@ -353,11 +295,7 @@ describe('Zero Config API', () => {
         // Error viewer should be created and error should be displayed
         expect(mockContainer.innerHTML).toContain('Viewer Creation Failed');
         expect(mockContainer.innerHTML).toContain('Test error');
-<<<<<<< Updated upstream
 
-=======
-        
->>>>>>> Stashed changes
         return viewer;
       })();
 
@@ -391,11 +329,7 @@ describe('Zero Config API', () => {
 
         // Error should be displayed in custom container
         expect(customContainer.innerHTML).toContain('Viewer Creation Failed');
-<<<<<<< Updated upstream
 
-=======
-        
->>>>>>> Stashed changes
         return viewer;
       })();
 
@@ -542,11 +476,7 @@ describe('Zero Config API', () => {
       });
 
       const testPromise = (async () => {
-<<<<<<< Updated upstream
         // Mock querySelector to return null
-=======
-        // Mock querySelector to return null  
->>>>>>> Stashed changes
         const originalQuerySelector = document.querySelector;
         const originalGetElementById = document.getElementById;
         vi.spyOn(document, 'querySelector').mockReturnValue(null);
@@ -555,32 +485,20 @@ describe('Zero Config API', () => {
         const error = new Error('Test error');
         // Setup config error scenario
         const errorConfigMock = setupConfigMock({ loadError: error });
-<<<<<<< Updated upstream
         vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(
           errorConfigMock.loadConfigMock
         );
-=======
-        vi.spyOn(ConfigLoader.prototype, 'loadConfig').mockImplementation(errorConfigMock.loadConfigMock);
->>>>>>> Stashed changes
 
         const options: ZeroConfigOptions = {
           container: '#nonexistent',
         };
 
         const viewer = await init(options);
-<<<<<<< Updated upstream
 
         // Restore original methods
         document.querySelector = originalQuerySelector;
         document.getElementById = originalGetElementById;
 
-=======
-        
-        // Restore original methods
-        document.querySelector = originalQuerySelector;
-        document.getElementById = originalGetElementById;
-        
->>>>>>> Stashed changes
         expect(viewer).toBeDefined();
         expect(viewer.destroy).toBeDefined();
         expect(viewer.setTheme).toBeDefined();
@@ -589,11 +507,7 @@ describe('Zero Config API', () => {
           expect.stringContaining('Failed to initialize'),
           expect.any(Error)
         );
-<<<<<<< Updated upstream
 
-=======
-        
->>>>>>> Stashed changes
         return viewer;
       })();
 

@@ -4,11 +4,7 @@
  * This replaces the global factory mocks that were causing hanging tests
  */
 
-<<<<<<< Updated upstream
 import { vi } from 'vitest';
-=======
-import { vi, type MockedFunction } from 'vitest';
->>>>>>> Stashed changes
 import type { DocumentationConfig, Document, ViewerState, Theme } from '../../src/types';
 import type { MarkdownDocsViewer } from '../../src/viewer';
 import * as factory from '../../src/factory';
@@ -51,11 +47,7 @@ export function createMockViewer(options: MockViewerOptions = {}): MarkdownDocsV
   const mockViewer = {
     // Core properties
     container,
-<<<<<<< Updated upstream
 
-=======
-    
->>>>>>> Stashed changes
     // Core lifecycle methods
     destroy: vi.fn().mockImplementation(() => {
       if (destroySucceeds) {
@@ -90,7 +82,7 @@ export function createMockViewer(options: MockViewerOptions = {}): MarkdownDocsV
       return Promise.resolve(doc.content || '');
     }),
 
-    // Search methods  
+    // Search methods
     search: vi.fn().mockResolvedValue([]),
 
     // State methods
@@ -175,7 +167,6 @@ export function createErrorViewer(error: Error, container?: HTMLElement): Markdo
  * Comprehensive factory mock setup with different scenarios
  * This provides a one-stop utility for different test scenarios
  */
-<<<<<<< Updated upstream
 export function setupFactoryMock(
   config: {
     /** Whether createViewer should succeed */
@@ -188,18 +179,6 @@ export function setupFactoryMock(
     container?: HTMLElement;
   } = {}
 ) {
-=======
-export function setupFactoryMock(config: {
-  /** Whether createViewer should succeed */
-  shouldSucceed?: boolean;
-  /** Custom viewer to return on success */
-  viewer?: MarkdownDocsViewer;
-  /** Error to throw on failure */
-  error?: Error;
-  /** Container for error display */
-  container?: HTMLElement;
-} = {}) {
->>>>>>> Stashed changes
   const { shouldSucceed = true, viewer, error, container } = config;
 
   if (shouldSucceed) {
@@ -208,11 +187,7 @@ export function setupFactoryMock(config: {
     const testError = error || new Error('Mock viewer creation error');
     // For error scenarios, we still need to create an error viewer that displays the error
     if (container) {
-<<<<<<< Updated upstream
       createErrorViewer(testError, container);
-=======
-      const errorViewer = createErrorViewer(testError, container);
->>>>>>> Stashed changes
       // Mock createViewer to throw error, but zero-config will create fallback viewer
       const spy = mockCreateViewerError(testError);
       return spy;
@@ -234,13 +209,9 @@ export interface AdvancedMockViewerOptions extends MockViewerOptions {
 /**
  * Creates a mock viewer with configurable failure modes for comprehensive testing
  */
-<<<<<<< Updated upstream
 export function createAdvancedMockViewer(
   options: AdvancedMockViewerOptions = {}
 ): MarkdownDocsViewer {
-=======
-export function createAdvancedMockViewer(options: AdvancedMockViewerOptions = {}): MarkdownDocsViewer {
->>>>>>> Stashed changes
   const {
     shouldDestroyFail = false,
     shouldRefreshFail = false,
@@ -256,16 +227,7 @@ export function createAdvancedMockViewer(options: AdvancedMockViewerOptions = {}
       throw new Error('Destroy failed');
     });
   }
-  
-  if (shouldRefreshFail) {
-    baseViewer.refresh = vi.fn().mockRejectedValue(new Error('Refresh failed'));
-  }
-  
-  if (shouldSearchFail) {
-    baseViewer.search = vi.fn().mockRejectedValue(new Error('Search failed'));
-  }
 
-<<<<<<< Updated upstream
   if (shouldRefreshFail) {
     baseViewer.refresh = vi.fn().mockRejectedValue(new Error('Refresh failed'));
   }
@@ -274,8 +236,6 @@ export function createAdvancedMockViewer(options: AdvancedMockViewerOptions = {}
     baseViewer.search = vi.fn().mockRejectedValue(new Error('Search failed'));
   }
 
-=======
->>>>>>> Stashed changes
   return baseViewer;
 }
 

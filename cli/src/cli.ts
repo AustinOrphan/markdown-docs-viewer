@@ -29,7 +29,9 @@ const program = new Command();
 // Configure main program
 program
   .name('mdv')
-  .description('Markdown Docs Viewer CLI - Create beautiful documentation sites with zero configuration')
+  .description(
+    'Markdown Docs Viewer CLI - Create beautiful documentation sites with zero configuration'
+  )
   .version(packageJson.version, '-v, --version', 'Display version number')
   .helpOption('-h, --help', 'Display help information')
   .configureHelp({
@@ -52,7 +54,11 @@ program
   .argument('[name]', 'Project name (default: current directory name)')
   .option('-d, --dir <directory>', 'Target directory (default: current directory)')
   .option('-t, --template <template>', 'Project template (default, minimal, blog, api)', 'default')
-  .option('--theme <theme>', 'Initial theme (default-light, default-dark, minimal, modern)', 'default-light')
+  .option(
+    '--theme <theme>',
+    'Initial theme (default-light, default-dark, minimal, modern)',
+    'default-light'
+  )
   .option('--git', 'Initialize git repository')
   .option('--install', 'Run npm install after setup')
   .option('-y, --yes', 'Skip interactive prompts and use defaults')
@@ -105,7 +111,9 @@ program
   .action(doctorCommand);
 
 // Add examples section to help
-program.addHelpText('after', `
+program.addHelpText(
+  'after',
+  `
 ${chalk.bold('Examples:')}
   ${chalk.cyan('mdv init my-docs')}                 Create new project
   ${chalk.cyan('mdv init --template api')}         Create API documentation project
@@ -123,12 +131,13 @@ ${chalk.bold('Resources:')}
   Homepage: ${chalk.blue('https://github.com/AustinOrphan/markdown-docs-viewer')}
   Issues:   ${chalk.blue('https://github.com/AustinOrphan/markdown-docs-viewer/issues')}
   Docs:     ${chalk.blue('https://github.com/AustinOrphan/markdown-docs-viewer#readme')}
-`);
+`
+);
 
 // Handle global options
-program.hook('preAction', (thisCommand, actionCommand) => {
+program.hook('preAction', (thisCommand, _actionCommand) => {
   const opts = thisCommand.opts();
-  
+
   // Set global state for verbose/quiet
   if (opts.verbose) {
     process.env.MDV_VERBOSE = 'true';
@@ -146,7 +155,7 @@ program.hook('preAction', (thisCommand, actionCommand) => {
 });
 
 // Handle unknown commands
-program.on('command:*', (operands) => {
+program.on('command:*', operands => {
   console.error(chalk.red(`Unknown command: ${operands[0]}`));
   console.log();
   console.log('Available commands:');
@@ -164,21 +173,26 @@ program.on('option:version', () => {
   console.log(`${chalk.bold('Markdown Docs Viewer CLI')} v${packageJson.version}`);
   console.log(`Node.js ${process.version}`);
   console.log(`Platform: ${process.platform} ${process.arch}`);
-  
+
   // Try to get viewer library version if available
   try {
-    const viewerPackagePath = join(process.cwd(), 'node_modules', 'markdown-docs-viewer', 'package.json');
+    const viewerPackagePath = join(
+      process.cwd(),
+      'node_modules',
+      'markdown-docs-viewer',
+      'package.json'
+    );
     const viewerPackage = JSON.parse(readFileSync(viewerPackagePath, 'utf8'));
     console.log(`Viewer Library: v${viewerPackage.version}`);
   } catch {
     // Viewer not installed locally, that's fine
   }
-  
+
   process.exit(0);
 });
 
 // Error handling
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error(chalk.red('Uncaught exception:'), error.message);
   if (process.env.MDV_VERBOSE === 'true') {
     console.error(error.stack);
@@ -209,19 +223,22 @@ process.on('SIGTERM', () => {
 async function main() {
   try {
     // Show banner for certain commands if not quiet
-    const showBanner = process.argv.includes('init') || 
-                      process.argv.includes('serve') || 
-                      (process.argv.length === 2 && !process.env.MDV_QUIET);
-                      
+    const showBanner =
+      process.argv.includes('init') ||
+      process.argv.includes('serve') ||
+      (process.argv.length === 2 && !process.env.MDV_QUIET);
+
     if (showBanner && !process.env.MDV_QUIET) {
-      console.log(chalk.cyan(`
+      console.log(
+        chalk.cyan(`
 ┌─────────────────────────────────────────────────────────────┐
 │  ${chalk.bold('Markdown Docs Viewer CLI')} v${packageJson.version}                      │
 │  ${chalk.gray('Transform markdown into beautiful documentation sites')}    │
 └─────────────────────────────────────────────────────────────┘
-`));
+`)
+      );
     }
-    
+
     await program.parseAsync(process.argv);
   } catch (error) {
     console.error(chalk.red('Command failed:'), error instanceof Error ? error.message : error);
