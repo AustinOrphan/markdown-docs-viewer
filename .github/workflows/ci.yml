@@ -111,7 +111,7 @@ jobs:
           ls -la dist/
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: dist/
@@ -145,7 +145,7 @@ jobs:
         run: npm run demo:build
 
       - name: Upload demo artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: demo-build
           path: demo/dist/
@@ -189,7 +189,7 @@ jobs:
           node -e "const viewer = require('markdown-docs-viewer'); console.log('Package imported successfully');"
 
       - name: Upload package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: npm-package
           path: '*.tgz'
